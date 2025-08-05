@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.querySelector('.close-panel-btn');
     const notesList = document.getElementById('notes-list');
 
-    const MAX_NOTES = 10;
+    const MAX_NOTES = 4; // We are now fixed to 4 notes
+    const MAX_LINES = 10;
     let notes = [];
 
-    // Colors for the pre-populated notes from the original dashboard screenshot
     const noteColors = ['#f0d4d4', '#f0f0d4', '#d4f0d4', '#d4d4f0'];
-    const newNotePlaceholder = 'Click to add a new note...';
+    const defaultNoteTitles = ['To-Do List', 'Sticky Notes 1', 'Sticky Notes 2', 'Sticky Notes 3'];
 
     // --- Helper Functions ---
     function saveNotes() {
@@ -21,13 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedNotes) {
             notes = JSON.parse(savedNotes);
         } else {
-            // Pre-populate with default notes if local storage is empty
-            notes = [
-                'To-Do List:\n- Read J.E.A. - Chapter 1\n- Backtest EUR/USD strategy\n- Review last 5 trades',
-                'Sticky Notes 1:\nExample note content here.',
-                'Sticky Notes 2:\nExample note content here.',
-                'Sticky Notes 3:\nExample note content here.'
-            ];
+            // Pre-populate with default notes if local storage is empty or non-existent
+            notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             saveNotes();
         }
         renderNotes();
@@ -40,37 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
             noteItem.classList.add('note-item');
             noteItem.setAttribute('data-index', index);
             
-            // Set background color based on the pre-defined colors for the first four notes
-            if (index < noteColors.length) {
-                noteItem.style.backgroundColor = noteColors[index];
-            } else {
-                noteItem.style.backgroundColor = 'var(--accent-color)'; // Default color for new notes
-            }
+            noteItem.style.backgroundColor = noteColors[index];
 
-            // Split the note content into title and body if a title is present
-            let displayContent = note;
-            let displayTitle = '';
-            const firstLineBreak = note.indexOf('\n');
-            if (firstLineBreak > 0) {
-                displayTitle = note.substring(0, firstLineBreak);
-                displayContent = note.substring(firstLineBreak + 1);
-            } else {
-                displayTitle = note;
-                displayContent = '';
-            }
-
-            const isToDo = note.startsWith('To-Do List');
+            const noteContent = note.trim();
+            const noteTitle = defaultNoteTitles[index];
+            const isToDo = noteTitle === 'To-Do List';
+            
+            let displayContent = noteContent.split('\n').slice(1).join('\n'); // Content without title
+            
             let contentHTML = '';
             if (isToDo) {
                 const tasks = displayContent.split('\n- ').filter(task => task.trim() !== '');
                 const listItems = tasks.map(task => `<li class="todo-item"><input type="checkbox"> <span>${task}</span></li>`).join('');
                 contentHTML = `
-                    <h3 class="sticky-note-title" contenteditable="true">${displayTitle}</h3>
+                    <h3 class="sticky-note-title" contenteditable="false">${noteTitle}</h3>
                     <ul class="todo-list" contenteditable="true">${listItems}</ul>
                 `;
             } else {
                 contentHTML = `
-                    <h3 class="sticky-note-title" contenteditable="true">${displayTitle}</h3>
+                    <h3 class="sticky-note-title" contenteditable="false">${noteTitle}</h3>
                     <p contenteditable="true">${displayContent}</p>
                 `;
             }
@@ -79,23 +62,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="note-content-area">
                     ${contentHTML}
                 </div>
-                <button class="note-delete-btn"><i class="fas fa-trash-alt"></i></button>
+                <button class="note-delete-btn"><i class="fas fa-eraser"></i></button>
             `;
             notesList.appendChild(noteItem);
         });
-
-        // Add a "new note" button if the limit hasn't been reached
-        if (notes.length < MAX_NOTES) {
-            const newNoteBtn = document.createElement('div');
-            newNoteBtn.classList.add('new-note-button');
-            newNoteBtn.innerHTML = `
-                <i class="fas fa-plus"></i>
-                <span>Add New Note</span>
-            `;
-            notesList.appendChild(newNoteBtn);
-        }
     }
-    
+
+    function updateNoteContent(index, newContent) {
+        const lines = newContent.split('\n');
+        if (lines.length > MAX_LINES) {
+            newContent = lines.slice(0, MAX_LINES).join('\n');
+            alert(`Note limit of ${MAX_LINES} lines reached. Please delete old content.`);
+        }
+        notes[index] = defaultNoteTitles[index] + ':\n' + newContent;
+        saveNotes();
+        renderNotes();
+    }
+
     // --- Event Listeners ---
     toggleBtn.addEventListener('click', () => {
         panel.classList.toggle('open');
@@ -112,20 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (deleteBtn) {
             const noteItem = deleteBtn.closest('.note-item');
             const index = noteItem.getAttribute('data-index');
-            notes.splice(index, 1);
+            notes[index] = defaultNoteTitles[index] + ':\n\n'; // Clear the content
             saveNotes();
             renderNotes();
-            return;
-        }
-
-        const newNoteBtn = e.target.closest('.new-note-button');
-        if (newNoteBtn) {
-            if (notes.length < MAX_NOTES) {
-                notes.push(newNotePlaceholder);
-                saveNotes();
-                renderNotes();
-            }
-            return;
         }
     });
 
@@ -133,26 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const editableElement = e.target.closest('[contenteditable="true"]');
         if (editableElement) {
             const noteItem = editableElement.closest('.note-item');
-            if (noteItem) {
-                const index = noteItem.getAttribute('data-index');
-                let newContent = '';
-                if (editableElement.tagName === 'H3') {
-                    newContent = editableElement.textContent + '\n' + noteItem.querySelector('p')?.textContent;
-                } else if (editableElement.tagName === 'P') {
-                    newContent = noteItem.querySelector('h3')?.textContent + '\n' + editableElement.textContent;
-                } else if (editableElement.tagName === 'UL') {
-                    const title = noteItem.querySelector('h3')?.textContent;
-                    const tasks = Array.from(editableElement.querySelectorAll('li')).map(li => li.textContent.trim());
-                    newContent = title + '\n- ' + tasks.join('\n- ');
-                }
-                
-                notes[index] = newContent.trim();
-                if (notes[index] === 'Click to add a new note...') {
-                    notes.splice(index, 1); // Delete if the placeholder is left empty
-                }
-                saveNotes();
-                renderNotes();
-            }
+            const index = noteItem.getAttribute('data-index');
+            
+            const newContent = editableElement.textContent;
+            updateNoteContent(index, newContent);
         }
     }, true); // Use capture phase to catch blur events
 
