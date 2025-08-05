@@ -101,20 +101,22 @@
 /* Clock Specific Styles */
 .live-clock-container {
     position: absolute;
-    /* FINAL POSITION FIX */
+    /* FINAL POSITION FIX: Moved down slightly */
     top: 100px; 
     right: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    width: 220px;
+    /* Increased width for better number fit */
+    width: 250px; /* Adjusted to accommodate the 300px clock */
     z-index: 2; 
 }
 
 .analog-clock {
-    width: 200px;
-    height: 200px;
+    /* FINAL SIZE FIX: Increased size to 300px */
+    width: 300px;
+    height: 300px;
     position: relative;
 }
 
@@ -175,9 +177,9 @@
     height: 100%;
     text-align: center;
     /* Corrected translateY value to place numbers on the inner dial */
-    transform: rotate(calc(var(--i) * 30deg)) translateY(-85px) rotate(calc(-1 * var(--i) * 30deg));
+    transform: rotate(calc(var(--i) * 30deg)) translateY(-125px) rotate(calc(-1 * var(--i) * 30deg));
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: var(--gold-color);
 }
 
@@ -236,12 +238,12 @@
 }
 
 #digital-time {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
 }
 
 #digital-date {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 400;
 }
 </style>
