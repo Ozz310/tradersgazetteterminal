@@ -21,30 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const html = await response.text();
             
-            // Extract and inject HTML, CSS, and JS
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            // Inject styles from the module's file
-            const style = doc.querySelector('style');
-            if (style) {
-                const existingStyle = document.querySelector(`style[data-module="${moduleName}"]`);
-                if (existingStyle) {
-                    existingStyle.remove();
-                }
-                style.setAttribute('data-module', moduleName);
-                document.head.appendChild(style);
-            }
-            
             // Inject the main content
-            const content = doc.body.innerHTML;
-            moduleContainer.innerHTML = content;
-            
-            // Run the script from the module's file
-            const script = doc.querySelector('script');
-            if (script) {
-                const scriptFn = new Function(script.textContent);
-                scriptFn();
+            moduleContainer.innerHTML = html;
+
+            // NEW: After injecting the content, check for and run module-specific init functions
+            if (moduleName === 'dashboard' && typeof initDashboardClock === 'function') {
+                initDashboardClock();
             }
 
             console.log(`Module loaded: ${moduleName}`);
