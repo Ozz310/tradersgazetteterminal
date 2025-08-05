@@ -58,8 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
-        const modulePath = `modules/${moduleName}/index.html`;
-        const moduleScriptPath = `modules/${moduleName}/script.js`;
+        // NEW: Using an absolute path to avoid loading issues
+        const modulePath = `/modules/${moduleName}/index.html`;
+        const moduleScriptPath = `/modules/${moduleName}/script.js`;
 
         try {
             // Load module HTML
@@ -74,8 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (moduleName === 'dashboard') {
                 initializeDashboardClock();
             } else if (moduleName === 'risk-management-hub') {
-                // NEW: Load the Risk Management Hub's script and then initialize
-                loadScript(moduleScriptPath, initRiskManagementHub);
+                loadScript(moduleScriptPath, () => {
+                    if (typeof initRiskManagementHub === 'function') {
+                        initRiskManagementHub();
+                    } else {
+                        console.error('initRiskManagementHub function not found in loaded script.');
+                    }
+                });
             }
 
             console.log(`Module loaded: ${moduleName}`);
