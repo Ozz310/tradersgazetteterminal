@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let notes = [];
     let isSaving = false;
 
-    const noteColors = ['#f0d4d4', '#f0f0d4', '#d4f0d4', '#d4d4f0'];
+    // NEW: Updated note colors for better readability and a premium feel
+    const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
     const defaultNoteTitles = ['To-Do List', 'Sticky Notes 1', 'Sticky Notes 2', 'Sticky Notes 3'];
 
     // --- Backend API Functions ---
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderNotes();
         } catch (error) {
             console.error('Error fetching notes:', error);
-            // Fallback to local storage if API fails
+            // Fallback to local storage as a cache if API fails
             const savedNotes = localStorage.getItem('traders-gazette-notes');
             if (savedNotes) {
                 notes = JSON.parse(savedNotes);
