@@ -13,27 +13,7 @@
             </div>
         </div>
 
-        <div class="widget-card sticky-notes-widget" style="background-color: #f0d4d4;">
-            <h3 class="sticky-note-title">To-Do List</h3>
-            <ul class="todo-list">
-                <li><input type="checkbox"> Read J.E.A. - Chapter 1</li>
-                <li><input type="checkbox"> Backtest EUR/USD strategy</li>
-                <li><input type="checkbox"> Review last 5 trades</li>
-            </ul>
         </div>
-        <div class="widget-card sticky-notes-widget" style="background-color: #f0f0d4;">
-            <h3 class="sticky-note-title">Sticky Notes 1</h3>
-            <p>Example note content here.</p>
-        </div>
-        <div class="widget-card sticky-notes-widget" style="background-color: #d4f0d4;">
-            <h3 class="sticky-note-title">Sticky Notes 2</h3>
-            <p>Example note content here.</p>
-        </div>
-        <div class="widget-card sticky-notes-widget" style="background-color: #d4d4f0;">
-            <h3 class="sticky-note-title">Sticky Notes 3</h3>
-            <p>Example note content here.</p>
-        </div>
-    </div>
 </div>
 
 <style>
@@ -67,7 +47,7 @@
 }
 
 .widget-main-info {
-    grid-column: span 2; /* Spans two columns on desktop */
+    grid-column: 1 / -1; /* This will now span the full width */
 }
 
 .widget-title {
@@ -95,24 +75,6 @@
 .live-date {
     font-size: 1rem;
     color: var(--text-color);
-}
-
-.sticky-notes-widget {
-    color: #333;
-}
-
-.sticky-note-title {
-    margin-top: 0;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    padding-bottom: 10px;
-}
-
-@media (max-width: 768px) {
-    .widget-main-info {
-        grid-column: span 1;
-    }
 }
 </style>
 
