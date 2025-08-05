@@ -4,30 +4,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.querySelector('.close-panel-btn');
     const notesList = document.getElementById('notes-list');
 
+    // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcYTv9Wx_doz44pCvRpXA6dv3BN0Oj00CG2_AULAenl_NWraJz5zw1saFfbwuZP9KTXw/exec';
+    
     const MAX_NOTES = 4; // We are now fixed to 4 notes
     const MAX_LINES = 10;
     let notes = [];
+    let isSaving = false;
 
     const noteColors = ['#f0d4d4', '#f0f0d4', '#d4f0d4', '#d4d4f0'];
     const defaultNoteTitles = ['To-Do List', 'Sticky Notes 1', 'Sticky Notes 2', 'Sticky Notes 3'];
 
-    // --- Helper Functions ---
-    function saveNotes() {
-        localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
-    }
-
-    function loadNotes() {
-        const savedNotes = localStorage.getItem('traders-gazette-notes');
-        if (savedNotes) {
-            notes = JSON.parse(savedNotes);
-        } else {
-            // Pre-populate with default notes if local storage is empty or non-existent
-            notes = defaultNoteTitles.map(title => `${title}:\n\n`);
-            saveNotes();
+    // --- Backend API Functions ---
+    async function fetchNotes() {
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const data = await response.json();
+            if (data && data.notes) {
+                // If notes are found on the server, use them
+                notes = data.notes;
+            } else {
+                // Otherwise, use the default pre-populated notes
+                notes = defaultNoteTitles.map(title => `${title}:\n\n`);
+            }
+            renderNotes();
+        } catch (error) {
+            console.error('Error fetching notes:', error);
+            // Fallback to local storage if API fails
+            const savedNotes = localStorage.getItem('traders-gazette-notes');
+            if (savedNotes) {
+                notes = JSON.parse(savedNotes);
+            } else {
+                notes = defaultNoteTitles.map(title => `${title}:\n\n`);
+            }
+            renderNotes();
         }
-        renderNotes();
     }
 
+    async function saveNotes() {
+        if (isSaving) return;
+        isSaving = true;
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ notes: notes }),
+            });
+            console.log('Notes saved to backend.');
+            // Update local storage as a cache
+            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
+        } catch (error) {
+            console.error('Error saving notes:', error);
+        } finally {
+            isSaving = false;
+        }
+    }
+    
+    // --- Frontend UI Functions ---
     function renderNotes() {
         notesList.innerHTML = '';
         notes.forEach((note, index) => {
@@ -75,8 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Note limit of ${MAX_LINES} lines reached. Please delete old content.`);
         }
         notes[index] = defaultNoteTitles[index] + ':\n' + newContent;
-        saveNotes();
-        renderNotes();
+        renderNotes(); // Instant UI update
+        saveNotes(); // Asynchronous backend save
     }
 
     // --- Event Listeners ---
@@ -96,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const noteItem = deleteBtn.closest('.note-item');
             const index = noteItem.getAttribute('data-index');
             notes[index] = defaultNoteTitles[index] + ':\n\n'; // Clear the content
-            saveNotes();
-            renderNotes();
+            renderNotes(); // Instant UI update
+            saveNotes(); // Asynchronous backend save
         }
     });
 
@@ -112,6 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, true); // Use capture phase to catch blur events
 
-    // Initial load
-    loadNotes();
+    // Initial load - Fetch notes from the backend
+    fetchNotes();
 });
