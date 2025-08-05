@@ -1,5 +1,4 @@
 /* --- Sticky Notes Component Container --- */
-/* This container is crucial for positioning the button and panel correctly */
 .sticky-notes-component-container {
     position: fixed;
     bottom: 0;
@@ -44,7 +43,7 @@
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    width: 350px;
+    width: 900px; /* NEW: Wider panel to fit notes horizontally */
     height: 0; /* Starts hidden and will animate to full height */
     background-color: var(--sidebar-color);
     border-top-left-radius: 15px;
@@ -90,23 +89,26 @@
 /* Notes List Container */
 .notes-list {
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-x: auto; /* NEW: Enable horizontal scrolling if needed */
+    overflow-y: hidden;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: flex; /* NEW: Use flexbox for a horizontal layout */
+    gap: 20px; /* NEW: Gap between notes */
 }
 
 /* Individual Note Styling */
 .note-item {
+    flex-shrink: 0; /* NEW: Prevent notes from shrinking */
+    width: 200px; /* NEW: Fixed width for notes to maintain horizontal layout */
     background-color: var(--accent-color);
     padding: 12px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     display: flex;
+    flex-direction: column; /* NEW: Stack content vertically inside the note */
     justify-content: space-between;
-    align-items: flex-start;
     gap: 10px;
+    height: 100%;
 }
 
 .note-item span {
@@ -124,6 +126,7 @@
     cursor: pointer;
     padding: 0;
     transition: color 0.2s ease;
+    align-self: flex-end; /* NEW: Position the delete button in the bottom right */
 }
 
 .note-delete-btn:hover {
@@ -195,10 +198,13 @@
         width: 100%;
     }
     .sticky-notes-panel {
-        width: 100%;
+        width: 100%; /* NEW: On mobile, the panel takes full width */
         border-radius: 0;
     }
     .sticky-notes-toggle-btn {
         margin: 10px;
+    }
+    .notes-list {
+        overflow-x: auto; /* Allow horizontal scrolling for notes on small screens */
     }
 }
