@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Traders Gazette - Terminal</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo-link">
+                    <img src="https://via.placeholder.com/60x60.png?text=TG" alt="The Traders Gazette Logo" class="sidebar-logo">
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-item active" data-module="dashboard">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-module="risk-management-hub">
+                        <i class="fas fa-balance-scale nav-icon"></i>
+                        <span class="nav-label">Risk Calculator</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-module="news-aggregator">
+                        <i class="fas fa-newspaper nav-icon"></i>
+                        <span class="nav-label">News Room</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-module="trading-journal">
+                        <i class="fas fa-book nav-icon"></i>
+                        <span class="nav-label">Trading Journal</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item" data-module="ebooks">
+                        <i class="fas fa-book-reader nav-icon"></i>
+                        <span class="nav-label">E-Books</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="footer-link">
+                    <i class="fas fa-expand-alt"></i>
+                    <span class="footer-label">Open Fullscreen</span>
+                </a>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="footer-label">Contact</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="content-wrapper">
+            <div id="module-container" class="module-container">
+                </div>
+        </main>
+    </div>
+
+    <div id="mobile-overlay" class="mobile-overlay"></div>
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
