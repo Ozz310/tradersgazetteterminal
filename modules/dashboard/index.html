@@ -85,10 +85,9 @@
     font-size: 1.8rem;
 }
 
-/* NEW: Clock Specific Styles - Final Positioning */
+/* Clock Specific Styles */
 .live-clock-container {
     position: absolute;
-    /* Adjusted top to place it below the top bar */
     top: 60px;
     right: 20px;
     display: flex;
@@ -211,42 +210,3 @@
     font-weight: 400;
 }
 </style>
-
-<script>
-    setTimeout(() => {
-        const hourHand = document.getElementById('hourHand');
-        const minuteHand = document.getElementById('minuteHand');
-        const secondHand = document.getElementById('secondHand');
-        const digitalTimeElement = document.getElementById('digital-time');
-        const digitalDateElement = document.getElementById('digital-date');
-
-        function updateClock() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const second = now.getSeconds();
-
-            // Analog Clock Logic
-            const hourDeg = (hour % 12) * 30 + (minute / 2);
-            const minuteDeg = minute * 6 + (second / 10);
-            const secondDeg = second * 6;
-
-            if (hourHand) hourHand.style.transform = `rotate(${hourDeg}deg)`;
-            if (minuteHand) minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
-            if (secondHand) secondHand.style.transform = `rotate(${secondDeg}deg)`;
-
-            // Digital Display Logic
-            if (digitalTimeElement) {
-                const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-                digitalTimeElement.textContent = now.toLocaleTimeString('en-US', options);
-            }
-            if (digitalDateElement) {
-                const options = { weekday: 'short', month: 'short', day: 'numeric' };
-                digitalDateElement.textContent = now.toLocaleDateString('en-US', options);
-            }
-        }
-        
-        updateClock();
-        setInterval(updateClock, 1000);
-    }, 0);
-</script>
