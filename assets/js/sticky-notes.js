@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_NOTES = 10;
     let notes = [];
 
+    // Colors for the pre-populated notes from the original dashboard screenshot
+    const noteColors = ['#f0d4d4', '#f0f0d4', '#d4f0d4', '#d4d4f0'];
+
     // --- Helper Functions ---
     function saveNotes() {
         localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
@@ -19,8 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedNotes = localStorage.getItem('traders-gazette-notes');
         if (savedNotes) {
             notes = JSON.parse(savedNotes);
-            renderNotes();
+        } else {
+            // Pre-populate with default notes if local storage is empty
+            notes = [
+                'To-Do List:\n- Read J.E.A. - Chapter 1\n- Backtest EUR/USD strategy\n- Review last 5 trades',
+                'Sticky Notes 1:\nExample note content here.',
+                'Sticky Notes 2:\nExample note content here.',
+                'Sticky Notes 3:\nExample note content here.'
+            ];
+            saveNotes();
         }
+        renderNotes();
     }
 
     function renderNotes() {
@@ -28,8 +40,43 @@ document.addEventListener('DOMContentLoaded', () => {
         notes.forEach((note, index) => {
             const noteItem = document.createElement('div');
             noteItem.classList.add('note-item');
+            
+            // Set background color based on the pre-defined colors for the first four notes
+            if (index < noteColors.length) {
+                noteItem.style.backgroundColor = noteColors[index];
+            } else {
+                noteItem.style.backgroundColor = 'var(--accent-color)'; // Default color for new notes
+            }
+
+            // Split the note content into title and body if a title is present
+            let displayContent = note;
+            let displayTitle = '';
+            const firstLineBreak = note.indexOf('\n');
+            if (firstLineBreak > 0) {
+                displayTitle = note.substring(0, firstLineBreak);
+                displayContent = note.substring(firstLineBreak + 1);
+            }
+
+            const isToDo = note.startsWith('To-Do List');
+            let contentHTML = '';
+            if (isToDo) {
+                const tasks = displayContent.split('\n- ').filter(task => task.trim() !== '');
+                const listItems = tasks.map(task => `<li><input type="checkbox"> ${task}</li>`).join('');
+                contentHTML = `
+                    <h3 class="sticky-note-title">${displayTitle}</h3>
+                    <ul class="todo-list">${listItems}</ul>
+                `;
+            } else {
+                 contentHTML = `
+                    <h3 class="sticky-note-title">${displayTitle}</h3>
+                    <p>${displayContent}</p>
+                `;
+            }
+
             noteItem.innerHTML = `
-                <span>${note}</span>
+                <div class="note-content-area">
+                    ${contentHTML}
+                </div>
                 <button class="note-delete-btn" data-index="${index}"><i class="fas fa-trash-alt"></i></button>
             `;
             notesList.appendChild(noteItem);
@@ -87,8 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     notesList.addEventListener('click', (e) => {
-        if (e.target.closest('.note-delete-btn')) {
-            const index = e.target.closest('.note-delete-btn').getAttribute('data-index');
+        const deleteBtn = e.target.closest('.note-delete-btn');
+        if (deleteBtn) {
+            const index = deleteBtn.getAttribute('data-index');
             if (index !== null) {
                 deleteNote(parseInt(index));
             }
