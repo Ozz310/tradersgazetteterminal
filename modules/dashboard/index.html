@@ -1,0 +1,140 @@
+<div class="dashboard-page">
+    <div class="dashboard-cover-photo" style="background-image: url('https://via.placeholder.com/1200x200.png?text=Trading+Dashboard+Header');"></div>
+
+    <div class="dashboard-widgets-grid">
+        <div class="widget-card widget-main-info">
+            <h2 class="widget-title">Dashboard</h2>
+            <div class="live-clock-container">
+                <div id="live-clock" class="live-clock"></div>
+                <div id="live-date" class="live-date"></div>
+            </div>
+            <div class="calendar-container">
+                <p>Google Calendar Placeholder</p>
+            </div>
+        </div>
+
+        <div class="widget-card sticky-notes-widget" style="background-color: #f0d4d4;">
+            <h3 class="sticky-note-title">To-Do List</h3>
+            <ul class="todo-list">
+                <li><input type="checkbox"> Read J.E.A. - Chapter 1</li>
+                <li><input type="checkbox"> Backtest EUR/USD strategy</li>
+                <li><input type="checkbox"> Review last 5 trades</li>
+            </ul>
+        </div>
+        <div class="widget-card sticky-notes-widget" style="background-color: #f0f0d4;">
+            <h3 class="sticky-note-title">Sticky Notes 1</h3>
+            <p>Example note content here.</p>
+        </div>
+        <div class="widget-card sticky-notes-widget" style="background-color: #d4f0d4;">
+            <h3 class="sticky-note-title">Sticky Notes 2</h3>
+            <p>Example note content here.</p>
+        </div>
+        <div class="widget-card sticky-notes-widget" style="background-color: #d4d4f0;">
+            <h3 class="sticky-note-title">Sticky Notes 3</h3>
+            <p>Example note content here.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Dashboard Specific Styles */
+.dashboard-page {
+    /* Full-screen page for the dashboard */
+}
+
+.dashboard-cover-photo {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-widgets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.widget-card {
+    background-color: var(--accent-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+}
+
+.widget-main-info {
+    grid-column: span 2; /* Spans two columns on desktop */
+}
+
+.widget-title {
+    color: var(--gold-color);
+    font-family: var(--font-secondary);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+}
+
+.live-clock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.live-clock {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--gold-color);
+    text-shadow: 0 0 5px rgba(240, 215, 136, 0.5);
+}
+
+.live-date {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.sticky-notes-widget {
+    color: #333;
+}
+
+.sticky-note-title {
+    margin-top: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .widget-main-info {
+        grid-column: span 1;
+    }
+}
+</style>
+
+<script>
+// Dashboard specific JavaScript
+document.addEventListener('DOMContentLoaded', () => {
+    function updateClock() {
+        const now = new Date();
+        const timeElement = document.getElementById('live-clock');
+        const dateElement = document.getElementById('live-date');
+        
+        if (timeElement) {
+            timeElement.textContent = now.toLocaleTimeString();
+        }
+        if (dateElement) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString(undefined, options);
+        }
+    }
+    
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call
+});
+</script>
