@@ -6,6 +6,7 @@
     <title>The Traders Gazette - Terminal</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/sticky-notes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
@@ -61,6 +62,25 @@
     <div id="mobile-overlay" class="mobile-overlay"></div>
     <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
 
+    <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <div id="sticky-notes-panel" class="sticky-notes-panel">
+        <div class="panel-header">
+            <h3>My Notes & Tasks</h3>
+            <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="notes-list" id="notes-list">
+            </div>
+        <div class="note-input-area">
+            <textarea id="new-note-input" placeholder="Write a new note or task..."></textarea>
+            <button id="save-note-btn"><i class="fas fa-save"></i> Save Note</button>
+            <p id="note-limit-message" class="note-limit-message"></p>
+        </div>
+    </div>
+
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/sticky-notes.js"></script>
 </body>
 </html>
