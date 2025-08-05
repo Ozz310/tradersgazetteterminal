@@ -69,9 +69,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--border-color);
-    /* NEW: Set position to relative for absolute children */
     position: relative;
-    padding-bottom: 40px; /* Add padding to prevent content from overlapping the clock */
+    padding-bottom: 40px; 
 }
 
 .widget-main-info {
@@ -86,9 +85,8 @@
     font-size: 1.8rem;
 }
 
-/* NEW: Clock Specific Styles */
+/* NEW: Clock Specific Styles - Increased Size */
 .live-clock-container {
-    /* NEW: Positioned absolutely in the top-right corner */
     position: absolute;
     top: 20px;
     right: 20px;
@@ -96,12 +94,12 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    width: 150px;
+    width: 180px; /* Increased width */
 }
 
 .analog-clock {
-    width: 120px;
-    height: 120px;
+    width: 150px; /* Increased size */
+    height: 150px; /* Increased size */
     position: relative;
 }
 
@@ -202,53 +200,53 @@
 }
 
 #digital-time {
-    font-size: 1.2rem;
+    font-size: 1.5rem; /* Increased font size */
     font-weight: 700;
 }
 
 #digital-date {
-    font-size: 0.8rem;
+    font-size: 1rem; /* Increased font size */
     font-weight: 400;
 }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        function updateClock() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const second = now.getSeconds();
+    function initDashboardClock() {
+        const now = new Date();
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+        const second = now.getSeconds();
 
-            // Analog Clock Logic
-            const hourDeg = (hour % 12) * 30 + (minute / 2);
-            const minuteDeg = minute * 6 + (second / 10);
-            const secondDeg = second * 6;
+        // Analog Clock Logic
+        const hourDeg = (hour % 12) * 30 + (minute / 2);
+        const minuteDeg = minute * 6 + (second / 10);
+        const secondDeg = second * 6;
 
-            const hourHand = document.getElementById('hourHand');
-            const minuteHand = document.getElementById('minuteHand');
-            const secondHand = document.getElementById('secondHand');
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
 
-            if (hourHand) hourHand.style.transform = `rotate(${hourDeg}deg)`;
-            if (minuteHand) minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
-            if (secondHand) secondHand.style.transform = `rotate(${secondDeg}deg)`;
+        if (hourHand) hourHand.style.transform = `rotate(${hourDeg}deg)`;
+        if (minuteHand) minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+        if (secondHand) secondHand.style.transform = `rotate(${secondDeg}deg)`;
 
-            // Digital Display Logic
-            const digitalTimeElement = document.getElementById('digital-time');
-            const digitalDateElement = document.getElementById('digital-date');
+        // Digital Display Logic
+        const digitalTimeElement = document.getElementById('digital-time');
+        const digitalDateElement = document.getElementById('digital-date');
 
-            if (digitalTimeElement) {
-                const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-                digitalTimeElement.textContent = now.toLocaleTimeString('en-US', options);
-            }
-            if (digitalDateElement) {
-                const options = { weekday: 'short', month: 'short', day: 'numeric' };
-                digitalDateElement.textContent = now.toLocaleDateString('en-US', options);
-            }
+        if (digitalTimeElement) {
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            digitalTimeElement.textContent = now.toLocaleTimeString('en-US', options);
         }
-        
-        // Update the clock every second
-        setInterval(updateClock, 1000);
-        updateClock(); // Initial call
-    });
+        if (digitalDateElement) {
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            digitalDateElement.textContent = now.toLocaleDateString('en-US', options);
+        }
+    }
+    
+    // Call the function once to initialize
+    initDashboardClock();
+    
+    // Then call it every second
+    setInterval(initDashboardClock, 1000);
 </script>
