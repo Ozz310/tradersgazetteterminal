@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
-        // NEW: Using an absolute path to avoid loading issues
-        const modulePath = `/modules/${moduleName}/index.html`;
-        const moduleScriptPath = `/modules/${moduleName}/script.js`;
+        // FINAL FIX: Using a simple relative path which is the correct way
+        const modulePath = `modules/${moduleName}/index.html`;
+        const moduleScriptPath = `modules/${moduleName}/script.js`;
 
         try {
             // Load module HTML
