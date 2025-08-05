@@ -7,6 +7,10 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    /* NEW: Reposition the container to the center-bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
 }
 
 /* --- Sticky Notes Toggle Button --- */
@@ -42,16 +46,21 @@
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
+    /* NEW: Panel is now positioned at the bottom center */
     width: calc(100vw - 250px);
     max-width: 100%;
     height: 0;
     background-color: var(--sidebar-color);
     border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
     box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     transform: translateY(100%);
     transition: height 0.3s ease-in-out, transform 0.3s ease-in-out, width 0.3s ease-in-out;
+    position: fixed;
+    bottom: 0;
+    left: 250px; /* Position next to the sidebar */
 }
 
 .sticky-notes-panel.open {
@@ -98,7 +107,7 @@
 }
 
 /* Individual Note Styling */
-.note-item, .new-note-button {
+.note-item {
     background-color: var(--accent-color);
     padding: 15px;
     border-radius: 8px;
@@ -112,52 +121,107 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.note-item:hover, .new-note-button:hover {
+.note-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
 }
 
-/* NEW: In-place editable content styles */
-.note-item h3, .note-item p, .note-item ul {
-    outline: none;
-    cursor: text;
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
 }
 
-.note-item h3 {
+.note-header h3 {
     font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
-    color: var(--gold-color);
-    border-bottom: 1px solid rgba(240, 215, 136, 0.2);
-    padding-bottom: 8px;
-}
-
-/* NEW: Ensure note text has a readable color, regardless of the background */
-.note-item p, .note-item li, .note-item h3 {
     color: #1a1a1a;
 }
 
-.note-item p, .note-item li {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin: 0;
+/* NEW: Styles for the to-do and bullet lists */
+.note-body {
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
-.note-item ul {
+.todo-list, .bullet-list {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
-.note-item li {
+.todo-list li, .bullet-list li {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+    position: relative;
 }
 
-.note-item li input[type="checkbox"] {
+.todo-list li input[type="checkbox"] {
     accent-color: var(--gold-color);
+    flex-shrink: 0;
+}
+
+.todo-list li.checked span {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.todo-list li span, .bullet-list li span {
+    outline: none;
+    cursor: text;
+}
+
+.bullet-list li::before {
+    content: '•';
+    color: #1a1a1a;
+    font-weight: bold;
+}
+
+/* Delete button for individual tasks/notes */
+.delete-task-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+}
+.todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
+    visibility: visible;
+}
+
+
+/* NEW: "Add Task/Note" button styling */
+.note-footer {
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.add-item-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.add-item-btn:hover {
+    color: #1a1a1a;
 }
 
 .note-delete-btn {
@@ -166,7 +230,6 @@
     color: #e74c3c;
     font-size: 1rem;
     cursor: pointer;
-    padding: 5px;
     transition: color 0.2s ease;
     align-self: flex-end;
 }
@@ -175,20 +238,19 @@
     color: #c0392b;
 }
 
-/* NEW: The old note input area is now hidden in CSS */
-.note-input-area {
-    display: none;
-}
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .sticky-notes-component-container {
         width: 100%;
+        left: 0;
+        transform: none;
     }
     .sticky-notes-panel {
         width: 100%;
         max-width: 100%;
         border-radius: 15px 15px 0 0;
+        left: 0;
     }
     .sticky-notes-toggle-btn {
         margin: 10px;
@@ -197,7 +259,7 @@
         grid-template-columns: 1fr;
         padding: 10px;
     }
-    .note-item, .new-note-button {
+    .note-item {
         width: 100%;
     }
 }
