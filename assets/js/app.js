@@ -6,12 +6,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const mobileOverlay = document.getElementById('mobile-overlay');
 
+    // NEW: Function to initialize the dashboard clock
+    function initializeDashboardClock() {
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+        const digitalTimeElement = document.getElementById('digital-time');
+        const digitalDateElement = document.getElementById('digital-date');
+
+        if (!hourHand || !minuteHand || !secondHand) {
+            console.error('Clock elements not found.');
+            return;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Analog Clock Logic
+            const secondDeg = seconds * 6;
+            const minuteDeg = minutes * 6 + seconds * 0.1;
+            const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+
+            secondHand.style.transform = `rotate(${secondDeg}deg)`;
+            minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+            hourHand.style.transform = `rotate(${hourDeg}deg)`;
+
+            // Digital Display Logic
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            digitalTimeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
+            
+            const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+            digitalDateElement.textContent = now.toLocaleDateString('en-US', dateOptions);
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
     // Function to load a module dynamically
     async function loadModule(moduleName) {
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
-        // Construct the path to the module's HTML file
         const modulePath = `modules/${moduleName}/index.html`;
 
         try {
@@ -24,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Inject the main content
             moduleContainer.innerHTML = html;
 
-            // NEW: After injecting the content, check for and run module-specific init functions
-            if (moduleName === 'dashboard' && typeof initDashboardClock === 'function') {
-                initDashboardClock();
+            // NEW: Call module-specific initialization functions after content is loaded
+            if (moduleName === 'dashboard') {
+                initializeDashboardClock();
             }
 
             console.log(`Module loaded: ${moduleName}`);
