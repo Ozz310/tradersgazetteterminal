@@ -1,16 +1,8 @@
 /* --- Sticky Notes Component Container --- */
 .sticky-notes-component-container {
-    /* The button and panel are now children of the body, not this container. */
-    /* This container's role is deprecated, but we'll leave it for now. */
-    /* NEW: We will manage positioning directly on the button and panel. */
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    /* This container is no longer needed for positioning and can be removed. */
+    /* NEW: The button and panel are now positioned independently as children of the body. */
+    display: contents;
 }
 
 /* --- Sticky Notes Toggle Button --- */
@@ -29,12 +21,12 @@
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    /* NEW: This button is now a direct child of the body to fix positioning */
+    /* NEW: Corrected fixed positioning to be centered at the bottom. */
     position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 55; /* Higher z-index to be on top of the panel */
+    z-index: 55;
 }
 
 .sticky-notes-toggle-btn:hover {
@@ -52,11 +44,11 @@
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    /* NEW: Fixed position to stretch from sidebar to edge */
+    /* NEW: Corrected fixed positioning to stretch across the bottom. */
     position: fixed;
     bottom: 0;
-    left: 250px; /* Positioned at the end of the 250px sidebar */
-    right: 0; /* Stretches to the right edge of the viewport */
+    left: 250px;
+    right: 0;
     height: 0;
     background-color: var(--sidebar-color);
     border-top-left-radius: 15px;
@@ -67,6 +59,7 @@
     transform: translateY(100%);
     transition: height 0.3s ease-in-out, transform 0.3s ease-in-out, left 0.3s ease-in-out;
     z-index: 50;
+    box-sizing: border-box; /* Ensures padding doesn't break layout */
 }
 
 .sticky-notes-panel.open {
