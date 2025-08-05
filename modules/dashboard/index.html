@@ -5,8 +5,33 @@
         <div class="widget-card widget-main-info">
             <h2 class="widget-title">Dashboard</h2>
             <div class="live-clock-container">
-                <div id="live-clock" class="live-clock"></div>
-                <div id="live-date" class="live-date"></div>
+                <div class="analog-clock">
+                    <div class="analog-dial">
+                        <div class="tick-marks">
+                            <span class="tick" style="transform: rotate(30deg);"></span>
+                            <span class="tick" style="transform: rotate(60deg);"></span>
+                            <span class="tick" style="transform: rotate(90deg);"></span>
+                            <span class="tick" style="transform: rotate(120deg);"></span>
+                            <span class="tick" style="transform: rotate(150deg);"></span>
+                            <span class="tick" style="transform: rotate(180deg);"></span>
+                            <span class="tick" style="transform: rotate(210deg);"></span>
+                            <span class="tick" style="transform: rotate(240deg);"></span>
+                            <span class="tick" style="transform: rotate(270deg);"></span>
+                            <span class="tick" style="transform: rotate(300deg);"></span>
+                            <span class="tick" style="transform: rotate(330deg);"></span>
+                            <span class="tick" style="transform: rotate(360deg);"></span>
+                        </div>
+                        <div class="analog-hand hour-hand" id="hourHand"></div>
+                        <div class="analog-hand minute-hand" id="minuteHand"></div>
+                        <div class="analog-hand second-hand" id="secondHand"></div>
+                        <div class="analog-center"></div>
+                    </div>
+                </div>
+
+                <div id="digital-display" class="digital-display">
+                    <span id="digital-time"></span>
+                    <span id="digital-date"></span>
+                </div>
             </div>
             <div class="calendar-container">
                 <p>Google Calendar Placeholder</p>
@@ -63,40 +88,150 @@
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
+    padding-top: 20px;
+    position: relative;
 }
 
-.live-clock {
-    font-size: 3rem;
-    font-weight: 700;
+.analog-clock {
+    width: 250px;
+    height: 250px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.analog-dial {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid var(--gold-color);
+    box-shadow: 0 0 15px rgba(240, 215, 136, 0.4);
+}
+
+.tick-marks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.tick {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 10px;
+    background-color: var(--gold-color);
+    transform-origin: bottom;
+    transform: translateX(-50%);
+}
+
+.tick:nth-child(3n) {
+    height: 15px;
+}
+
+.analog-hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 5px 5px 0 0;
+    background-color: var(--gold-color);
+}
+
+.hour-hand {
+    width: 4px;
+    height: 30%;
+    margin-left: -2px;
+    z-index: 3;
+}
+
+.minute-hand {
+    width: 2px;
+    height: 40%;
+    margin-left: -1px;
+    z-index: 2;
+}
+
+.second-hand {
+    width: 1px;
+    height: 45%;
+    margin-left: -0.5px;
+    z-index: 1;
+    background-color: #e74c3c;
+    box-shadow: 0 0 5px #e74c3c;
+}
+
+.analog-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: var(--gold-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+}
+
+.digital-display {
+    text-align: center;
+    font-family: var(--font-primary);
     color: var(--gold-color);
     text-shadow: 0 0 5px rgba(240, 215, 136, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.live-date {
+#digital-time {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+#digital-date {
     font-size: 1rem;
-    color: var(--text-color);
+    font-weight: 400;
 }
 </style>
 
 <script>
-// Dashboard specific JavaScript
-document.addEventListener('DOMContentLoaded', () => {
-    function updateClock() {
-        const now = new Date();
-        const timeElement = document.getElementById('live-clock');
-        const dateElement = document.getElementById('live-date');
+    document.addEventListener('DOMContentLoaded', () => {
+        function updateClock() {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const second = now.getSeconds();
+
+            // Analog Clock Logic
+            const hourDeg = (hour % 12) * 30 + (minute / 2);
+            const minuteDeg = minute * 6 + (second / 10);
+            const secondDeg = second * 6;
+
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const secondHand = document.getElementById('secondHand');
+
+            if (hourHand) hourHand.style.transform = `rotate(${hourDeg}deg)`;
+            if (minuteHand) minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+            if (secondHand) secondHand.style.transform = `rotate(${secondDeg}deg)`;
+
+            // Digital Display Logic
+            const digitalTimeElement = document.getElementById('digital-time');
+            const digitalDateElement = document.getElementById('digital-date');
+
+            if (digitalTimeElement) {
+                const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+                digitalTimeElement.textContent = now.toLocaleTimeString('en-US', options);
+            }
+            if (digitalDateElement) {
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                digitalDateElement.textContent = now.toLocaleDateString('en-US', options);
+            }
+        }
         
-        if (timeElement) {
-            timeElement.textContent = now.toLocaleTimeString();
-        }
-        if (dateElement) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            dateElement.textContent = now.toLocaleDateString(undefined, options);
-        }
-    }
-    
-    // Update the clock every second
-    setInterval(updateClock, 1000);
-    updateClock(); // Initial call
-});
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+    });
 </script>
