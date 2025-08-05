@@ -3,15 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const panel = document.getElementById('sticky-notes-panel');
     const closeBtn = document.querySelector('.close-panel-btn');
     const notesList = document.getElementById('notes-list');
-    const newNoteInput = document.getElementById('new-note-input');
-    const saveNoteBtn = document.getElementById('save-note-btn');
-    const limitMessage = document.getElementById('note-limit-message');
 
     const MAX_NOTES = 10;
     let notes = [];
 
     // Colors for the pre-populated notes from the original dashboard screenshot
     const noteColors = ['#f0d4d4', '#f0f0d4', '#d4f0d4', '#d4d4f0'];
+    const newNotePlaceholder = 'Click to add a new note...';
 
     // --- Helper Functions ---
     function saveNotes() {
@@ -40,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notes.forEach((note, index) => {
             const noteItem = document.createElement('div');
             noteItem.classList.add('note-item');
+            noteItem.setAttribute('data-index', index);
             
             // Set background color based on the pre-defined colors for the first four notes
             if (index < noteColors.length) {
@@ -55,21 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (firstLineBreak > 0) {
                 displayTitle = note.substring(0, firstLineBreak);
                 displayContent = note.substring(firstLineBreak + 1);
+            } else {
+                displayTitle = note;
+                displayContent = '';
             }
 
             const isToDo = note.startsWith('To-Do List');
             let contentHTML = '';
             if (isToDo) {
                 const tasks = displayContent.split('\n- ').filter(task => task.trim() !== '');
-                const listItems = tasks.map(task => `<li><input type="checkbox"> ${task}</li>`).join('');
+                const listItems = tasks.map(task => `<li class="todo-item"><input type="checkbox"> <span>${task}</span></li>`).join('');
                 contentHTML = `
-                    <h3 class="sticky-note-title">${displayTitle}</h3>
-                    <ul class="todo-list">${listItems}</ul>
+                    <h3 class="sticky-note-title" contenteditable="true">${displayTitle}</h3>
+                    <ul class="todo-list" contenteditable="true">${listItems}</ul>
                 `;
             } else {
-                 contentHTML = `
-                    <h3 class="sticky-note-title">${displayTitle}</h3>
-                    <p>${displayContent}</p>
+                contentHTML = `
+                    <h3 class="sticky-note-title" contenteditable="true">${displayTitle}</h3>
+                    <p contenteditable="true">${displayContent}</p>
                 `;
             }
 
@@ -77,46 +79,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="note-content-area">
                     ${contentHTML}
                 </div>
-                <button class="note-delete-btn" data-index="${index}"><i class="fas fa-trash-alt"></i></button>
+                <button class="note-delete-btn"><i class="fas fa-trash-alt"></i></button>
             `;
             notesList.appendChild(noteItem);
         });
 
-        // Update the visibility of the limit message
-        if (notes.length >= MAX_NOTES) {
-            limitMessage.textContent = `Limit of ${MAX_NOTES} notes reached.`;
-            limitMessage.classList.add('visible');
-        } else {
-            limitMessage.classList.remove('visible');
+        // Add a "new note" button if the limit hasn't been reached
+        if (notes.length < MAX_NOTES) {
+            const newNoteBtn = document.createElement('div');
+            newNoteBtn.classList.add('new-note-button');
+            newNoteBtn.innerHTML = `
+                <i class="fas fa-plus"></i>
+                <span>Add New Note</span>
+            `;
+            notesList.appendChild(newNoteBtn);
         }
     }
-
-    function addNote() {
-        const noteText = newNoteInput.value.trim();
-        if (noteText && notes.length < MAX_NOTES) {
-            notes.push(noteText);
-            newNoteInput.value = '';
-            saveNotes();
-            renderNotes();
-        } else if (notes.length >= MAX_NOTES) {
-            limitMessage.textContent = `Limit of ${MAX_NOTES} notes reached.`;
-            limitMessage.classList.add('visible');
-        }
-    }
-
-    function deleteNote(index) {
-        notes.splice(index, 1);
-        saveNotes();
-        renderNotes();
-    }
-
+    
     // --- Event Listeners ---
     toggleBtn.addEventListener('click', () => {
         panel.classList.toggle('open');
         toggleBtn.classList.toggle('active');
-        if (panel.classList.contains('open')) {
-            newNoteInput.focus();
-        }
     });
 
     closeBtn.addEventListener('click', () => {
@@ -124,24 +107,54 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBtn.classList.remove('active');
     });
 
-    saveNoteBtn.addEventListener('click', addNote);
-
-    newNoteInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            addNote();
-        }
-    });
-
     notesList.addEventListener('click', (e) => {
         const deleteBtn = e.target.closest('.note-delete-btn');
         if (deleteBtn) {
-            const index = deleteBtn.getAttribute('data-index');
-            if (index !== null) {
-                deleteNote(parseInt(index));
+            const noteItem = deleteBtn.closest('.note-item');
+            const index = noteItem.getAttribute('data-index');
+            notes.splice(index, 1);
+            saveNotes();
+            renderNotes();
+            return;
+        }
+
+        const newNoteBtn = e.target.closest('.new-note-button');
+        if (newNoteBtn) {
+            if (notes.length < MAX_NOTES) {
+                notes.push(newNotePlaceholder);
+                saveNotes();
+                renderNotes();
             }
+            return;
         }
     });
+
+    notesList.addEventListener('blur', (e) => {
+        const editableElement = e.target.closest('[contenteditable="true"]');
+        if (editableElement) {
+            const noteItem = editableElement.closest('.note-item');
+            if (noteItem) {
+                const index = noteItem.getAttribute('data-index');
+                let newContent = '';
+                if (editableElement.tagName === 'H3') {
+                    newContent = editableElement.textContent + '\n' + noteItem.querySelector('p')?.textContent;
+                } else if (editableElement.tagName === 'P') {
+                    newContent = noteItem.querySelector('h3')?.textContent + '\n' + editableElement.textContent;
+                } else if (editableElement.tagName === 'UL') {
+                    const title = noteItem.querySelector('h3')?.textContent;
+                    const tasks = Array.from(editableElement.querySelectorAll('li')).map(li => li.textContent.trim());
+                    newContent = title + '\n- ' + tasks.join('\n- ');
+                }
+                
+                notes[index] = newContent.trim();
+                if (notes[index] === 'Click to add a new note...') {
+                    notes.splice(index, 1); // Delete if the placeholder is left empty
+                }
+                saveNotes();
+                renderNotes();
+            }
+        }
+    }, true); // Use capture phase to catch blur events
 
     // Initial load
     loadNotes();
