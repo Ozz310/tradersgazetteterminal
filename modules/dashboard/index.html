@@ -101,20 +101,18 @@
 /* Clock Specific Styles */
 .live-clock-container {
     position: absolute;
-    /* NEW: Adjusted top to be below the title block */
-    top: 80px; 
+    /* FINAL POSITION FIX: Moved down slightly */
+    top: 90px; 
     right: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    /* NEW: Increased width for better number fit */
     width: 220px;
     z-index: 2; 
 }
 
 .analog-clock {
-    /* NEW: Increased size to accommodate numbers inside */
     width: 200px;
     height: 200px;
     position: relative;
@@ -162,7 +160,7 @@
 .tick:nth-child(11) { transform: rotate(330deg); }
 .tick:nth-child(12) { transform: rotate(360deg); }
 
-/* NEW: Styles for the numbers inside the clock */
+/* FINAL FIX: Styles for the numbers inside the clock */
 .clock-numbers {
     position: absolute;
     width: 100%;
@@ -176,7 +174,7 @@
     width: 100%;
     height: 100%;
     text-align: center;
-    transform: rotate(calc(var(--i) * 30deg)) translateY(-85px) rotate(calc(-1 * var(--i) * 30deg));
+    transform: rotate(calc(var(--i) * 30deg)) translateY(-75px) rotate(calc(-1 * var(--i) * 30deg));
     font-weight: 700;
     font-size: 1rem;
     color: var(--gold-color);
