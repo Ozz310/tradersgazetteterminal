@@ -7,14 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcYTv9Wx_doz44pCvRpXA6dv3BN0Oj00CG2_AULAenl_NWraJz5zw1saFfbwuZP9KTXw/exec';
     
-    const MAX_NOTES = 4; // We are now fixed to 4 notes
-    const MAX_LINES = 10;
+    const MAX_NOTES = 4;
+    const MAX_ITEMS = 5;
     let notes = [];
     let isSaving = false;
 
-    // NEW: Updated note colors for better readability and a premium feel
     const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
-    const defaultNoteTitles = ['To-Do List', 'Sticky Notes 1', 'Sticky Notes 2', 'Sticky Notes 3'];
+    const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
 
     // --- Backend API Functions ---
     async function fetchNotes() {
@@ -22,16 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(SCRIPT_URL);
             const data = await response.json();
             if (data && data.notes) {
-                // If notes are found on the server, use them
                 notes = data.notes;
             } else {
-                // Otherwise, use the default pre-populated notes
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
         } catch (error) {
             console.error('Error fetching notes:', error);
-            // Fallback to local storage as a cache if API fails
             const savedNotes = localStorage.getItem('traders-gazette-notes');
             if (savedNotes) {
                 notes = JSON.parse(savedNotes);
@@ -48,14 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Required for Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ notes: notes }),
             });
             console.log('Notes saved to backend.');
-            // Update local storage as a cache
             localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         } catch (error) {
             console.error('Error saving notes:', error);
@@ -71,52 +64,135 @@ document.addEventListener('DOMContentLoaded', () => {
             const noteItem = document.createElement('div');
             noteItem.classList.add('note-item');
             noteItem.setAttribute('data-index', index);
-            
             noteItem.style.backgroundColor = noteColors[index];
-
-            const noteContent = note.trim();
-            const noteTitle = defaultNoteTitles[index];
-            const isToDo = noteTitle === 'To-Do List';
-            
-            let displayContent = noteContent.split('\n').slice(1).join('\n'); // Content without title
-            
-            let contentHTML = '';
-            if (isToDo) {
-                const tasks = displayContent.split('\n- ').filter(task => task.trim() !== '');
-                const listItems = tasks.map(task => `<li class="todo-item"><input type="checkbox"> <span>${task}</span></li>`).join('');
-                contentHTML = `
-                    <h3 class="sticky-note-title" contenteditable="false">${noteTitle}</h3>
-                    <ul class="todo-list" contenteditable="true">${listItems}</ul>
-                `;
-            } else {
-                contentHTML = `
-                    <h3 class="sticky-note-title" contenteditable="false">${noteTitle}</h3>
-                    <p contenteditable="true">${displayContent}</p>
-                `;
-            }
-
-            noteItem.innerHTML = `
-                <div class="note-content-area">
-                    ${contentHTML}
-                </div>
-                <button class="note-delete-btn"><i class="fas fa-eraser"></i></button>
-            `;
+            noteItem.innerHTML = createNoteContent(note, index);
             notesList.appendChild(noteItem);
+        });
+        addEventListenersToNotes();
+    }
+
+    function createNoteContent(note, index) {
+        const noteTitle = defaultNoteTitles[index];
+        const isToDo = noteTitle === 'To Do List';
+        const [title, ...items] = note.split('\n').map(s => s.trim()).filter(s => s);
+
+        let itemsHTML = '';
+        if (isToDo) {
+            items.forEach((item, i) => {
+                const isChecked = item.startsWith('[x]');
+                const text = isChecked ? item.substring(3).trim() : item;
+                itemsHTML += `
+                    <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''}>
+                        <span contenteditable="true">${text}</span>
+                    </li>
+                `;
+            });
+        } else {
+            items.forEach((item, i) => {
+                itemsHTML += `
+                    <li class="bullet-item" data-bullet-index="${i}">
+                        <span contenteditable="true">${item.replace(/^\* /, '')}</span>
+                    </li>
+                `;
+            });
+        }
+
+        const deleteButton = `<button class="note-delete-btn"><i class="fas fa-eraser"></i></button>`;
+        const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
+        const limitMessage = `<p class="limit-message">${items.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
+        
+        return `
+            <div class="note-header">
+                <h3>${title}</h3>
+                ${deleteButton}
+            </div>
+            <div class="note-body">
+                <ul class="${isToDo ? 'todo-list' : 'bullet-list'}">
+                    ${itemsHTML}
+                </ul>
+                ${limitMessage}
+            </div>
+            <div class="note-footer">
+                ${addButton}
+            </div>
+        `;
+    }
+
+    function addEventListenersToNotes() {
+        notesList.querySelectorAll('.add-item-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const noteItem = e.target.closest('.note-item');
+                const index = noteItem.getAttribute('data-index');
+                const [title, ...items] = notes[index].split('\n').map(s => s.trim()).filter(s => s);
+                if (items.length < MAX_ITEMS) {
+                    const newItem = btn.getAttribute('data-type') === 'task' ? 'New Task' : '* New Note';
+                    notes[index] += `\n${newItem}`;
+                    renderNotes();
+                    saveNotes();
+                }
+            });
+        });
+
+        notesList.querySelectorAll('.note-delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const noteItem = e.target.closest('.note-item');
+                const index = noteItem.getAttribute('data-index');
+                const noteTitle = defaultNoteTitles[index];
+                notes[index] = `${noteTitle}:\n\n`;
+                renderNotes();
+                saveNotes();
+            });
+        });
+
+        notesList.querySelectorAll('.todo-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const noteItem = e.target.closest('.note-item');
+                const index = noteItem.getAttribute('data-index');
+                const taskIndex = e.target.closest('.todo-item').getAttribute('data-task-index');
+                
+                const [title, ...items] = notes[index].split('\n').map(s => s.trim()).filter(s => s);
+                const isChecked = e.target.checked;
+                const updatedItem = isChecked ? `[x]${items[taskIndex].replace('[x]', '').trim()}` : items[taskIndex].replace('[x]', '').trim();
+                items[taskIndex] = updatedItem;
+                
+                notes[index] = [title, ...items].join('\n');
+                renderNotes();
+                saveNotes();
+            });
+        });
+
+        notesList.querySelectorAll('.note-item [contenteditable="true"]').forEach(element => {
+            element.addEventListener('keypress', (e) => {
+                const noteItem = e.target.closest('.note-item');
+                const index = noteItem.getAttribute('data-index');
+                const [title, ...items] = notes[index].split('\n').map(s => s.trim()).filter(s => s);
+                if (e.key === 'Enter' && items.length < MAX_ITEMS) {
+                    e.preventDefault();
+                    const newItem = noteItem.querySelector('.add-item-btn').getAttribute('data-type') === 'task' ? 'New Task' : '* New Note';
+                    notes[index] += `\n${newItem}`;
+                    renderNotes();
+                    saveNotes();
+                }
+            });
+
+            element.addEventListener('blur', (e) => {
+                const noteItem = e.target.closest('.note-item');
+                const index = noteItem.getAttribute('data-index');
+                const updatedContent = Array.from(noteItem.querySelectorAll('[contenteditable="true"]')).map(el => {
+                    return e.target.closest('.todo-item') ? `[${el.closest('.todo-item').querySelector('input').checked ? 'x' : ' '}]${el.textContent.trim()}` : el.textContent.trim();
+                });
+                
+                const lines = updatedContent.join('\n');
+                const combinedContent = `${defaultNoteTitles[index]}:\n${lines}`;
+                notes[index] = combinedContent;
+                saveNotes();
+                renderNotes();
+            });
         });
     }
 
-    function updateNoteContent(index, newContent) {
-        const lines = newContent.split('\n');
-        if (lines.length > MAX_LINES) {
-            newContent = lines.slice(0, MAX_LINES).join('\n');
-            alert(`Note limit of ${MAX_LINES} lines reached. Please delete old content.`);
-        }
-        notes[index] = defaultNoteTitles[index] + ':\n' + newContent;
-        renderNotes(); // Instant UI update
-        saveNotes(); // Asynchronous backend save
-    }
-
-    // --- Event Listeners ---
+    // --- Event Listeners for Panel ---
     toggleBtn.addEventListener('click', () => {
         panel.classList.toggle('open');
         toggleBtn.classList.toggle('active');
@@ -127,28 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBtn.classList.remove('active');
     });
 
-    notesList.addEventListener('click', (e) => {
-        const deleteBtn = e.target.closest('.note-delete-btn');
-        if (deleteBtn) {
-            const noteItem = deleteBtn.closest('.note-item');
-            const index = noteItem.getAttribute('data-index');
-            notes[index] = defaultNoteTitles[index] + ':\n\n'; // Clear the content
-            renderNotes(); // Instant UI update
-            saveNotes(); // Asynchronous backend save
-        }
-    });
-
-    notesList.addEventListener('blur', (e) => {
-        const editableElement = e.target.closest('[contenteditable="true"]');
-        if (editableElement) {
-            const noteItem = editableElement.closest('.note-item');
-            const index = noteItem.getAttribute('data-index');
-            
-            const newContent = editableElement.textContent;
-            updateNoteContent(index, newContent);
-        }
-    }, true); // Use capture phase to catch blur events
-
-    // Initial load - Fetch notes from the backend
+    // Initial load
     fetchNotes();
 });
