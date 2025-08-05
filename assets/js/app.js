@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNavToggle = document.getElementById('mobile-nav-toggle');
     const sidebar = document.getElementById('sidebar');
     const mobileOverlay = document.getElementById('mobile-overlay');
+    let loadedStyles = []; // To keep track of loaded stylesheets
 
-    // NEW: Function to initialize the dashboard clock
+    // Function to initialize the dashboard clock
     function initializeDashboardClock() {
         const hourHand = document.getElementById('hourHand');
         const minuteHand = document.getElementById('minuteHand');
@@ -25,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
 
-            // Analog Clock Logic
             const secondDeg = seconds * 6;
             const minuteDeg = minutes * 6 + seconds * 0.1;
             const hourDeg = (hours % 12) * 30 + minutes * 0.5;
@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
             minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
             hourHand.style.transform = `rotate(${hourDeg}deg)`;
 
-            // Digital Display Logic
             const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
             digitalTimeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
             
@@ -45,6 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateClock();
         setInterval(updateClock, 1000);
     }
+    
+    // A universal way to load a script dynamically
+    function loadScript(url, callback) {
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = callback;
+        document.body.appendChild(script);
+    }
 
     // Function to load a module dynamically
     async function loadModule(moduleName) {
@@ -52,20 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
         moduleContainer.innerHTML = '';
         
         const modulePath = `modules/${moduleName}/index.html`;
+        const moduleScriptPath = `modules/${moduleName}/script.js`;
 
         try {
+            // Load module HTML
             const response = await fetch(modulePath);
             if (!response.ok) {
                 throw new Error(`Failed to load module: ${modulePath}`);
             }
             const html = await response.text();
-            
-            // Inject the main content
             moduleContainer.innerHTML = html;
-
-            // NEW: Call module-specific initialization functions after content is loaded
+            
+            // Call module-specific initialization functions
             if (moduleName === 'dashboard') {
                 initializeDashboardClock();
+            } else if (moduleName === 'risk-management-hub') {
+                // NEW: Load the Risk Management Hub's script and then initialize
+                loadScript(moduleScriptPath, initRiskManagementHub);
             }
 
             console.log(`Module loaded: ${moduleName}`);
