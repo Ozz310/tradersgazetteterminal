@@ -70,6 +70,7 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--border-color);
     position: relative;
+    /* NEW: Adjusted padding to make space for the clock */
     padding-bottom: 40px; 
 }
 
@@ -85,7 +86,7 @@
     font-size: 1.8rem;
 }
 
-/* NEW: Clock Specific Styles - Increased Size */
+/* NEW: Clock Specific Styles - Corrected Positioning */
 .live-clock-container {
     position: absolute;
     top: 20px;
@@ -94,12 +95,13 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    width: 180px; /* Increased width */
+    width: 180px;
+    z-index: 2; /* Ensure the clock is on top of other content */
 }
 
 .analog-clock {
-    width: 150px; /* Increased size */
-    height: 150px; /* Increased size */
+    width: 150px;
+    height: 150px;
     position: relative;
 }
 
@@ -200,18 +202,18 @@
 }
 
 #digital-time {
-    font-size: 1.5rem; /* Increased font size */
+    font-size: 1.5rem;
     font-weight: 700;
 }
 
 #digital-date {
-    font-size: 1rem; /* Increased font size */
+    font-size: 1rem;
     font-weight: 400;
 }
 </style>
 
 <script>
-    function initDashboardClock() {
+    function updateClock() {
         const now = new Date();
         const hour = now.getHours();
         const minute = now.getMinutes();
@@ -243,10 +245,10 @@
             digitalDateElement.textContent = now.toLocaleDateString('en-US', options);
         }
     }
-    
+
     // Call the function once to initialize
-    initDashboardClock();
-    
+    updateClock();
+
     // Then call it every second
-    setInterval(initDashboardClock, 1000);
+    setInterval(updateClock, 1000);
 </script>
