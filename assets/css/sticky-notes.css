@@ -1,11 +1,20 @@
+/* --- Sticky Notes Component Container --- */
+/* This container is crucial for positioning the button and panel correctly */
+.sticky-notes-component-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 50; /* A high z-index to appear above most content */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
 /* --- Sticky Notes Toggle Button --- */
 .sticky-notes-toggle-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 50; /* A high z-index to appear above most content */
     width: 60px;
     height: 60px;
+    margin: 20px;
     background: var(--gold-color);
     color: var(--bg-color);
     border: none;
@@ -33,13 +42,8 @@
     transform: rotate(45deg);
 }
 
-
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 45; /* Below the toggle button but above other content */
     width: 350px;
     height: 0; /* Starts hidden and will animate to full height */
     background-color: var(--sidebar-color);
@@ -187,12 +191,14 @@
 
 /* --- Mobile Responsiveness for Panel --- */
 @media (max-width: 768px) {
+    .sticky-notes-component-container {
+        width: 100%;
+    }
     .sticky-notes-panel {
         width: 100%;
         border-radius: 0;
     }
     .sticky-notes-toggle-btn {
-        bottom: 10px;
-        right: 10px;
+        margin: 10px;
     }
 }
