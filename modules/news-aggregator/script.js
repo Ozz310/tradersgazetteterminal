@@ -8,8 +8,6 @@ function loadScript(url, callback) {
 
 // --- Main initialization function to be called by app.js ---
 function initNewsAggregator() {
-    // This file is the new, refactored version of the original script
-    
     // API Key and URL for the Google Apps Script
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
     
@@ -34,7 +32,25 @@ function initNewsAggregator() {
         if (!newsList) return;
         
         // Show skeleton loader
-        newsList.innerHTML = '<div class="skeleton-wrapper"><div class="skeleton-article"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line long"></div></div><div class="skeleton-article"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line long"></div></div><div class="skeleton-article"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line long"></div></div></div>';
+        newsList.innerHTML = `
+            <div class="skeleton-wrapper">
+                <div class="skeleton-article">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line medium"></div>
+                    <div class="skeleton-line long"></div>
+                </div>
+                <div class="skeleton-article">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line medium"></div>
+                    <div class="skeleton-line long"></div>
+                </div>
+                <div class="skeleton-article">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line medium"></div>
+                    <div class="skeleton-line long"></div>
+                </div>
+            </div>
+        `;
 
         try {
             const response = await fetch(GOOGLE_SHEET_URL);
@@ -69,6 +85,7 @@ function initNewsAggregator() {
             const summary = article.Summary || '';
             let url = article.URL || '#';
             const publishedTime = article['Published Time'] || 'N/A';
+            const tickers = article.Tickers || '';
             
             if (url !== '') {
                 url = url.replace(/^"|"$/g, '').trim();
@@ -77,6 +94,11 @@ function initNewsAggregator() {
                 }
                 try { new URL(url); } catch (e) { url = '#'; }
             } else { url = '#'; }
+            
+            const isBreaking = index === 0;
+            const breakingRibbonHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
+            const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More</a>` : '';
+            const tickersHtml = tickers ? `<div class="news-meta"><span>Tickers: ${tickers}</span></div>` : '';
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
@@ -84,9 +106,12 @@ function initNewsAggregator() {
             const summaryHtml = displaySummary ? `<p>${displaySummary}${summary.length > 300 ? '...' : ''}</p>` : '<p>No summary available.</p>';
             
             articleDiv.innerHTML = `
+                ${breakingRibbonHtml}
                 <h2><a href="${url}" target="_blank" rel="noopener noreferrer">${headline}</a></h2>
                 <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
                 ${summaryHtml}
+                ${readMoreHtml}
+                ${tickersHtml}
             `;
             newsList.appendChild(articleDiv);
         });
