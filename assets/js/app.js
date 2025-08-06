@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Load module-specific CSS (for modules that need it)
-            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator') {
+            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers') {
                  const link = document.createElement('link');
                  link.rel = 'stylesheet';
                  link.href = moduleStylePath;
