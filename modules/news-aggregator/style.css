@@ -19,7 +19,8 @@
     display: flex;
     gap: 20px;
     align-items: stretch;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    height: 600px; /* NEW: Constrained height to fix layout */
     box-sizing: border-box;
     width: 100%;
 }
@@ -29,7 +30,7 @@
     min-width: 300px;
     position: relative;
     padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
+    height: 100%; /* NEW: Fill parent height */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     overflow: hidden;
@@ -52,6 +53,8 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
+    height: 100%; /* NEW: Fill parent height */
+    box-sizing: border-box;
 }
 
 .news-aggregator .news-title {
@@ -66,7 +69,7 @@
 
 .news-aggregator .news-list {
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* NEW: Add internal scrollbar */
     scrollbar-width: none;
 }
 
