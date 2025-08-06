@@ -1,5 +1,5 @@
 /* Import module-specific styles */
-@import url('../modules/risk-management-hub/style.css');
+@import url('../../modules/risk-management-hub/style.css');
 
 /* Core Variables and Resets */
 :root {
