@@ -1,5 +1,6 @@
 /* Import module-specific styles */
 @import url('../../modules/risk-management-hub/style.css');
+@import url('../../modules/news-aggregator/style.css'); /* NEW: Added import for News Room */
 
 /* Core Variables and Resets */
 :root {
@@ -130,7 +131,7 @@ body {
 .module-container {
     flex-grow: 1;
     overflow-y: auto; /* This is the main scrollable area */
-    padding: 20px;
+    padding: 0; /* FINAL FIX: Removed padding to allow full width */
 }
 
 /* Mobile Nav Toggle Button */
