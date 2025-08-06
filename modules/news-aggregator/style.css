@@ -1,12 +1,12 @@
 /* All styles are scoped to the .news-aggregator container */
 .news-aggregator {
     box-sizing: border-box;
-    /* NEW: Vertically center the entire content within the module container */
+    /* NEW: Use flexbox on the main container to center the content */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 40px); /* Ensures it fills the screen vertically */
+    min-height: calc(100vh - 40px); /* Adjusts to fill the screen */
 }
 
 .news-aggregator .news-header-banner {
@@ -26,9 +26,10 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 600px; /* NEW: Increased height by 200px */
+    height: 600px; /* Increased height by 200px */
     box-sizing: border-box;
     width: 100%;
+    max-width: 1200px; /* NEW: Added max-width to prevent overflow on very wide screens */
 }
 
 .news-aggregator .youtube-live-container {
