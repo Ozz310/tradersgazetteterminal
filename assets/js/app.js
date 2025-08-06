@@ -60,8 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // FINAL FIX: Using a simple relative path which is the correct way
         const modulePath = `modules/${moduleName}/index.html`;
         const moduleScriptPath = `modules/${moduleName}/script.js`;
+        const moduleStylePath = `modules/${moduleName}/style.css`;
 
         try {
+            // Load module-specific CSS (for modules that need it)
+            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator') {
+                 const link = document.createElement('link');
+                 link.rel = 'stylesheet';
+                 link.href = moduleStylePath;
+                 document.head.appendChild(link);
+            }
+            
             // Load module HTML
             const response = await fetch(modulePath);
             if (!response.ok) {
@@ -69,17 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const html = await response.text();
             moduleContainer.innerHTML = html;
-
-            // Load module-specific CSS
-            const existingStyle = document.getElementById(`style-${moduleName}`);
-            if (existingStyle) {
-                existingStyle.remove();
-            }
-            const link = document.createElement('link');
-            link.id = `style-${moduleName}`;
-            link.rel = 'stylesheet';
-            link.href = `modules/${moduleName}/style.css`;
-            document.head.appendChild(link);
             
             // Call module-specific initialization functions
             if (moduleName === 'dashboard') {
