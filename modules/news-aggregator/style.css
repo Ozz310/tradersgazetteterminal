@@ -25,14 +25,13 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 700px; /* NEW: Increased height */
+    height: 700px;
     box-sizing: border-box;
-    width: 100%;
-    max-width: 1200px;
+    width: 100%; /* FINAL FIX: Removed max-width to allow full horizontal stretch */
 }
 
 .news-aggregator .youtube-live-container {
-    flex: 1 1 50%; /* FINAL WIDTH FIX */
+    flex: 1 1 50%;
     min-width: 300px;
     position: relative;
     height: 100%;
@@ -50,7 +49,7 @@
 }
 
 .news-aggregator .news-aggregator-container {
-    flex: 1 1 50%; /* FINAL WIDTH FIX */
+    flex: 1 1 50%;
     min-width: 300px;
     background-color: var(--accent-color);
     padding: 20px;
