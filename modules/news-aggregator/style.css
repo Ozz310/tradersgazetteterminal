@@ -1,6 +1,5 @@
 /* All styles are scoped to the .news-aggregator container */
 .news-aggregator {
-    padding: 20px;
     box-sizing: border-box;
 }
 
@@ -21,6 +20,8 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: wrap;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .news-aggregator .youtube-live-container {
