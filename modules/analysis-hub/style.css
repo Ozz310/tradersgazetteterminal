@@ -9,8 +9,9 @@
 
 .analysis-hub .analysis-hub-cover-photo {
     width: 100%;
-    height: 250px;
-    background-image: url('https://via.placeholder.com/1920x250.png?text=Analysis+Hub+Banner');
+    /* FINAL FIX: Increased height to better frame the image */
+    height: 300px;
+    background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png?raw=true');
     background-size: cover;
     background-position: center;
     border-radius: 0;
@@ -20,7 +21,7 @@
 
 .analysis-hub .analysis-hub-content-container {
     width: 100%;
-    max-width: none; /* FINAL FIX: Removed max-width to allow full horizontal stretch */
+    max-width: none;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -43,7 +44,8 @@
 }
 
 .analysis-hub .tradingview-widget-container {
-    height: 600px !important;
+    height: 600px;
+    width: 100%;
 }
 
 .analysis-hub .economic-calendar-container iframe {
