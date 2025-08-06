@@ -1,8 +1,9 @@
+/* ALL CSS IS NOW SCOPED TO THE .risk-management-hub CONTAINER */
 .risk-management-hub {
-    padding: 20px;
+    /* Main container for the module */
 }
 
-.main-widget-container {
+.risk-management-hub .main-widget-container {
     background-color: var(--content-bg-color);
     padding: 30px;
     border-radius: 12px;
@@ -16,7 +17,7 @@
     gap: 10px;
 }
 
-.header-title {
+.risk-management-hub .header-title {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--gold-color);
@@ -24,7 +25,7 @@
     margin-bottom: 0;
 }
 
-.main-content-flex {
+.risk-management-hub .main-content-flex {
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -32,7 +33,7 @@
     align-items: stretch;
 }
 
-.controls-panel {
+.risk-management-hub .controls-panel {
     background-color: var(--accent-color);
     padding: 20px;
     border-radius: 8px;
@@ -44,13 +45,13 @@
     justify-content: flex-start;
 }
 
-.calculator-menu {
+.risk-management-hub .calculator-menu {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.menu-button {
+.risk-management-hub .menu-button {
     background: var(--accent-color);
     background: linear-gradient(145deg, #4a4a4a, #3c3c3c);
     color: var(--text-color);
@@ -65,7 +66,7 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 2px 5px rgba(0,0,0,0.3);
 }
 
-.menu-button.active {
+.risk-management-hub .menu-button.active {
     background: var(--gold-color);
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     color: #1a1a1a;
@@ -73,14 +74,14 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
-.menu-button:hover:not(.active) {
+.risk-management-hub .menu-button:hover:not(.active) {
     background: #555;
     background: linear-gradient(145deg, #555, #4a4a4a);
     color: var(--gold-color);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 2px 5px rgba(0,0,0,0.3);
 }
 
-.calculator-panel {
+.risk-management-hub .calculator-panel {
     background-color: var(--accent-color);
     padding: 30px;
     border-radius: 8px;
@@ -89,7 +90,7 @@
     flex: 1;
 }
 
-.results-panel {
+.risk-management-hub .results-panel {
     background-color: var(--accent-color);
     padding: 30px;
     border-radius: 8px;
@@ -99,15 +100,15 @@
     min-width: 300px;
 }
 
-.calculator-tab {
+.risk-management-hub .calculator-tab {
     display: none;
 }
 
-.calculator-tab.active {
+.risk-management-hub .calculator-tab.active {
     display: block;
 }
 
-.calculator-info {
+.risk-management-hub .calculator-info {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -119,11 +120,11 @@
     border-radius: 8px;
 }
 
-.input-group {
+.risk-management-hub .input-group {
     margin-bottom: 10px;
 }
 
-label {
+.risk-management-hub label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
@@ -131,7 +132,7 @@ label {
     font-size: 0.95rem;
 }
 
-input[type="number"], select, input[type="range"] {
+.risk-management-hub input[type="number"], .risk-management-hub select, .risk-management-hub input[type="range"] {
     width: 100%;
     padding: 12px;
     border: 1px solid #555;
@@ -143,13 +144,13 @@ input[type="number"], select, input[type="range"] {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="number"]:focus, select:focus, input[type="range"]:focus {
+.risk-management-hub input[type="number"]:focus, .risk-management-hub select:focus, .risk-management-hub input[type="range"]:focus {
     outline: none;
     border-color: var(--gold-color);
     box-shadow: 0 0 0 3px rgba(240, 215, 136, 0.4);
 }
 
-#calculateMarginBtn, #calculateRRBtn {
+.risk-management-hub #calculateMarginBtn, .risk-management-hub #calculateRRBtn {
     background: var(--gold-color);
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     color: #1a1a1a;
@@ -168,14 +169,14 @@ input[type="number"]:focus, select:focus, input[type="range"]:focus {
     gap: 10px;
     margin-top: 15px;
 }
-#calculateMarginBtn:hover, #calculateRRBtn:hover {
+.risk-management-hub #calculateMarginBtn:hover, .risk-management-hub #calculateRRBtn:hover {
     background: #DDAA33;
     background: linear-gradient(145deg, #DDAA33, #F0D788);
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
 }
 
-.message-box {
+.risk-management-hub .message-box {
     display: none;
     background-color: var(--border-color);
     color: #fff;
@@ -191,11 +192,11 @@ input[type="number"]:focus, select:focus, input[type="range"]:focus {
     border: none;
 }
 
-.message-box.show {
+.risk-management-hub .message-box.show {
     display: flex;
 }
 
-.message-box-close {
+.risk-management-hub .message-box-close {
     background: none;
     border: none;
     color: #fff;
@@ -205,7 +206,7 @@ input[type="number"]:focus, select:focus, input[type="range"]:focus {
     line-height: 1;
 }
 
-.loading-spinner {
+.risk-management-hub .loading-spinner {
     border: 4px solid rgba(255, 255, 255, 0.3);
     border-top: 4px solid var(--gold-color);
     border-radius: 50%;
@@ -221,24 +222,24 @@ input[type="number"]:focus, select:focus, input[type="range"]:focus {
     100% { transform: rotate(360deg); }
 }
 
-.result-area {
+.risk-management-hub .result-area {
     padding-top: 5px;
 }
 
-.result-title {
+.risk-management-hub .result-title {
     color: var(--gold-color);
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.5rem;
 }
 
-.results-grid {
+.risk-management-hub .results-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
 }
 
-.result-card {
+.risk-management-hub .result-card {
     background-color: var(--border-color);
     padding: 15px;
     border-radius: 8px;
@@ -248,40 +249,40 @@ input[type="number"]:focus, select:focus, input[type="range"]:focus {
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.result-card.success-border {
+.risk-management-hub .result-card.success-border {
     border-color: var(--gold-color);
     box-shadow: 0 0 8px rgba(240, 215, 136, 0.4);
 }
 
-.result-card p {
+.risk-management-hub .result-card p {
     font-size: 0.9rem;
     margin-bottom: 5px;
     color: #b0b0b0;
 }
 
-.result-card span {
+.risk-management-hub .result-card span {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--text-color);
     display: block;
 }
 
-.result-card.success-border span {
+.risk-management-hub .result-card.success-border span {
     color: var(--gold-color);
 }
 
-.result-card p.timestamp {
+.risk-management-hub .result-card p.timestamp {
     font-size: 0.7rem;
     color: #999;
     margin-top: 5px;
 }
 
-input.invalid {
+.risk-management-hub input.invalid {
     border-color: #d32f2f !important;
     box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.4) !important;
 }
 
-.branding {
+.risk-management-hub .branding {
     margin-top: 10px;
     padding-top: 10px;
     text-align: center;
@@ -293,63 +294,63 @@ input.invalid {
     gap: 10px;
 }
 
-.branding-divider {
+.risk-management-hub .branding-divider {
     width: 100%;
     height: 1px;
     background-color: #4a4a4a;
     margin-bottom: 5px;
 }
 
-.branding img {
+.risk-management-hub .branding img {
     max-width: 150px;
     height: auto;
     filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4));
     transition: filter 0.3s ease;
 }
 
-.branding img:hover {
+.risk-management-hub .branding img:hover {
     filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.7));
 }
 
 @media (max-width: 900px) {
-    .main-widget-container {
+    .risk-management-hub .main-widget-container {
         padding: 10px;
         gap: 10px;
     }
-    .header-title {
+    .risk-management-hub .header-title {
         font-size: 2rem;
     }
-    .main-content-flex {
+    .risk-management-hub .main-content-flex {
         flex-direction: column;
         gap: 10px;
     }
-    .controls-panel, .calculator-panel, .results-panel {
+    .risk-management-hub .controls-panel, .risk-management-hub .calculator-panel, .risk-management-hub .results-panel {
         padding: 15px;
         min-width: unset;
         gap: 10px;
     }
-    .controls-panel {
+    .risk-management-hub .controls-panel {
         flex: 1;
     }
-    .results-grid {
+    .risk-management-hub .results-grid {
         grid-template-columns: 1fr;
     }
-    .calculator-menu {
+    .risk-management-hub .calculator-menu {
         flex-direction: row;
         gap: 10px;
     }
-    .branding {
+    .risk-management-hub .branding {
         margin-top: 10px;
     }
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.risk-management-hub input::-webkit-outer-spin-button,
+.risk-management-hub input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-input[type="range"] {
+.risk-management-hub input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
     height: 10px;
@@ -360,7 +361,7 @@ input[type="range"] {
     margin-bottom: 10px;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+.risk-management-hub input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
@@ -371,11 +372,11 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
+.risk-management-hub input[type="range"]::-webkit-slider-thumb:hover {
     background: var(--dark-gold-color);
 }
 
-input[type="range"]::-moz-range-thumb {
+.risk-management-hub input[type="range"]::-moz-range-thumb {
     width: 20px;
     height: 20px;
     background: var(--gold-color);
@@ -385,11 +386,11 @@ input[type="range"]::-moz-range-thumb {
     border: none;
 }
 
-input[type="range"]::-moz-range-thumb:hover {
+.risk-management-hub input[type="range"]::-moz-range-thumb:hover {
     background: var(--dark-gold-color);
 }
 
-input[type="range"]::-ms-thumb {
+.risk-management-hub input[type="range"]::-ms-thumb {
     width: 20px;
     height: 20px;
     background: var(--gold-color);
@@ -399,17 +400,17 @@ input[type="range"]::-ms-thumb {
     border: none;
 }
 
-input[type="range"]::-ms-thumb:hover {
+.risk-management-hub input[type="range"]::-ms-thumb:hover {
     background: var(--dark-gold-color);
 }
 
-input[type="range"]::-ms-track {
+.risk-management-hub input[type="range"]::-ms-track {
     background: var(--border-color);
     color: transparent;
     border-radius: 5px;
 }
 
-input[type="range"]::-moz-range-track {
+.risk-management-hub input[type="range"]::-moz-range-track {
     background: var(--border-color);
     border-radius: 5px;
 }
