@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
-        // FINAL FIX: Using a simple relative path which is the correct way
         const modulePath = `modules/${moduleName}/index.html`;
         const moduleScriptPath = `modules/${moduleName}/script.js`;
 
@@ -71,6 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const html = await response.text();
             moduleContainer.innerHTML = html;
             
+            // Load module-specific CSS
+            const existingStyle = document.getElementById(`style-${moduleName}`);
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            const link = document.createElement('link');
+            link.id = `style-${moduleName}`;
+            link.rel = 'stylesheet';
+            link.href = `modules/${moduleName}/style.css`;
+            document.head.appendChild(link);
+            
             // Call module-specific initialization functions
             if (moduleName === 'dashboard') {
                 initializeDashboardClock();
@@ -80,6 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         initRiskManagementHub();
                     } else {
                         console.error('initRiskManagementHub function not found in loaded script.');
+                    }
+                });
+            } else if (moduleName === 'news-aggregator') {
+                loadScript(moduleScriptPath, () => {
+                    if (typeof initNewsAggregator === 'function') {
+                        initNewsAggregator();
+                    } else {
+                        console.error('initNewsAggregator function not found in loaded script.');
                     }
                 });
             }
