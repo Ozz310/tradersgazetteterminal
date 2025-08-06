@@ -43,8 +43,7 @@
 }
 
 .analysis-hub .tradingview-widget-container {
-    height: 600px;
-    width: 100%;
+    height: 600px !important;
 }
 
 .analysis-hub .economic-calendar-container iframe {
