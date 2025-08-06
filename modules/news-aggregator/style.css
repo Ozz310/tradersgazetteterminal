@@ -1,12 +1,11 @@
 /* All styles are scoped to the .news-aggregator container */
 .news-aggregator {
     box-sizing: border-box;
-    /* NEW: Use flexbox on the main container to center the content */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 40px); /* Adjusts to fill the screen */
+    min-height: calc(100vh - 40px);
 }
 
 .news-aggregator .news-header-banner {
@@ -26,14 +25,15 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 600px; /* Increased height by 200px */
+    height: 700px; /* NEW: Increased height by 100px */
     box-sizing: border-box;
     width: 100%;
-    max-width: 1200px; /* NEW: Added max-width to prevent overflow on very wide screens */
+    max-width: 1200px;
 }
 
 .news-aggregator .youtube-live-container {
-    flex: 1;
+    /* FINAL WIDTH FIX */
+    flex: 1 1 50%;
     min-width: 300px;
     position: relative;
     height: 100%;
@@ -51,7 +51,8 @@
 }
 
 .news-aggregator .news-aggregator-container {
-    flex: 1;
+    /* FINAL WIDTH FIX */
+    flex: 1 1 50%;
     min-width: 300px;
     background-color: var(--accent-color);
     padding: 20px;
@@ -115,7 +116,6 @@
     /* ... ribbon styling ... */
 }
 
-/* NEW: Branding section CSS */
 .news-aggregator .news-branding-footer {
     display: flex;
     flex-direction: column;
