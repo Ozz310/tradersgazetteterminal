@@ -1,0 +1,53 @@
+/* All styles are scoped to the .analysis-hub container */
+.analysis-hub {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px);
+}
+
+.analysis-hub .analysis-hub-cover-photo {
+    width: 100%;
+    height: 250px;
+    background-image: url('https://via.placeholder.com/1920x250.png?text=Analysis+Hub+Banner');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+}
+
+.analysis-hub .analysis-hub-content-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.analysis-hub .advanced-chart-container,
+.analysis-hub .economic-calendar-container {
+    background-color: var(--accent-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.analysis-hub .widget-title {
+    color: var(--gold-color);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
+}
+
+.analysis-hub .tradingview-widget-container {
+    height: 600px !important;
+}
+
+.analysis-hub .economic-calendar-container iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
+}
