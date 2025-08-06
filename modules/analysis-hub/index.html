@@ -3,50 +3,12 @@
     <div class="analysis-hub-content-container">
         <div class="advanced-chart-container">
             <h2 class="widget-title">Advanced Chart</h2>
-            <div class="tradingview-widget-container" style="height:100%;width:100%">
-                <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
-                <div class="tradingview-widget-copyright">
-                    <a href="https://www.tradingview.com/symbols/NASDAQ-AAPL/?exchange=NASDAQ" rel="noopener nofollow" target="_blank">
-                        <span class="blue-text">AAPL chart by TradingView</span>
-                    </a>
-                </div>
+            <div class="tradingview-widget-container">
+                <iframe src="https://www.tradingview.com/widgetembed/?width=100%25&height=100%25&symbol=NASDAQ:AAPL&interval=D&timezone=Etc/UTC&theme=dark&style=1&locale=en&hide_side_toolbar=false&allow_symbol_change=true&details=true&hotlist=true&support_host=https://www.tradingview.com" 
+                    frameborder="0" 
+                    allowfullscreen>
+                </iframe>
             </div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async></script>
-            <script>
-                // Manual script injection for TradingView to work with modular loading
-                const tradingViewScript = document.querySelector('.tradingview-widget-container script[src*="advanced-chart"]');
-                if (tradingViewScript) {
-                    tradingViewScript.remove();
-                }
-                const newScript = document.createElement('script');
-                newScript.type = 'text/javascript';
-                newScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-                newScript.async = true;
-                newScript.textContent = JSON.stringify({
-                    "allow_symbol_change": true,
-                    "calendar": false,
-                    "details": true,
-                    "hide_side_toolbar": false,
-                    "hide_top_toolbar": false,
-                    "hide_legend": false,
-                    "hide_volume": false,
-                    "hotlist": true,
-                    "interval": "D",
-                    "locale": "en",
-                    "save_image": true,
-                    "style": "1",
-                    "symbol": "NASDAQ:AAPL",
-                    "theme": "dark",
-                    "backgroundColor": "#0F0F0F",
-                    "gridColor": "rgba(242, 242, 242, 0.06)",
-                    "watchlist": [],
-                    "withdateranges": true,
-                    "compareSymbols": [],
-                    "studies": [],
-                    "autosize": true
-                });
-                document.body.appendChild(newScript);
-            </script>
         </div>
 
         <div class="economic-calendar-container">
