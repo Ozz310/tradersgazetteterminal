@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNavToggle = document.getElementById('mobile-nav-toggle');
     const sidebar = document.getElementById('sidebar');
     const mobileOverlay = document.getElementById('mobile-overlay');
-    let loadedStyles = []; // To keep track of loaded stylesheets
 
     // Function to initialize the dashboard clock
     function initializeDashboardClock() {
@@ -58,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
+        // FINAL FIX: Using a simple relative path which is the correct way
         const modulePath = `modules/${moduleName}/index.html`;
         const moduleScriptPath = `modules/${moduleName}/script.js`;
 
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const html = await response.text();
             moduleContainer.innerHTML = html;
-            
+
             // Load module-specific CSS
             const existingStyle = document.getElementById(`style-${moduleName}`);
             if (existingStyle) {
