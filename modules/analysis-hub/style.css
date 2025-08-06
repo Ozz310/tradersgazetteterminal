@@ -20,7 +20,7 @@
 
 .analysis-hub .analysis-hub-content-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: none; /* FINAL FIX: Removed max-width to allow full horizontal stretch */
     display: flex;
     flex-direction: column;
     gap: 20px;
