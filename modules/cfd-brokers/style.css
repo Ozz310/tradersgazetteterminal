@@ -1,0 +1,86 @@
+/* All styles are scoped to the .cfd-brokers container */
+.cfd-brokers {
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px);
+}
+
+.cfd-brokers .brokers-cover-photo {
+    width: 100%;
+    height: 250px;
+    background-image: url('https://via.placeholder.com/1920x250.png?text=CFD+Brokers+Banner');
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+}
+
+.cfd-brokers .brokers-content-container {
+    width: 100%;
+    max-width: 900px;
+}
+
+.cfd-brokers .broker-card {
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.cfd-brokers .broker-image-section {
+    flex: 0 0 250px;
+    text-align: center;
+}
+
+.cfd-brokers .broker-image-section img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.cfd-brokers .broker-text-section {
+    flex: 1;
+}
+
+.cfd-brokers .broker-text-section h2 {
+    color: var(--gold-color);
+    font-size: 2rem;
+    margin-top: 0;
+}
+
+.cfd-brokers .broker-text-section p {
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.cfd-brokers .join-now-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background: var(--gold-color);
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 8px;
+    margin-top: 15px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.cfd-brokers .join-now-button:hover {
+    background: var(--dark-gold-color);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .cfd-brokers .broker-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
