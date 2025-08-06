@@ -25,15 +25,14 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 700px; /* NEW: Increased height by 100px */
+    height: 700px; /* NEW: Increased height */
     box-sizing: border-box;
     width: 100%;
     max-width: 1200px;
 }
 
 .news-aggregator .youtube-live-container {
-    /* FINAL WIDTH FIX */
-    flex: 1 1 50%;
+    flex: 1 1 50%; /* FINAL WIDTH FIX */
     min-width: 300px;
     position: relative;
     height: 100%;
@@ -51,8 +50,7 @@
 }
 
 .news-aggregator .news-aggregator-container {
-    /* FINAL WIDTH FIX */
-    flex: 1 1 50%;
+    flex: 1 1 50%; /* FINAL WIDTH FIX */
     min-width: 300px;
     background-color: var(--accent-color);
     padding: 20px;
@@ -116,6 +114,7 @@
     /* ... ribbon styling ... */
 }
 
+/* NEW: Branding section CSS */
 .news-aggregator .news-branding-footer {
     display: flex;
     flex-direction: column;
