@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Load module-specific CSS (for modules that need it)
-            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub' || moduleName === 'contact-us' || moduleName === 'trading-ebooks') {
+            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub' || moduleName === 'contact-us' || moduleName === 'trading-ebooks' || moduleName === 'trading-journal') {
                  const link = document.createElement('link');
                  link.rel = 'stylesheet';
                  link.href = moduleStylePath;
@@ -107,6 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         initEbooks();
                     } else {
                         console.error('initEbooks function not found in loaded script.');
+                    }
+                });
+            } else if (moduleName === 'trading-journal') {
+                 loadScript(moduleScriptPath, () => {
+                    if (typeof initJournal === 'function') {
+                        initJournal();
+                    } else {
+                        console.error('initJournal function not found in loaded script.');
                     }
                 });
             }
