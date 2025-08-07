@@ -1,13 +1,10 @@
-// This file is now a module-specific script
-// The init function will be called by app.js when the module is loaded
-
 const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
-        summary: 'The flagship e-book designed to guide traders who have faced losses on how to rebuild their capital and trade with discipline. Learn about mindset reset, strategic risk management, position sizing, and more.',
-        videoUrl: 'https://www.youtube.com/embed/your_video_id', // Placeholder for now
+        summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here',
+        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?autoplay=1',
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
-        coverUrl: 'https://via.placeholder.com/200x300.png?text=The+Comeback+Trader+Cover'
+        coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
     }
 };
 
