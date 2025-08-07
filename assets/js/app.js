@@ -57,13 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
+        // FINAL FIX: Using a simple relative path which is the correct way
         const modulePath = `modules/${moduleName}/index.html`;
         const moduleScriptPath = `modules/${moduleName}/script.js`;
         const moduleStylePath = `modules/${moduleName}/style.css`;
 
         try {
             // Load module-specific CSS (for modules that need it)
-            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub') {
+            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub' || moduleName === 'contact-us') {
                  const link = document.createElement('link');
                  link.rel = 'stylesheet';
                  link.href = moduleStylePath;
@@ -99,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else if (moduleName === 'analysis-hub') {
                 // The Analysis Hub has no script, so we don't need a loadScript call
+            } else if (moduleName === 'contact-us') {
+                // The Contact Us module has no script, so we don't need a loadScript call
             }
 
             console.log(`Module loaded: ${moduleName}`);
