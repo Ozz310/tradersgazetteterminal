@@ -1,0 +1,135 @@
+/* All styles are scoped to the .trading-journal container */
+.trading-journal {
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px);
+}
+
+.trading-journal .journal-cover-photo {
+    width: 100%;
+    height: 250px;
+    background-image: url('https://via.placeholder.com/1920x250.png?text=Trading+Journal+Banner');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+}
+
+.trading-journal .journal-content-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.trading-journal .journal-entry-form-card,
+.trading-journal .journal-data-card {
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.trading-journal .widget-title {
+    color: var(--gold-color);
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
+}
+
+.trading-journal .form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.trading-journal .form-group {
+    flex: 1;
+}
+
+.trading-journal .form-group.full-width {
+    flex: 1 1 100%;
+}
+
+.trading-journal .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.trading-journal .form-group input,
+.trading-journal .form-group select,
+.trading-journal .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+.trading-journal .submit-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: var(--gold-color);
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.trading-journal .submit-button:hover {
+    background: var(--dark-gold-color);
+    transform: translateY(-2px);
+}
+
+.trading-journal .journal-table-container {
+    overflow-x: auto;
+}
+
+.trading-journal #journalTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.trading-journal #journalTable thead th {
+    background-color: var(--sidebar-color);
+    color: var(--gold-color);
+    padding: 12px;
+    text-align: left;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.trading-journal #journalTable tbody td {
+    border-top: 1px solid var(--border-color);
+    padding: 12px;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.trading-journal .journal-status {
+    margin-top: 15px;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .trading-journal .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
