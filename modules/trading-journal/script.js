@@ -7,7 +7,6 @@ function initJournal() {
     const journalForm = document.getElementById('journalForm');
     const journalTableBody = document.querySelector('#journalTable tbody');
     const journalStatus = document.getElementById('journalStatus');
-    const initUserBtn = document.getElementById('initUserBtn');
 
     // --- Backend API Functions ---
     async function fetchJournalEntries() {
@@ -109,8 +108,8 @@ function initJournal() {
         addJournalEntry(entry);
     });
 
-    initUserBtn.addEventListener('click', initUser);
-
-    // Initial load
-    fetchJournalEntries();
+    // Initial load: Try to fetch entries, if that fails, initialize user
+    fetchJournalEntries().catch(() => {
+        initUser();
+    });
 }
