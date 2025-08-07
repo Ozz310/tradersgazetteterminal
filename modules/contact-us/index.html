@@ -3,7 +3,7 @@
     <div class="contact-us-content-container">
         <div class="contact-form-card">
             <h2 class="widget-title">Get in Touch</h2>
-            <form action="#" method="POST" class="contact-form">
+            <form id="contactForm" action="https://script.google.com/macros/s/AKfycbx3rdqktGHvKLtApWCmoQ9zAHognpNfCrptqCA-08enQVEYVsS12QUh04fYEluiA_zw/exec" method="POST" class="contact-form">
                 <div class="form-group">
                     <label for="name">Your Name</label>
                     <input type="text" id="name" name="name" required>
@@ -13,26 +13,41 @@
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
+                    <label for="contactNumber">Contact Number</label>
+                    <input type="tel" id="contactNumber" name="contactNumber" required>
+                </div>
+                <div class="form-group">
                     <label for="message">Message</label>
                     <textarea id="message" name="message" rows="5" required></textarea>
                 </div>
                 <button type="submit" class="submit-button">Send Message</button>
             </form>
+            <p id="formStatus" class="form-status"></p>
         </div>
         <div class="contact-channels-card">
             <h2 class="widget-title">Or Chat with Us</h2>
             <p>For immediate support, connect with us on our social channels.</p>
             <div class="social-links">
-                <a href="https://t.me/yourtelegram" target="_blank" class="social-button telegram-button">
+                <a href="https://t.me/Ozz310" target="_blank" class="social-button telegram-button">
                     <i class="fab fa-telegram-plane"></i>
                     Chat on Telegram
                 </a>
-                <a href="https://wa.me/yourwhatsapp" target="_blank" class="social-button whatsapp-button">
+                <a href="https://api.whatsapp.com/send/?phone=35796816787&text=Hi+TradersGazette%2C+I%27m+interested+in+your+trading+tools&type=phone_number&app_absent=0" target="_blank" class="social-button whatsapp-button">
                     <i class="fab fa-whatsapp"></i>
                     Chat on WhatsApp
                 </a>
             </div>
-            <p class="tawk-live-chat-placeholder">Tawk.to Live Chat Widget will appear here</p>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://tawk.to/chat/6874d625e452b41910d78e4c/1j046918d';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
