@@ -7,6 +7,7 @@ function initJournal() {
     const journalForm = document.getElementById('journalForm');
     const journalTableBody = document.querySelector('#journalTable tbody');
     const journalStatus = document.getElementById('journalStatus');
+    const initUserBtn = document.getElementById('initUserBtn');
 
     // --- Backend API Functions ---
     async function fetchJournalEntries() {
@@ -25,6 +26,26 @@ function initJournal() {
         } catch (error) {
             journalStatus.textContent = 'Failed to fetch entries. Check your connection.';
             console.error('Error fetching journal data:', error);
+        }
+    }
+
+    async function initUser() {
+        journalStatus.textContent = 'Initializing user...';
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'init-user',
+                    userID: USER_ID
+                })
+            });
+            journalStatus.textContent = 'User initialized successfully. Fetching entries...';
+            fetchJournalEntries();
+        } catch (error) {
+            journalStatus.textContent = 'Failed to initialize user. Check your connection.';
+            console.error('Error initializing user:', error);
         }
     }
 
@@ -87,6 +108,8 @@ function initJournal() {
         };
         addJournalEntry(entry);
     });
+
+    initUserBtn.addEventListener('click', initUser);
 
     // Initial load
     fetchJournalEntries();
