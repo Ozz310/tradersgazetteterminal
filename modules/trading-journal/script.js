@@ -1,3 +1,4 @@
+// Final bug fix
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXRrtBilaIkkxqagFWMJwc6YLOn1vB3-M2nQWlmGYPJoUjOXzSpUh46NWXx9wJXioJ/exec';
