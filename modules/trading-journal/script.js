@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzk3fC_aFfmOz30iA-fADf8Jcjw-3WBPn7Dc4t7Ms_riXTxuSNL625Z9sI-O6PbE275/exec'; // <-- REPLACE THIS WITH YOUR NEW URL
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzk3fC_aFfmOz30iA-fADf8Jcjw-3WBPn7Dc4t7Ms_riXTxuSNL625Z9sI-O6PbE275/exec';
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
