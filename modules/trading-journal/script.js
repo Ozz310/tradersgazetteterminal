@@ -1,6 +1,6 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXRrtBilaIkkxqagFWMJwc6YLOn1vB3-M2nQWlmGYPJoUjOXzSpUh46NWXx9wJXioJ/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWW8tN7M-FPXVXsmzPTrt7rvNfTjF7GYW6kvox_U7PxcNXHWelB9G76_Fh_WFCXrKp/exec';
 
 // --- Main initialization function to be called by app.js ---
 function initJournal() {
@@ -94,16 +94,16 @@ function initJournal() {
     journalForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const entry = {
-            date: document.getElementById('date').value,
-            symbol: document.getElementById('symbol').value,
-            assetType: document.getElementById('assetType').value,
-            buySell: document.getElementById('buySell').value,
-            entryPrice: parseFloat(document.getElementById('entryPrice').value),
-            exitPrice: parseFloat(document.getElementById('exitPrice').value),
-            takeProfit: parseFloat(document.getElementById('takeProfit').value),
-            stopLoss: parseFloat(document.getElementById('stopLoss').value),
-            plNet: parseFloat(document.getElementById('plNet').value),
-            notes: document.getElementById('notes').value
+            Date: document.getElementById('date').value,
+            Symbol: document.getElementById('symbol').value,
+            "Asset Type": document.getElementById('assetType').value,
+            "Buy/Sell": document.getElementById('buySell').value,
+            "Entry Price": parseFloat(document.getElementById('entryPrice').value),
+            "Exit Price": parseFloat(document.getElementById('exitPrice').value),
+            "Take Profit": parseFloat(document.getElementById('takeProfit').value),
+            "Stop Loss": parseFloat(document.getElementById('stopLoss').value),
+            "P&L Net": parseFloat(document.getElementById('plNet').value),
+            Notes: document.getElementById('notes').value
         };
         addJournalEntry(entry);
     });
