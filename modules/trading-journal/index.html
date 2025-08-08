@@ -1,98 +1,152 @@
+<!-- modules/trading-journal/index.html -->
 <div class="trading-journal">
-    <div class="journal-cover-photo"></div>
-    <div class="journal-content-container">
-        <div class="journal-entry-form-card">
-            <h2 class="widget-title">Add a New Trade</h2>
-            <form id="journalForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input type="date" id="date" name="date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="symbol">Symbol</label>
-                        <input type="text" id="symbol" name="symbol" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="assetType">Asset Type</label>
-                        <select id="assetType" name="assetType" required>
-                            <option value="">Select...</option>
-                            <option value="Forex">Forex</option>
-                            <option value="Crypto">Crypto</option>
-                            <option value="Commodity">Commodity</option>
-                            <option value="Stocks">Stocks</option>
-                            <option value="Indices">Indices</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="buySell">Position</label>
-                        <select id="buySell" name="buySell" required>
-                            <option value="">Select...</option>
-                            <option value="Buy">Buy</option>
-                            <option value="Sell">Sell</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="entryPrice">Entry Price</label>
-                        <input type="number" id="entryPrice" name="entryPrice" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="exitPrice">Exit Price</label>
-                        <input type="number" id="exitPrice" name="exitPrice" step="0.0001" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="takeProfit">Take Profit</label>
-                        <input type="number" id="takeProfit" name="takeProfit" step="0.0001">
-                    </div>
-                    <div class="form-group">
-                        <label for="stopLoss">Stop Loss</label>
-                        <input type="number" id="stopLoss" name="stopLoss" step="0.0001">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <label for="plNet">P&L Net</label>
-                        <input type="number" id="plNet" name="plNet" step="0.01">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" name="notes" rows="3"></textarea>
-                    </div>
-                </div>
-                <button type="submit" class="submit-button">Add Entry</button>
-            </form>
-        </div>
-        <div class="journal-data-card">
-            <h2 class="widget-title">My Journal Entries</h2>
-            <div class="journal-table-container">
-                <table id="journalTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Symbol</th>
-                            <th>Asset Type</th>
-                            <th>Buy/Sell</th>
-                            <th>Entry Price</th>
-                            <th>Exit Price</th>
-                            <th>Take Profit</th>
-                            <th>Stop Loss</th>
-                            <th>P&L Net</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+  <div class="journal-cover-photo"></div>
+
+  <div class="journal-content-container">
+    <div class="journal-entry-form-card">
+      <h2 class="widget-title">Add a New Trade</h2>
+
+      <div class="tab-switcher">
+        <button id="tabTable" class="tab active">Table View</button>
+        <button id="tabAnalytics" class="tab">Analytics View</button>
+      </div>
+
+      <div id="tableView" class="tab-content">
+        <form id="journalForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date">Date</label>
+              <input type="date" id="date" name="date" required>
             </div>
-            <div id="journalStatus" class="journal-status"></div>
+            <div class="form-group">
+              <label for="symbol">Symbol</label>
+              <input type="text" id="symbol" name="symbol" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="assetType">Asset Type</label>
+              <select id="assetType" name="assetType" required>
+                <option value="">Select...</option>
+                <option value="Forex">Forex</option>
+                <option value="Crypto">Crypto</option>
+                <option value="Commodity">Commodity</option>
+                <option value="Stocks">Stocks</option>
+                <option value="Indices">Indices</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="buySell">Position</label>
+              <select id="buySell" name="buySell" required>
+                <option value="">Select...</option>
+                <option value="Buy">Buy</option>
+                <option value="Sell">Sell</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="entryPrice">Entry Price</label>
+              <input type="number" id="entryPrice" name="entryPrice" step="0.0001" required>
+            </div>
+            <div class="form-group">
+              <label for="exitPrice">Exit Price</label>
+              <input type="number" id="exitPrice" name="exitPrice" step="0.0001" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="takeProfit">Take Profit</label>
+              <input type="number" id="takeProfit" name="takeProfit" step="0.0001">
+            </div>
+            <div class="form-group">
+              <label for="stopLoss">Stop Loss</label>
+              <input type="number" id="stopLoss" name="stopLoss" step="0.0001">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="plNet">P&L Net</label>
+              <input type="number" id="plNet" name="plNet" step="0.01">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="3"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-button">Add Entry</button>
+        </form>
+      </div>
+
+      <div id="analyticsView" class="tab-content" style="display:none;">
+        <h3 class="widget-title" style="margin-top:0">Analytics</h3>
+        <div class="analytics-grid">
+          <div class="chart-card">
+            <h4>P&L Over Time</h4>
+            <canvas id="pnlTimeChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4>P&L by Asset Type</h4>
+            <canvas id="pnlAssetChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4>P&L by Symbol</h4>
+            <canvas id="pnlSymbolChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4>Buy vs Sell (Count & Net P&L)</h4>
+            <canvas id="pnlSideChart"></canvas>
+          </div>
         </div>
+      </div>
+
     </div>
+
+    <div class="journal-data-card">
+      <h2 class="widget-title">My Journal Entries</h2>
+      <div class="journal-table-container">
+        <table id="journalTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Symbol</th>
+              <th>Asset Type</th>
+              <th>Buy/Sell</th>
+              <th>Entry Price</th>
+              <th>Exit Price</th>
+              <th>Take Profit</th>
+              <th>Stop Loss</th>
+              <th>P&L Net</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="journalStatus" class="journal-status"></div>
+    </div>
+  </div>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Link to your script.js -->
+<script src="modules/trading-journal/script.js"></script>
+
+<!-- Minimal styling hook (keep your global CSS) -->
+<style>
+  /* keep terminal black & gold theme - tweak in your main stylesheet */
+  .tab { margin-right:8px; padding:8px 12px; background:#111; color:#FFD700; border:1px solid #333; cursor:pointer; }
+  .tab.active { background:#000; box-shadow:0 0 12px rgba(255,215,0,0.08); }
+  .analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .chart-card { background:#000; border:1px solid #222; padding:12px; border-radius:8px; color:#FFD700; }
+  @media (max-width:900px) { .analytics-grid { grid-template-columns:1fr; } }
+</style>
