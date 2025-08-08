@@ -17,6 +17,27 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
+                        <label>Asset Type</label>
+                        <select name="assetType" required>
+                            <option value="">Select...</option>
+                            <option value="Forex">Forex</option>
+                            <option value="Crypto">Crypto</option>
+                            <option value="Commodity">Commodity</option>
+                            <option value="Stocks">Stocks</option>
+                            <option value="Indices">Indices</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Buy/Sell</label>
+                        <select name="buySell" required>
+                            <option value="">Select...</option>
+                            <option value="Buy">Buy</option>
+                            <option value="Sell">Sell</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label>Entry Price</label>
                         <input type="number" step="0.0001" name="entryPrice" required>
                     </div>
@@ -27,12 +48,18 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Result</label>
-                        <select name="result">
-                            <option value="Win">Win</option>
-                            <option value="Loss">Loss</option>
-                            <option value="Breakeven">Breakeven</option>
-                        </select>
+                        <label>Take Profit</label>
+                        <input type="number" step="0.0001" name="takeProfit">
+                    </div>
+                    <div class="form-group">
+                        <label>Stop Loss</label>
+                        <input type="number" step="0.0001" name="stopLoss">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>P&L Net</label>
+                        <input type="number" step="0.01" name="plNet">
                     </div>
                     <div class="form-group">
                         <label>Notes</label>
@@ -52,9 +79,13 @@
                         <tr>
                             <th>Date</th>
                             <th>Symbol</th>
+                            <th>Asset Type</th>
+                            <th>Buy/Sell</th>
                             <th>Entry Price</th>
                             <th>Exit Price</th>
-                            <th>Result</th>
+                            <th>Take Profit</th>
+                            <th>Stop Loss</th>
+                            <th>P&L Net</th>
                             <th>Notes</th>
                         </tr>
                     </thead>
