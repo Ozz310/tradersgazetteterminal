@@ -1,6 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6wCt4bmL2qx_mqKrbyAKa7Q9cAgnep3NCNTu49UZtkeopoSUZufVikC5ozo7XUi24/exec';
+// Use your new deployment URL
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7lv6oEG2EmLxM5ja6Cy-rF25MGKCfPvm_nZNkwsJIMpbCmApf2u2R5bVNQ6LsYYBc/exec';
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
@@ -27,7 +28,13 @@ async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
         const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                // This header is needed for some Apps Script deployments.
+                'Content-Type': 'application/json' 
+            }
+        });
         const payload = await res.json();
         
         if (payload.status === 'success') {
@@ -51,7 +58,8 @@ async function initUser() {
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            // Content-Type must be text/plain for Apps Script to parse JSON correctly in some cases
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'init-user', userID: USER_ID })
         });
         const payload = await res.json();
@@ -86,7 +94,8 @@ async function addJournalEntry(entry) {
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            // Content-Type must be text/plain for Apps Script to parse JSON correctly
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'add-entry', userID: USER_ID, entry: sanitizedEntry })
         });
 
