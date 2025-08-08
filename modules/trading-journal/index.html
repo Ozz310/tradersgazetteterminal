@@ -143,11 +143,10 @@
 
 <!-- Minimal styling hook (keep your global CSS) -->
 <style>
-  /* keep terminal black & gold theme - tweak in your main stylesheet */
-  .tab { margin-right:8px; padding:8px 12px; background:#111; color:#FFD700; border:1px solid #333; cursor:pointer; }
+  /* basic black & gold theme hooks - adjust in main CSS */
+  .tab { margin-right:8px; padding:8px 12px; background:#111; color:#FFD700; border:1px solid #333; cursor:pointer; border-radius:4px; }
   .tab.active { background:#000; box-shadow:0 0 12px rgba(255,215,0,0.08); }
   .analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .chart-card { background:#000; border:1px solid #222; padding:12px; border-radius:8px; color:#FFD700; }
   @media (max-width:900px) { .analytics-grid { grid-template-columns:1fr; } }
 </style>
- 
