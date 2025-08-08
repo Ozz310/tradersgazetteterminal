@@ -1,6 +1,6 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWW8tN7M-FPXVXsmzPTrt7rvNfTjF7GYW6kvox_U7PxcNXHWelB9G76_Fh_WFCXrKp/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXRrtBilaIkkxqagFWMJwc6YLOn1vB3-M2nQWlmGYPJoUjOXzSpUh46NWXx9wJXioJ/exec';
 
 // --- Main initialization function to be called by app.js ---
 function initJournal() {
