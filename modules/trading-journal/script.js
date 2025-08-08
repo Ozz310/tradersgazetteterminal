@@ -3,7 +3,8 @@
 
 // --- Configuration ---
 const USER_ID = 'trader_001';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXRrtBilaIkkxqagFWMJwc6YLOn1vB3-M2nQWlmGYPJoUjOXzSpUh46NWXx9wJXioJ/exec';
+const DEPLOYMENT_ID = 'AKfycbw6wCt4bmL2qx_mqKrbyAKa7Q9cAgnep3NCNTu49UZtkeopoSUZufVikC5ozo7XUi24';
+const SCRIPT_URL = 'https://script.google.com/macros/s/' + DEPLOYMENT_ID + '/exec';
 
 // --- DOM ---
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
@@ -22,7 +23,6 @@ function safeNumber(value) {
 
 function formatDateForDisplay(dateStr) {
   if (!dateStr) return '';
-  // Accept Date object or ISO string
   const d = (dateStr instanceof Date) ? dateStr : new Date(dateStr);
   if (!isFinite(d)) return dateStr;
   return d.toISOString().slice(0, 10);
@@ -98,7 +98,6 @@ async function addJournalEntry(entry) {
     const payload = await res.json();
     if (payload.status === 'success') {
       journalStatus.textContent = 'Entry added successfully!';
-      // refresh entries and charts
       await fetchJournalEntries();
       journalForm.reset();
     } else {
@@ -134,7 +133,6 @@ function renderJournalEntries(entries) {
 
 // --- Charts: prepare datasets and draw/update charts ---
 function prepareChartDatasets(entries) {
-  // Normalize entries: ensure numeric conversions
   const items = entries.map(e => ({
     Date: e.Date ? new Date(e.Date) : null,
     Symbol: e.Symbol || '',
@@ -143,7 +141,7 @@ function prepareChartDatasets(entries) {
     PnL: (e['P&L Net'] !== undefined && e['P&L Net'] !== null && e['P&L Net'] !== '') ? Number(e['P&L Net']) : 0
   }));
 
-  // 1) P&L by Date (sum)
+  // P&L by Date
   const pnlByDateMap = {};
   items.forEach(it => {
     const key = it.Date ? it.Date.toISOString().slice(0, 10) : 'unknown';
@@ -152,7 +150,7 @@ function prepareChartDatasets(entries) {
   const pnlByDateLabels = Object.keys(pnlByDateMap).sort();
   const pnlByDateValues = pnlByDateLabels.map(k => pnlByDateMap[k]);
 
-  // 2) P&L by Asset Type
+  // P&L by Asset Type
   const pnlByAsset = {};
   items.forEach(it => {
     const k = it.AssetType || 'Unknown';
@@ -161,17 +159,17 @@ function prepareChartDatasets(entries) {
   const assetLabels = Object.keys(pnlByAsset);
   const assetValues = assetLabels.map(k => pnlByAsset[k]);
 
-  // 3) P&L by Symbol (sorted)
+  // P&L by Symbol (sorted)
   const pnlBySymbol = {};
   items.forEach(it => {
     const k = it.Symbol || 'Unknown';
     pnlBySymbol[k] = (pnlBySymbol[k] || 0) + (isFinite(it.PnL) ? it.PnL : 0);
   });
-  const symbolEntries = Object.entries(pnlBySymbol).sort((a, b) => b[1] - a[1]); // desc
-  const symbolLabels = symbolEntries.map(e => e[0]).slice(0, 30); // top 30
+  const symbolEntries = Object.entries(pnlBySymbol).sort((a, b) => b[1] - a[1]);
+  const symbolLabels = symbolEntries.map(e => e[0]).slice(0, 30);
   const symbolValues = symbolEntries.map(e => e[1]).slice(0, 30);
 
-  // 4) Buy vs Sell counts & net
+  // Buy vs Sell counts & net
   const sideCounts = { Buy: 0, Sell: 0, Other: 0 };
   const sidePnls = { Buy: 0, Sell: 0, Other: 0 };
   items.forEach(it => {
@@ -307,7 +305,6 @@ function createOrUpdateStackedSideChart(ctx, sideCounts, sidePnls) {
 
 function updateCharts(entries) {
   const ds = prepareChartDatasets(entries);
-  // find canvases
   const ctxTime = document.getElementById('pnlTimeChart').getContext('2d');
   const ctxAsset = document.getElementById('pnlAssetChart').getContext('2d');
   const ctxSymbol = document.getElementById('pnlSymbolChart').getContext('2d');
@@ -341,7 +338,6 @@ function initJournal() {
     tabTable.classList.remove('active');
     tableView.style.display = 'none';
     analyticsView.style.display = '';
-    // Ensure charts are drawn/resized
     fetchJournalEntries();
   });
 
