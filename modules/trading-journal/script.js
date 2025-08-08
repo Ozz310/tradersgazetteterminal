@@ -1,11 +1,10 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsdtp22EVmoKY02XJBTygbl3DF4eTk4MXMitRnwDfo3B9x_RTLhu-VJHX72y5mHlTw/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsdtp22EVmoKY02XJBTygbl3DF4eTk4MXMitRnwDfo3B9x_RTLhu-VJHX72y5mHlTw/exec';
 
 // --- Global variables for DOM elements and charts
-let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
-let pnlTimeChart, pnlAssetChart, pnlSymbolChart, pnlSideChart;
+let journalForm, journalTableBody, journalStatus;
 
 // --- Helpers ---
 function safeNumber(value) {
@@ -36,7 +35,6 @@ async function fetchJournalEntries() {
             if (payload.data && payload.data.length > 0) {
                 renderJournalEntries(payload.data);
                 journalStatus.textContent = `Found ${payload.data.length} entries.`;
-                updateCharts(payload.data);
             } else {
                 journalStatus.textContent = 'No entries found. Initializing new user...';
                 await initUser(); 
@@ -77,17 +75,16 @@ async function initUser() {
 async function addJournalEntry(entry) {
     journalStatus.textContent = 'Adding entry...';
 
-    // This block correctly maps the 6 frontend fields to the 10 backend fields
     const sanitizedEntry = {
         Date: entry.Date || '',
         Symbol: entry.Symbol || '',
-        "Asset Type": '', // Field not in form, set to empty
-        "Buy/Sell": '', // Field not in form, set to empty
+        "Asset Type": entry["Asset Type"] || '',
+        "Buy/Sell": entry["Buy/Sell"] || '',
         "Entry Price": safeNumber(entry["Entry Price"]),
         "Exit Price": safeNumber(entry["Exit Price"]),
-        "Take Profit": '', // Field not in form, set to empty
-        "Stop Loss": '', // Field not in form, set to empty
-        "P&L Net": '', // Field not in form, set to empty
+        "Take Profit": safeNumber(entry["Take Profit"]),
+        "Stop Loss": safeNumber(entry["Stop Loss"]),
+        "P&L Net": safeNumber(entry["P&L Net"]),
         Notes: entry.Notes || ''
     };
 
@@ -115,7 +112,9 @@ async function addJournalEntry(entry) {
 
 // --- UI Rendering ---
 function renderJournalEntries(entries) {
-    journalTableBody.innerHTML = '';
+    const tableBody = document.querySelector("#journalTable tbody");
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
     entries.forEach(entry => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -130,219 +129,39 @@ function renderJournalEntries(entries) {
             <td>${entry['P&L Net'] !== undefined ? entry['P&L Net'] : ''}</td>
             <td>${entry.Notes || ''}</td>
         `;
-        journalTableBody.appendChild(row);
+        tableBody.appendChild(row);
     });
 }
 
-// --- Charts: prepare datasets and draw/update charts ---
-function prepareChartDatasets(entries) {
-    const items = entries.map(e => ({
-        Date: e.Date ? new Date(e.Date) : null,
-        Symbol: e.Symbol || '',
-        AssetType: e['Asset Type'] || '',
-        Side: e['Buy/Sell'] || '',
-        PnL: (e['P&L Net'] !== undefined && e['P&L Net'] !== null && e['P&L Net'] !== '') ? Number(e['P&L Net']) : 0
-    }));
-
-    // P&L by Date
-    const pnlByDateMap = {};
-    items.forEach(it => {
-        const key = it.Date ? it.Date.toISOString().slice(0, 10) : 'unknown';
-        pnlByDateMap[key] = (pnlByDateMap[key] || 0) + (isFinite(it.PnL) ? it.PnL : 0);
-    });
-    const pnlByDateLabels = Object.keys(pnlByDateMap).sort();
-    const pnlByDateValues = pnlByDateLabels.map(k => pnlByDateMap[k]);
-
-    // P&L by Asset Type
-    const pnlByAsset = {};
-    items.forEach(it => {
-        const k = it.AssetType || 'Unknown';
-        pnlByAsset[k] = (pnlByAsset[k] || 0) + (isFinite(it.PnL) ? it.PnL : 0);
-    });
-    const assetLabels = Object.keys(pnlByAsset);
-    const assetValues = assetLabels.map(k => pnlByAsset[k]);
-
-    // P&L by Symbol (sorted)
-    const pnlBySymbol = {};
-    items.forEach(it => {
-        const k = it.Symbol || 'Unknown';
-        pnlBySymbol[k] = (pnlBySymbol[k] || 0) + (isFinite(it.PnL) ? it.PnL : 0);
-    });
-    const symbolEntries = Object.entries(pnlBySymbol).sort((a, b) => b[1] - a[1]);
-    const symbolLabels = symbolEntries.map(e => e[0]).slice(0, 30);
-    const symbolValues = symbolEntries.map(e => e[1]).slice(0, 30);
-
-    // Buy vs Sell counts & net
-    const sideCounts = { Buy: 0, Sell: 0, Other: 0 };
-    const sidePnls = { Buy: 0, Sell: 0, Other: 0 };
-    items.forEach(it => {
-        const s = (it.Side === 'Buy' || it.Side === 'Sell') ? it.Side : 'Other';
-        sideCounts[s] = (sideCounts[s] || 0) + 1;
-        sidePnls[s] = (sidePnls[s] || 0) + (isFinite(it.PnL) ? it.PnL : 0);
-    });
-
-    return {
-        pnlByDateLabels, pnlByDateValues,
-        assetLabels, assetValues,
-        symbolLabels, symbolValues,
-        sideCounts, sidePnls
-    };
-}
-
-function createOrUpdateLineChart(ctx, labels, data) {
-    if (pnlTimeChart) {
-        pnlTimeChart.data.labels = labels;
-        pnlTimeChart.data.datasets[0].data = data;
-        pnlTimeChart.update();
-        return;
-    }
-    pnlTimeChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [{
-                label: 'P&L Over Time',
-                data,
-                borderWidth: 2,
-                tension: 0.3,
-                borderColor: '#FFD700',
-                backgroundColor: 'rgba(255,215,0,0.06)',
-                fill: true,
-                pointRadius: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-                x: { ticks: { color: '#FFD700' }, grid: { color: '#111' } },
-                y: { ticks: { color: '#FFD700' }, grid: { color: '#111' } }
-            }
-        }
-    });
-}
-
-function createOrUpdateDoughnutChart(ctx, labels, data) {
-    if (pnlAssetChart) {
-        pnlAssetChart.data.labels = labels;
-        pnlAssetChart.data.datasets[0].data = data;
-        pnlAssetChart.update();
-        return;
-    }
-    pnlAssetChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: { labels, datasets: [{ data, borderWidth: 1 }] },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom', labels: { color: '#FFD700' } },
-                tooltip: { callbacks: {} }
-            }
-        }
-    });
-}
-
-function createOrUpdateBarChart(ctx, labels, data) {
-    if (pnlSymbolChart) {
-        pnlSymbolChart.data.labels = labels;
-        pnlSymbolChart.data.datasets[0].data = data;
-        pnlSymbolChart.update();
-        return;
-    }
-    pnlSymbolChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Net P&L',
-                data,
-                borderWidth: 0
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { ticks: { color: '#FFD700' } },
-                y: { ticks: { color: '#FFD700' } }
-            }
-        }
-    });
-}
-
-function createOrUpdateStackedSideChart(ctx, sideCounts, sidePnls) {
-    const labels = Object.keys(sideCounts);
-    const counts = labels.map(l => sideCounts[l] || 0);
-    const pnls = labels.map(l => sidePnls[l] || 0);
-    if (pnlSideChart) {
-        pnlSideChart.data.labels = labels;
-        pnlSideChart.data.datasets[0].data = counts;
-        pnlSideChart.data.datasets[1].data = pnls;
-        pnlSideChart.update();
-        return;
-    }
-    pnlSideChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { type: 'bar', label: 'Count', data: counts, yAxisID: 'y1' },
-                { type: 'bar', label: 'Net P&L', data: pnls, yAxisID: 'y' }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { labels: { color: '#FFD700' } } },
-            scales: {
-                y: { position: 'left', ticks: { color: '#FFD700' } },
-                y1: { position: 'right', ticks: { color: '#FFD700' }, grid: { drawOnChartArea: false } },
-                x: { ticks: { color: '#FFD700' } }
-            }
-        }
-    });
-}
-
-function updateCharts(entries) {
-    const ds = prepareChartDatasets(entries);
-    const ctxTime = document.getElementById('pnlTimeChart').getContext('2d');
-    const ctxAsset = document.getElementById('pnlAssetChart').getContext('2d');
-    const ctxSymbol = document.getElementById('pnlSymbolChart').getContext('2d');
-    const ctxSide = document.getElementById('pnlSideChart').getContext('2d');
-
-    createOrUpdateLineChart(ctxTime, ds.pnlByDateLabels, ds.pnlByDateValues);
-    createOrUpdateDoughnutChart(ctxAsset, ds.assetLabels, ds.assetValues);
-    createOrUpdateBarChart(ctxSymbol, ds.symbolLabels, ds.symbolValues);
-    createOrUpdateStackedSideChart(ctxSide, ds.sideCounts, ds.sidePnls);
-}
+// --- Charts: No charts in this version of the form, so this section is removed. ---
 
 // --- Init ---
 function initJournal() {
     journalForm = document.getElementById('journalForm');
-    journalTableBody = document.querySelector('#journalTable tbody');
-    journalStatus = document.getElementById('journalStatus');
-    // Tab and analytics views from previous code are not in the new HTML
-    // We will assume these elements are not critical for the current layout and skip them.
+    journalStatus = document.getElementById('status');
+    
+    if (!journalForm || !journalStatus) {
+        console.error("Critical form elements not found in the DOM.");
+        return;
+    }
 
-    // Submit handler
-    journalForm.addEventListener('submit', (e) => {
+    journalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        // Correctly get form data by name
         const entry = {
             Date: journalForm.elements['date'].value,
             Symbol: journalForm.elements['symbol'].value,
+            "Asset Type": journalForm.elements['assetType'].value,
+            "Buy/Sell": journalForm.elements['buySell'].value,
             "Entry Price": journalForm.elements['entryPrice'].value,
             "Exit Price": journalForm.elements['exitPrice'].value,
-            "Result": journalForm.elements['result'].value,
+            "Take Profit": journalForm.elements['takeProfit'].value,
+            "Stop Loss": journalForm.elements['stopLoss'].value,
+            "P&L Net": journalForm.elements['plNet'].value,
             Notes: journalForm.elements['notes'].value
         };
-        addJournalEntry(entry);
+        await addJournalEntry(entry);
     });
 
-    // Initial load
     fetchJournalEntries();
 }
 
