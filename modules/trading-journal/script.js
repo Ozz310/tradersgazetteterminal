@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSTRMCsrcLdVG3seImOFLYiNka4WMddi-sLzEh-GAYxTNzwM_Tfg7Lmc7lIkw-CJoQ/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzk3fC_aFfmOz30iA-fADf8Jcjw-3WBPn7Dc4t7Ms_riXTxuSNL625Z9sI-O6PbE275/exec'; // <-- REPLACE THIS WITH YOUR NEW URL
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
@@ -28,13 +28,9 @@ async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
         const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
-        const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                // This header is needed for some Apps Script deployments.
-                'Content-Type': 'application/json' 
-            }
-        });
+        // The GET request no longer needs the headers property.
+        const res = await fetch(url);
+        
         const payload = await res.json();
         
         if (payload.status === 'success') {
@@ -58,7 +54,7 @@ async function initUser() {
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            // Content-Type must be text/plain for Apps Script to parse JSON correctly in some cases
+            // Content-Type must be text/plain for Apps Script to parse JSON correctly
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'init-user', userID: USER_ID })
         });
