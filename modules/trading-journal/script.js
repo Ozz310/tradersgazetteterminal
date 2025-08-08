@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzk3fC_aFfmOz30iA-fADf8Jcjw-3WBPn7Dc4t7Ms_riXTxuSNL625Z9sI-O6PbE275/exec';
+const SCRIPT_URL = 'YOUR_NEW_DEPLOYMENT_URL_HERE'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
@@ -28,15 +28,20 @@ async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
         const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
-        // The GET request no longer needs the headers property.
         const res = await fetch(url);
         
         const payload = await res.json();
         
         if (payload.status === 'success') {
-            renderJournalEntries(payload.data);
-            journalStatus.textContent = `Found ${payload.data.length} entries.`;
-            updateCharts(payload.data);
+            if (payload.data && payload.data.length > 0) {
+                renderJournalEntries(payload.data);
+                journalStatus.textContent = `Found ${payload.data.length} entries.`;
+                updateCharts(payload.data);
+            } else {
+                // If data is empty, we initialize the user.
+                journalStatus.textContent = 'No entries found. Initializing new user...';
+                await initUser(); 
+            }
             return payload.data;
         } else {
             journalStatus.textContent = `Error: ${payload.message}`;
@@ -54,13 +59,13 @@ async function initUser() {
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            // Content-Type must be text/plain for Apps Script to parse JSON correctly
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'init-user', userID: USER_ID })
         });
         const payload = await res.json();
         if (payload.status === 'success') {
             journalStatus.textContent = 'User initialized successfully. Fetching entries...';
+            // Now that the user is initialized, fetch the (now empty) entries.
             await fetchJournalEntries();
         } else {
             journalStatus.textContent = `Init error: ${payload.message}`;
@@ -90,7 +95,6 @@ async function addJournalEntry(entry) {
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            // Content-Type must be text/plain for Apps Script to parse JSON correctly
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'add-entry', userID: USER_ID, entry: sanitizedEntry })
         });
@@ -359,8 +363,6 @@ function initJournal() {
         addJournalEntry(entry);
     });
 
-    // Initial load: Try to fetch entries, if that fails, initialize user
-    fetchJournalEntries().catch(() => {
-        initUser();
-    });
+    // Initial load: This call is now a simple fetch, which is safe.
+    fetchJournalEntries();
 }
