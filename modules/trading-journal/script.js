@@ -1,6 +1,6 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7lv6oEG2EmLxM5ja6Cy-rF25MGKCfPvm_nZNkwsJIMpbCmApf2u2R5bVNQ6LsYYBc/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6wCt4bmL2qx_mqKrbyAKa7Q9cAgnep3NCNTu49UZtkeopoSUZufVikC5ozo7XUi24/exec';
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
@@ -354,9 +354,8 @@ function initJournal() {
         addJournalEntry(entry);
     });
 
-    // Initial load
-    fetchJournalEntries().catch(() => initUser());
+    // Initial load: Try to fetch entries, if that fails, initialize user
+    fetchJournalEntries().catch(() => {
+        initUser();
+    });
 }
-
-// Run init when file loads
-document.addEventListener('DOMContentLoaded', initJournal);
