@@ -1,6 +1,6 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6wCt4bmL2qx_mqKrbyAKa7Q9cAgnep3NCNTu49UZtkeopoSUZufVikC5ozo7XUi24/exec';
+const SCRIPT_URL = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalTableBody, journalStatus, tabTable, tabAnalytics, tableView, analyticsView;
@@ -111,7 +111,7 @@ function renderJournalEntries(entries) {
     entries.forEach(entry => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${entry.Date}</td>
+            <td>${formatDateForDisplay(entry.Date)}</td>
             <td>${entry.Symbol || ''}</td>
             <td>${entry['Asset Type'] || ''}</td>
             <td>${entry['Buy/Sell'] || ''}</td>
