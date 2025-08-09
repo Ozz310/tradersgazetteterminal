@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 const LIVE_URL = 'https://ozz310.github.io/traders-gazette-terminal/?module=trading-journal';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuDYYAOcE4Z6QPOTDU0JoVSHLmBmV8kVrLkIJveBhU7qxdi3NWFAkygJic5CJ9t0qc/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpJcZn0h5QOXsxlLW4c8naZWkZAzble8qwKvmDOqVAB9pik6movTCak-EC6OVPVdFA/exec'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalStatus;
@@ -32,7 +32,9 @@ function initJournal() {
         return;
     }
 
-    journalForm.addEventListener('submit', async (e) => {
+    // Attach event listener for form submission
+    journalForm.addEventListener('submit', (e) => {
+        // Prevent the default form submission to handle it manually
         e.preventDefault();
 
         // Get the form data
@@ -40,27 +42,24 @@ function initJournal() {
         formData.append('action', 'add-entry');
         formData.append('userID', USER_ID);
         formData.append('redirect_url', LIVE_URL);
-
-        // Submit the form
-        journalStatus.textContent = 'Submitting entry...';
         
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            });
-
+        // This is the new part: directly submit the form
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+            redirect: 'follow'
+        }).then(response => {
+            // Check if the response is a redirect
             if (response.redirected) {
                 window.location.href = response.url;
             } else {
-                const result = await response.text();
-                journalStatus.textContent = `Submission response: ${result}`;
+                journalStatus.textContent = "Submission failed with an unexpected response.";
             }
-
-        } catch (error) {
+        }).catch(error => {
             journalStatus.textContent = `Submission failed: ${error}`;
-        }
+        });
 
+        journalStatus.textContent = 'Submitting entry...';
     });
 }
 
