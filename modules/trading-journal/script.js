@@ -26,14 +26,8 @@ function formatDateForDisplay(dateStr) {
 async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
-        const formData = new FormData();
-        formData.append('action', 'get-data');
-        formData.append('userID', USER_ID);
-
-        const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: formData,
-        });
+        const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
+        const res = await fetch(url);
         
         const payload = await res.json();
         
@@ -60,13 +54,10 @@ async function fetchJournalEntries() {
 async function initUser() {
     journalStatus.textContent = 'Initializing user...';
     try {
-        const formData = new FormData();
-        formData.append('action', 'init-user');
-        formData.append('userID', USER_ID);
-
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: formData,
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'init-user', userID: USER_ID })
         });
         const payload = await res.json();
         if (payload.status === 'success') {
@@ -85,24 +76,24 @@ async function initUser() {
 async function addJournalEntry(entry) {
     journalStatus.textContent = 'Adding entry...';
 
-    const formData = new FormData();
-    formData.append('action', 'add-entry');
-    formData.append('userID', USER_ID);
-    formData.append('date', entry.Date || '');
-    formData.append('symbol', entry.Symbol || '');
-    formData.append('assetType', entry["Asset Type"] || '');
-    formData.append('buySell', entry["Buy/Sell"] || '');
-    formData.append('entryPrice', entry["Entry Price"] || '');
-    formData.append('exitPrice', entry["Exit Price"] || '');
-    formData.append('takeProfit', entry["Take Profit"] || '');
-    formData.append('stopLoss', entry["Stop Loss"] || '');
-    formData.append('plNet', entry["P&L Net"] || '');
-    formData.append('notes', entry.Notes || '');
+    const sanitizedEntry = {
+        Date: entry.Date || '',
+        Symbol: entry.Symbol || '',
+        "Asset Type": entry["Asset Type"] || '',
+        "Buy/Sell": entry["Buy/Sell"] || '',
+        "Entry Price": safeNumber(entry["Entry Price"]),
+        "Exit Price": safeNumber(entry["Exit Price"]),
+        "Take Profit": safeNumber(entry["Take Profit"]),
+        "Stop Loss": safeNumber(entry["Stop Loss"]),
+        "P&L Net": safeNumber(entry["P&L Net"]),
+        Notes: entry.Notes || ''
+    };
 
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: formData,
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'add-entry', userID: USER_ID, entry: sanitizedEntry })
         });
 
         const payload = await res.json();
