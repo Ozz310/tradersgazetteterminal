@@ -26,8 +26,14 @@ function formatDateForDisplay(dateStr) {
 async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
-        const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
-        const res = await fetch(url);
+        const formData = new FormData();
+        formData.append('action', 'get-data');
+        formData.append('userID', USER_ID);
+
+        const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+        });
         
         const payload = await res.json();
         
@@ -54,10 +60,13 @@ async function fetchJournalEntries() {
 async function initUser() {
     journalStatus.textContent = 'Initializing user...';
     try {
+        const formData = new FormData();
+        formData.append('action', 'init-user');
+        formData.append('userID', USER_ID);
+
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'init-user', userID: USER_ID })
+            body: formData,
         });
         const payload = await res.json();
         if (payload.status === 'success') {
@@ -76,34 +85,27 @@ async function initUser() {
 async function addJournalEntry(entry) {
     journalStatus.textContent = 'Adding entry...';
 
-    const sanitizedEntry = {
-        Date: entry.Date || '',
-        Symbol: entry.Symbol || '',
-        "Asset Type": entry["Asset Type"] || '',
-        "Buy/Sell": entry["Buy/Sell"] || '',
-        "Entry Price": safeNumber(entry["Entry Price"]),
-        "Exit Price": safeNumber(entry["Exit Price"]),
-        "Take Profit": safeNumber(entry["Take Profit"]),
-        "Stop Loss": safeNumber(entry["Stop Loss"]),
-        "P&L Net": safeNumber(entry["P&L Net"]),
-        Notes: entry.Notes || ''
+    const payload = {
+        action: 'add-entry',
+        userID: USER_ID,
+        entry: entry
     };
 
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'add-entry', userID: USER_ID, entry: sanitizedEntry })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
 
-        const payload = await res.json();
-        if (payload.status === 'success') {
+        const result = await res.json();
+        if (result.status === 'success') {
             journalStatus.textContent = 'Entry added successfully!';
             await fetchJournalEntries();
             journalForm.reset();
         } else {
-            journalStatus.textContent = `Add error: ${payload.message}`;
-            console.error('Add entry failed', payload);
+            journalStatus.textContent = `Add error: ${result.message}`;
+            console.error('Add entry failed', result);
         }
     } catch (err) {
         journalStatus.textContent = 'Failed to add entry. Check network or CORS.';
