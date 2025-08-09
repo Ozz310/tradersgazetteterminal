@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 const LIVE_URL = 'https://ozz310.github.io/traders-gazette-terminal/?module=trading-journal';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpJcZn0h5QOXsxlLW4c8naZWkZAzble8qwKvmDOqVAB9pik6movTCak-EC6OVPVdFA/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5ptqN6GfgfqhjoIwztvKo5toiHXLlAzm7B-lUKM80ji3BTsYS2iTJwscu4rZavafB/exec'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalStatus;
