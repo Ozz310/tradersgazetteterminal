@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyna_kfx_W9nM2VN6lNgp0SsY6Q0uhz1teyalPXTyE_udtUGo_9CCQaC_psu6GAFZo/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8EL1nrL1ECZs72DpPiUQ5tFPkwNAG8UkanEQ6pfAtm5NrkEUhVhvus55YUBzYtF-Q/exec'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalStatus;
@@ -26,8 +26,12 @@ function formatDateForDisplay(dateStr) {
 async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
-        const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
-        const res = await fetch(url);
+        // Change to POST with a simple payload
+        const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'get-data', userID: USER_ID })
+        });
         
         const payload = await res.json();
         
