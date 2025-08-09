@@ -167,4 +167,4 @@ function initJournal() {
     fetchJournalEntries();
 }
 
-document.addEventListener('DOMContentLoaded', initJournal);
+document.addEventListener('DOMContentLoaded', initJournal); 
