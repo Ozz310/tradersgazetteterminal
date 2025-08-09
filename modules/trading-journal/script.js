@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8EL1nrL1ECZs72DpPiUQ5tFPkwNAG8UkanEQ6pfAtm5NrkEUhVhvus55YUBzYtF-Q/exec'; 
+const SCRIPT_URL = 'YOUR_NEW_DEPLOYMENT_URL_HERE'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalStatus;
@@ -26,7 +26,6 @@ function formatDateForDisplay(dateStr) {
 async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
-        // Change to POST with a simple payload
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -73,6 +72,7 @@ async function initUser() {
     } catch (err) {
         journalStatus.textContent = 'Failed to initialize user. Check network or CORS.';
         console.error('Error initializing user:', err);
+        return [];
     }
 }
 
@@ -167,4 +167,4 @@ function initJournal() {
     fetchJournalEntries();
 }
 
-document.addEventListener('DOMContentLoaded', initJournal); 
+document.addEventListener('DOMContentLoaded', initJournal);
