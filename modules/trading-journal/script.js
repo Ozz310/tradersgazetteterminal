@@ -1,10 +1,10 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsdtp22EVmoKY02XJBTygbl3DF4eTk4MXMitRnwDfo3B9x_RTLhu-VJHX72y5mHlTw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHHIJDuk_jja4F3HSuGspuUJAFdITQL8QZIoT6SPFnMXUPqFv2lONwvyjjBFnu-jY/exec'; 
 
 // --- Global variables for DOM elements and charts
-let journalForm, journalTableBody, journalStatus;
+let journalForm, journalStatus;
 
 // --- Helpers ---
 function safeNumber(value) {
@@ -132,8 +132,6 @@ function renderJournalEntries(entries) {
         tableBody.appendChild(row);
     });
 }
-
-// --- Charts: No charts in this version of the form, so this section is removed. ---
 
 // --- Init ---
 function initJournal() {
