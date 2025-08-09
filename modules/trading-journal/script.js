@@ -35,20 +35,32 @@ function initJournal() {
     journalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Dynamically create a hidden input for the redirect URL
-        let redirectInput = document.createElement('input');
-        redirectInput.type = 'hidden';
-        redirectInput.name = 'redirect_url';
-        redirectInput.value = LIVE_URL;
-        journalForm.appendChild(redirectInput);
-        
-        // Dynamically set form attributes for submission
-        journalForm.action = SCRIPT_URL;
-        journalForm.method = 'POST';
-        journalForm.target = '_self';
+        // Get the form data
+        const formData = new FormData(journalForm);
+        formData.append('action', 'add-entry');
+        formData.append('userID', USER_ID);
+        formData.append('redirect_url', LIVE_URL);
 
+        // Submit the form
         journalStatus.textContent = 'Submitting entry...';
-        journalForm.submit();
+        
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                const result = await response.text();
+                journalStatus.textContent = `Submission response: ${result}`;
+            }
+
+        } catch (error) {
+            journalStatus.textContent = `Submission failed: ${error}`;
+        }
+
     });
 }
 
