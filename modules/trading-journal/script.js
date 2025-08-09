@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
-// IMPORTANT: Use your new deployment URL here
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzck8lhH6_e9e13HWA7B8TkfzmWGBVCHv8jeXqkPq5KXqeVW9EWvUi1YngmIPUWyScZ/exec'; 
+// IMPORTANT: Use your new Cloudflare Worker URL here
+const SCRIPT_URL = 'YOUR_CLOUDFLARE_WORKER_URL_HERE'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalStatus;
@@ -26,9 +26,14 @@ function formatDateForDisplay(dateStr) {
 async function fetchJournalEntries() {
     journalStatus.textContent = 'Loading entries...';
     try {
-        // Correct GET request
-        const url = `${SCRIPT_URL}?action=get-data&userID=${USER_ID}`;
-        const res = await fetch(url);
+        const formData = new FormData();
+        formData.append('action', 'get-data');
+        formData.append('userID', USER_ID);
+
+        const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+        });
         
         const payload = await res.json();
         
@@ -55,10 +60,13 @@ async function fetchJournalEntries() {
 async function initUser() {
     journalStatus.textContent = 'Initializing user...';
     try {
+        const formData = new FormData();
+        formData.append('action', 'init-user');
+        formData.append('userID', USER_ID);
+
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'init-user', userID: USER_ID })
+            body: formData,
         });
         const payload = await res.json();
         if (payload.status === 'success') {
@@ -77,24 +85,24 @@ async function initUser() {
 async function addJournalEntry(entry) {
     journalStatus.textContent = 'Adding entry...';
 
-    const sanitizedEntry = {
-        Date: entry.Date || '',
-        Symbol: entry.Symbol || '',
-        "Asset Type": entry["Asset Type"] || '',
-        "Buy/Sell": entry["Buy/Sell"] || '',
-        "Entry Price": safeNumber(entry["Entry Price"]),
-        "Exit Price": safeNumber(entry["Exit Price"]),
-        "Take Profit": safeNumber(entry["Take Profit"]),
-        "Stop Loss": safeNumber(entry["Stop Loss"]),
-        "P&L Net": safeNumber(entry["P&L Net"]),
-        Notes: entry.Notes || ''
-    };
+    const formData = new FormData();
+    formData.append('action', 'add-entry');
+    formData.append('userID', USER_ID);
+    formData.append('date', entry.Date || '');
+    formData.append('symbol', entry.Symbol || '');
+    formData.append('assetType', entry["Asset Type"] || '');
+    formData.append('buySell', entry["Buy/Sell"] || '');
+    formData.append('entryPrice', entry["Entry Price"] || '');
+    formData.append('exitPrice', entry["Exit Price"] || '');
+    formData.append('takeProfit', entry["Take Profit"] || '');
+    formData.append('stopLoss', entry["Stop Loss"] || '');
+    formData.append('plNet', entry["P&L Net"] || '');
+    formData.append('notes', entry.Notes || '');
 
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'add-entry', userID: USER_ID, entry: sanitizedEntry })
+            body: formData,
         });
 
         const payload = await res.json();
