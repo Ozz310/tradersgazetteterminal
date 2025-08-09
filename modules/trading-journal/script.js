@@ -1,7 +1,7 @@
 // --- Global Configuration ---
 const USER_ID = 'trader_001';
 // IMPORTANT: Use your new Cloudflare Worker URL here
-const SCRIPT_URL = 'YOUR_CLOUDFLARE_WORKER_URL_HERE'; 
+const SCRIPT_URL = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/'; 
 
 // --- Global variables for DOM elements and charts
 let journalForm, journalStatus;
