@@ -85,27 +85,34 @@ async function initUser() {
 async function addJournalEntry(entry) {
     journalStatus.textContent = 'Adding entry...';
 
-    const payload = {
-        action: 'add-entry',
-        userID: USER_ID,
-        entry: entry
-    };
+    const formData = new FormData();
+    formData.append('action', 'add-entry');
+    formData.append('userID', USER_ID);
+    formData.append('date', journalForm.elements['date'].value);
+    formData.append('symbol', journalForm.elements['symbol'].value);
+    formData.append('assetType', journalForm.elements['assetType'].value);
+    formData.append('buySell', journalForm.elements['buySell'].value);
+    formData.append('entryPrice', journalForm.elements['entryPrice'].value);
+    formData.append('exitPrice', journalForm.elements['exitPrice'].value);
+    formData.append('takeProfit', journalForm.elements['takeProfit'].value);
+    formData.append('stopLoss', journalForm.elements['stopLoss'].value);
+    formData.append('plNet', journalForm.elements['plNet'].value);
+    formData.append('notes', journalForm.elements['notes'].value);
 
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: formData,
         });
 
-        const result = await res.json();
-        if (result.status === 'success') {
+        const payload = await res.json();
+        if (payload.status === 'success') {
             journalStatus.textContent = 'Entry added successfully!';
             await fetchJournalEntries();
             journalForm.reset();
         } else {
-            journalStatus.textContent = `Add error: ${result.message}`;
-            console.error('Add entry failed', result);
+            journalStatus.textContent = `Add error: ${payload.message}`;
+            console.error('Add entry failed', payload);
         }
     } catch (err) {
         journalStatus.textContent = 'Failed to add entry. Check network or CORS.';
