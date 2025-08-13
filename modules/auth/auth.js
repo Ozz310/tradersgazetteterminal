@@ -26,7 +26,6 @@ function initAuthModule(moduleContainer) {
     
     // Use event delegation on the main container
     moduleContainer.addEventListener('click', (e) => {
-        e.preventDefault();
         const target = e.target;
 
         if (target.matches('#show-signup')) {
