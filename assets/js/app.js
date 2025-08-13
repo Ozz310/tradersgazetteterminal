@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         moduleContainer.innerHTML = '';
         
-        const moduleStylePath = `modules/${moduleName}/style.css`;
+        const moduleStylePath = `modules/${moduleName}/${moduleName === 'auth' ? 'auth.css' : 'style.css'}`;
         const moduleScriptPath = `modules/${moduleName}/auth.js`;
         
         // Remove existing module-specific CSS
