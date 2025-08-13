@@ -1,8 +1,10 @@
 // /modules/auth/auth.js
+
 // Replace with your deployed Apps Script Web App URL
 const API_URL = 'https://script.google.com/macros/s/AKfycbyA0sDfJdyPdUAHr0Rwdq9UjnqFDWR6_5S9bEOpaz7VJGFdeOVTbvUo62Jrg7cl-8KK/exec';
 
-document.addEventListener('DOMContentLoaded', () => {
+// This function is now called directly from app.js
+function initAuthModule() {
     const authContainer = document.querySelector('.auth-container');
     
     // Check for password reset action in URL
@@ -10,16 +12,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const action = urlParams.get('action');
     const resetToken = urlParams.get('token');
 
+    // Remove the query parameters from the URL
+    if (action || resetToken) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
     if (action === 'reset-password' && resetToken) {
         // Load the password reset form if a token is present
-        loadAuthModuleContent('reset-password');
-        document.getElementById('reset-password-form').addEventListener('submit', (e) => {
-            handleResetPassword(e, resetToken);
-        });
+        loadAuthModuleContent('reset-password', resetToken);
     } else {
         // Otherwise, load the default auth page
         loadAuthModuleContent('login');
-        initAuthListeners();
     }
     
     // Check and set event listeners for login, signup, and forgot password forms
@@ -51,24 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to load the correct auth module content
-    async function loadAuthModuleContent(page) {
-        let pageContent = '';
-        if (page === 'login') {
-            pageContent = await fetch('modules/auth/login.html').then(res => res.text());
-        } else if (page === 'signup') {
-            pageContent = await fetch('modules/auth/signup.html').then(res => res.text());
-        } else if (page === 'forgot-password') {
-            pageContent = await fetch('modules/auth/forgot-password.html').then(res => res.text());
-        } else if (page === 'reset-password') {
-             pageContent = await fetch('modules/auth/reset-password.html').then(res => res.text());
+    // Function to load the correct auth module content from the templates
+    function loadAuthModuleContent(page, resetToken = null) {
+        const template = document.getElementById(`${page}-template`);
+        if (template) {
+            authContainer.innerHTML = template.innerHTML;
         }
-        authContainer.innerHTML = pageContent;
-        if(page !== 'reset-password') {
+        
+        // After loading the content, set up the listeners
+        if (page === 'reset-password') {
+            document.getElementById('reset-password-form').addEventListener('submit', (e) => {
+                handleResetPassword(e, resetToken);
+            });
+        } else {
             initAuthListeners();
         }
     }
-});
+}
+
 
 /**
  * Displays messages in a designated area on the auth page.
@@ -92,7 +95,7 @@ async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashArray = Array.from(new Uint8array(hashBuffer));
     const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
