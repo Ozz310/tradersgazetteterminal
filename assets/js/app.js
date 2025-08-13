@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNavToggle = document.getElementById('mobile-nav-toggle');
     const sidebar = document.getElementById('sidebar');
     const mobileOverlay = document.getElementById('mobile-overlay');
+    const logoutButton = document.getElementById('logout-button');
 
     // Function to initialize the dashboard clock
     function initializeDashboardClock() {
@@ -52,8 +53,41 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(script);
     }
 
+    /**
+     * AUTHENTICATION GUARD: Checks if a user is logged in.
+     * @returns {boolean} True if a valid token exists, false otherwise.
+     */
+    function isAuthenticated() {
+        const token = localStorage.getItem('tg_token');
+        // A simple check for token existence. We can add API validation later.
+        return !!token;
+    }
+
+    /**
+     * Logs the user out by clearing the token and redirecting to the login page.
+     */
+    function logout() {
+        localStorage.removeItem('tg_token');
+        localStorage.removeItem('tg_userId');
+        window.location.hash = '#auth';
+        loadModule('auth');
+    }
+
     // Function to load a module dynamically
     async function loadModule(moduleName) {
+        // --- AUTH GUARD LOGIC ---
+        // Block access to all modules except 'auth' if the user is not logged in
+        if (moduleName !== 'auth' && !isAuthenticated()) {
+            window.location.hash = '#auth';
+            return loadModule('auth');
+        }
+        // If the user is logged in and tries to go to 'auth', redirect to dashboard
+        if (moduleName === 'auth' && isAuthenticated()) {
+            window.location.hash = '#dashboard';
+            return loadModule('dashboard');
+        }
+        // --- END AUTH GUARD ---
+
         // Clear previous module content
         moduleContainer.innerHTML = '';
         
@@ -63,11 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Load module-specific CSS (for modules that need it)
-            if (moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub' || moduleName === 'contact-us' || moduleName === 'trading-ebooks' || moduleName === 'trading-journal') {
-                 const link = document.createElement('link');
-                 link.rel = 'stylesheet';
-                 link.href = moduleStylePath;
-                 document.head.appendChild(link);
+            if (moduleName === 'auth' || moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub' || moduleName === 'contact-us' || moduleName === 'trading-ebooks' || moduleName === 'trading-journal') {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = moduleStylePath;
+                document.head.appendChild(link);
             }
             
             // Load module HTML
@@ -76,8 +110,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`Failed to load module: ${modulePath}`);
             }
             const html = await response.text();
-            moduleContainer.innerHTML = html;
             
+            // For the auth module, we need to handle its different pages (login/signup)
+            if (moduleName === 'auth') {
+                const loginHtml = await fetch('modules/auth/login.html').then(res => res.text());
+                const signupHtml = await fetch('modules/auth/signup.html').then(res => res.text());
+                moduleContainer.innerHTML = `
+                    <div id="auth-container" class="auth-container">
+                        ${loginHtml}
+                    </div>
+                    <template id="login-template">${loginHtml}</template>
+                    <template id="signup-template">${signupHtml}</template>
+                `;
+                loadScript('modules/auth/auth.js');
+            } else {
+                moduleContainer.innerHTML = html;
+            }
+
             // Call module-specific initialization functions
             if (moduleName === 'dashboard') {
                 initializeDashboardClock();
@@ -102,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (moduleName === 'contact-us') {
                 // The Contact Us module has no script, so we don't need a loadScript call
             } else if (moduleName === 'trading-ebooks') {
-                 loadScript(moduleScriptPath, () => {
+                loadScript(moduleScriptPath, () => {
                     if (typeof initEbooks === 'function') {
                         initEbooks();
                     } else {
@@ -110,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             } else if (moduleName === 'trading-journal') {
-                 loadScript(moduleScriptPath, () => {
+                loadScript(moduleScriptPath, () => {
                     if (typeof initJournal === 'function') {
                         initJournal();
                     } else {
@@ -159,6 +208,15 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileOverlay.classList.remove('visible');
     });
 
-    // Initial load: load the dashboard module
-    loadModule('dashboard');
+    // Listen for the logout button click
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
+    
+    // Initial load: check auth status and load the appropriate module
+    if (isAuthenticated()) {
+        loadModule('dashboard');
+    } else {
+        loadModule('auth');
+    }
 });
