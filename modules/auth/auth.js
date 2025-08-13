@@ -1,4 +1,3 @@
-
 // /modules/auth/auth.js
 
 // Replace with your deployed Apps Script Web App URL
@@ -29,13 +28,23 @@ function initAuthModule(moduleContainer) {
     moduleContainer.addEventListener('click', (e) => {
         const target = e.target;
 
-        if (target.matches('#show-signup')) {
+        // Use closest() for more reliable event delegation
+        const showSignupLink = target.closest('#show-signup');
+        const showLoginLink = target.closest('#show-login');
+        const showForgotPasswordLink = target.closest('#show-forgot-password');
+        const backToLoginLink = target.closest('#back-to-login');
+        
+        if (showSignupLink) {
+            e.preventDefault();
             loadAuthModuleContent('signup', moduleContainer);
-        } else if (target.matches('#show-login')) {
+        } else if (showLoginLink) {
+            e.preventDefault();
             loadAuthModuleContent('login', moduleContainer);
-        } else if (target.matches('#show-forgot-password')) {
+        } else if (showForgotPasswordLink) {
+            e.preventDefault();
             loadAuthModuleContent('forgot-password', moduleContainer);
-        } else if (target.matches('#back-to-login')) {
+        } else if (backToLoginLink) {
+            e.preventDefault();
             loadAuthModuleContent('login', moduleContainer);
         }
     });
