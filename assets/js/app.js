@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const moduleContainer = document.getElementById('module-container');
     let currentModule = null;
 
-    // Use a WeakMap to store loaded modules to prevent double-loading
-    const loadedModules = new WeakMap();
+    // Corrected: Use a standard Map instead of WeakMap
+    // WeakMap keys must be objects, but we are using strings.
+    const loadedModules = new Map();
 
     // Attach event listeners for sidebar navigation
     sidebar.addEventListener('click', (e) => {
@@ -93,8 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Call the init function for the module if it exists
-            const initFunctionName = `init${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}Module`;
-            if (window.tg_auth && window.tg_auth.initAuthModule) {
+            if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
                 window.tg_auth.initAuthModule(moduleContainer);
             }
             
