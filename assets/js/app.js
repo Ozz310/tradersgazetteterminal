@@ -88,6 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove existing module-specific CSS
         document.querySelectorAll('link[data-module-css]').forEach(link => link.remove());
 
+        // Add/remove a class from the body to control sidebar visibility
+        if (moduleName === 'auth') {
+            document.body.classList.add('auth-active');
+        } else {
+            document.body.classList.remove('auth-active');
+        }
+
         try {
             // Load module-specific CSS
             const link = document.createElement('link');
