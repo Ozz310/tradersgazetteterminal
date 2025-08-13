@@ -24,27 +24,23 @@ function initAuthModule(moduleContainer) {
         loadAuthModuleContent('login', moduleContainer);
     }
     
-    // Use event delegation on the main container
+    // Use event delegation on the main container for all clicks
     moduleContainer.addEventListener('click', (e) => {
+        // Stop the default action of any link click immediately
+        if (e.target.closest('a')) {
+            e.preventDefault();
+        }
+
         const target = e.target;
 
-        // Use closest() for more reliable event delegation
-        const showSignupLink = target.closest('#show-signup');
-        const showLoginLink = target.closest('#show-login');
-        const showForgotPasswordLink = target.closest('#show-forgot-password');
-        const backToLoginLink = target.closest('#back-to-login');
-        
-        if (showSignupLink) {
-            e.preventDefault();
+        // Use a switch statement for cleaner, more reliable delegation
+        if (target.matches('#show-signup')) {
             loadAuthModuleContent('signup', moduleContainer);
-        } else if (showLoginLink) {
-            e.preventDefault();
+        } else if (target.matches('#show-login')) {
             loadAuthModuleContent('login', moduleContainer);
-        } else if (showForgotPasswordLink) {
-            e.preventDefault();
+        } else if (target.matches('#show-forgot-password')) {
             loadAuthModuleContent('forgot-password', moduleContainer);
-        } else if (backToLoginLink) {
-            e.preventDefault();
+        } else if (target.matches('#back-to-login')) {
             loadAuthModuleContent('login', moduleContainer);
         }
     });
