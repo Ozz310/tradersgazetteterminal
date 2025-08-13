@@ -24,34 +24,21 @@ function initAuthModule(moduleContainer) {
         loadAuthModuleContent('login', moduleContainer);
     }
     
-    // Check and set event listeners for login, signup, and forgot password forms
-    function initAuthListeners() {
-        const loginForm = document.getElementById('login-form');
-        const signupForm = document.getElementById('signup-form');
-        const forgotPasswordForm = document.getElementById('forgot-password-form');
-        
-        if (loginForm) loginForm.addEventListener('submit', handleLogin);
-        if (signupForm) signupForm.addEventListener('submit', handleSignup);
-        if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+    // Use event delegation on the main container
+    moduleContainer.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = e.target;
 
-        // Add event listeners for switching between forms
-        document.getElementById('show-signup')?.addEventListener('click', (e) => {
-            e.preventDefault();
+        if (target.matches('#show-signup')) {
             loadAuthModuleContent('signup', moduleContainer);
-        });
-        document.getElementById('show-login')?.addEventListener('click', (e) => {
-            e.preventDefault();
+        } else if (target.matches('#show-login')) {
             loadAuthModuleContent('login', moduleContainer);
-        });
-        document.getElementById('show-forgot-password')?.addEventListener('click', (e) => {
-            e.preventDefault();
+        } else if (target.matches('#show-forgot-password')) {
             loadAuthModuleContent('forgot-password', moduleContainer);
-        });
-        document.getElementById('back-to-login')?.addEventListener('click', (e) => {
-            e.preventDefault();
+        } else if (target.matches('#back-to-login')) {
             loadAuthModuleContent('login', moduleContainer);
-        });
-    }
+        }
+    });
 
     // Function to load the correct auth module content from the templates
     function loadAuthModuleContent(page, container, resetToken = null) {
@@ -60,17 +47,20 @@ function initAuthModule(moduleContainer) {
             container.innerHTML = template.innerHTML;
         }
         
-        // After loading the content, set up the listeners
-        if (page === 'reset-password') {
-            document.getElementById('reset-password-form').addEventListener('submit', (e) => {
+        // After loading the content, set up the listeners for forms
+        if (page === 'login') {
+            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+        } else if (page === 'signup') {
+            document.getElementById('signup-form')?.addEventListener('submit', handleSignup);
+        } else if (page === 'forgot-password') {
+            document.getElementById('forgot-password-form')?.addEventListener('submit', handleForgotPassword);
+        } else if (page === 'reset-password') {
+            document.getElementById('reset-password-form')?.addEventListener('submit', (e) => {
                 handleResetPassword(e, resetToken);
             });
-        } else {
-            initAuthListeners();
         }
     }
 }
-
 
 /**
  * Displays messages in a designated area on the auth page.
@@ -94,7 +84,7 @@ async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8array(hashBuffer));
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
@@ -180,7 +170,7 @@ async function handleSignup(event) {
         if (result.status === 'success') {
             displayMessage('Signup successful! Please log in.', false);
             // Optionally, switch to the login form automatically
-            document.getElementById('show-login').click();
+            loadAuthModuleContent('login', moduleContainer);
         } else {
             displayMessage('Signup failed: ' + result.message, true);
         }
@@ -274,3 +264,4 @@ async function handleResetPassword(event, resetToken) {
         displayMessage('An error occurred. Please try again.', true);
     }
 }
+
