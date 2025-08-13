@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Now load the script that will manage these templates and call the init function
                 loadScript(`modules/auth/auth.js`, () => {
                     if (typeof initAuthModule === 'function') {
-                        initAuthModule();
+                        initAuthModule(moduleContainer);
                     }
                 });
             } else {
