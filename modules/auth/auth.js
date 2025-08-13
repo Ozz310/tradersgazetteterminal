@@ -274,4 +274,3 @@ async function handleResetPassword(event, resetToken) {
         displayMessage('An error occurred. Please try again.', true);
     }
 }
-
