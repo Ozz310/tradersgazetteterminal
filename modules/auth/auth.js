@@ -45,6 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+/**
+ * Displays messages in a designated area on the auth page.
+ * @param {string} message - The message to display.
+ * @param {boolean} isError - True for an error message, false for success.
+ */
+function displayMessage(message, isError = false) {
+    const messageArea = document.getElementById('message-area');
+    if (messageArea) {
+        messageArea.textContent = message;
+        messageArea.style.color = isError ? '#ff4d4d' : '#ffd700';
+    }
+}
 
 /**
  * Securely hashes the password using SHA-256 before sending it to the backend.
@@ -70,6 +82,9 @@ async function handleLogin(event) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
     
+    // Clear previous messages
+    displayMessage('');
+
     // Hash the password on the client-side for extra security
     const passwordHash = await hashPassword(password);
 
@@ -88,18 +103,19 @@ async function handleLogin(event) {
         const result = await response.json();
 
         if (result.status === 'success') {
-            console.log('Login successful!', result);
+            displayMessage('Login successful!', false);
             // Store the session token and user ID
             localStorage.setItem('tg_token', result.token);
             localStorage.setItem('tg_userId', result.userId);
             // Redirect the user to the main dashboard
-            window.location.href = '/dashboard'; // You will need to define this route
+            window.location.hash = '#dashboard';
+            window.location.reload(); // Force a full app reload to ensure proper auth guard check
         } else {
-            alert('Login failed: ' + result.message);
+            displayMessage('Login failed: ' + result.message, true);
         }
     } catch (error) {
         console.error('Network error during login:', error);
-        alert('An error occurred. Please try again.');
+        displayMessage('An error occurred. Please try again.', true);
     }
 }
 
@@ -114,6 +130,9 @@ async function handleSignup(event) {
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
     
+    // Clear previous messages
+    displayMessage('');
+
     const passwordHash = await hashPassword(password);
 
     const data = {
@@ -132,15 +151,14 @@ async function handleSignup(event) {
         const result = await response.json();
 
         if (result.status === 'success') {
-            alert('Signup successful! Please log in.');
+            displayMessage('Signup successful! Please log in.', false);
             // Optionally, switch to the login form automatically
-            document.getElementById('auth-container').innerHTML = document.getElementById('login-template').innerHTML;
-            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('show-login').click();
         } else {
-            alert('Signup failed: ' + result.message);
+            displayMessage('Signup failed: ' + result.message, true);
         }
     } catch (error) {
         console.error('Network error during signup:', error);
-        alert('An error occurred. Please try again.');
+        displayMessage('An error occurred. Please try again.', true);
     }
 }
