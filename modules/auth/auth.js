@@ -5,44 +5,52 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbw7-BoIZl2wBUcuyAvSWYni
 
 document.addEventListener('DOMContentLoaded', () => {
     const authContainer = document.querySelector('.auth-container');
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const showSignupLink = document.getElementById('show-signup');
-    const showLoginLink = document.getElementById('show-login');
+    
+    // Check and set event listeners for login, signup, and forgot password forms
+    function initAuthListeners() {
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        
+        if (loginForm) loginForm.addEventListener('submit', handleLogin);
+        if (signupForm) signupForm.addEventListener('submit', handleSignup);
+        if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', handleForgotPassword);
 
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
+        // Add event listeners for switching between forms
+        document.getElementById('show-signup')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadAuthModuleContent('signup');
+        });
+        document.getElementById('show-login')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadAuthModuleContent('login');
+        });
+        document.getElementById('show-forgot-password')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadAuthModuleContent('forgot-password');
+        });
+        document.getElementById('back-to-login')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadAuthModuleContent('login');
+        });
     }
 
-    if (signupForm) {
-        signupForm.addEventListener('submit', handleSignup);
+    // Function to load the correct auth module content
+    async function loadAuthModuleContent(page) {
+        let pageContent = '';
+        if (page === 'login') {
+            pageContent = await fetch('modules/auth/login.html').then(res => res.text());
+        } else if (page === 'signup') {
+            pageContent = await fetch('modules/auth/signup.html').then(res => res.text());
+        } else if (page === 'forgot-password') {
+            pageContent = await fetch('modules/auth/forgot-password.html').then(res => res.text());
+        }
+        authContainer.innerHTML = pageContent;
+        initAuthListeners();
     }
     
-    if (showSignupLink) {
-        showSignupLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            authContainer.innerHTML = document.getElementById('signup-template').innerHTML;
-            document.getElementById('signup-form').addEventListener('submit', handleSignup);
-            document.getElementById('show-login').addEventListener('click', (e) => {
-                e.preventDefault();
-                authContainer.innerHTML = document.getElementById('login-template').innerHTML;
-                document.getElementById('login-form').addEventListener('submit', handleLogin);
-            });
-        });
-    }
-
-    if (showLoginLink) {
-        showLoginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            authContainer.innerHTML = document.getElementById('login-template').innerHTML;
-            document.getElementById('login-form').addEventListener('submit', handleLogin);
-            document.getElementById('show-signup').addEventListener('click', (e) => {
-                e.preventDefault();
-                authContainer.innerHTML = document.getElementById('signup-template').innerHTML;
-                document.getElementById('signup-form').addEventListener('submit', handleSignup);
-            });
-        });
-    }
+    // Initial call to set up the listeners on page load
+    initAuthListeners();
 });
 
 /**
@@ -159,6 +167,40 @@ async function handleSignup(event) {
         }
     } catch (error) {
         console.error('Network error during signup:', error);
+        displayMessage('An error occurred. Please try again.', true);
+    }
+}
+
+/**
+ * Handles the forgot password form submission.
+ * @param {Event} event - The form submission event.
+ */
+async function handleForgotPassword(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('forgot-email').value;
+    displayMessage(''); // Clear previous messages
+
+    const data = {
+        action: 'forgot-password',
+        email
+    };
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            displayMessage('If an account with that email exists, a password reset link has been sent.', false);
+        } else {
+            displayMessage(result.message, true);
+        }
+    } catch (error) {
+        console.error('Network error during forgot password request:', error);
         displayMessage('An error occurred. Please try again.', true);
     }
 }
