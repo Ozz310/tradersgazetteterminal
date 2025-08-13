@@ -1,9 +1,27 @@
 // /modules/auth/auth.js
+
 // Replace with your deployed Apps Script Web App URL
 const API_URL = 'https://script.google.com/macros/s/AKfycbw2FyGHtmlIVJ9blfA67uNdHj-pIRqeic3DRbDH3NyUv7rgZ_w3aQ3umJSTUwV5h0k5/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
     const authContainer = document.querySelector('.auth-container');
+    
+    // Check for password reset action in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const resetToken = urlParams.get('token');
+
+    if (action === 'reset-password' && resetToken) {
+        // Load the password reset form if a token is present
+        loadAuthModuleContent('reset-password');
+        document.getElementById('reset-password-form').addEventListener('submit', (e) => {
+            handleResetPassword(e, resetToken);
+        });
+    } else {
+        // Otherwise, load the default auth page
+        loadAuthModuleContent('login');
+        initAuthListeners();
+    }
     
     // Check and set event listeners for login, signup, and forgot password forms
     function initAuthListeners() {
@@ -43,13 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
             pageContent = await fetch('modules/auth/signup.html').then(res => res.text());
         } else if (page === 'forgot-password') {
             pageContent = await fetch('modules/auth/forgot-password.html').then(res => res.text());
+        } else if (page === 'reset-password') {
+             pageContent = await fetch('modules/auth/reset-password.html').then(res => res.text());
         }
         authContainer.innerHTML = pageContent;
-        initAuthListeners();
+        if(page !== 'reset-password') {
+            initAuthListeners();
+        }
     }
-    
-    // Initial call to set up the listeners on page load
-    initAuthListeners();
 });
 
 /**
@@ -200,6 +219,57 @@ async function handleForgotPassword(event) {
         }
     } catch (error) {
         console.error('Network error during forgot password request:', error);
+        displayMessage('An error occurred. Please try again.', true);
+    }
+}
+
+/**
+ * Handles the new password form submission.
+ * @param {Event} event - The form submission event.
+ * @param {string} resetToken - The password reset token from the URL.
+ */
+async function handleResetPassword(event, resetToken) {
+    event.preventDefault();
+    displayMessage('');
+
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (newPassword !== confirmPassword) {
+        return displayMessage('Passwords do not match.', true);
+    }
+
+    if (newPassword.length < 6) {
+        return displayMessage('Password must be at least 6 characters long.', true);
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+
+    const data = {
+        action: 'reset-password',
+        resetToken,
+        passwordHash
+    };
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            displayMessage('Password reset successfully! You can now log in.', false);
+            // Redirect to the login page after a successful reset
+            setTimeout(() => {
+                window.location.href = window.location.origin + window.location.pathname;
+            }, 3000);
+        } else {
+            displayMessage(result.message, true);
+        }
+    } catch (error) {
+        console.error('Network error during password reset:', error);
         displayMessage('An error occurred. Please try again.', true);
     }
 }
