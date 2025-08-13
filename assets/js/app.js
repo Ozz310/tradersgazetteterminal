@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function isAuthenticated() {
         const token = localStorage.getItem('tg_token');
-        // A simple check for token existence. We can add API validation later.
         return !!token;
     }
 
@@ -76,96 +75,73 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to load a module dynamically
     async function loadModule(moduleName) {
         // --- AUTH GUARD LOGIC ---
-        // Block access to all modules except 'auth' if the user is not logged in
         if (moduleName !== 'auth' && !isAuthenticated()) {
             window.location.hash = '#auth';
             return loadModule('auth');
         }
-        // If the user is logged in and tries to go to 'auth', redirect to dashboard
         if (moduleName === 'auth' && isAuthenticated()) {
             window.location.hash = '#dashboard';
             return loadModule('dashboard');
         }
         // --- END AUTH GUARD ---
 
-        // Clear previous module content
         moduleContainer.innerHTML = '';
         
-        const modulePath = `modules/${moduleName}/index.html`;
-        const moduleScriptPath = `modules/${moduleName}/script.js`;
+        const moduleScriptPath = `modules/${moduleName}/auth.js`;
         const moduleStylePath = `modules/${moduleName}/style.css`;
+        
+        // Remove existing module-specific CSS
+        document.querySelectorAll('link[data-module-css]').forEach(link => link.remove());
 
         try {
-            // Load module-specific CSS (for modules that need it)
-            if (moduleName === 'auth' || moduleName === 'risk-management-hub' || moduleName === 'news-aggregator' || moduleName === 'cfd-brokers' || moduleName === 'analysis-hub' || moduleName === 'contact-us' || moduleName === 'trading-ebooks' || moduleName === 'trading-journal') {
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = moduleStylePath;
-                document.head.appendChild(link);
-            }
+            // Load module-specific CSS
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = moduleStylePath;
+            link.setAttribute('data-module-css', moduleName);
+            document.head.appendChild(link);
             
-            // Load module HTML
-            const response = await fetch(modulePath);
-            if (!response.ok) {
-                throw new Error(`Failed to load module: ${modulePath}`);
-            }
-            const html = await response.text();
-            
-            // For the auth module, we need to handle its different pages (login/signup)
+            // Handle the auth module separately due to its multiple pages
             if (moduleName === 'auth') {
                 const loginHtml = await fetch('modules/auth/login.html').then(res => res.text());
                 const signupHtml = await fetch('modules/auth/signup.html').then(res => res.text());
-                moduleContainer.innerHTML = `
-                    <div id="auth-container" class="auth-container">
-                        ${loginHtml}
-                    </div>
+                const forgotPasswordHtml = await fetch('modules/auth/forgot-password.html').then(res => res.text());
+                const resetPasswordHtml = await fetch('modules/auth/reset-password.html').then(res => res.text());
+
+                // Store all auth pages in templates for dynamic switching
+                const templates = document.createElement('div');
+                templates.innerHTML = `
                     <template id="login-template">${loginHtml}</template>
                     <template id="signup-template">${signupHtml}</template>
+                    <template id="forgot-password-template">${forgotPasswordHtml}</template>
+                    <template id="reset-password-template">${resetPasswordHtml}</template>
                 `;
-                loadScript('modules/auth/auth.js');
+                moduleContainer.appendChild(templates);
+                
+                // Now load the script that will manage these templates
+                loadScript(moduleScriptPath);
             } else {
+                // For all other modules, load their single index.html
+                const modulePath = `modules/${moduleName}/index.html`;
+                const response = await fetch(modulePath);
+                if (!response.ok) {
+                    throw new Error(`Failed to load module: ${modulePath}`);
+                }
+                const html = await response.text();
                 moduleContainer.innerHTML = html;
-            }
-
-            // Call module-specific initialization functions
-            if (moduleName === 'dashboard') {
-                initializeDashboardClock();
-            } else if (moduleName === 'risk-management-hub') {
-                loadScript(moduleScriptPath, () => {
-                    if (typeof initRiskManagementHub === 'function') {
-                        initRiskManagementHub();
-                    } else {
-                        console.error('initRiskManagementHub function not found in loaded script.');
-                    }
-                });
-            } else if (moduleName === 'news-aggregator') {
-                loadScript(moduleScriptPath, () => {
-                    if (typeof initNewsAggregator === 'function') {
-                        initNewsAggregator();
-                    } else {
-                        console.error('initNewsAggregator function not found in loaded script.');
-                    }
-                });
-            } else if (moduleName === 'analysis-hub') {
-                // The Analysis Hub has no script, so we don't need a loadScript call
-            } else if (moduleName === 'contact-us') {
-                // The Contact Us module has no script, so we don't need a loadScript call
-            } else if (moduleName === 'trading-ebooks') {
-                loadScript(moduleScriptPath, () => {
-                    if (typeof initEbooks === 'function') {
-                        initEbooks();
-                    } else {
-                        console.error('initEbooks function not found in loaded script.');
-                    }
-                });
-            } else if (moduleName === 'trading-journal') {
-                loadScript(moduleScriptPath, () => {
-                    if (typeof initJournal === 'function') {
-                        initJournal();
-                    } else {
-                        console.error('initJournal function not found in loaded script.');
-                    }
-                });
+                
+                // Call module-specific initialization functions (if needed)
+                if (moduleName === 'dashboard') {
+                    initializeDashboardClock();
+                } else if (moduleName === 'risk-management-hub') {
+                    loadScript(`modules/risk-management-hub/script.js`, () => { if (typeof initRiskManagementHub === 'function') initRiskManagementHub(); });
+                } else if (moduleName === 'news-aggregator') {
+                    loadScript(`modules/news-aggregator/script.js`, () => { if (typeof initNewsAggregator === 'function') initNewsAggregator(); });
+                } else if (moduleName === 'trading-ebooks') {
+                    loadScript(`modules/trading-ebooks/script.js`, () => { if (typeof initEbooks === 'function') initEbooks(); });
+                } else if (moduleName === 'trading-journal') {
+                    loadScript(`modules/trading-journal/script.js`, () => { if (typeof initJournal === 'function') initJournal(); });
+                }
             }
 
             console.log(`Module loaded: ${moduleName}`);
@@ -182,14 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const moduleName = e.currentTarget.getAttribute('data-module');
 
-            // Remove active class from all items
             navItems.forEach(nav => nav.classList.remove('active'));
-            // Add active class to the clicked item
             e.currentTarget.classList.add('active');
 
             loadModule(moduleName);
 
-            // Close sidebar on mobile
             if (sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
                 mobileOverlay.classList.remove('visible');
@@ -208,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileOverlay.classList.remove('visible');
     });
 
-    // Listen for the logout button click
     if (logoutButton) {
         logoutButton.addEventListener('click', logout);
     }
