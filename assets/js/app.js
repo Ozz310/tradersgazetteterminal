@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const mobileOverlay = document.getElementById('mobile-overlay');
     const logoutButton = document.getElementById('logout-button');
+    let loadedScripts = {};
 
     // Function to initialize the dashboard clock
     function initializeDashboardClock() {
@@ -45,11 +46,18 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(updateClock, 1000);
     }
     
-    // A universal way to load a script dynamically
+    // A universal way to load a script dynamically, ensuring it's only loaded once
     function loadScript(url, callback) {
+        if (loadedScripts[url]) {
+            if (callback) callback();
+            return;
+        }
         const script = document.createElement('script');
         script.src = url;
-        script.onload = callback;
+        script.onload = () => {
+            loadedScripts[url] = true;
+            if (callback) callback();
+        };
         document.body.appendChild(script);
     }
 
@@ -87,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         moduleContainer.innerHTML = '';
         
-        const moduleScriptPath = `modules/${moduleName}/auth.js`;
         const moduleStylePath = `modules/${moduleName}/style.css`;
+        const moduleScriptPath = `modules/${moduleName}/auth.js`;
         
         // Remove existing module-specific CSS
         document.querySelectorAll('link[data-module-css]').forEach(link => link.remove());
@@ -100,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.href = moduleStylePath;
             link.setAttribute('data-module-css', moduleName);
             document.head.appendChild(link);
-            
+
             // Handle the auth module separately due to its multiple pages
             if (moduleName === 'auth') {
                 const loginHtml = await fetch('modules/auth/login.html').then(res => res.text());
