@@ -204,6 +204,6 @@ body.auth-active .mobile-nav-toggle {
 }
 
 /* Hide sticky notes button on auth pages */
-body.auth-active .sticky-notes-toggle {
+body.auth-active .sticky-notes-toggle-btn {
     display: none;
 }
