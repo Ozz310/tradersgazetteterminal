@@ -77,26 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
         window.location.hash = '#auth';
-        loadModule('auth');
     }
 
-    // Function to load a module dynamically
+    // Function to load a module dynamically based on the URL hash
     async function loadModule(moduleName) {
-        // --- AUTH GUARD LOGIC ---
-        if (moduleName !== 'auth' && !isAuthenticated()) {
-            window.location.hash = '#auth';
-            return loadModule('auth');
-        }
-        if (moduleName === 'auth' && isAuthenticated()) {
-            window.location.hash = '#dashboard';
-            return loadModule('dashboard');
-        }
-        // --- END AUTH GUARD ---
-
         moduleContainer.innerHTML = '';
         
         const moduleStylePath = `modules/${moduleName}/${moduleName === 'auth' ? 'auth.css' : 'style.css'}`;
-        const moduleScriptPath = `modules/${moduleName}/auth.js`;
         
         // Remove existing module-specific CSS
         document.querySelectorAll('link[data-module-css]').forEach(link => link.remove());
@@ -126,8 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 moduleContainer.appendChild(templates);
                 
-                // Now load the script that will manage these templates
-                loadScript(moduleScriptPath);
+                // Now load the script that will manage these templates and call the init function
+                loadScript(`modules/auth/auth.js`, () => {
+                    if (typeof initAuthModule === 'function') {
+                        initAuthModule();
+                    }
+                });
             } else {
                 // For all other modules, load their single index.html
                 const modulePath = `modules/${moduleName}/index.html`;
@@ -159,22 +150,34 @@ document.addEventListener('DOMContentLoaded', () => {
             moduleContainer.innerHTML = `<div class="error-message">Failed to load ${moduleName} module.</div>`;
         }
     }
+
+    // --- NEW ROUTER LOGIC ---
+    function router() {
+        const hash = window.location.hash.substring(1) || 'dashboard';
+        const moduleName = hash.split('?')[0];
+
+        // Auth guard logic moved here
+        if (moduleName !== 'auth' && !isAuthenticated()) {
+            window.location.hash = '#auth';
+            return; // Exit to let the hash change trigger the next load
+        }
+        
+        // This ensures the sidebar highlights the correct item
+        navItems.forEach(item => item.classList.remove('active'));
+        const activeNav = document.querySelector(`.nav-item[data-module="${moduleName}"]`);
+        if (activeNav) {
+            activeNav.classList.add('active');
+        }
+
+        loadModule(moduleName);
+    }
     
     // Add event listeners for navigation
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const moduleName = e.currentTarget.getAttribute('data-module');
-
-            navItems.forEach(nav => nav.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-
-            loadModule(moduleName);
-
-            if (sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-                mobileOverlay.classList.remove('visible');
-            }
+            window.location.hash = `#${moduleName}`;
         });
     });
 
@@ -193,10 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutButton.addEventListener('click', logout);
     }
     
-    // Initial load: check auth status and load the appropriate module
-    if (isAuthenticated()) {
-        loadModule('dashboard');
-    } else {
-        loadModule('auth');
-    }
+    // Listen for hash changes and call the router
+    window.addEventListener('hashchange', router);
+    
+    // Initial load based on current hash
+    router();
 });
