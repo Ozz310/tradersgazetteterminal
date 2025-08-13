@@ -16,6 +16,27 @@ function initAuthModule(moduleContainer) {
         window.history.replaceState({}, document.title, window.location.pathname);
     }
     
+    // Function to load the correct auth module content from the templates
+    const loadAuthModuleContent = (page, container, token = null) => {
+        const template = document.getElementById(`${page}-template`);
+        if (template) {
+            container.innerHTML = template.innerHTML;
+        }
+        
+        // After loading the content, set up the listeners for forms
+        if (page === 'login') {
+            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+        } else if (page === 'signup') {
+            document.getElementById('signup-form')?.addEventListener('submit', handleSignup);
+        } else if (page === 'forgot-password') {
+            document.getElementById('forgot-password-form')?.addEventListener('submit', handleForgotPassword);
+        } else if (page === 'reset-password') {
+            document.getElementById('reset-password-form')?.addEventListener('submit', (e) => {
+                handleResetPassword(e, token);
+            });
+        }
+    };
+
     if (action === 'reset-password' && resetToken) {
         // Load the password reset form if a token is present
         loadAuthModuleContent('reset-password', moduleContainer, resetToken);
@@ -24,7 +45,7 @@ function initAuthModule(moduleContainer) {
         loadAuthModuleContent('login', moduleContainer);
     }
     
-    // Use event delegation on the main container for all clicks
+    // Use event delegation on the main container
     moduleContainer.addEventListener('click', (e) => {
         // Stop the default action of any link click immediately
         if (e.target.closest('a')) {
@@ -44,27 +65,6 @@ function initAuthModule(moduleContainer) {
             loadAuthModuleContent('login', moduleContainer);
         }
     });
-
-    // Function to load the correct auth module content from the templates
-    function loadAuthModuleContent(page, container, resetToken = null) {
-        const template = document.getElementById(`${page}-template`);
-        if (template) {
-            container.innerHTML = template.innerHTML;
-        }
-        
-        // After loading the content, set up the listeners for forms
-        if (page === 'login') {
-            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
-        } else if (page === 'signup') {
-            document.getElementById('signup-form')?.addEventListener('submit', handleSignup);
-        } else if (page === 'forgot-password') {
-            document.getElementById('forgot-password-form')?.addEventListener('submit', handleForgotPassword);
-        } else if (page === 'reset-password') {
-            document.getElementById('reset-password-form')?.addEventListener('submit', (e) => {
-                handleResetPassword(e, resetToken);
-            });
-        }
-    }
 }
 
 /**
