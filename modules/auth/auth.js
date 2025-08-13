@@ -3,9 +3,8 @@
 // Replace with your deployed Apps Script Web App URL
 const API_URL = 'https://script.google.com/macros/s/AKfycbyA0sDfJdyPdUAHr0Rwdq9UjnqFDWR6_5S9bEOpaz7VJGFdeOVTbvUo62Jrg7cl-8KK/exec';
 
-// This function is now called directly from app.js
-function initAuthModule() {
-    const authContainer = document.querySelector('.auth-container');
+// This function is now called directly from app.js and receives the container element
+function initAuthModule(moduleContainer) {
     
     // Check for password reset action in URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -19,10 +18,10 @@ function initAuthModule() {
     
     if (action === 'reset-password' && resetToken) {
         // Load the password reset form if a token is present
-        loadAuthModuleContent('reset-password', resetToken);
+        loadAuthModuleContent('reset-password', moduleContainer, resetToken);
     } else {
         // Otherwise, load the default auth page
-        loadAuthModuleContent('login');
+        loadAuthModuleContent('login', moduleContainer);
     }
     
     // Check and set event listeners for login, signup, and forgot password forms
@@ -38,27 +37,27 @@ function initAuthModule() {
         // Add event listeners for switching between forms
         document.getElementById('show-signup')?.addEventListener('click', (e) => {
             e.preventDefault();
-            loadAuthModuleContent('signup');
+            loadAuthModuleContent('signup', moduleContainer);
         });
         document.getElementById('show-login')?.addEventListener('click', (e) => {
             e.preventDefault();
-            loadAuthModuleContent('login');
+            loadAuthModuleContent('login', moduleContainer);
         });
         document.getElementById('show-forgot-password')?.addEventListener('click', (e) => {
             e.preventDefault();
-            loadAuthModuleContent('forgot-password');
+            loadAuthModuleContent('forgot-password', moduleContainer);
         });
         document.getElementById('back-to-login')?.addEventListener('click', (e) => {
             e.preventDefault();
-            loadAuthModuleContent('login');
+            loadAuthModuleContent('login', moduleContainer);
         });
     }
 
     // Function to load the correct auth module content from the templates
-    function loadAuthModuleContent(page, resetToken = null) {
+    function loadAuthModuleContent(page, container, resetToken = null) {
         const template = document.getElementById(`${page}-template`);
         if (template) {
-            authContainer.innerHTML = template.innerHTML;
+            container.innerHTML = template.innerHTML;
         }
         
         // After loading the content, set up the listeners
