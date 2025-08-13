@@ -209,4 +209,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial load based on current hash
     router();
 });
-
