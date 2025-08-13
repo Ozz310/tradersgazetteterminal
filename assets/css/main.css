@@ -197,14 +197,13 @@ body {
     }
 }
 
-/* Hide sidebar when auth is active */
+/* Hide sidebar and mobile nav toggle when auth is active */
 body.auth-active .sidebar,
 body.auth-active .mobile-nav-toggle {
     display: none;
 }
 
 /* Hide sticky notes button on auth pages */
-body.auth-active #sticky-notes-toggle {
+body.auth-active .sticky-notes-toggle {
     display: none;
 }
-
