@@ -1,7 +1,6 @@
 // /modules/auth/auth.js
-
 // Replace with your deployed Apps Script Web App URL
-const API_URL = 'https://script.google.com/macros/s/AKfycbw2FyGHtmlIVJ9blfA67uNdHj-pIRqeic3DRbDH3NyUv7rgZ_w3aQ3umJSTUwV5h0k5/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyA0sDfJdyPdUAHr0Rwdq9UjnqFDWR6_5S9bEOpaz7VJGFdeOVTbvUo62Jrg7cl-8KK/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
     const authContainer = document.querySelector('.auth-container');
