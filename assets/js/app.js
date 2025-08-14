@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const moduleContainer = document.getElementById('module-container');
     
-    // Corrected: Use a standard Map instead of WeakMap
     const loadedModules = new Map();
 
     // Attach event listeners for sidebar navigation
@@ -19,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Check if the user is authenticated
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
         return !!token;
@@ -29,13 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const hash = window.location.hash || '#auth';
         const moduleName = hash.substring(1) || 'auth';
         
-        // Hide dashboard elements if not authenticated and not on the auth page
         if (moduleName !== 'auth' && !isAuthenticated()) {
             window.location.hash = '#auth';
             return;
         }
 
-        // --- UPDATED LOGIC FOR HIDING/SHOWING COMPONENTS ---
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
         
@@ -52,11 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 stickyNotesToggleBtn.style.display = 'none';
             }
         }
-        // --- END OF UPDATED LOGIC ---
 
         await loadModule(moduleName);
         
-        // Update active class for sidebar links
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -66,9 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // Asynchronously loads a module's HTML and associated JavaScript
+    // Function to dynamically load a module's CSS file
+    const loadModuleCSS = (moduleName) => {
+        const existingLink = document.querySelector(`link[href="assets/css/${moduleName}.css"]`);
+        if (existingLink) return;
+
+        const newLink = document.createElement('link');
+        newLink.rel = 'stylesheet';
+        newLink.href = `assets/css/${moduleName}.css`;
+        document.head.appendChild(newLink);
+    };
+
     const loadModule = async (moduleName) => {
         try {
+            // First, load the module's script if it hasn't been loaded yet
             if (!loadedModules.has(moduleName)) {
                 const scriptPath = `modules/${moduleName}/${moduleName}.js`;
                 const script = document.createElement('script');
@@ -85,23 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadedModules.set(moduleName, true);
             }
             
+            // Second, load the module's HTML content
+            let html;
             if (moduleName === 'auth') {
                 const response = await fetch(`modules/auth/login.html`);
-                const html = await response.text();
-                moduleContainer.innerHTML = html;
+                html = await response.text();
             } else {
                 const htmlPath = `modules/${moduleName}/index.html`;
                 const response = await fetch(htmlPath);
                 if (!response.ok) throw new Error('HTML file not found.');
-                const html = await response.text();
-                moduleContainer.innerHTML = html;
+                html = await response.text();
             }
+            moduleContainer.innerHTML = html;
 
+            // Third, apply the module's CSS
+            loadModuleCSS(moduleName);
+
+            // Finally, call the init function to run the module's logic
             if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
                 window.tg_auth.initAuthModule(moduleContainer);
-            } else if (moduleName !== 'auth') {
-                // Here is where you would call the init function for other modules
-                // Example: window.tg_dashboard.initDashboardModule(moduleContainer);
             }
             
             console.log(`Module loaded: ${moduleName}`);
