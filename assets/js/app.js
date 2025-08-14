@@ -3,8 +3,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const moduleContainer = document.getElementById('module-container');
-    let currentModule = null;
-
+    
+    // Corrected: Use a standard Map instead of WeakMap
     const loadedModules = new Map();
 
     // Attach event listeners for sidebar navigation
@@ -35,12 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Show/hide main elements based on auth state
+        // --- UPDATED LOGIC FOR HIDING/SHOWING COMPONENTS ---
+        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
+        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+        
         if (isAuthenticated()) {
             sidebar.style.display = 'flex';
+            if (stickyNotesPanel && stickyNotesToggleBtn) {
+                stickyNotesPanel.style.display = 'block';
+                stickyNotesToggleBtn.style.display = 'block';
+            }
         } else {
             sidebar.style.display = 'none';
+            if (stickyNotesPanel && stickyNotesToggleBtn) {
+                stickyNotesPanel.style.display = 'none';
+                stickyNotesToggleBtn.style.display = 'none';
+            }
         }
+        // --- END OF UPDATED LOGIC ---
 
         await loadModule(moduleName);
         
@@ -73,25 +85,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadedModules.set(moduleName, true);
             }
             
-            // --- UPDATED HTML LOADING LOGIC ---
-            // The auth module loads templates from a different file, so we need to handle that specifically
             if (moduleName === 'auth') {
                 const response = await fetch(`modules/auth/login.html`);
                 const html = await response.text();
                 moduleContainer.innerHTML = html;
             } else {
-                // For all other modules, try to load index.html
                 const htmlPath = `modules/${moduleName}/index.html`;
                 const response = await fetch(htmlPath);
                 if (!response.ok) throw new Error('HTML file not found.');
                 const html = await response.text();
                 moduleContainer.innerHTML = html;
             }
-            // --- END OF UPDATED LOGIC ---
 
-            // Call the init function for the module if it exists
             if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
                 window.tg_auth.initAuthModule(moduleContainer);
+            } else if (moduleName !== 'auth') {
+                // Here is where you would call the init function for other modules
+                // Example: window.tg_dashboard.initDashboardModule(moduleContainer);
             }
             
             console.log(`Module loaded: ${moduleName}`);
@@ -105,4 +115,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial route handling
     window.addEventListener('hashchange', router);
     router();
-});    
+});
