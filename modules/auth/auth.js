@@ -1,7 +1,7 @@
 // /modules/auth/auth.js
 
 (() => {
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyT7F7-FMLa_ZZA3JlNmnkrFkA-CW_rpXSpfUG16DY_IuwRZRbXUMKozd4NKk0XChhE/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzRtFPQ5TwEPOOpySFnu4hsv8_a6tEuXvp6heFwPNkheHEnTtXLJaGMIsq3xoRdRGTy/exec';
     
     let moduleContainer = null;
 
