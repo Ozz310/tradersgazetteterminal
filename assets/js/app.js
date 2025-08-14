@@ -62,12 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        const existingLink = document.querySelector(`link[href="assets/css/${moduleName}.css"]`);
+        const existingLink = document.querySelector(`link[href*="${moduleName}.css"]`);
         if (existingLink) return;
 
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
-        newLink.href = `assets/css/${moduleName}.css`;
+        newLink.href = `modules/${moduleName}/${moduleName}.css`; // Corrected path
         document.head.appendChild(newLink);
     };
 
@@ -123,4 +123,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('hashchange', router);
     router();
 });
-
