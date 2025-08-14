@@ -1,6 +1,7 @@
 // /modules/auth/auth.js
 
 (() => {
+    // Re-check this URL after every deployment of your Google Apps Script
     const API_URL = 'https://script.google.com/macros/s/AKfycbzRtFPQ5TwEPOOpySFnu4hsv8_a6tEuXvp6heFwPNkheHEnTtXLJaGMIsq3xoRdRGTy/exec';
     
     let moduleContainer = null;
@@ -111,7 +112,11 @@
         const data = { action: 'login', email, passwordHash };
 
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+            const response = await fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify(data), 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
+            });
             const result = await response.json();
             if (result.status === 'success') {
                 displayMessage('Login successful!', false);
@@ -138,8 +143,14 @@
         const data = { action: 'signup', name, email, passwordHash };
 
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            });
+            
             const result = await response.json();
+            
             if (result.status === 'success') {
                 displayMessage('Signup successful! Please log in.', false);
                 loadAuthPage('login', moduleContainer);
@@ -159,7 +170,11 @@
         const data = { action: 'forgot-password', email };
 
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            });
             const result = await response.json();
             if (result.status === 'success') {
                 displayMessage('If an account with that email exists, a password reset link has been sent.', false);
@@ -185,7 +200,11 @@
         const data = { action: 'reset-password', resetToken, passwordHash };
 
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            });
             const result = await response.json();
             if (result.status === 'success') {
                 displayMessage('Password reset successfully! You can now log in.', false);
