@@ -1,8 +1,7 @@
 // /modules/auth/auth.js
 
 (() => {
-    // Re-check this URL after every deployment of your Google Apps Script
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzRtFPQ5TwEPOOpySFnu4hsv8_a6tEuXvp6heFwPNkheHEnTtXLJaGMIsq3xoRdRGTy/exec';
+    const API_URL = 'https://users-worker.mohammadosama310.workers.dev/';
     
     let moduleContainer = null;
 
@@ -115,7 +114,7 @@
             const response = await fetch(API_URL, { 
                 method: 'POST', 
                 body: JSON.stringify(data), 
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
+                headers: { 'Content-Type': 'application/json' } 
             });
             const result = await response.json();
             if (result.status === 'success') {
@@ -146,7 +145,7 @@
             const response = await fetch(API_URL, {
                 method: 'POST',
                 body: JSON.stringify(data),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                headers: { 'Content-Type': 'application/json' }
             });
             
             const result = await response.json();
@@ -173,7 +172,7 @@
             const response = await fetch(API_URL, {
                 method: 'POST',
                 body: JSON.stringify(data),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
             if (result.status === 'success') {
@@ -203,7 +202,7 @@
             const response = await fetch(API_URL, {
                 method: 'POST',
                 body: JSON.stringify(data),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
             if (result.status === 'success') {
