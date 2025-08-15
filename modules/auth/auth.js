@@ -2,26 +2,15 @@
 
 (() => {
     const API_URL = 'https://users-worker.mohammadosama310.workers.dev/';
-    
     let moduleContainer = null;
 
-    /**
-     * Dynamically fetches and loads an HTML file into the container.
-     * It also attaches form submit handlers after loading.
-     * @param {string} page - The name of the HTML file (e.g., 'login', 'signup').
-     * @param {HTMLElement} container - The main module container element.
-     * @param {string} [resetToken=null] - The password reset token.
-     */
     const loadAuthPage = async (page, container, resetToken = null) => {
         try {
             const response = await fetch(`modules/auth/${page}.html`);
-            if (!response.ok) {
-                throw new Error(`Failed to load auth page: ${page}.html`);
-            }
+            if (!response.ok) { throw new Error(`Failed to load auth page: ${page}.html`); }
             const html = await response.text();
             container.innerHTML = html;
 
-            // After loading the content, set up the listeners for forms
             if (page === 'login') {
                 document.getElementById('login-form')?.addEventListener('submit', handleLogin);
             } else if (page === 'signup') {
@@ -33,7 +22,6 @@
                     handleResetPassword(e, resetToken);
                 });
             }
-
         } catch (error) {
             console.error(error);
             container.innerHTML = `<div class="error-message">Error loading page.</div>`;
@@ -42,12 +30,9 @@
 
     const initAuthModule = (container) => {
         moduleContainer = container;
-
-        // Attach event listener directly to the container for delegation
         moduleContainer.addEventListener('click', (e) => {
             const target = e.target.closest('a');
             if (!target) return;
-            
             e.preventDefault();
 
             switch (target.id) {
@@ -78,13 +63,9 @@
         
         if (action === 'reset-password' && resetToken) {
             loadAuthPage('reset-password', moduleContainer, resetToken);
-        } else {
-            // This is now redundant because app.js already loads login.html,
-            // but we keep it as a fallback.
-            // The main click handler will now handle navigation between pages.
         }
     };
-    
+
     function displayMessage(message, isError = false) {
         const messageArea = document.getElementById('message-area');
         if (messageArea) {
@@ -92,7 +73,7 @@
             messageArea.style.color = isError ? '#ff4d4d' : '#ffd700';
         }
     }
-    
+
     async function hashPassword(password) {
         const encoder = new TextEncoder();
         const data = encoder.encode(password);
@@ -101,7 +82,7 @@
         const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
         return hashHex;
     }
-    
+
     async function handleLogin(event) {
         event.preventDefault();
         const email = document.getElementById('login-email').value;
@@ -131,7 +112,7 @@
             displayMessage('An error occurred. Please try again.', true);
         }
     }
-    
+
     async function handleSignup(event) {
         event.preventDefault();
         const name = document.getElementById('signup-name').value;
