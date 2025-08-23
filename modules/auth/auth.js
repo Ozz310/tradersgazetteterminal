@@ -12,7 +12,6 @@
             container.innerHTML = html;
 
             if (page === 'login') {
-                // Ensure the form element exists before adding the event listener
                 const loginForm = document.getElementById('login-form');
                 if (loginForm) {
                     loginForm.addEventListener('submit', handleLogin);
@@ -78,12 +77,9 @@
         const action = urlParams.get('action');
         const resetToken = urlParams.get('token');
         
-        // This is the main fix!
-        // We need to either load the login page by default or based on a condition.
         if (action === 'reset-password' && resetToken) {
             loadAuthPage('reset-password', moduleContainer, resetToken);
         } else {
-            // Load the login page by default if no other action is specified.
             loadAuthPage('login', moduleContainer);
         }
 
@@ -91,9 +87,6 @@
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     };
-
-    // ... (rest of the functions: displayMessage, hashPassword, handleLogin, etc.) ...
-    // The rest of your code is correct, so no need to change it.
 
     function displayMessage(message, isError = false) {
         const messageArea = document.getElementById('message-area');
@@ -131,8 +124,10 @@
                 displayMessage('Login successful!', false);
                 localStorage.setItem('tg_token', result.token);
                 localStorage.setItem('tg_userId', result.userId);
+                
+                // FIX APPLIED: Removed window.location.reload()
                 window.location.hash = '#dashboard';
-                window.location.reload();
+
             } else {
                 displayMessage('Login failed: ' + result.message, true);
             }
