@@ -65,9 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        // Corrected path to load the style.css file from the specific module folder
         const cssPath = `modules/${moduleName}/style.css`;
-        const existingLink = document.querySelector(`link[href*="${cssPath}"]`);
+        const existingLink = document.querySelector(`link[href="${cssPath}"]`);
         if (existingLink) return;
 
         const newLink = document.createElement('link');
