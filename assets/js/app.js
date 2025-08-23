@@ -1,4 +1,3 @@
-
 // /assets/js/app.js
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -117,7 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('HTML file not found.');
                 html = await response.text();
             }
-            moduleContainer.innerHTML = html;
+            
+            // Clean up the fetched HTML before injecting it
+            const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
+            moduleContainer.innerHTML = cleanedHtml;
 
             // Apply the module's CSS
             loadModuleCSS(moduleName);
