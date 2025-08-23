@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
-        newLink.href = `modules/${moduleName}/${moduleName}.css`;
+        newLink.href = `modules/${moduleName}/style.css`; // CORRECTED PATH
         document.head.appendChild(newLink);
     };
 
