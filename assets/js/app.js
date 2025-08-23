@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const moduleName = navItem.dataset.module;
             if (moduleName) {
+                if (moduleName === 'logout') {
+                    handleLogout();
+                    return;
+                }
                 window.location.hash = '#' + moduleName;
             }
         }
@@ -67,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
-        newLink.href = `modules/${moduleName}/${moduleName}.css`; // Corrected path
+        newLink.href = `modules/${moduleName}/${moduleName}.css`;
         document.head.appendChild(newLink);
     };
 
@@ -83,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     script.onload = resolve;
                     script.onerror = () => {
                         console.error(`Failed to load script for module: ${moduleName}`);
-                        reject();
+                        reject(new Error('Script load error'));
                     };
                     document.head.appendChild(script);
                 });
@@ -107,8 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
             loadModuleCSS(moduleName);
 
             // Finally, call the init function to run the module's logic
+            // This is updated to call the correct init function for each module
             if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
                 window.tg_auth.initAuthModule(moduleContainer);
+            } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
+                window.tg_dashboard.initDashboard();
             }
             
             console.log(`Module loaded: ${moduleName}`);
@@ -118,6 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
             moduleContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
         }
     };
+
+    // Logout function
+    function handleLogout() {
+        localStorage.removeItem('tg_token');
+        localStorage.removeItem('tg_userId');
+        window.location.hash = '#auth';
+        window.location.reload();
+    }
 
     // Initial route handling
     window.addEventListener('hashchange', router);
