@@ -63,9 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Function to dynamically load a module's CSS file
+    // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        const cssPath = `modules/${moduleName}/style.css`;
+        // Construct the path relative to the root of your project
+        const cssPath = `/tradersgazetteterminal/modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
         if (existingLink) return;
 
@@ -82,11 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 let scriptPath;
                 
                 if (moduleName === 'auth') {
-                    scriptPath = `modules/auth/auth.js`;
+                    scriptPath = `/tradersgazetteterminal/modules/auth/auth.js`;
                 } else if (moduleName === 'dashboard') {
-                    scriptPath = `modules/dashboard/dashboard.js`;
+                    scriptPath = `/tradersgazetteterminal/modules/dashboard/dashboard.js`;
                 } else {
-                    scriptPath = `modules/${moduleName}/script.js`;
+                    scriptPath = `/tradersgazetteterminal/modules/${moduleName}/script.js`;
                 }
                 
                 const script = document.createElement('script');
@@ -107,10 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Load the module's HTML content
             let html;
             if (moduleName === 'auth') {
-                const response = await fetch(`modules/auth/login.html`);
+                const response = await fetch(`/tradersgazetteterminal/modules/auth/login.html`);
                 html = await response.text();
             } else {
-                const htmlPath = `modules/${moduleName}/index.html`;
+                const htmlPath = `/tradersgazetteterminal/modules/${moduleName}/index.html`;
                 const response = await fetch(htmlPath);
                 if (!response.ok) throw new Error('HTML file not found.');
                 html = await response.text();
