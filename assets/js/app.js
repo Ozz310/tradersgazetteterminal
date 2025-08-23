@@ -110,6 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (moduleName === 'auth') {
                 const response = await fetch(`/tradersgazetteterminal/modules/auth/login.html`);
                 html = await response.text();
+            } else if (moduleName === 'dashboard') {
+                const response = await fetch(`/tradersgazetteterminal/modules/dashboard/dashboard-content.html`);
+                if (!response.ok) throw new Error('Dashboard content file not found.');
+                html = await response.text();
             } else {
                 const htmlPath = `/tradersgazetteterminal/modules/${moduleName}/index.html`;
                 const response = await fetch(htmlPath);
