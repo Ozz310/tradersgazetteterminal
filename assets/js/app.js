@@ -65,24 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        // Skip loading CSS for the dashboard since styles are embedded
-        if (moduleName === 'dashboard') {
-            return;
-        }
-        
-        const existingLink = document.querySelector(`link[href*="modules/${moduleName}/"]`);
+        // Corrected path to load the style.css file from the specific module folder
+        const cssPath = `modules/${moduleName}/style.css`;
+        const existingLink = document.querySelector(`link[href*="${cssPath}"]`);
         if (existingLink) return;
 
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
-        let cssPath;
-
-        if (moduleName === 'auth') {
-            cssPath = `modules/auth/style.css`;
-        } else {
-            cssPath = `modules/${moduleName}/style.css`;
-        }
-        
         newLink.href = cssPath;
         document.head.appendChild(newLink);
     };
