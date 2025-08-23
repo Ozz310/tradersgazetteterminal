@@ -62,23 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
             activeNavItem.classList.add('active');
         }
     };
-
-    // Corrected function to dynamically load a module's CSS file
+    
     const loadModuleCSS = (moduleName) => {
-        // Construct the path relative to the root of your project
-        const cssPath = `modules/${moduleName}/style.css`;
-        const existingLink = document.querySelector(`link[href="${cssPath}"]`);
-        if (existingLink) return;
+        // Remove old module-specific CSS first
+        const oldLink = document.querySelector('link[data-module-css]');
+        if (oldLink) {
+            oldLink.remove();
+        }
 
+        // Add new module-specific CSS
+        const cssPath = `modules/${moduleName}/style.css`;
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
         newLink.href = cssPath;
+        newLink.setAttribute('data-module-css', moduleName);
         document.head.appendChild(newLink);
     };
 
     const loadModule = async (moduleName) => {
         try {
-            // Load the module's script if it hasn't been loaded yet
             if (!loadedModules.has(moduleName)) {
                 let scriptPath;
                 
@@ -105,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadedModules.set(moduleName, true);
             }
 
-            // Load the module's HTML content
             let html;
             if (moduleName === 'auth') {
                 const response = await fetch(`modules/auth/login.html`);
@@ -121,14 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 html = await response.text();
             }
             
-            // Clean up the fetched HTML before injecting it
             const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
             moduleContainer.innerHTML = cleanedHtml;
 
-            // Apply the module's CSS
             loadModuleCSS(moduleName);
 
-            // Call the init function to run the module's logic
             if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
                 window.tg_auth.initAuthModule(moduleContainer);
             } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
@@ -145,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Logout function
     function handleLogout() {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
@@ -153,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     }
 
-    // Initial route handling
     window.addEventListener('hashchange', router);
     router();
 });
