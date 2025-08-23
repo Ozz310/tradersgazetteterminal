@@ -1,28 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Traders Gazette - Terminal</title>
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;700&display=swap">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/sticky-notes.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-</head>
-<body>
-    <div class="terminal-container">
-        <aside id="sidebar" class="sidebar"></aside>
-        <div id="module-container" class="module-container"></div>
+<div class="dashboard-page">
+    <div class="dashboard-cover-photo" style="background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_lpa2swlpa2swlpa2.png?raw=true');"></div>
+    <div class="dashboard-widgets-grid">
+        <div class="widget-card widget-main-info">
+            <h2 class="widget-title">Dashboard</h2>
+            <div class="live-clock-container">
+                <div class="analog-clock">
+                    <div class="analog-dial">
+                        <div class="tick-marks">
+                            <span class="tick" style="transform: rotate(30deg);"></span>
+                            <span class="tick" style="transform: rotate(60deg);"></span>
+                            <span class="tick" style="transform: rotate(90deg);"></span>
+                            <span class="tick" style="transform: rotate(120deg);"></span>
+                            <span class="tick" style="transform: rotate(150deg);"></span>
+                            <span class="tick" style="transform: rotate(180deg);"></span>
+                            <span class="tick" style="transform: rotate(210deg);"></span>
+                            <span class="tick" style="transform: rotate(240deg);"></span>
+                            <span class="tick" style="transform: rotate(270deg);"></span>
+                            <span class="tick" style="transform: rotate(300deg);"></span>
+                            <span class="tick" style="transform: rotate(330deg);"></span>
+                            <span class="tick" style="transform: rotate(360deg);"></span>
+                        </div>
+                        <div class="analog-hand hour-hand" id="hourHand"></div>
+                        <div class="analog-hand minute-hand" id="minuteHand"></div>
+                        <div class="analog-hand second-hand" id="secondHand"></div>
+                        <div class="analog-center"></div>
+                    </div>
+                </div>
+                <div id="digital-display" class="digital-display">
+                    <span id="digital-time"></span>
+                    <span id="digital-date"></span>
+                </div>
+            </div>
+            <div class="calendar-container">
+            </div>
+        </div>
     </div>
-    
-    <div id="mobile-overlay" class="mobile-overlay"></div>
-    <button id="mobile-nav-toggle" class="mobile-nav-toggle">&#9776;</button>
-
-    <div id="sticky-notes-component-container"></div>
-
-    <script src="assets/js/app.js" type="text/javascript"></script>
-    <script src="assets/js/sticky-notes.js" type="text/javascript"></script>
-</body>
-</html>
+</div>
