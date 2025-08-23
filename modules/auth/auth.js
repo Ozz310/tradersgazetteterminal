@@ -1,6 +1,5 @@
 // /modules/auth/auth.js
 
-
 (() => {
     const API_URL = 'https://users-worker.mohammadosama310.workers.dev/';
     let moduleContainer = null;
@@ -13,15 +12,36 @@
             container.innerHTML = html;
 
             if (page === 'login') {
-                document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+                // Ensure the form element exists before adding the event listener
+                const loginForm = document.getElementById('login-form');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', handleLogin);
+                } else {
+                    console.error('Login form not found.');
+                }
             } else if (page === 'signup') {
-                document.getElementById('signup-form')?.addEventListener('submit', handleSignup);
+                const signupForm = document.getElementById('signup-form');
+                if (signupForm) {
+                    signupForm.addEventListener('submit', handleSignup);
+                } else {
+                    console.error('Signup form not found.');
+                }
             } else if (page === 'forgot-password') {
-                document.getElementById('forgot-password-form')?.addEventListener('submit', handleForgotPassword);
+                const forgotPasswordForm = document.getElementById('forgot-password-form');
+                if (forgotPasswordForm) {
+                    forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+                } else {
+                    console.error('Forgot password form not found.');
+                }
             } else if (page === 'reset-password') {
-                document.getElementById('reset-password-form')?.addEventListener('submit', (e) => {
-                    handleResetPassword(e, resetToken);
-                });
+                const resetPasswordForm = document.getElementById('reset-password-form');
+                if (resetPasswordForm) {
+                    resetPasswordForm.addEventListener('submit', (e) => {
+                        handleResetPassword(e, resetToken);
+                    });
+                } else {
+                    console.error('Reset password form not found.');
+                }
             }
         } catch (error) {
             console.error(error);
@@ -57,15 +77,23 @@
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
         const resetToken = urlParams.get('token');
+        
+        // This is the main fix!
+        // We need to either load the login page by default or based on a condition.
+        if (action === 'reset-password' && resetToken) {
+            loadAuthPage('reset-password', moduleContainer, resetToken);
+        } else {
+            // Load the login page by default if no other action is specified.
+            loadAuthPage('login', moduleContainer);
+        }
 
         if (action || resetToken) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
-        
-        if (action === 'reset-password' && resetToken) {
-            loadAuthPage('reset-password', moduleContainer, resetToken);
-        }
     };
+
+    // ... (rest of the functions: displayMessage, hashPassword, handleLogin, etc.) ...
+    // The rest of your code is correct, so no need to change it.
 
     function displayMessage(message, isError = false) {
         const messageArea = document.getElementById('message-area');
@@ -93,10 +121,10 @@
         const data = { action: 'login', email, passwordHash };
 
         try {
-            const response = await fetch(API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify(data), 
-                headers: { 'Content-Type': 'application/json' } 
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
             if (result.status === 'success') {
@@ -129,9 +157,9 @@
                 body: JSON.stringify(data),
                 headers: { 'Content-Type': 'application/json' }
             });
-            
+
             const result = await response.json();
-            
+
             if (result.status === 'success') {
                 displayMessage('Signup successful! Please log in.', false);
                 loadAuthPage('login', moduleContainer);
@@ -143,7 +171,7 @@
             displayMessage('An error occurred. Please try again.', true);
         }
     }
-    
+
     async function handleForgotPassword(event) {
         event.preventDefault();
         const email = document.getElementById('forgot-email').value;
@@ -167,7 +195,7 @@
             displayMessage('An error occurred. Please try again.', true);
         }
     }
-    
+
     async function handleResetPassword(event, resetToken) {
         event.preventDefault();
         displayMessage('');
