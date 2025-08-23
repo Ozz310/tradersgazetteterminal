@@ -65,12 +65,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        const existingLink = document.querySelector(`link[href*="${moduleName}/style.css"]`);
+        // Skip loading CSS for the dashboard since styles are embedded
+        if (moduleName === 'dashboard') {
+            return;
+        }
+        
+        const existingLink = document.querySelector(`link[href*="modules/${moduleName}/"]`);
         if (existingLink) return;
 
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
-        newLink.href = `modules/${moduleName}/style.css`;
+        let cssPath;
+
+        if (moduleName === 'auth') {
+            cssPath = `modules/auth/style.css`;
+        } else {
+            cssPath = `modules/${moduleName}/style.css`;
+        }
+        
+        newLink.href = cssPath;
         document.head.appendChild(newLink);
     };
 
@@ -78,19 +91,21 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Load the module's script if it hasn't been loaded yet
             if (!loadedModules.has(moduleName)) {
-                let scriptPath = `modules/${moduleName}/script.js`;
-                // Special case for dashboard and auth modules
-                if (moduleName === 'dashboard') {
-                    scriptPath = `modules/${moduleName}/dashboard.js`;
-                } else if (moduleName === 'auth') {
-                    scriptPath = `modules/${moduleName}/auth.js`;
+                let scriptPath;
+                
+                if (moduleName === 'auth') {
+                    scriptPath = `modules/auth/auth.js`;
+                } else if (moduleName === 'dashboard') {
+                    scriptPath = `modules/dashboard/dashboard.js`;
+                } else {
+                    scriptPath = `modules/${moduleName}/script.js`;
                 }
                 
                 const script = document.createElement('script');
                 script.src = scriptPath;
                 script.type = 'text/javascript';
 
-                await new Promise((resolve, reject) => {
+                await new Promise((resolve) => {
                     script.onload = resolve;
                     script.onerror = () => {
                         console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
@@ -118,7 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
             loadModuleCSS(moduleName);
 
             // Call the init function to run the module's logic
-            if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
+            if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
+                window.tg_auth.initAuthModule(moduleContainer);
+            } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
+                window.tg_dashboard.initDashboard();
+            } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
                 window.tg_modules[moduleName].init();
             }
 
