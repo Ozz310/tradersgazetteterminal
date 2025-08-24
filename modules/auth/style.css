@@ -1,10 +1,4 @@
-
-/* /modules/auth/auth.css */
-body {
-    background-color: #000;
-    color: #fff;
-    font-family: 'Arial', sans-serif;
-}
+/* /modules/auth/style.css */
 
 .auth-container {
     display: flex;
