@@ -17,8 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Backend API Functions ---
     async function fetchNotes() {
+        // Get the user ID from localStorage
+        const userId = localStorage.getItem('tg_userId');
+        if (!userId) {
+            console.error('User ID not found. Cannot fetch notes.');
+            return;
+        }
+
         try {
-            const response = await fetch(SCRIPT_URL);
+            // Include the user ID in the fetch request URL
+            const response = await fetch(`${SCRIPT_URL}?userId=${userId}`);
             const data = await response.json();
             if (data && data.notes) {
                 notes = data.notes;
@@ -41,12 +49,22 @@ document.addEventListener('DOMContentLoaded', () => {
     async function saveNotes() {
         if (isSaving) return;
         isSaving = true;
+
+        // Get the user ID from localStorage
+        const userId = localStorage.getItem('tg_userId');
+        if (!userId) {
+            console.error('User ID not found. Cannot save notes.');
+            isSaving = false;
+            return;
+        }
+
         try {
+            // Include the user ID in the request body for saving
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ notes: notes }),
+                body: JSON.stringify({ notes: notes, userId: userId }),
             });
             console.log('Notes saved to backend.');
             localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
@@ -57,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- Frontend UI Functions ---
+    // --- Frontend UI Functions (Rest of the code remains unchanged) ---
     function renderNotes() {
         notesList.innerHTML = '';
         notes.forEach((note, index) => {
