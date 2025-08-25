@@ -1,201 +1,171 @@
-/* eslint-disable no-unused-vars */
 /**
- * Main application logic for The Traders Gazette Single Page Application.
- * Handles routing, module loading, and user authentication.
+ * Main application router and module loader for The Traders Gazette Notion App.
+ * Manages view transitions, dynamic script loading, and user authentication state.
  */
-const app = (function() {
-    let currentModule = null;
-    const moduleContainer = document.querySelector('.module-container');
-    const sidebar = document.getElementById('sidebar');
 
-    // MAPPING: Use this object to map module names to their specific HTML file names.
-    const HTML_MAP = {
-        'auth': 'auth.html',
-        'dashboard': 'dashboard-content.html',
-        'analysis-hub': 'index.html',
-        'cfd-brokers': 'index.html',
-        'contact-us': 'index.html',
-        'news-aggregator': 'index.html',
-        'risk-management-hub': 'index.html',
-        'trading-ebooks': 'index.html',
-        'trading-journal': 'index.html'
-    };
+const MODULE_CONTAINER_ID = 'module-container';
+const APP_SCRIPTS_PATH = 'assets/js/';
+const MODULES_PATH = 'modules/';
+const AUTH_TOKEN_KEY = 'tg_token';
 
-    /**
-     * Loads a specific CSS file for a module and replaces any previously loaded module CSS.
-     * @param {string} moduleName The name of the module (e.g., 'dashboard', 'auth').
-     */
-    function loadModuleCSS(moduleName) {
-        const existingLink = document.querySelector('link[data-module-css]');
+// Map module names to their file paths
+const MODULE_MAP = {
+    'auth': { html: 'auth/auth.html', js: 'auth/auth.js', css: 'auth/style.css' },
+    'dashboard': { html: 'dashboard/dashboard-content.html', js: 'dashboard/dashboard.js', css: 'dashboard/style.css' },
+    'trading-ebooks': { html: 'trading-ebooks/index.html', js: 'trading-ebooks/script.js', css: 'trading-ebooks/style.css' },
+    'analysis-hub': { html: 'analysis-hub/index.html', js: 'analysis-hub/script.js', css: 'analysis-hub/style.css' },
+    'risk-management-hub': { html: 'risk-management-hub/index.html', js: 'risk-management-hub/script.js', css: 'risk-management-hub/style.css' },
+    'news-aggregator': { html: 'news-aggregator/index.html', js: 'news-aggregator/script.js', css: 'news-aggregator/style.css' },
+    'trading-journal': { html: 'trading-journal/index.html', js: 'trading-journal/script.js', css: 'trading-journal/style.css' },
+    'cfd-brokers': { html: 'cfd-brokers/index.html', js: 'cfd-brokers/script.js', css: 'cfd-brokers/style.css' },
+    'contact-us': { html: 'contact-us/index.html', js: 'contact-us/script.js', css: 'contact-us/style.css' },
+    // Removed logout from here to handle it as a function
+};
+
+let currentModule = '';
+
+/**
+ * Loads a module's HTML, CSS, and JS.
+ * @param {string} moduleName The name of the module to load.
+ */
+async function loadModule(moduleName) {
+    console.log(`Attempting to load module: ${moduleName}`);
+    
+    // Check if the module is already loaded
+    if (currentModule === moduleName) {
+        console.log(`Module '${moduleName}' is already loaded. Aborting.`);
+        return;
+    }
+
+    const moduleInfo = MODULE_MAP[moduleName];
+
+    if (!moduleInfo) {
+        console.error(`Module not found in map: ${moduleName}`);
+        return;
+    }
+
+    const container = document.getElementById(MODULE_CONTAINER_ID);
+    if (!container) {
+        console.error('Module container not found.');
+        return;
+    }
+
+    try {
+        // 1. Load HTML
+        const htmlPath = `${MODULES_PATH}${moduleInfo.html}`;
+        const htmlResponse = await fetch(htmlPath);
+        if (!htmlResponse.ok) throw new Error(`Failed to load HTML for ${moduleName}: ${htmlResponse.statusText}`);
+        const htmlContent = await htmlResponse.text();
+        container.innerHTML = htmlContent;
+
+        // 2. Load CSS (if it exists)
+        const existingLink = document.querySelector(`link[data-module-css]`);
         if (existingLink) {
             existingLink.remove();
         }
+        if (moduleInfo.css) {
+            const cssPath = `${MODULES_PATH}${moduleInfo.css}`;
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = cssPath;
+            link.setAttribute('data-module-css', moduleName);
+            document.head.appendChild(link);
+        }
 
-        const newLink = document.createElement('link');
-        newLink.rel = 'stylesheet';
-        newLink.href = `modules/${moduleName}/style.css`;
-        newLink.setAttribute('data-module-css', moduleName);
-        document.head.appendChild(newLink);
-    }
-
-    /**
-     * Loads a specific JavaScript file for a module and replaces any previously loaded module JS.
-     * @param {string} moduleName The name of the module (e.g., 'dashboard', 'auth').
-     * @returns {Promise<void>} A promise that resolves when the script is loaded.
-     */
-    function loadModuleJS(moduleName) {
-        const existingScript = document.querySelector('script[data-module-js]');
+        // 3. Load JS (if it exists)
+        // Remove old script tag to prevent multiple initializations
+        const existingScript = document.querySelector(`script[data-module-js]`);
         if (existingScript) {
             existingScript.remove();
         }
+        if (moduleInfo.js) {
+            const jsPath = `${MODULES_PATH}${moduleInfo.js}`;
+            const script = document.createElement('script');
+            script.src = jsPath;
+            script.setAttribute('data-module-js', moduleName);
+            script.onload = () => {
+                const moduleNameCamelCase = moduleName.replace(/-./g, x => x[1].toUpperCase()) + 'Module';
+                if (window[moduleNameCamelCase] && typeof window[moduleNameCamelCase].init === 'function') {
+                    console.log(`Initializing module: ${moduleName}`);
+                    window[moduleNameCamelCase].init();
+                } else {
+                    console.warn(`Module init function not found for: ${moduleName}`);
+                }
+            };
+            document.body.appendChild(script);
+        }
 
-        return new Promise((resolve, reject) => {
-            let scriptFileName;
-            if (moduleName === 'auth') {
-                scriptFileName = 'auth.js';
-            } else if (moduleName === 'dashboard') {
-                scriptFileName = 'dashboard.js';
-            } else {
-                scriptFileName = 'script.js';
-            }
-            
-            const newScript = document.createElement('script');
-            newScript.src = `modules/${moduleName}/${scriptFileName}`;
-            newScript.setAttribute('data-module-js', moduleName);
-            newScript.onload = resolve;
-            newScript.onerror = reject;
-            document.body.appendChild(newScript);
-        });
+        currentModule = moduleName;
+        console.log(`Module '${moduleName}' loaded successfully.`);
+        updateActiveNav(moduleName);
+
+    } catch (error) {
+        console.error(`Error loading module '${moduleName}':`, error);
+        container.innerHTML = `<div class="error-message">Failed to load module: ${moduleName}</div>`;
     }
+}
 
-    /**
-     * Hides the sidebar and the sticky notes button on non-authenticated pages.
-     * @param {boolean} shouldHide True to hide, false to show.
-     */
-    function hideAppElements(shouldHide) {
-        if (shouldHide) {
-            sidebar.style.display = 'none';
-            document.querySelector('.sticky-notes-toggle-btn').style.display = 'none';
+/**
+ * Updates the active state of the sidebar navigation links.
+ * @param {string} moduleName The name of the currently active module.
+ */
+function updateActiveNav(moduleName) {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        if (item.getAttribute('href') === `#${moduleName}`) {
+            item.classList.add('active');
         } else {
-            sidebar.style.display = 'flex';
-            document.querySelector('.sticky-notes-toggle-btn').style.display = 'flex';
-        }
-    }
-
-    /**
-     * Renders a specific module by loading its HTML, CSS, and JS.
-     * @param {string} moduleName The name of the module to load.
-     */
-    async function loadModule(moduleName) {
-        if (currentModule === moduleName) return;
-
-        try {
-            // Use the HTML_MAP to get the correct HTML filename.
-            const htmlFileName = HTML_MAP[moduleName];
-            if (!htmlFileName) {
-                 throw new Error(`No HTML file mapped for module: ${moduleName}`);
-            }
-
-            const response = await fetch(`modules/${moduleName}/${htmlFileName}`);
-            if (!response.ok) {
-                throw new Error(`Failed to load module HTML for: ${moduleName}`);
-            }
-            const html = await response.text();
-
-            // Clear the module container and inject new content
-            moduleContainer.innerHTML = html;
-
-            // Load module-specific CSS and JS
-            loadModuleCSS(moduleName);
-            await loadModuleJS(moduleName);
-
-            // Manually call the init function for the authentication module
-            if (moduleName === 'auth' && window.authModule && typeof window.authModule.init === 'function') {
-                window.authModule.init();
-            }
-            
-            // Hide the app elements if the module is for authentication
-            hideAppElements(moduleName === 'auth');
-            
-            // Set the current module
-            currentModule = moduleName;
-
-        } catch (error) {
-            console.error('Failed to load module:', error);
-            moduleContainer.innerHTML = '<h1>Error: Module Not Found</h1>';
-        }
-    }
-
-    /**
-     * Updates the active state of a navigation item in the sidebar.
-     * @param {string} path The path to match the nav item's href.
-     */
-    function updateActiveNav(path) {
-        document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
-            if (item.getAttribute('href') === `#${path}`) {
-                item.classList.add('active');
-            }
-        });
-    }
-
-    /**
-     * Core router function. Handles navigation based on the URL hash.
-     */
-    async function router() {
-        const hash = window.location.hash || '#dashboard';
-        const path = hash.substring(1);
-        const isAuthenticated = !!localStorage.getItem('tg_token');
-
-        if (isAuthenticated) {
-            // User is authenticated, route to requested page or dashboard
-            hideAppElements(false);
-            if (path === 'login' || path === 'signup' || path === 'forgot-password') {
-                window.location.hash = '#dashboard';
-            } else {
-                await loadModule(path);
-                updateActiveNav(path);
-            }
-        } else {
-            // User is not authenticated, force them to the login page
-            hideAppElements(true);
-            await loadModule('auth');
         }
-    }
+    });
+}
 
-    // Event listener for hash changes
-    window.addEventListener('hashchange', router);
+/**
+ * Handles routing based on the URL hash.
+ */
+function router() {
+    const hash = window.location.hash.substring(1) || 'auth';
+    const isAuthenticated = localStorage.getItem(AUTH_TOKEN_KEY);
     
-    // Event Delegation for Sidebar Navigation
-    // This is the key fix for the navigation links.
-    sidebar.addEventListener('click', (e) => {
-        const navItem = e.target.closest('.nav-item');
-        if (navItem) {
-            e.preventDefault(); // Prevent default link behavior
-            const href = navItem.getAttribute('href');
-            if (href) {
-                window.location.hash = href;
-            }
+    // Handle authentication routing
+    if (isAuthenticated) {
+        // User is authenticated, redirect to dashboard if they're on the auth page
+        if (hash === 'auth' || hash === '') {
+            loadModule('dashboard');
+            window.location.hash = 'dashboard';
+        } else if (hash === 'logout') {
+            logout();
+        } else {
+            loadModule(hash);
         }
-        
-        // Handle Logout Button separately
-        const logoutBtn = e.target.closest('#logout-btn');
-        if (logoutBtn) {
-            e.preventDefault();
-            localStorage.removeItem('tg_token'); // Clear the token
-            localStorage.removeItem('tg_userId');
-            window.location.hash = '#login'; // Redirect to login page
+    } else {
+        // User is not authenticated, redirect to auth page
+        if (hash !== 'auth') {
+            window.location.hash = 'auth';
         }
-    });
+        loadModule('auth');
+    }
+}
 
-    // Initial route load on page start
-    window.addEventListener('load', () => {
-        router();
-    });
+/**
+ * Handles the logout process.
+ */
+function logout() {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem('tg_userId');
+    // Clear the module container
+    document.getElementById(MODULE_CONTAINER_ID).innerHTML = '';
+    // Redirect to auth page
+    window.location.hash = 'auth';
+    console.log('Logged out successfully.');
+}
 
-    // Public methods
-    return {
-        router: router
-    };
+// Event listeners
+window.addEventListener('hashchange', router);
+document.addEventListener('DOMContentLoaded', router);
 
-})();
+// Expose functions for debugging if needed
+window.app = {
+    loadModule: loadModule,
+    router: router
+};
