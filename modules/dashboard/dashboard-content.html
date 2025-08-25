@@ -1,38 +1,54 @@
-<div class="dashboard-page">
-    <div class="dashboard-cover-photo" style="background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Gemini_Generated_Image_lpa2swlpa2swlpa2.png');"></div>
-    <div class="dashboard-widgets-grid">
-        <div class="widget-card widget-main-info">
-            <h2 class="widget-title">Dashboard</h2>
-            <div class="live-clock-container">
-                <div class="analog-clock">
-                    <div class="analog-dial">
-                        <div class="tick-marks">
-                            <span class="tick" style="transform: rotate(30deg);"></span>
-                            <span class="tick" style="transform: rotate(60deg);"></span>
-                            <span class="tick" style="transform: rotate(90deg);"></span>
-                            <span class="tick" style="transform: rotate(120deg);"></span>
-                            <span class="tick" style="transform: rotate(150deg);"></span>
-                            <span class="tick" style="transform: rotate(180deg);"></span>
-                            <span class="tick" style="transform: rotate(210deg);"></span>
-                            <span class="tick" style="transform: rotate(240deg);"></span>
-                            <span class="tick" style="transform: rotate(270deg);"></span>
-                            <span class="tick" style="transform: rotate(300deg);"></span>
-                            <span class="tick" style="transform: rotate(330deg);"></span>
-                            <span class="tick" style="transform: rotate(360deg);"></span>
-                        </div>
-                        <div class="analog-hand hour-hand" id="hourHand"></div>
-                        <div class="analog-hand minute-hand" id="minuteHand"></div>
-                        <div class="analog-hand second-hand" id="secondHand"></div>
-                        <div class="analog-center"></div>
-                    </div>
-                </div>
-                <div id="digital-display" class="digital-display">
-                    <span id="digital-time"></span>
-                    <span id="digital-date"></span>
-                </div>
-            </div>
-            <div class="calendar-container">
-            </div>
-        </div>
-    </div>
+<div class="dashboard-container">
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="../assets/images/logo.png" alt="The Traders Gazette Logo" class="logo">
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#analysis-hub" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Analysis Hub</span>
+            </a>
+            <a href="#trading-journal" class="nav-item">
+                <i class="fas fa-book"></i>
+                <span>Trading Journal</span>
+            </a>
+            <a href="#risk-management-hub" class="nav-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Risk Management Hub</span>
+            </a>
+            <a href="#trading-ebooks" class="nav-item">
+                <i class="fas fa-book-reader"></i>
+                <span>E-books</span>
+            </a>
+            <a href="#news-aggregator" class="nav-item">
+                <i class="fas fa-newspaper"></i>
+                <span>News Room</span>
+            </a>
+            <a href="#cfd-brokers" class="nav-item">
+                <i class="fas fa-handshake"></i>
+                <span>CFD Brokers</span>
+            </a>
+            <a href="#contact-us" class="nav-item">
+                <i class="fas fa-envelope"></i>
+                <span>Contact Us</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button class="nav-item" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content" id="module-container">
+        <h1>Welcome to Your Dashboard</h1>
+        <p>This is where your main dashboard content will appear. Use the navigation to explore other modules.</p>
+    </main>
 </div>
