@@ -6,7 +6,7 @@ const stickyNotes = (function() {
     const notesList = document.getElementById('notes-list');
 
     // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY0NTO9rIoTm6X0cunPYAa31ebZGQ8lJwdynpTrQCCHxBE3U4Sg/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcYTv9Wx_doz44pCvRpXA6dv3BN0Oj00CG2_AULAenl_NWraJz5zw1saFfbwuZP9KTXw/exec';
     
     const MAX_NOTES = 4;
     const MAX_ITEMS = 5;
@@ -15,15 +15,10 @@ const stickyNotes = (function() {
 
     const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
     const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
+    const userId = 'single_user_id';
 
     // --- Backend API Functions ---
     async function fetchNotes() {
-        const userId = localStorage.getItem('tg_userId');
-        if (!userId) {
-            console.error('User ID not found. Cannot fetch notes.');
-            return;
-        }
-
         try {
             const response = await fetch(`${SCRIPT_URL}?userId=${userId}`);
             const data = await response.json();
@@ -48,14 +43,6 @@ const stickyNotes = (function() {
     async function saveNotes() {
         if (isSaving) return;
         isSaving = true;
-
-        const userId = localStorage.getItem('tg_userId');
-        if (!userId) {
-            console.error('User ID not found. Cannot save notes.');
-            isSaving = false;
-            return;
-        }
-
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
