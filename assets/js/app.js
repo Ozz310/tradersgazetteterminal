@@ -69,7 +69,9 @@ const app = (function() {
         if (currentModule === moduleName) return;
 
         try {
-            const response = await fetch(`modules/${moduleName}/${moduleName}-content.html`);
+            // Correct the path for the auth module
+            const htmlFileName = (moduleName === 'auth') ? 'login.html' : `${moduleName}-content.html`;
+            const response = await fetch(`modules/${moduleName}/${htmlFileName}`);
             if (!response.ok) {
                 throw new Error(`Failed to load module HTML for: ${moduleName}`);
             }
