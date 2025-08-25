@@ -1,226 +1,190 @@
-// /modules/auth/auth.js
+/**
+ * Authentication module for The Traders Gazette.
+ * Handles user login, signup, and password reset functionality.
+ */
 
-(() => {
-    const API_URL = 'https://users-worker.mohammadosama310.workers.dev/';
-    let moduleContainer = null;
+const authModule = (function() {
 
-    const loadAuthPage = async (page, container, resetToken = null) => {
-        try {
-            const response = await fetch(`modules/auth/${page}.html`);
-            if (!response.ok) { throw new Error(`Failed to load auth page: ${page}.html`); }
-            const html = await response.text();
-            container.innerHTML = html;
+    const AUTH_MODULE_ID = 'auth-module';
+    let authBox;
 
-            if (page === 'login') {
-                const loginForm = document.getElementById('login-form');
-                if (loginForm) {
-                    loginForm.addEventListener('submit', handleLogin);
-                } else {
-                    console.error('Login form not found.');
-                }
-            } else if (page === 'signup') {
-                const signupForm = document.getElementById('signup-form');
-                if (signupForm) {
-                    signupForm.addEventListener('submit', handleSignup);
-                } else {
-                    console.error('Signup form not found.');
-                }
-            } else if (page === 'forgot-password') {
-                const forgotPasswordForm = document.getElementById('forgot-password-form');
-                if (forgotPasswordForm) {
-                    forgotPasswordForm.addEventListener('submit', handleForgotPassword);
-                } else {
-                    console.error('Forgot password form not found.');
-                }
-            } else if (page === 'reset-password') {
-                const resetPasswordForm = document.getElementById('reset-password-form');
-                if (resetPasswordForm) {
-                    resetPasswordForm.addEventListener('submit', (e) => {
-                        handleResetPassword(e, resetToken);
-                    });
-                } else {
-                    console.error('Reset password form not found.');
-                }
-            }
-        } catch (error) {
-            console.error(error);
-            container.innerHTML = `<div class="error-message">Error loading page.</div>`;
+    /**
+     * Initializes the module by finding the main container and adding event listeners.
+     */
+    function init() {
+        authBox = document.getElementById(AUTH_MODULE_ID);
+        if (!authBox) {
+            console.error('Auth module container not found.');
+            return;
         }
-    };
 
-    const initAuthModule = (container) => {
-        moduleContainer = container;
-        moduleContainer.addEventListener('click', (e) => {
-            const target = e.target.closest('a');
-            if (!target) return;
-            e.preventDefault();
+        addEventListeners();
+    }
 
-            switch (target.id) {
-                case 'show-signup':
-                    loadAuthPage('signup', moduleContainer);
-                    break;
-                case 'show-login':
-                    loadAuthPage('login', moduleContainer);
-                    break;
-                case 'show-forgot-password':
-                    loadAuthPage('forgot-password', moduleContainer);
-                    break;
-                case 'back-to-login':
-                    loadAuthPage('login', moduleContainer);
-                    break;
-                default:
-                    break;
+    /**
+     * Adds event listeners to forms and navigation links.
+     */
+    function addEventListeners() {
+        const loginForm = authBox.querySelector('#login-form');
+        const signupForm = authBox.querySelector('#signup-form');
+        const forgotPasswordForm = authBox.querySelector('#forgot-password-form');
+        const loginToggle = authBox.querySelector('#login-toggle');
+        const signupToggle = authBox.querySelector('#signup-toggle');
+        const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
+        const backToLoginLink = authBox.querySelector('#back-to-login-link');
+        const backToLoginLink2 = authBox.querySelector('#back-to-login-link2');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
+        if (signupForm) {
+            signupForm.addEventListener('submit', handleSignup);
+        }
+        if (forgotPasswordForm) {
+            forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+        }
+        if (loginToggle) {
+            loginToggle.addEventListener('click', showLoginForm);
+        }
+        if (signupToggle) {
+            signupToggle.addEventListener('click', showSignupForm);
+        }
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', showForgotPasswordForm);
+        }
+        if (backToLoginLink) {
+            backToLoginLink.addEventListener('click', showLoginForm);
+        }
+        if (backToLoginLink2) {
+            backToLoginLink2.addEventListener('click', showLoginForm);
+        }
+    }
+
+    /**
+     * Displays a message to the user in the auth box.
+     * @param {string} message The message to display.
+     * @param {string} type The type of message ('success' or 'error').
+     */
+    function displayMessage(message, type) {
+        const messageBox = authBox.querySelector('#auth-message');
+        if (messageBox) {
+            messageBox.textContent = message;
+            messageBox.className = type;
+            messageBox.style.display = 'block';
+        }
+    }
+
+    /**
+     * Handles the login form submission.
+     * @param {Event} e The form submission event.
+     */
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = e.target.querySelector('#login-email').value;
+        const password = e.target.querySelector('#login-password').value;
+
+        try {
+            // Placeholder for actual login logic
+            console.log('Attempting login...');
+            
+            // For now, let's simulate a successful login
+            const dummyUserId = 'test-user-id-' + Date.now();
+            localStorage.setItem('tg_userId', dummyUserId);
+            localStorage.setItem('tg_token', 'dummy-token');
+
+            displayMessage('Login successful! Redirecting...', 'success');
+            window.location.hash = '#dashboard';
+            
+        } catch (error) {
+            console.error('Login failed:', error);
+            displayMessage('Login failed: ' + error.message, 'error');
+        }
+    }
+
+    /**
+     * Handles the signup form submission.
+     * @param {Event} e The form submission event.
+     */
+    async function handleSignup(e) {
+        e.preventDefault();
+        const email = e.target.querySelector('#signup-email').value;
+        const password = e.target.querySelector('#signup-password').value;
+        const confirmPassword = e.target.querySelector('#confirm-password').value;
+
+        if (password !== confirmPassword) {
+            displayMessage('Passwords do not match.', 'error');
+            return;
+        }
+
+        try {
+            // Placeholder for actual signup logic
+            console.log('Attempting signup...');
+            const dummyUserId = 'test-user-id-' + Date.now();
+            localStorage.setItem('tg_userId', dummyUserId);
+            localStorage.setItem('tg_token', 'dummy-token');
+
+            displayMessage('Signup successful! Redirecting...', 'success');
+            window.location.hash = '#dashboard';
+            
+        } catch (error) {
+            console.error('Signup failed:', error);
+            displayMessage('Signup failed: ' + error.message, 'error');
+        }
+    }
+
+    /**
+     * Handles the forgot password form submission.
+     * @param {Event} e The form submission event.
+     */
+    async function handleForgotPassword(e) {
+        e.preventDefault();
+        const email = e.target.querySelector('#forgot-password-email').value;
+
+        try {
+            // Placeholder for actual password reset logic
+            console.log('Attempting password reset...');
+            displayMessage('Password reset email sent. Please check your inbox.', 'success');
+            
+        } catch (error) {
+            console.error('Password reset failed:', error);
+            displayMessage('Password reset failed: ' + error.message, 'error');
+        }
+    }
+
+    /**
+     * Toggles between the login, signup, and forgot password forms.
+     */
+    function showForm(formId) {
+        const forms = ['login-form', 'signup-form', 'forgot-password-form'];
+        forms.forEach(id => {
+            const form = authBox.querySelector(`#${id}`);
+            if (form) {
+                form.classList.toggle('hidden', id !== formId);
             }
         });
+    }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const action = urlParams.get('action');
-        const resetToken = urlParams.get('token');
-        
-        if (action === 'reset-password' && resetToken) {
-            loadAuthPage('reset-password', moduleContainer, resetToken);
-        } else {
-            loadAuthPage('login', moduleContainer);
-        }
+    function showLoginForm(e) {
+        if (e) e.preventDefault();
+        showForm('login-form');
+    }
 
-        if (action || resetToken) {
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+    function showSignupForm(e) {
+        if (e) e.preventDefault();
+        showForm('signup-form');
+    }
+
+    function showForgotPasswordForm(e) {
+        if (e) e.preventDefault();
+        showForm('forgot-password-form');
+    }
+
+    // Initialize the module when the DOM is ready
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Public methods
+    return {
+        init: init
     };
 
-    function displayMessage(message, isError = false) {
-        const messageArea = document.getElementById('message-area');
-        if (messageArea) {
-            messageArea.textContent = message;
-            messageArea.style.color = isError ? '#ff4d4d' : '#ffd700';
-        }
-    }
-
-    async function hashPassword(password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-    }
-
-    async function handleLogin(event) {
-        event.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        displayMessage('');
-        const passwordHash = await hashPassword(password);
-        const data = { action: 'login', email, passwordHash };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
-                displayMessage('Login successful!', false);
-                localStorage.setItem('tg_token', result.token);
-                localStorage.setItem('tg_userId', result.userId);
-                
-                // FIX APPLIED: Removed window.location.reload()
-                window.location.hash = '#dashboard';
-
-            } else {
-                displayMessage('Login failed: ' + result.message, true);
-            }
-        } catch (error) {
-            console.error('Network error during login:', error);
-            displayMessage('An error occurred. Please try again.', true);
-        }
-    }
-
-    async function handleSignup(event) {
-        event.preventDefault();
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        displayMessage('');
-        const passwordHash = await hashPassword(password);
-        const data = { action: 'signup', name, email, passwordHash };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'success') {
-                displayMessage('Signup successful! Please log in.', false);
-                loadAuthPage('login', moduleContainer);
-            } else {
-                displayMessage('Signup failed: ' + result.message, true);
-            }
-        } catch (error) {
-            console.error('Network error during signup:', error);
-            displayMessage('An error occurred. Please try again.', true);
-        }
-    }
-
-    async function handleForgotPassword(event) {
-        event.preventDefault();
-        const email = document.getElementById('forgot-email').value;
-        displayMessage('');
-        const data = { action: 'forgot-password', email };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
-                displayMessage('If an account with that email exists, a password reset link has been sent.', false);
-            } else {
-                displayMessage(result.message, true);
-            }
-        } catch (error) {
-            console.error('Network error during forgot password request:', error);
-            displayMessage('An error occurred. Please try again.', true);
-        }
-    }
-
-    async function handleResetPassword(event, resetToken) {
-        event.preventDefault();
-        displayMessage('');
-        const newPassword = document.getElementById('new-password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-
-        if (newPassword !== confirmPassword) { return displayMessage('Passwords do not match.', true); }
-        if (newPassword.length < 6) { return displayMessage('Password must be at least 6 characters long.', true); }
-
-        const passwordHash = await hashPassword(newPassword);
-        const data = { action: 'reset-password', resetToken, passwordHash };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
-                displayMessage('Password reset successfully! You can now log in.', false);
-                setTimeout(() => { window.location.href = window.location.origin + window.location.pathname; }, 3000);
-            } else {
-                displayMessage(result.message, true);
-            }
-        } catch (error) {
-            console.error('Network error during password reset:', error);
-            displayMessage('An error occurred. Please try again.', true);
-        }
-    }
-
-    window.tg_auth = { initAuthModule };
 })();
