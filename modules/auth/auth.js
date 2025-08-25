@@ -2,7 +2,6 @@
  * Authentication module for The Traders Gazette.
  * Handles user login, signup, and password reset functionality.
  */
-
 const AUTH_MODULE_ID = 'auth-module';
 let authBox;
 
@@ -18,7 +17,6 @@ function init() {
     }
 
     addEventListeners();
-    // This part ensures the correct form is displayed on initial load
     const hash = window.location.hash.substring(1);
     if (hash === 'signup') {
         showForm('signup-form');
@@ -98,10 +96,8 @@ async function handleLogin(e) {
         const dummyUserId = 'test-user-id-' + Date.now();
         localStorage.setItem('tg_userId', dummyUserId);
         localStorage.setItem('tg_token', 'dummy-token');
-
         displayMessage('Login successful! Redirecting...', 'success');
         window.location.hash = '#dashboard';
-        
     } catch (error) {
         console.error('Login failed:', error);
         displayMessage('Login failed: ' + error.message, 'error');
@@ -131,7 +127,6 @@ async function handleSignup(e) {
 
         displayMessage('Signup successful! Redirecting...', 'success');
         window.location.hash = '#dashboard';
-        
     } catch (error) {
         console.error('Signup failed:', error);
         displayMessage('Signup failed: ' + error.message, 'error');
@@ -149,7 +144,6 @@ async function handleForgotPassword(e) {
     try {
         console.log('Attempting password reset...');
         displayMessage('Password reset email sent. Please check your inbox.', 'success');
-        
     } catch (error) {
         console.error('Password reset failed:', error);
         displayMessage('Password reset failed: ' + error.message, 'error');
@@ -184,7 +178,6 @@ function showForgotPasswordForm(e) {
     showForm('forgot-password-form');
 }
 
-// Public methods are now exposed on the window object
 window.authModule = {
     init: init
 };
