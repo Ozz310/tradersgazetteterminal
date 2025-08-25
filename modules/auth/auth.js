@@ -27,9 +27,10 @@ function addEventListeners() {
     const loginForm = authBox.querySelector('#login-form');
     const signupForm = authBox.querySelector('#signup-form');
     const forgotPasswordForm = authBox.querySelector('#forgot-password-form');
-    const loginToggle = authBox.querySelector('#login-toggle');
-    const signupToggle = authBox.querySelector('#signup-toggle');
-    const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
+    // Corrected selectors to match login.html
+    const loginToggle = authBox.querySelector('#login-toggle'); 
+    const signupToggle = authBox.querySelector('#show-signup');
+    const forgotPasswordLink = authBox.querySelector('#show-forgot-password');
     const backToLoginLink = authBox.querySelector('#back-to-login-link');
     const backToLoginLink2 = authBox.querySelector('#back-to-login-link2');
     
