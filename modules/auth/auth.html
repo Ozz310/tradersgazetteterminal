@@ -1,0 +1,47 @@
+<div class="auth-container" id="auth-module">
+    <div class="auth-box" id="login-form-container">
+        <h2 class="auth-title">Log In</h2>
+        <div id="auth-message"></div>
+        <form id="login-form">
+            <div class="input-group">
+                <input type="email" id="login-email" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="login-password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="auth-button">Log In</button>
+        </form>
+        <p class="auth-link">Don't have an account? <a href="#" id="signup-toggle">Sign Up</a></p>
+        <p class="auth-link forgot-password"><a href="#" id="forgot-password-link">Forgot password?</a></p>
+    </div>
+
+    <div class="auth-box hidden" id="signup-form-container">
+        <h2 class="auth-title">Sign Up</h2>
+        <div id="auth-message"></div>
+        <form id="signup-form">
+            <div class="input-group">
+                <input type="email" id="signup-email" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="signup-password" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            </div>
+            <button type="submit" class="auth-button">Sign Up</button>
+        </form>
+        <p class="auth-link"><a href="#" id="back-to-login-link">Back to Log In</a></p>
+    </div>
+
+    <div class="auth-box hidden" id="forgot-password-form-container">
+        <h2 class="auth-title">Forgot Password</h2>
+        <div id="auth-message"></div>
+        <form id="forgot-password-form">
+            <div class="input-group">
+                <input type="email" id="forgot-password-email" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" class="auth-button">Reset Password</button>
+        </form>
+        <p class="auth-link"><a href="#" id="back-to-login-link2">Back to Log In</a></p>
+    </div>
+</div>
