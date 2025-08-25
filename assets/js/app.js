@@ -37,8 +37,10 @@ const app = (function() {
         }
 
         return new Promise((resolve, reject) => {
+            // Correct the path for the auth module's script
+            const scriptFileName = (moduleName === 'auth') ? 'auth.js' : 'script.js';
             const newScript = document.createElement('script');
-            newScript.src = `modules/${moduleName}/script.js`;
+            newScript.src = `modules/${moduleName}/${scriptFileName}`;
             newScript.type = 'module';
             newScript.setAttribute('data-module-js', moduleName);
             newScript.onload = resolve;
