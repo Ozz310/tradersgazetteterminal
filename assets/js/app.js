@@ -41,7 +41,6 @@ const app = (function() {
             const scriptFileName = (moduleName === 'auth') ? 'auth.js' : 'script.js';
             const newScript = document.createElement('script');
             newScript.src = `modules/${moduleName}/${scriptFileName}`;
-            newScript.type = 'module';
             newScript.setAttribute('data-module-js', moduleName);
             newScript.onload = resolve;
             newScript.onerror = reject;
@@ -86,6 +85,11 @@ const app = (function() {
             loadModuleCSS(moduleName);
             await loadModuleJS(moduleName);
 
+            // Manually call the init function for the authentication module
+            if (moduleName === 'auth' && window.authModule && typeof window.authModule.init === 'function') {
+                window.authModule.init();
+            }
+            
             // Hide the app elements if the module is for authentication
             hideAppElements(moduleName === 'auth');
             
