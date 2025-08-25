@@ -18,6 +18,15 @@ function init() {
     }
 
     addEventListeners();
+    // This part ensures the correct form is displayed on initial load
+    const hash = window.location.hash.substring(1);
+    if (hash === 'signup') {
+        showForm('signup-form');
+    } else if (hash === 'forgot-password') {
+        showForm('forgot-password-form');
+    } else {
+        showForm('login-form');
+    }
 }
 
 /**
@@ -27,18 +36,15 @@ function addEventListeners() {
     const loginForm = authBox.querySelector('#login-form');
     const signupForm = authBox.querySelector('#signup-form');
     const forgotPasswordForm = authBox.querySelector('#forgot-password-form');
-    // Corrected selectors to match login.html
-    const loginToggle = authBox.querySelector('#login-toggle'); 
-    const signupToggle = authBox.querySelector('#show-signup');
-    const forgotPasswordLink = authBox.querySelector('#show-forgot-password');
+    const signupToggle = authBox.querySelector('#signup-toggle');
+    const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
     const backToLoginLink = authBox.querySelector('#back-to-login-link');
     const backToLoginLink2 = authBox.querySelector('#back-to-login-link2');
     
-    console.log('Attempting to add event listeners...'); // Diagnostic log 2
+    console.log('Attempting to add event listeners...');
     console.log('Login Form found:', !!loginForm);
     console.log('Signup Form found:', !!signupForm);
     console.log('Forgot Password Form found:', !!forgotPasswordForm);
-    console.log('Login Toggle found:', !!loginToggle);
 
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
@@ -48,9 +54,6 @@ function addEventListeners() {
     }
     if (forgotPasswordForm) {
         forgotPasswordForm.addEventListener('submit', handleForgotPassword);
-    }
-    if (loginToggle) {
-        loginToggle.addEventListener('click', showLoginForm);
     }
     if (signupToggle) {
         signupToggle.addEventListener('click', showSignupForm);
@@ -86,14 +89,12 @@ function displayMessage(message, type) {
  */
 async function handleLogin(e) {
     e.preventDefault();
-    console.log('Login button clicked!'); // Diagnostic log 3
+    console.log('Login button clicked!');
     const email = e.target.querySelector('#login-email').value;
     const password = e.target.querySelector('#login-password').value;
 
     try {
         console.log('Attempting login...');
-        
-        // For now, let's simulate a successful login
         const dummyUserId = 'test-user-id-' + Date.now();
         localStorage.setItem('tg_userId', dummyUserId);
         localStorage.setItem('tg_token', 'dummy-token');
@@ -161,9 +162,9 @@ async function handleForgotPassword(e) {
 function showForm(formId) {
     const forms = ['login-form', 'signup-form', 'forgot-password-form'];
     forms.forEach(id => {
-        const form = authBox.querySelector(`#${id}`);
-        if (form) {
-            form.classList.toggle('hidden', id !== formId);
+        const formContainer = authBox.querySelector(`#${id}-container`);
+        if (formContainer) {
+            formContainer.classList.toggle('hidden', id !== formId);
         }
     });
 }
