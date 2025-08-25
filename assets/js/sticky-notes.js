@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notesList = document.getElementById('notes-list');
 
     // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcYTv9Wx_doz44pCvRpXA6dv3BN0Oj00CG2_AULAenl_NWraJz5zw1saFfbwuZP9KTXw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY0NTO9rIoTm6X0cunPYAa31ebZGQ8lJwdynpTrQCCHxBE3U4Sg/exec';
     
     const MAX_NOTES = 4;
     const MAX_ITEMS = 5;
