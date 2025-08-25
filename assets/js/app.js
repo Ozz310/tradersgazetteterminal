@@ -1,149 +1,147 @@
+/* eslint-disable no-unused-vars */
 /**
- * Authentication module for The Traders Gazette.
- * Handles user login and signup functionality.
+ * Main application logic for The Traders Gazette Single Page Application.
+ * Handles routing, module loading, and user authentication.
  */
-import { firebase } from '../../config/firebase.js';
-
-const authModule = (function() {
-
-    const AUTH_MODULE_ID = 'auth-module';
-    const authBox = document.getElementById(AUTH_MODULE_ID);
+const app = (function() {
+    let currentModule = null;
+    const moduleContainer = document.querySelector('.module-container');
+    const sidebar = document.getElementById('sidebar');
 
     /**
-     * Initializes the module by adding event listeners to the login and signup forms.
+     * Loads a specific CSS file for a module and replaces any previously loaded module CSS.
+     * @param {string} moduleName The name of the module (e.g., 'dashboard', 'auth').
      */
-    function init() {
-        if (!authBox) {
-            console.error('Auth module container not found.');
-            return;
+    function loadModuleCSS(moduleName) {
+        const existingLink = document.querySelector('link[data-module-css]');
+        if (existingLink) {
+            existingLink.remove();
         }
 
-        const loginForm = authBox.querySelector('#login-form');
-        const signupForm = authBox.querySelector('#signup-form');
-        const loginToggle = authBox.querySelector('#login-toggle');
-        const signupToggle = authBox.querySelector('#signup-toggle');
+        const newLink = document.createElement('link');
+        newLink.rel = 'stylesheet';
+        newLink.href = `modules/${moduleName}/style.css`;
+        newLink.setAttribute('data-module-css', moduleName);
+        document.head.appendChild(newLink);
+    }
 
-        if (loginForm) {
-            loginForm.addEventListener('submit', handleLogin);
+    /**
+     * Loads a specific JavaScript file for a module and replaces any previously loaded module JS.
+     * @param {string} moduleName The name of the module (e.g., 'dashboard', 'auth').
+     * @returns {Promise<void>} A promise that resolves when the script is loaded.
+     */
+    function loadModuleJS(moduleName) {
+        const existingScript = document.querySelector('script[data-module-js]');
+        if (existingScript) {
+            existingScript.remove();
         }
-        if (signupForm) {
-            signupForm.addEventListener('submit', handleSignup);
-        }
-        if (loginToggle) {
-            loginToggle.addEventListener('click', showLoginForm);
-        }
-        if (signupToggle) {
-            signupToggle.addEventListener('click', showSignupForm);
+
+        return new Promise((resolve, reject) => {
+            const newScript = document.createElement('script');
+            newScript.src = `modules/${moduleName}/script.js`;
+            newScript.type = 'module';
+            newScript.setAttribute('data-module-js', moduleName);
+            newScript.onload = resolve;
+            newScript.onerror = reject;
+            document.body.appendChild(newScript);
+        });
+    }
+
+    /**
+     * Hides the sidebar and the sticky notes button on non-authenticated pages.
+     * @param {boolean} shouldHide True to hide, false to show.
+     */
+    function hideAppElements(shouldHide) {
+        if (shouldHide) {
+            sidebar.style.display = 'none';
+            document.querySelector('.sticky-notes-toggle-btn').style.display = 'none';
+        } else {
+            sidebar.style.display = 'flex';
+            document.querySelector('.sticky-notes-toggle-btn').style.display = 'flex';
         }
     }
 
     /**
-     * Handles the login form submission.
-     * @param {Event} e The form submission event.
+     * Renders a specific module by loading its HTML, CSS, and JS.
+     * @param {string} moduleName The name of the module to load.
      */
-    async function handleLogin(e) {
-        e.preventDefault();
-        const email = e.target.querySelector('#login-email').value;
-        const password = e.target.querySelector('#login-password').value;
-
-        // Perform validation
-        if (!email || !password) {
-            displayMessage('Please enter both email and password.', 'error');
-            return;
-        }
+    async function loadModule(moduleName) {
+        if (currentModule === moduleName) return;
 
         try {
-            const userCredential = await firebase.auth.signInWithEmailAndPassword(firebase.authInstance, email, password);
-            const user = userCredential.user;
+            const response = await fetch(`modules/${moduleName}/${moduleName}-content.html`);
+            if (!response.ok) {
+                throw new Error(`Failed to load module HTML for: ${moduleName}`);
+            }
+            const html = await response.text();
+
+            // Clear the module container and inject new content
+            moduleContainer.innerHTML = html;
+
+            // Load module-specific CSS and JS
+            loadModuleCSS(moduleName);
+            await loadModuleJS(moduleName);
+
+            // Hide the app elements if the module is for authentication
+            hideAppElements(moduleName === 'auth');
             
-            // Set user ID and token in local storage
-            localStorage.setItem('tg_userId', user.uid);
-            localStorage.setItem('tg_token', await user.getIdToken());
-            
-            displayMessage('Login successful! Redirecting...', 'success');
-            
-            // Redirect to the dashboard
-            window.location.hash = '#dashboard';
+            // Set the current module
+            currentModule = moduleName;
 
         } catch (error) {
-            console.error('Login failed:', error);
-            displayMessage('Login failed: ' + error.message, 'error');
+            console.error('Failed to load module:', error);
+            moduleContainer.innerHTML = '<h1>Error: Module Not Found</h1>';
         }
     }
 
     /**
-     * Handles the signup form submission.
-     * @param {Event} e The form submission event.
+     * Updates the active state of a navigation item in the sidebar.
+     * @param {string} path The path to match the nav item's href.
      */
-    async function handleSignup(e) {
-        e.preventDefault();
-        const email = e.target.querySelector('#signup-email').value;
-        const password = e.target.querySelector('#signup-password').value;
-        const confirmPassword = e.target.querySelector('#confirm-password').value;
-
-        // Perform validation
-        if (!email || !password || !confirmPassword) {
-            displayMessage('Please fill out all fields.', 'error');
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            displayMessage('Passwords do not match.', 'error');
-            return;
-        }
-
-        try {
-            const userCredential = await firebase.auth.createUserWithEmailAndPassword(firebase.authInstance, email, password);
-            const user = userCredential.user;
-
-            // Set user ID and token in local storage
-            localStorage.setItem('tg_userId', user.uid);
-            localStorage.setItem('tg_token', await user.getIdToken());
-
-            displayMessage('Signup successful! Redirecting...', 'success');
-
-            // Redirect to the dashboard
-            window.location.hash = '#dashboard';
-            
-        } catch (error) {
-            console.error('Signup failed:', error);
-            displayMessage('Signup failed: ' + error.message, 'error');
-        }
+    function updateActiveNav(path) {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === `#${path}`) {
+                item.classList.add('active');
+            }
+        });
     }
 
     /**
-     * Toggles between the login and signup forms.
+     * Core router function. Handles navigation based on the URL hash.
      */
-    function showLoginForm() {
-        authBox.querySelector('#login-form').classList.remove('hidden');
-        authBox.querySelector('#signup-form').classList.add('hidden');
-    }
-    
-    function showSignupForm() {
-        authBox.querySelector('#signup-form').classList.remove('hidden');
-        authBox.querySelector('#login-form').classList.add('hidden');
-    }
+    async function router() {
+        const hash = window.location.hash || '#dashboard';
+        const path = hash.substring(1);
+        const isAuthenticated = !!localStorage.getItem('tg_token');
 
-    /**
-     * Displays a message to the user in the auth box.
-     * @param {string} message The message to display.
-     * @param {string} type The type of message ('success' or 'error').
-     */
-    function displayMessage(message, type) {
-        const messageBox = authBox.querySelector('#auth-message');
-        if (messageBox) {
-            messageBox.textContent = message;
-            messageBox.className = type;
-            messageBox.style.display = 'block';
+        if (isAuthenticated) {
+            // User is authenticated, route to requested page or dashboard
+            hideAppElements(false);
+            if (path === 'login' || path === 'signup') {
+                window.location.hash = '#dashboard';
+            } else {
+                await loadModule(path);
+                updateActiveNav(path);
+            }
+        } else {
+            // User is not authenticated, force them to the login page
+            hideAppElements(true);
+            await loadModule('auth');
         }
     }
 
-    // Initialize the module when the page loads
-    window.addEventListener('load', init);
+    // Event listener for hash changes
+    window.addEventListener('hashchange', router);
 
-    // Expose public methods
+    // Initial route load on page start
+    window.addEventListener('load', () => {
+        router();
+    });
+
+    // Public methods
     return {
-        init: init
+        router: router
     };
 
 })();
