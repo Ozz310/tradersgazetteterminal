@@ -37,8 +37,10 @@ const app = (function() {
         }
 
         return new Promise((resolve, reject) => {
+            // Correct the path for the auth module's script
+            const scriptFileName = (moduleName === 'auth') ? 'auth.js' : 'script.js';
             const newScript = document.createElement('script');
-            newScript.src = `modules/${moduleName}/script.js`;
+            newScript.src = `modules/${moduleName}/${scriptFileName}`;
             newScript.type = 'module';
             newScript.setAttribute('data-module-js', moduleName);
             newScript.onload = resolve;
@@ -69,7 +71,7 @@ const app = (function() {
         if (currentModule === moduleName) return;
 
         try {
-            // Correct the path for the auth module
+            // Correct the path for the auth module's HTML
             const htmlFileName = (moduleName === 'auth') ? 'login.html' : `${moduleName}-content.html`;
             const response = await fetch(`modules/${moduleName}/${htmlFileName}`);
             if (!response.ok) {
