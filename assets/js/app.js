@@ -37,8 +37,16 @@ const app = (function() {
         }
 
         return new Promise((resolve, reject) => {
-            // Correct the path for the auth module's script
-            const scriptFileName = (moduleName === 'auth') ? 'auth.js' : 'script.js';
+            // Correct the path for the auth and dashboard module scripts
+            let scriptFileName;
+            if (moduleName === 'auth') {
+                scriptFileName = 'auth.js';
+            } else if (moduleName === 'dashboard') {
+                scriptFileName = 'dashboard.js';
+            } else {
+                scriptFileName = 'script.js';
+            }
+            
             const newScript = document.createElement('script');
             newScript.src = `modules/${moduleName}/${scriptFileName}`;
             newScript.setAttribute('data-module-js', moduleName);
