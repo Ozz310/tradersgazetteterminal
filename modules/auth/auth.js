@@ -2,6 +2,7 @@
  * Authentication module for The Traders Gazette.
  * Handles user login, signup, and password reset functionality.
  */
+
 const AUTH_MODULE_ID = 'auth-module';
 let authBox;
 
