@@ -1,11 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
+const stickyNotes = (function() {
+
     const toggleBtn = document.getElementById('sticky-notes-toggle-btn');
     const panel = document.getElementById('sticky-notes-panel');
     const closeBtn = document.querySelector('.close-panel-btn');
     const notesList = document.getElementById('notes-list');
 
     // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY0NTO9rIoTm6X0cunPYAa31ebZGQ8lJwdynpTrQCCHxBE3U4Sg/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY0NTO9rIoTm6X0cunPYAa31ebZGQ8lJwdynpTrQCCHxBE3U4Sg/exec';
     
     const MAX_NOTES = 4;
     const MAX_ITEMS = 5;
@@ -17,7 +18,6 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
 
     // --- Backend API Functions ---
     async function fetchNotes() {
-        // Get the user ID from localStorage
         const userId = localStorage.getItem('tg_userId');
         if (!userId) {
             console.error('User ID not found. Cannot fetch notes.');
@@ -25,7 +25,6 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
         }
 
         try {
-            // Include the user ID in the fetch request URL
             const response = await fetch(`${SCRIPT_URL}?userId=${userId}`);
             const data = await response.json();
             if (data && data.notes) {
@@ -50,7 +49,6 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
         if (isSaving) return;
         isSaving = true;
 
-        // Get the user ID from localStorage
         const userId = localStorage.getItem('tg_userId');
         if (!userId) {
             console.error('User ID not found. Cannot save notes.');
@@ -59,7 +57,6 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
         }
 
         try {
-            // Include the user ID in the request body for saving
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -75,7 +72,7 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
         }
     }
     
-    // --- Frontend UI Functions (Rest of the code remains unchanged) ---
+    // --- Frontend UI Functions ---
     function renderNotes() {
         notesList.innerHTML = '';
         notes.forEach((note, index) => {
@@ -214,6 +211,10 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
     toggleBtn.addEventListener('click', () => {
         panel.classList.toggle('open');
         toggleBtn.classList.toggle('active');
+        // Now we can fetch notes when the panel is opened
+        if (panel.classList.contains('open')) {
+            fetchNotes();
+        }
     });
 
     closeBtn.addEventListener('click', () => {
@@ -221,6 +222,5 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZUL5hd6Qsrwai3LLAY
         toggleBtn.classList.remove('active');
     });
 
-    // Initial load
-    fetchNotes();
-});
+    // We no longer call fetchNotes() here. It will be called when the panel is opened.
+})();
