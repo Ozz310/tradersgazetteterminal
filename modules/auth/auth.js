@@ -12,6 +12,7 @@ const authModule = (function() {
      * Initializes the module by finding the main container and adding event listeners.
      */
     function init() {
+        console.log('Auth module init() called.'); // Diagnostic log 1
         authBox = document.getElementById(AUTH_MODULE_ID);
         if (!authBox) {
             console.error('Auth module container not found.');
@@ -33,6 +34,12 @@ const authModule = (function() {
         const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
         const backToLoginLink = authBox.querySelector('#back-to-login-link');
         const backToLoginLink2 = authBox.querySelector('#back-to-login-link2');
+        
+        console.log('Attempting to add event listeners...'); // Diagnostic log 2
+        console.log('Login Form found:', !!loginForm);
+        console.log('Signup Form found:', !!signupForm);
+        console.log('Forgot Password Form found:', !!forgotPasswordForm);
+        console.log('Login Toggle found:', !!loginToggle);
 
         if (loginForm) {
             loginForm.addEventListener('submit', handleLogin);
@@ -80,11 +87,11 @@ const authModule = (function() {
      */
     async function handleLogin(e) {
         e.preventDefault();
+        console.log('Login button clicked!'); // Diagnostic log 3
         const email = e.target.querySelector('#login-email').value;
         const password = e.target.querySelector('#login-password').value;
 
         try {
-            // Placeholder for actual login logic
             console.log('Attempting login...');
             
             // For now, let's simulate a successful login
@@ -117,7 +124,6 @@ const authModule = (function() {
         }
 
         try {
-            // Placeholder for actual signup logic
             console.log('Attempting signup...');
             const dummyUserId = 'test-user-id-' + Date.now();
             localStorage.setItem('tg_userId', dummyUserId);
@@ -141,7 +147,6 @@ const authModule = (function() {
         const email = e.target.querySelector('#forgot-password-email').value;
 
         try {
-            // Placeholder for actual password reset logic
             console.log('Attempting password reset...');
             displayMessage('Password reset email sent. Please check your inbox.', 'success');
             
