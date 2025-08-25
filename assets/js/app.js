@@ -150,7 +150,7 @@ const app = (function() {
         if (isAuthenticated) {
             // User is authenticated, route to requested page or dashboard
             hideAppElements(false);
-            if (path === 'login' || path === 'signup') {
+            if (path === 'login' || path === 'signup' || path === 'forgot-password') {
                 window.location.hash = '#dashboard';
             } else {
                 await loadModule(path);
@@ -159,12 +159,39 @@ const app = (function() {
         } else {
             // User is not authenticated, force them to the login page
             hideAppElements(true);
-            await loadModule('auth');
+            // Added check for other auth paths
+            if (path === 'signup' || path === 'forgot-password') {
+                 await loadModule('auth');
+            } else {
+                 await loadModule('auth');
+            }
         }
     }
 
     // Event listener for hash changes
     window.addEventListener('hashchange', router);
+
+    // Event Delegation for Sidebar Navigation
+    // This is the key fix for the navigation links.
+    sidebar.addEventListener('click', (e) => {
+        const navItem = e.target.closest('.nav-item');
+        if (navItem) {
+            e.preventDefault(); // Prevent default link behavior
+            const href = navItem.getAttribute('href');
+            if (href) {
+                window.location.hash = href;
+            }
+        }
+        
+        // Handle Logout Button separately
+        const logoutBtn = e.target.closest('#logout-btn');
+        if (logoutBtn) {
+            e.preventDefault();
+            localStorage.removeItem('tg_token'); // Clear the token
+            localStorage.removeItem('tg_userId');
+            window.location.hash = '#login'; // Redirect to login page
+        }
+    });
 
     // Initial route load on page start
     window.addEventListener('load', () => {
