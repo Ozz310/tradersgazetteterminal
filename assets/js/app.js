@@ -10,7 +10,7 @@ const app = (function() {
 
     // MAPPING: Use this object to map module names to their specific HTML file names.
     const HTML_MAP = {
-        'auth': 'login.html',
+        'auth': 'auth.html', // Now pointing to a single file
         'dashboard': 'dashboard-content.html',
         'analysis-hub': 'index.html',
         'cfd-brokers': 'index.html',
@@ -159,39 +159,12 @@ const app = (function() {
         } else {
             // User is not authenticated, force them to the login page
             hideAppElements(true);
-            // Added check for other auth paths
-            if (path === 'signup' || path === 'forgot-password') {
-                 await loadModule('auth');
-            } else {
-                 await loadModule('auth');
-            }
+            await loadModule('auth');
         }
     }
 
     // Event listener for hash changes
     window.addEventListener('hashchange', router);
-
-    // Event Delegation for Sidebar Navigation
-    // This is the key fix for the navigation links.
-    sidebar.addEventListener('click', (e) => {
-        const navItem = e.target.closest('.nav-item');
-        if (navItem) {
-            e.preventDefault(); // Prevent default link behavior
-            const href = navItem.getAttribute('href');
-            if (href) {
-                window.location.hash = href;
-            }
-        }
-        
-        // Handle Logout Button separately
-        const logoutBtn = e.target.closest('#logout-btn');
-        if (logoutBtn) {
-            e.preventDefault();
-            localStorage.removeItem('tg_token'); // Clear the token
-            localStorage.removeItem('tg_userId');
-            window.location.hash = '#login'; // Redirect to login page
-        }
-    });
 
     // Initial route load on page start
     window.addEventListener('load', () => {
