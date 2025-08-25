@@ -8,6 +8,19 @@ const app = (function() {
     const moduleContainer = document.querySelector('.module-container');
     const sidebar = document.getElementById('sidebar');
 
+    // MAPPING: Use this object to map module names to their specific HTML file names.
+    const HTML_MAP = {
+        'auth': 'login.html',
+        'dashboard': 'dashboard-content.html',
+        'analysis-hub': 'index.html',
+        'cfd-brokers': 'index.html',
+        'contact-us': 'index.html',
+        'news-aggregator': 'index.html',
+        'risk-management-hub': 'index.html',
+        'trading-ebooks': 'index.html',
+        'trading-journal': 'index.html'
+    };
+
     /**
      * Loads a specific CSS file for a module and replaces any previously loaded module CSS.
      * @param {string} moduleName The name of the module (e.g., 'dashboard', 'auth').
@@ -37,7 +50,6 @@ const app = (function() {
         }
 
         return new Promise((resolve, reject) => {
-            // Correct the path for the auth and dashboard module scripts
             let scriptFileName;
             if (moduleName === 'auth') {
                 scriptFileName = 'auth.js';
@@ -78,8 +90,12 @@ const app = (function() {
         if (currentModule === moduleName) return;
 
         try {
-            // Correct the path for the auth module's HTML
-            const htmlFileName = (moduleName === 'auth') ? 'login.html' : `${moduleName}-content.html`;
+            // Use the HTML_MAP to get the correct HTML filename.
+            const htmlFileName = HTML_MAP[moduleName];
+            if (!htmlFileName) {
+                 throw new Error(`No HTML file mapped for module: ${moduleName}`);
+            }
+
             const response = await fetch(`modules/${moduleName}/${htmlFileName}`);
             if (!response.ok) {
                 throw new Error(`Failed to load module HTML for: ${moduleName}`);
