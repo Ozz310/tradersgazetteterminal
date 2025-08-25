@@ -10,7 +10,7 @@ let authBox;
  * Initializes the module by finding the main container and adding event listeners.
  */
 function init() {
-    console.log('Auth module init() called.'); // Diagnostic log 1
+    console.log('Auth module init() called.');
     authBox = document.getElementById(AUTH_MODULE_ID);
     if (!authBox) {
         console.error('Auth module container not found.');
