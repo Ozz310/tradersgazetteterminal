@@ -36,3 +36,4 @@ const dashboardModule = (function() {
 
 // Make sure to call init() when the module is loaded
 // This will be handled by app.js
+
