@@ -2,7 +2,10 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
+    const terminalContainer = document.getElementById('terminal-container');
     const moduleContainer = document.getElementById('module-container');
+    const authContainer = document.getElementById('auth-container');
+    const backgroundSymbols = document.querySelector('.background-symbols');
     const loadedModules = new Map();
 
     // Attach event listeners for sidebar navigation
@@ -39,13 +42,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
 
         if (isAuthenticated()) {
-            sidebar.style.display = 'flex';
+            // Logged in: Hide auth, show terminal and notes
+            if (authContainer) authContainer.style.display = 'none';
+            if (backgroundSymbols) backgroundSymbols.style.display = 'none';
+            if (terminalContainer) terminalContainer.style.display = 'flex';
+            if (sidebar) sidebar.style.display = 'flex';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.style.display = 'block';
                 stickyNotesToggleBtn.style.display = 'block';
             }
         } else {
-            sidebar.style.display = 'none';
+            // Logged out: Hide terminal and notes, show auth
+            if (authContainer) authContainer.style.display = 'flex';
+            if (backgroundSymbols) backgroundSymbols.style.display = 'block';
+            if (terminalContainer) terminalContainer.style.display = 'none';
+            if (sidebar) sidebar.style.display = 'none';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.style.display = 'none';
                 stickyNotesToggleBtn.style.display = 'none';
