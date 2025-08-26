@@ -1,184 +1,217 @@
-/**
- * Authentication module for The Traders Gazette.
- * Handles user login, signup, and password reset functionality.
- */
+// /modules/auth/auth.js
 
-const AUTH_MODULE_ID = 'auth-module';
-let authBox;
-
-/**
- * Initializes the module by finding the main container and adding event listeners.
- */
-function init() {
-    console.log('Auth module init() called.');
-    authBox = document.getElementById(AUTH_MODULE_ID);
-    if (!authBox) {
-        console.error('Auth module container not found.');
-        return;
-    }
-
-    addEventListeners();
-    const hash = window.location.hash.substring(1);
-    if (hash === 'signup') {
-        showForm('signup-form');
-    } else if (hash === 'forgot-password') {
-        showForm('forgot-password-form');
-    } else {
-        showForm('login-form');
-    }
-}
-
-/**
- * Adds event listeners to forms and navigation links.
- */
-function addEventListeners() {
-    const loginForm = authBox.querySelector('#login-form');
-    const signupForm = authBox.querySelector('#signup-form');
-    const forgotPasswordForm = authBox.querySelector('#forgot-password-form');
-    const signupToggle = authBox.querySelector('#signup-toggle');
-    const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
-    const backToLoginLink = authBox.querySelector('#back-to-login-link');
-    const backToLoginLink2 = authBox.querySelector('#back-to-login-link2');
+(() => {
+    // This API URL points to your Cloudflare Worker.
+    const API_URL = 'https://users-worker.mohammadosama310.workers.dev/';
     
-    console.log('Attempting to add event listeners...');
-    console.log('Login Form found:', !!loginForm);
-    console.log('Signup Form found:', !!signupForm);
-    console.log('Forgot Password Form found:', !!forgotPasswordForm);
+    let moduleContainer = null;
+    let authBox = null;
 
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    if (signupForm) {
-        signupForm.addEventListener('submit', handleSignup);
-    }
-    if (forgotPasswordForm) {
-        forgotPasswordForm.addEventListener('submit', handleForgotPassword);
-    }
-    if (signupToggle) {
-        signupToggle.addEventListener('click', showSignupForm);
-    }
-    if (forgotPasswordLink) {
-        forgotPasswordLink.addEventListener('click', showForgotPasswordForm);
-    }
-    if (backToLoginLink) {
-        backToLoginLink.addEventListener('click', showLoginForm);
-    }
-    if (backToLoginLink2) {
-        backToLoginLink2.addEventListener('click', showLoginForm);
-    }
-}
-
-/**
- * Displays a message to the user in the auth box.
- * @param {string} message The message to display.
- * @param {string} type The type of message ('success' or 'error').
- */
-function displayMessage(message, type) {
-    const messageBox = authBox.querySelector('#auth-message');
-    if (messageBox) {
-        messageBox.textContent = message;
-        messageBox.className = type;
-        messageBox.style.display = 'block';
-    }
-}
-
-/**
- * Handles the login form submission.
- * @param {Event} e The form submission event.
- */
-async function handleLogin(e) {
-    e.preventDefault();
-    console.log('Login button clicked!');
-    const email = e.target.querySelector('#login-email').value;
-    const password = e.target.querySelector('#login-password').value;
-
-    try {
-        console.log('Attempting login...');
-        const dummyUserId = 'test-user-id-' + Date.now();
-        localStorage.setItem('tg_userId', dummyUserId);
-        localStorage.setItem('tg_token', 'dummy-token');
-        displayMessage('Login successful! Redirecting...', 'success');
-        window.location.hash = '#dashboard';
-    } catch (error) {
-        console.error('Login failed:', error);
-        displayMessage('Login failed: ' + error.message, 'error');
-    }
-}
-
-/**
- * Handles the signup form submission.
- * @param {Event} e The form submission event.
- */
-async function handleSignup(e) {
-    e.preventDefault();
-    const email = e.target.querySelector('#signup-email').value;
-    const password = e.target.querySelector('#signup-password').value;
-    const confirmPassword = e.target.querySelector('#confirm-password').value;
-
-    if (password !== confirmPassword) {
-        displayMessage('Passwords do not match.', 'error');
-        return;
-    }
-
-    try {
-        console.log('Attempting signup...');
-        const dummyUserId = 'test-user-id-' + Date.now();
-        localStorage.setItem('tg_userId', dummyUserId);
-        localStorage.setItem('tg_token', 'dummy-token');
-
-        displayMessage('Signup successful! Redirecting...', 'success');
-        window.location.hash = '#dashboard';
-    } catch (error) {
-        console.error('Signup failed:', error);
-        displayMessage('Signup failed: ' + error.message, 'error');
-    }
-}
-
-/**
- * Handles the forgot password form submission.
- * @param {Event} e The form submission event.
- */
-async function handleForgotPassword(e) {
-    e.preventDefault();
-    const email = e.target.querySelector('#forgot-password-email').value;
-
-    try {
-        console.log('Attempting password reset...');
-        displayMessage('Password reset email sent. Please check your inbox.', 'success');
-    } catch (error) {
-        console.error('Password reset failed:', error);
-        displayMessage('Password reset failed: ' + error.message, 'error');
-    }
-}
-
-/**
- * Toggles between the login, signup, and forgot password forms.
- */
-function showForm(formId) {
-    const forms = ['login-form', 'signup-form', 'forgot-password-form'];
-    forms.forEach(id => {
-        const formContainer = authBox.querySelector(`#${id}-container`);
-        if (formContainer) {
-            formContainer.classList.toggle('hidden', id !== formId);
+    /**
+     * Initializes the auth module.
+     * @param {HTMLElement} container The main content container.
+     */
+    const initAuthModule = (container) => {
+        moduleContainer = container;
+        authBox = document.getElementById('auth-module');
+        if (!authBox) {
+            console.error('Auth module container not found.');
+            return;
         }
-    });
-}
 
-function showLoginForm(e) {
-    if (e) e.preventDefault();
-    showForm('login-form');
-}
+        // Add event listeners for forms and navigation links.
+        addEventListeners();
 
-function showSignupForm(e) {
-    if (e) e.preventDefault();
-    showForm('signup-form');
-}
+        // Show the login form by default on page load.
+        showForm('login-form');
+    };
 
-function showForgotPasswordForm(e) {
-    if (e) e.preventDefault();
-    showForm('forgot-password-form');
-}
+    /**
+     * Adds event listeners to forms and links for a single-page module.
+     */
+    function addEventListeners() {
+        const loginForm = authBox.querySelector('#login-form');
+        const signupForm = authBox.querySelector('#signup-form');
+        const forgotPasswordForm = authBox.querySelector('#forgot-password-form');
+        const signupToggle = authBox.querySelector('#signup-toggle');
+        const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
+        const backToLoginLink = authBox.querySelector('#back-to-login-link');
+        const backToLoginLink2 = authBox.querySelector('#back-to-login-link2');
+        
+        // Form submissions
+        if (loginForm) loginForm.addEventListener('submit', handleLogin);
+        if (signupForm) signupForm.addEventListener('submit', handleSignup);
+        if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', handleForgotPassword);
 
-window.authModule = {
-    init: init
-};
+        // Form toggling links
+        if (signupToggle) signupToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('signup-form');
+        });
+        if (forgotPasswordLink) forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('forgot-password-form');
+        });
+        if (backToLoginLink) backToLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('login-form');
+        });
+        if (backToLoginLink2) backToLoginLink2.addEventListener('click', (e) => {
+            e.preventDefault();
+            showForm('login-form');
+        });
+    }
+
+    /**
+     * Toggles the visibility of the different forms.
+     * @param {string} formIdToShow The ID of the form to display (e.g., 'login-form').
+     */
+    function showForm(formIdToShow) {
+        const formContainers = authBox.querySelectorAll('.form-container');
+        formContainers.forEach(container => {
+            container.classList.add('hidden');
+        });
+
+        const formToShow = authBox.querySelector(`#${formIdToShow}-container`);
+        if (formToShow) {
+            formToShow.classList.remove('hidden');
+        }
+    }
+
+    /**
+     * Displays a message to the user.
+     * @param {string} message The message to display.
+     * @param {boolean} isError True if the message is an error.
+     */
+    function displayMessage(message, isError = false) {
+        const messageArea = document.getElementById('auth-message');
+        if (messageArea) {
+            messageArea.textContent = message;
+            messageArea.className = isError ? 'auth-message error' : 'auth-message success';
+            messageArea.style.display = 'block';
+        }
+    }
+
+    /**
+     * Hashes a password using SHA-256.
+     * @param {string} password The password to hash.
+     * @returns {Promise<string>} The hashed password.
+     */
+    async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    }
+
+    /**
+     * Handles the login form submission and communicates with the backend.
+     */
+    async function handleLogin(event) {
+        event.preventDefault();
+        displayMessage('');
+
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const passwordHash = await hashPassword(password);
+        
+        const data = { action: 'login', email, passwordHash };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                displayMessage('Login successful! Redirecting...', false);
+                localStorage.setItem('tg_token', result.token);
+                localStorage.setItem('tg_userId', result.userId);
+                window.location.hash = '#dashboard';
+            } else {
+                displayMessage('Login failed: ' + result.message, true);
+            }
+        } catch (error) {
+            console.error('Network error during login:', error);
+            displayMessage('An error occurred. Please try again.', true);
+        }
+    }
+
+    /**
+     * Handles the signup form submission and communicates with the backend.
+     */
+    async function handleSignup(event) {
+        event.preventDefault();
+        displayMessage('');
+
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const name = 'User'; // Placeholder name since your form doesn't have a name field
+
+        if (password !== confirmPassword) {
+            return displayMessage('Passwords do not match.', true);
+        }
+        if (password.length < 6) {
+            return displayMessage('Password must be at least 6 characters long.', true);
+        }
+
+        const passwordHash = await hashPassword(password);
+        const data = { action: 'signup', name, email, passwordHash };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                displayMessage('Signup successful! Please log in.', false);
+                showForm('login-form');
+            } else {
+                displayMessage('Signup failed: ' + result.message, true);
+            }
+        } catch (error) {
+            console.error('Network error during signup:', error);
+            displayMessage('An error occurred. Please try again.', true);
+        }
+    }
+
+    /**
+     * Handles the forgot password submission.
+     */
+    async function handleForgotPassword(event) {
+        event.preventDefault();
+        displayMessage('');
+
+        const email = document.getElementById('forgot-password-email').value;
+        const data = { action: 'forgot-password', email };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                displayMessage('If an account with that email exists, a password reset link has been sent.', false);
+            } else {
+                displayMessage(result.message, true);
+            }
+        } catch (error) {
+            console.error('Network error during forgot password request:', error);
+            displayMessage('An error occurred. Please try again.', true);
+        }
+    }
+
+    // Expose the init function to the global scope for app.js to call.
+    window.tg_auth = { initAuthModule };
+})();
