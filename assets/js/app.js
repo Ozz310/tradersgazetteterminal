@@ -19,7 +19,6 @@ const MODULE_MAP = {
     'trading-journal': { html: 'trading-journal/index.html', js: 'trading-journal/script.js', css: 'trading-journal/style.css' },
     'cfd-brokers': { html: 'cfd-brokers/index.html', js: 'cfd-brokers/script.js', css: 'cfd-brokers/style.css' },
     'contact-us': { html: 'contact-us/index.html', js: 'contact-us/script.js', css: 'contact-us/style.css' },
-    // Removed logout from here to handle it as a function
 };
 
 let currentModule = '';
@@ -121,6 +120,21 @@ function updateActiveNav(moduleName) {
 }
 
 /**
+ * Toggles the visibility of the sidebar.
+ * @param {boolean} isVisible True to show, false to hide.
+ */
+function toggleSidebarVisibility(isVisible) {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        if (isVisible) {
+            sidebar.classList.remove('hidden-sidebar');
+        } else {
+            sidebar.classList.add('hidden-sidebar');
+        }
+    }
+}
+
+/**
  * Handles routing based on the URL hash.
  */
 function router() {
@@ -129,7 +143,9 @@ function router() {
     
     // Handle authentication routing
     if (isAuthenticated) {
-        // User is authenticated, redirect to dashboard if they're on the auth page
+        // User is authenticated, hide auth screen and show sidebar
+        document.body.classList.remove('auth-view');
+        toggleSidebarVisibility(true);
         if (hash === 'auth' || hash === '') {
             loadModule('dashboard');
             window.location.hash = 'dashboard';
@@ -139,7 +155,9 @@ function router() {
             loadModule(hash);
         }
     } else {
-        // User is not authenticated, redirect to auth page
+        // User is not authenticated, hide sidebar and show auth screen
+        document.body.classList.add('auth-view');
+        toggleSidebarVisibility(false);
         if (hash !== 'auth') {
             window.location.hash = 'auth';
         }
