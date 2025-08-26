@@ -1,4 +1,3 @@
-
 // /assets/js/app.js
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -109,7 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Load the module's HTML content
             let html;
             if (moduleName === 'auth') {
-                const response = await fetch(`modules/auth/login.html`);
+                const response = await fetch(`modules/auth/auth.html`);
+                if (!response.ok) throw new Error('Auth content file not found.');
                 html = await response.text();
             } else if (moduleName === 'dashboard') {
                 const response = await fetch(`modules/dashboard/dashboard-content.html`);
