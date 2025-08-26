@@ -5,8 +5,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainAppContainer = document.getElementById('main-app-container');
     const moduleContainer = document.getElementById('module-container');
     const authContainer = document.getElementById('auth-container');
+    const loaderOverlay = document.getElementById('loader-overlay');
     const backgroundSymbols = document.querySelector('.background-symbols');
     const loadedModules = new Map();
+
+    // Show the loader
+    const showLoader = () => {
+        if (loaderOverlay) {
+            loaderOverlay.classList.remove('hidden');
+        }
+    };
+
+    // Hide the loader
+    const hideLoader = () => {
+        if (loaderOverlay) {
+            loaderOverlay.classList.add('hidden');
+        }
+    };
 
     // Attach event listeners for sidebar navigation
     sidebar.addEventListener('click', (e) => {
@@ -30,11 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const router = async () => {
+        showLoader();
         const hash = window.location.hash || '#auth';
         const moduleName = hash.substring(1) || 'auth';
 
         if (moduleName !== 'auth' && !isAuthenticated()) {
             window.location.hash = '#auth';
+            hideLoader();
             return;
         }
 
@@ -46,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) mainAppContainer.style.display = 'flex';
-            if (sidebar) sidebar.style.display = 'flex';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.style.display = 'block';
                 stickyNotesToggleBtn.style.display = 'block';
@@ -56,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) mainAppContainer.style.display = 'none';
-            if (sidebar) sidebar.style.display = 'none';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.style.display = 'none';
                 stickyNotesToggleBtn.style.display = 'none';
@@ -72,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeNavItem) {
             activeNavItem.classList.add('active');
         }
+
+        hideLoader();
     };
 
     // Corrected function to dynamically load a module's CSS file
