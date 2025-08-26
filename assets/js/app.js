@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
-    const terminalContainer = document.getElementById('terminal-container');
+    const mainAppContainer = document.getElementById('main-app-container');
     const moduleContainer = document.getElementById('module-container');
     const authContainer = document.getElementById('auth-container');
     const backgroundSymbols = document.querySelector('.background-symbols');
@@ -42,20 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
 
         if (isAuthenticated()) {
-            // Logged in: Hide auth, show terminal and notes
+            // Logged in: Hide auth, show main app and notes
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
-            if (terminalContainer) terminalContainer.style.display = 'flex';
+            if (mainAppContainer) mainAppContainer.style.display = 'flex';
             if (sidebar) sidebar.style.display = 'flex';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.style.display = 'block';
                 stickyNotesToggleBtn.style.display = 'block';
             }
         } else {
-            // Logged out: Hide terminal and notes, show auth
+            // Logged out: Hide main app and notes, show auth
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
-            if (terminalContainer) terminalContainer.style.display = 'none';
+            if (mainAppContainer) mainAppContainer.style.display = 'none';
             if (sidebar) sidebar.style.display = 'none';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.style.display = 'none';
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        // Construct the path relative to the root of your project
         const cssPath = `modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
         if (existingLink) return;
@@ -88,8 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadModule = async (moduleName) => {
+        let targetContainer = moduleContainer;
+        if (moduleName === 'auth') {
+            targetContainer = authContainer;
+        }
+        
         try {
-            // Load the module's script if it hasn't been loaded yet
             if (!loadedModules.has(moduleName)) {
                 let scriptPath;
                 
@@ -116,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadedModules.set(moduleName, true);
             }
 
-            // Load the module's HTML content
             let html;
             if (moduleName === 'auth') {
                 const response = await fetch(`modules/auth/auth.html`);
@@ -133,16 +135,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 html = await response.text();
             }
             
-            // Clean up the fetched HTML before injecting it
             const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
-            moduleContainer.innerHTML = cleanedHtml;
+            targetContainer.innerHTML = cleanedHtml;
 
-            // Apply the module's CSS
             loadModuleCSS(moduleName);
 
-            // Call the init function to run the module's logic
             if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
-                window.tg_auth.initAuthModule(moduleContainer);
+                window.tg_auth.initAuthModule(targetContainer);
             } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
                 window.tg_dashboard.initDashboard();
             } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
@@ -153,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error(`Error loading module ${moduleName}:`, error);
-            moduleContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
+            targetContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
         }
     };
 
