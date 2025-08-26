@@ -1,13 +1,10 @@
 /* /modules/auth/style.css */
 
-.auth-container {
+.auth-box {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
-
-.auth-box {
     background-color: #1a1a1a;
     padding: 2.5rem;
     border-radius: 8px;
