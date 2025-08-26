@@ -1,47 +1,59 @@
-<div class="auth-container" id="auth-module">
-    <div class="auth-box" id="login-form-container">
-        <h2 class="auth-title">Log In</h2>
-        <div id="auth-message"></div>
+<div id="auth-module" class="auth-container">
+    <div class="auth-message-container">
+        <p id="auth-message" class="auth-message"></p>
+    </div>
+    <div id="login-form-container" class="form-container">
+        <h2>Login</h2>
         <form id="login-form">
             <div class="input-group">
-                <input type="email" id="login-email" placeholder="Email" required>
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" name="email" required>
             </div>
             <div class="input-group">
-                <input type="password" id="login-password" placeholder="Password" required>
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required>
             </div>
-            <button type="submit" class="auth-button">Log In</button>
+            <button type="submit" class="auth-btn">Log In</button>
         </form>
-        <p class="auth-link">Don't have an account? <a href="#" id="signup-toggle">Sign Up</a></p>
-        <p class="auth-link forgot-password"><a href="#" id="forgot-password-link">Forgot password?</a></p>
+        <div class="auth-links">
+            <a href="#" id="forgot-password-link">Forgot password?</a>
+            <a href="#" id="signup-toggle">Don't have an account? Sign up</a>
+        </div>
     </div>
 
-    <div class="auth-box hidden" id="signup-form-container">
-        <h2 class="auth-title">Sign Up</h2>
-        <div id="auth-message"></div>
+    <div id="signup-form-container" class="form-container hidden">
+        <h2>Sign Up</h2>
         <form id="signup-form">
             <div class="input-group">
-                <input type="email" id="signup-email" placeholder="Email" required>
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" name="email" required>
             </div>
             <div class="input-group">
-                <input type="password" id="signup-password" placeholder="Password" required>
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" name="password" required>
             </div>
             <div class="input-group">
-                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
             </div>
-            <button type="submit" class="auth-button">Sign Up</button>
+            <button type="submit" class="auth-btn">Sign Up</button>
         </form>
-        <p class="auth-link"><a href="#" id="back-to-login-link">Back to Log In</a></p>
+        <div class="auth-links">
+            <a href="#" id="back-to-login-link">Back to login</a>
+        </div>
     </div>
 
-    <div class="auth-box hidden" id="forgot-password-form-container">
-        <h2 class="auth-title">Forgot Password</h2>
-        <div id="auth-message"></div>
+    <div id="forgot-password-form-container" class="form-container hidden">
+        <h2>Forgot Password</h2>
         <form id="forgot-password-form">
             <div class="input-group">
-                <input type="email" id="forgot-password-email" placeholder="Enter your email" required>
+                <label for="forgot-password-email">Email</label>
+                <input type="email" id="forgot-password-email" name="email" required>
             </div>
-            <button type="submit" class="auth-button">Reset Password</button>
+            <button type="submit" class="auth-btn">Reset Password</button>
         </form>
-        <p class="auth-link"><a href="#" id="back-to-login-link2">Back to Log In</a></p>
+        <div class="auth-links">
+            <a href="#" id="back-to-login-link2">Back to login</a>
+        </div>
     </div>
 </div>
