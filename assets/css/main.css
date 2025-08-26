@@ -22,6 +22,15 @@ body {
     height: 100vh;
 }
 
+/* Auth Container */
+#auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
 /* Main Container for the Terminal */
 .terminal-container {
     display: flex;
