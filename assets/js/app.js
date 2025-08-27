@@ -40,8 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const isAuthenticated = () => {
+        // Corrected: Check for both the token and the userId
         const token = localStorage.getItem('tg_token');
-        return !!token;
+        const userId = localStorage.getItem('userId');
+        return !!token && !!userId;
     };
 
     const router = async () => {
@@ -184,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout function
     function handleLogout() {
         localStorage.removeItem('tg_token');
-        localStorage.removeItem('userId'); // Correct key to match the new flow
+        // Corrected: Use the correct key to remove the userId
+        localStorage.removeItem('userId'); 
         window.location.hash = '#auth';
         window.location.reload();
     }
