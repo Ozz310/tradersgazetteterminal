@@ -130,7 +130,8 @@
             if (result.status === 'success') {
                 displayMessage('Login successful! Redirecting...', false);
                 localStorage.setItem('tg_token', result.token);
-                localStorage.setItem('tg_userId', result.userId);
+                // Corrected: Store userId with the key 'userId'
+                localStorage.setItem('userId', result.userId);
                 // Trigger the app router to load the dashboard without a page reload
                 window.location.hash = '#dashboard';
             } else {
