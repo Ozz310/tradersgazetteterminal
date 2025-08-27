@@ -51,7 +51,7 @@ window.tg_app = (function() {
             removeModuleCss();
 
             // Load module HTML - CORRECTED PATH HERE
-            const moduleHtmlResponse = await fetch(`/modules/${moduleName}/${htmlFileName}`);
+            const moduleHtmlResponse = await fetch(`modules/${moduleName}/${htmlFileName}`);
             if (!moduleHtmlResponse.ok) {
                 throw new Error(`Failed to load ${moduleName} HTML: ${moduleHtmlResponse.statusText}`);
             }
@@ -60,13 +60,13 @@ window.tg_app = (function() {
             // Load module CSS - CORRECTED PATH HERE
             const moduleCssLink = document.createElement('link');
             moduleCssLink.rel = 'stylesheet';
-            moduleCssLink.href = `/modules/${moduleName}/style.css`;
+            moduleCssLink.href = `modules/${moduleName}/style.css`;
             moduleCssLink.onload = () => console.log(`Module CSS loaded: ${moduleName}`);
             moduleCssLink.onerror = (e) => console.error(`Error loading module CSS for ${moduleName}:`, e);
             document.head.appendChild(moduleCssLink);
 
             // Load module JS - CORRECTED PATH HERE
-            const moduleJs = await import(`/modules/${moduleName}/script.js`);
+            const moduleJs = await import(`modules/${moduleName}/script.js`);
             window.tg_modules[moduleName] = moduleJs.default; // Assign the module to the global scope
 
             // Initialize the module after the HTML is in the DOM
