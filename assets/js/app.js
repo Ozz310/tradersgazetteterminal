@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (moduleName === 'dashboard') {
                     scriptPath = `modules/dashboard/dashboard.js`;
                 } else {
+                    // This is the generic path for all other modules
                     scriptPath = `modules/${moduleName}/script.js`;
                 }
                 
@@ -146,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Dashboard content file not found.');
                 html = await response.text();
             } else {
+                // This is the generic path for all other modules' HTML
                 const htmlPath = `modules/${moduleName}/index.html`;
                 const response = await fetch(htmlPath);
                 if (!response.ok) throw new Error('HTML file not found.');
@@ -162,7 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
                 window.tg_dashboard.initDashboard();
             } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
-                window.tg_modules[moduleName].init();
+                // Pass the userId to the module's init function
+                const currentUserId = localStorage.getItem('userId');
+                if (currentUserId) {
+                    window.tg_modules[moduleName].init(currentUserId);
+                } else {
+                    console.error("User ID not found in localStorage. Cannot initialize module.");
+                }
             }
 
             console.log(`Module loaded: ${moduleName}`);
@@ -176,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout function
     function handleLogout() {
         localStorage.removeItem('tg_token');
-        localStorage.removeItem('tg_userId');
+        localStorage.removeItem('userId'); // Correct key to match the new flow
         window.location.hash = '#auth';
         window.location.reload();
     }
