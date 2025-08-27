@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
   const workerUrl = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
   const loader = document.getElementById('loader');
