@@ -1,198 +1,166 @@
 // /assets/js/app.js
 
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.getElementById('sidebar');
+window.tg_app = (function() {
+    const authContainer = document.getElementById('auth-container');
     const mainAppContainer = document.getElementById('main-app-container');
     const moduleContainer = document.getElementById('module-container');
-    const authContainer = document.getElementById('auth-container');
+    const sidebar = document.getElementById('sidebar');
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const mobileOverlay = document.getElementById('mobile-overlay');
     const loaderOverlay = document.getElementById('loader-overlay');
-    const backgroundSymbols = document.querySelector('.background-symbols');
-    const loadedModules = new Map();
+    
+    // Modules will be loaded here
+    window.tg_modules = {};
+    
+    // State
+    let userId = null;
+    let currentModule = null;
 
-    // Show the loader
-    const showLoader = () => {
-        if (loaderOverlay) {
-            loaderOverlay.classList.remove('hidden');
-        }
-    };
-
-    // Hide the loader
-    const hideLoader = () => {
-        if (loaderOverlay) {
-            loaderOverlay.classList.add('hidden');
-        }
-    };
-
-    // Attach event listeners for sidebar navigation
-    sidebar.addEventListener('click', (e) => {
-        const navItem = e.target.closest('.nav-item');
-        if (navItem) {
-            e.preventDefault();
-            const moduleName = navItem.dataset.module;
-            if (moduleName) {
-                if (moduleName === 'logout') {
-                    handleLogout();
-                    return;
-                }
-                window.location.hash = '#' + moduleName;
-            }
-        }
-    });
-
-    const isAuthenticated = () => {
-        // Corrected: Check for both the token and the userId
-        const token = localStorage.getItem('tg_token');
-        const userId = localStorage.getItem('userId');
-        return !!token && !!userId;
-    };
-
+    // A simple router based on URL hash
     const router = async () => {
-        showLoader();
-        const hash = window.location.hash || '#auth';
-        const moduleName = hash.substring(1) || 'auth';
+        const hash = window.location.hash.substring(1) || 'dashboard';
+        const route = hash.split('?')[0];
 
-        if (moduleName !== 'auth' && !isAuthenticated()) {
-            window.location.hash = '#auth';
-            hideLoader();
+        if (userId) {
+            // User is authenticated, load the requested module
+            mainAppContainer.classList.remove('hidden');
+            authContainer.classList.add('hidden');
+            await loadModule(route);
+        } else {
+            // User is not authenticated, show the auth screen
+            mainAppContainer.classList.add('hidden');
+            authContainer.classList.remove('hidden');
+            await loadModule('auth');
+        }
+    };
+
+    // New function to load a module
+    const loadModule = async (moduleName) => {
+        if (currentModule === moduleName) {
             return;
         }
 
-        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
-        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+        showLoader();
 
-        if (isAuthenticated()) {
-            // Logged in: Hide auth, show main app and notes
-            if (authContainer) authContainer.style.display = 'none';
-            if (backgroundSymbols) backgroundSymbols.style.display = 'none';
-            if (mainAppContainer) mainAppContainer.style.display = 'flex';
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.style.display = 'block';
-                stickyNotesToggleBtn.style.display = 'block';
-            }
-        } else {
-            // Logged out: Hide main app and notes, show auth
-            if (authContainer) authContainer.style.display = 'flex';
-            if (backgroundSymbols) backgroundSymbols.style.display = 'block';
-            if (mainAppContainer) mainAppContainer.style.display = 'none';
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.style.display = 'none';
-                stickyNotesToggleBtn.style.display = 'none';
-            }
-        }
-
-        await loadModule(moduleName);
-
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        const activeNavItem = document.querySelector(`.nav-item[data-module="${moduleName}"]`);
-        if (activeNavItem) {
-            activeNavItem.classList.add('active');
-        }
-
-        hideLoader();
-    };
-
-    // Corrected function to dynamically load a module's CSS file
-    const loadModuleCSS = (moduleName) => {
-        const cssPath = `modules/${moduleName}/style.css`;
-        const existingLink = document.querySelector(`link[href="${cssPath}"]`);
-        if (existingLink) return;
-
-        const newLink = document.createElement('link');
-        newLink.rel = 'stylesheet';
-        newLink.href = cssPath;
-        document.head.appendChild(newLink);
-    };
-
-    const loadModule = async (moduleName) => {
-        let targetContainer = moduleContainer;
-        if (moduleName === 'auth') {
-            targetContainer = authContainer;
-        }
-        
         try {
-            if (!loadedModules.has(moduleName)) {
-                let scriptPath;
-                
-                if (moduleName === 'auth') {
-                    scriptPath = `modules/auth/auth.js`;
-                } else if (moduleName === 'dashboard') {
-                    scriptPath = `modules/dashboard/dashboard.js`;
-                } else {
-                    // This is the generic path for all other modules
-                    scriptPath = `modules/${moduleName}/script.js`;
+            // Clear previous module content and styles
+            moduleContainer.innerHTML = '';
+            removeModuleCss();
+
+            // Load module HTML
+            const moduleHtmlResponse = await fetch(`modules/${moduleName}/index.html`);
+            if (!moduleHtmlResponse.ok) {
+                throw new Error(`Failed to load ${moduleName} HTML: ${moduleHtmlResponse.statusText}`);
+            }
+            moduleContainer.innerHTML = await moduleHtmlResponse.text();
+
+            // Load module CSS
+            const moduleCssLink = document.createElement('link');
+            moduleCssLink.rel = 'stylesheet';
+            moduleCssLink.href = `modules/${moduleName}/style.css`;
+            moduleCssLink.onload = () => console.log(`Module CSS loaded: ${moduleName}`);
+            moduleCssLink.onerror = (e) => console.error(`Error loading module CSS for ${moduleName}:`, e);
+            document.head.appendChild(moduleCssLink);
+
+            // Load module JS
+            const moduleJs = await import(`./modules/${moduleName}/script.js`);
+            window.tg_modules[moduleName] = moduleJs.default; // Assign the module to the global scope
+
+            // Initialize the module after the HTML is in the DOM
+            if (window.tg_modules[moduleName] && window.tg_modules[moduleName].init) {
+                window.tg_modules[moduleName].init(userId);
+                console.log(`Module loaded: ${moduleName}`);
+            }
+
+            // Update active state of sidebar links
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-module') === moduleName) {
+                    item.classList.add('active');
                 }
-                
-                const script = document.createElement('script');
-                script.src = scriptPath;
-                script.type = 'text/javascript';
+            });
 
-                await new Promise((resolve) => {
-                    script.onload = resolve;
-                    script.onerror = () => {
-                        console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
-                        resolve();
-                    };
-                    document.head.appendChild(script);
-                });
-                loadedModules.set(moduleName, true);
-            }
-
-            let html;
-            if (moduleName === 'auth') {
-                const response = await fetch(`modules/auth/auth.html`);
-                if (!response.ok) throw new Error('Auth content file not found.');
-                html = await response.text();
-            } else if (moduleName === 'dashboard') {
-                const response = await fetch(`modules/dashboard/dashboard-content.html`);
-                if (!response.ok) throw new Error('Dashboard content file not found.');
-                html = await response.text();
-            } else {
-                // This is the generic path for all other modules' HTML
-                const htmlPath = `modules/${moduleName}/index.html`;
-                const response = await fetch(htmlPath);
-                if (!response.ok) throw new Error('HTML file not found.');
-                html = await response.text();
-            }
+            currentModule = moduleName;
             
-            const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
-            targetContainer.innerHTML = cleanedHtml;
-
-            loadModuleCSS(moduleName);
-
-            if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
-                window.tg_auth.initAuthModule(targetContainer);
-            } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
-                window.tg_dashboard.initDashboard();
-            } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
-                // Pass the userId to the module's init function
-                const currentUserId = localStorage.getItem('userId');
-                if (currentUserId) {
-                    window.tg_modules[moduleName].init(currentUserId);
-                } else {
-                    console.error("User ID not found in localStorage. Cannot initialize module.");
-                }
-            }
-
-            console.log(`Module loaded: ${moduleName}`);
-
         } catch (error) {
             console.error(`Error loading module ${moduleName}:`, error);
-            targetContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
+        } finally {
+            hideLoader();
         }
     };
+    
+    const removeModuleCss = () => {
+        const links = document.querySelectorAll('link[href*="/modules/"]');
+        links.forEach(link => {
+            if (!link.href.includes('auth/style.css')) { // Don't remove the auth CSS
+                link.remove();
+            }
+        });
+    };
 
-    // Logout function
-    function handleLogout() {
-        localStorage.removeItem('tg_token');
-        // Corrected: Use the correct key to remove the userId
-        localStorage.removeItem('userId'); 
-        window.location.hash = '#auth';
-        window.location.reload();
-    }
+    const login = (id) => {
+        userId = id;
+        window.location.hash = 'dashboard';
+        router();
+    };
 
-    // Initial route handling
-    window.addEventListener('hashchange', router);
-    router();
+    const logout = () => {
+        userId = null;
+        window.location.hash = 'auth';
+    };
+
+    const showLoader = () => {
+        loaderOverlay.classList.remove('hidden');
+    };
+
+    const hideLoader = () => {
+        loaderOverlay.classList.add('hidden');
+    };
+
+    const init = () => {
+        // Initial route on page load
+        router();
+
+        // Listen for hash changes to navigate
+        window.addEventListener('hashchange', router);
+
+        // Sidebar navigation
+        sidebar.addEventListener('click', (e) => {
+            if (e.target.closest('.nav-item')) {
+                const navItem = e.target.closest('.nav-item');
+                const moduleName = navItem.getAttribute('data-module');
+                if (moduleName === 'logout') {
+                    logout();
+                } else if (moduleName) {
+                    window.location.hash = moduleName;
+                }
+                e.preventDefault();
+            }
+        });
+
+        // Mobile nav toggle
+        mobileNavToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+        });
+
+        mobileOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+        });
+    };
+
+    return {
+        init: init,
+        login: login,
+        logout: logout,
+        showLoader: showLoader,
+        hideLoader: hideLoader
+    };
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Check for a user session
+    // For now, we'll just initialize without one and let the router handle the auth screen
+    window.tg_app.init();
 });
