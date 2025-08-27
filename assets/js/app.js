@@ -66,7 +66,7 @@ window.tg_app = (function() {
             document.head.appendChild(moduleCssLink);
 
             // Load module JS - CORRECTED PATH HERE
-            const moduleJs = await import(`/tradersgazetteterminal/modules/${moduleName}/script.js`);
+            const moduleJs = await import(`/tradersgazetteterminal/modules/${moduleName}/${moduleName}.js`);
             window.tg_modules[moduleName] = moduleJs.default; // Assign the module to the global scope
 
             // Initialize the module after the HTML is in the DOM
