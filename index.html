@@ -3,113 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Traders Gazette - Terminal</title>
-    <base href="/tradersgazetteterminal/">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto:wght@400;500;700&display=swap">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/sticky-notes.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="modules/auth/style.css">
-    <link rel="stylesheet" href="assets/css/loader.css">
+    <title>The Trader's Gazette</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/tailwind.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <div class="background-symbols">
-        <span class="symbol symbol-1">$</span>
-        <span class="symbol symbol-2">€</span>
-        <span class="symbol symbol-3">📈</span>
-        <span class="symbol symbol-4">¥</span>
-        <span class="symbol symbol-5">£</span>
-        <span class="symbol symbol-6">📊</span>
-        <span class="symbol symbol-7">$</span>
-        <span class="symbol symbol-8">📈</span>
-        <span class="symbol symbol-9">€</span>
-        <span class="symbol symbol-10">¥</span>
+
+    <div id="loader-overlay" class="loader-overlay hidden">
+        <div class="loader-spinner"></div>
     </div>
 
-    <div id="main-app-container" class="terminal-container">
-        <aside class="sidebar" id="sidebar">
+    <div id="auth-container" class="hidden">
+        </div>
+
+    <div id="main-app-container" class="hidden">
+        <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <a href="#" class="logo-link">
-                    <img src="https://raw.githubusercontent.com/Ozz310/TradersGazette/refs/heads/main/newsagrregator/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" alt="The Traders Gazette Logo" class="sidebar-logo">
-                </a>
+                <a href="#"><img src="assets/images/logo.png" alt="The Trader's Gazette Logo" class="logo"></a>
             </div>
-            <nav class="sidebar-nav">
+            <nav class="nav-menu">
                 <ul>
-                    <li><a href="#" class="nav-item active" data-module="dashboard">
-                        <i class="fas fa-tachometer-alt nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="trading-ebooks">
-                        <i class="fas fa-book-reader nav-icon"></i>
-                        <span class="nav-label">Trading E-Books</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="analysis-hub">
-                        <i class="fas fa-chart-line nav-icon"></i>
-                        <span class="nav-label">Analysis Hub</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="risk-management-hub">
-                        <i class="fas fa-balance-scale nav-icon"></i>
-                        <span class="nav-label">Risk Management Hub</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="news-aggregator">
-                        <i class="fas fa-newspaper nav-icon"></i>
-                        <span class="nav-label">News Room</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="trading-journal">
-                        <i class="fas fa-book nav-icon"></i>
-                        <span class="nav-label">Trading Journal</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="cfd-brokers">
-                        <i class="fas fa-handshake nav-icon"></i>
-                        <span class="nav-label">CFD Brokers</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="contact-us">
-                        <i class="fas fa-envelope nav-icon"></i>
-                        <span class="nav-label">Contact Us</span>
-                    </a></li>
-                    <li><a href="#" class="nav-item" data-module="logout">
-                        <i class="fas fa-sign-out-alt nav-icon"></i>
-                        <span class="nav-label">Log Out</span>
-                    </a></li>
+                    <li><a href="#dashboard" class="nav-item active" data-module="dashboard">Dashboard</a></li>
+                    <li><a href="#trading-journal" class="nav-item" data-module="trading-journal">Trading Journal</a></li>
+                    <li><a href="#analysis-hub" class="nav-item" data-module="analysis-hub">Analysis Hub</a></li>
+                    <li><a href="#news-room" class="nav-item" data-module="news-room">News Room</a></li>
+                    <li><a href="#ebooks" class="nav-item" data-module="ebooks">E-book Hub</a></li>
+                    <li><a href="#contact-us" class="nav-item" data-module="contact-us">Contact Us</a></li>
+                    <li><a href="#" class="nav-item logout" data-module="logout">Logout</a></li>
                 </ul>
             </nav>
-            <div class="sidebar-footer">
-                </div>
         </aside>
 
-        <main class="content-wrapper">
+        <main id="main-content" class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="profile">
+                        <img src="assets/images/avatar.png" alt="User Avatar" class="avatar">
+                        <span class="username">Trader</span>
+                    </div>
+                </div>
+            </header>
+
             <div id="module-container" class="module-container">
-            </div>
+                </div>
         </main>
     </div>
 
-    <div id="auth-container" class="module-container"></div>
-    <div id="loader-overlay" class="loader-overlay hidden">
-        <div class="loader-container">
-            <div class="loader"></div>
-            <div class="loader-text">Loading...</div>
-        </div>
-    </div>
-
     <div id="mobile-overlay" class="mobile-overlay"></div>
-    <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
-
-    <div class="sticky-notes-component-container">
-        <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
-            <i class="fas fa-plus"></i>
-        </button>
-        
-        <div id="sticky-notes-panel" class="sticky-notes-panel">
-            <div class="panel-header">
-                <h3>My Notes & Tasks</h3>
-                <button class="close-panel-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="notes-list" id="notes-list">
-            </div>
-        </div>
-    </div>
-
-    <script src="assets/js/app.js"></script>
+    
+    <script type="module" src="assets/js/app.js"></script>
     <script src="assets/js/sticky-notes.js"></script>
 </body>
 </html>
