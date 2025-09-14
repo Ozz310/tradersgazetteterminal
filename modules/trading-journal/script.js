@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Get User ID from localStorage
   const userId = localStorage.getItem('tg_userId');
   if (!userId) {
-    console.error('User ID not found. Trading Journal cannot be loaded.');
+    console.error('User ID not found. Trading Journal cannot be loaded. Please ensure you are logged in.');
+    showNotification('User ID not found. Please log in again.', 'error');
+    if (loader) loader.classList.add('hidden');
     return;
   }
   let tradesData = [];
