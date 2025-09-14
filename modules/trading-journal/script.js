@@ -5,14 +5,30 @@ async function initializeTradingJournal() {
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // DOM Elements - Declared once at the top
         const loader = document.getElementById('loader');
         const notification = document.getElementById('notification');
         const userIdDisplay = document.getElementById('user-id-display');
+        const entryFormCard = document.getElementById('entry-form-card');
+        const uploadCsvModal = document.getElementById('upload-csv-modal');
+        const timeFrameSelect = document.getElementById('time-frame');
+        const exportTableCsv = document.getElementById('export-table-csv');
+        const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
+        const tableTab = document.getElementById('table-tab');
+        const analyticsTab = document.getElementById('analytics-tab');
+        const tableView = document.getElementById('table-view');
+        const analyticsView = document.getElementById('analytics-view');
+        const addEntryButton = document.getElementById('add-entry-button');
+        const tradeForm = document.getElementById('trade-form');
+        const uploadCsvButton = document.getElementById('upload-csv-button');
+        const uploadCsvForm = document.getElementById('upload-csv-form');
+        const closeCsvModal = document.getElementById('close-csv-modal');
         
         // Firebase Imports
         const { initializeApp } = window.firebase.app;
         const { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } = window.firebase.auth;
-        const { getFirestore, collection, addDoc, onSnapshot, getDocs, writeBatch, doc } = window.firebase.firestore;
+        const { getFirestore, collection, addDoc, onSnapshot, writeBatch, doc } = window.firebase.firestore;
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -133,10 +149,6 @@ async function initializeTradingJournal() {
         });
 
         // Trade Form Submission (Manual Entry)
-        const addEntryButton = document.getElementById('add-entry-button');
-        const tradeForm = document.getElementById('trade-form');
-        const entryFormCard = document.getElementById('entry-form-card');
-        const uploadCsvModal = document.getElementById('upload-csv-modal');
         if (addEntryButton && tradeForm && entryFormCard) {
             addEntryButton.addEventListener('click', () => {
                 entryFormCard.classList.toggle('hidden');
@@ -179,9 +191,6 @@ async function initializeTradingJournal() {
         }
 
         // CSV Upload Modal
-        const uploadCsvButton = document.getElementById('upload-csv-button');
-        const uploadCsvForm = document.getElementById('upload-csv-form');
-        const closeCsvModal = document.getElementById('close-csv-modal');
         if (uploadCsvButton && uploadCsvForm && uploadCsvModal && closeCsvModal) {
             uploadCsvButton.addEventListener('click', () => {
                 uploadCsvModal.classList.remove('hidden');
@@ -269,9 +278,8 @@ async function initializeTradingJournal() {
             return trades;
         }
 
-        // Charts Logic (your original code)
+        // Charts Logic
         let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
-        const timeFrameSelect = document.getElementById('time-frame');
 
         async function updateCharts() {
             const trades = tradesData;
@@ -474,18 +482,13 @@ async function initializeTradingJournal() {
         }
         
         // Tab switching
-        const tableTab = document.getElementById('table-tab');
-        const analyticsTab = document.getElementById('analytics-tab');
-        const tableView = document.getElementById('table-view');
-        const analyticsView = document.getElementById('analytics-view');
-        
         if (tableTab && analyticsTab && tableView && analyticsView) {
             tableTab.addEventListener('click', () => {
                 tableTab.classList.add('active');
                 analyticsTab.classList.remove('active');
                 tableView.style.display = 'block';
                 analyticsView.style.display = 'none';
-                loadTrades(auth.currentUser?.uid);
+                if(auth.currentUser) loadTrades(auth.currentUser.uid);
             });
             
             analyticsTab.addEventListener('click', () => {
@@ -497,14 +500,12 @@ async function initializeTradingJournal() {
             });
         }
         
-        const timeFrameSelect = document.getElementById('time-frame');
         if (timeFrameSelect) {
             timeFrameSelect.addEventListener('change', () => {
                 updateCharts();
             });
         }
         
-        const exportTableCsv = document.getElementById('export-table-csv');
         if (exportTableCsv) {
             exportTableCsv.addEventListener('click', () => {
                 if (!tradesData || tradesData.length === 0) {
@@ -534,7 +535,6 @@ async function initializeTradingJournal() {
             });
         }
         
-        const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
         if (exportAnalyticsCsv) {
             exportAnalyticsCsv.addEventListener('click', () => {
                 if (!tradesData || tradesData.length === 0) {
