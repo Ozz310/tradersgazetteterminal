@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const exportTableCsv = document.getElementById('export-table-csv');
   const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
 
-  // --- NEW: Get User ID from localStorage ---
+  // Get User ID from localStorage
   const userId = localStorage.getItem('tg_userId');
   if (!userId) {
     console.error('User ID not found. Trading Journal cannot be loaded.');
@@ -288,7 +288,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: { title: { display: true, text: 'Date', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+          x: { title: { display: true, text: 'Date', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+          ,
           y: { beginAtZero: true, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
         },
         plugins: {
