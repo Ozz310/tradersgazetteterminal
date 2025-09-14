@@ -1,5 +1,6 @@
 // This function contains all the core logic for the trading journal
 async function initializeTradingJournal() {
+  try {
     const workerUrl = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
     const loader = document.getElementById('loader');
     const notification = document.getElementById('notification');
@@ -10,23 +11,23 @@ async function initializeTradingJournal() {
     const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
 
     function showNotification(message, type = 'success') {
-        if (notification) {
-            notification.textContent = message;
-            notification.style.color = type === 'success' ? '#d4af37' : '#FF4040';
-            notification.classList.remove('hidden');
-            setTimeout(() => notification.classList.add('hidden'), 3000);
-        } else {
-            console.warn('Notification element not found. Message:', message);
-        }
+      if (notification) {
+        notification.textContent = message;
+        notification.style.color = type === 'success' ? '#d4af37' : '#FF4040';
+        notification.classList.remove('hidden');
+        setTimeout(() => notification.classList.add('hidden'), 3000);
+      } else {
+        console.warn('Notification element not found. Message:', message);
+      }
     }
 
     // Get User ID from localStorage
     const userId = localStorage.getItem('tg_userId');
     if (!userId) {
-        console.error('User ID not found. Trading Journal cannot be loaded. Please ensure you are logged in.');
-        showNotification('User ID not found. Please log in again.', 'error');
-        if (loader) loader.classList.add('hidden');
-        return;
+      console.error('User ID not found. Trading Journal cannot be loaded. Please ensure you are logged in.');
+      showNotification('User ID not found. Please log in again.', 'error');
+      if (loader) loader.classList.add('hidden');
+      return;
     }
     let tradesData = [];
 
@@ -34,30 +35,29 @@ async function initializeTradingJournal() {
 
     // Helper function for API calls
     async function makeApiCall(action, payload) {
-        if (loader) loader.classList.remove('hidden');
-        try {
-            const response = await fetch(workerUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, ...payload, userId }),
-            });
-            if (!response.ok) throw new Error('Network response was not ok');
-            const result = await response.json();
-            if (result.status === 'Error') {
-                throw new Error(result.error);
-            }
-            return result;
-        } catch (error) {
-            showNotification(`Error: ${error.message}`, 'error');
-            console.error(`API call for ${action} failed:`, error);
-            return null;
-        } finally {
-            if (loader) loader.classList.add('hidden');
+      if (loader) loader.classList.remove('hidden');
+      try {
+        const response = await fetch(workerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, ...payload, userId }),
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const result = await response.json();
+        if (result.status === 'Error') {
+          throw new Error(result.error);
         }
+        return result;
+      } catch (error) {
+        showNotification(`Error: ${error.message}`, 'error');
+        console.error(`API call for ${action} failed:`, error);
+        return null;
+      } finally {
+        if (loader) loader.classList.add('hidden');
+      }
     }
 
-    // ... (rest of your functions like loadTrades, tradeForm.addEventListener, etc., remain the same) ...
-
+    // Load trades from sheets
     async function loadTrades() {
       const result = await makeApiCall('readTrades');
       if (result && Array.isArray(result.trades)) {
@@ -98,7 +98,7 @@ async function initializeTradingJournal() {
           }
         }
       } else {
-          tradesData = []; // Ensure tradesData is always an empty array on error/no data
+          tradesData = [];
           const tradeTableBody = document.getElementById('trade-table-body');
           if (tradeTableBody) {
                tradeTableBody.innerHTML = '<tr><td colspan="12">No trades yet</td></tr>';
@@ -479,9 +479,15 @@ async function initializeTradingJournal() {
 
     // Initial call to load trades
     await loadTrades();
-
-    // Call initializeUserSession
-    await initializeUserSession();
+  } catch (e) {
+    console.error('Fatal error in script:', e);
+    const notification = document.getElementById('notification');
+    if (notification) {
+      notification.textContent = `A fatal error occurred: ${e.message}`;
+      notification.style.color = '#FF4040';
+      notification.classList.remove('hidden');
+    }
+  }
 }
 
 // Attach the function to the global window object
