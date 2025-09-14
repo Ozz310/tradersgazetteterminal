@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
+// This function contains all the core logic for the trading journal
+async function initializeTradingJournal() {
     const workerUrl = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
     const loader = document.getElementById('loader');
     const notification = document.getElementById('notification');
@@ -10,68 +10,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
 
     function showNotification(message, type = 'success') {
-      if (notification) {
-        notification.textContent = message;
-        notification.style.color = type === 'success' ? '#d4af37' : '#FF4040';
-        notification.classList.remove('hidden');
-        setTimeout(() => notification.classList.add('hidden'), 3000);
-      } else {
-        console.warn('Notification element not found. Message:', message);
-      }
+        if (notification) {
+            notification.textContent = message;
+            notification.style.color = type === 'success' ? '#d4af37' : '#FF4040';
+            notification.classList.remove('hidden');
+            setTimeout(() => notification.classList.add('hidden'), 3000);
+        } else {
+            console.warn('Notification element not found. Message:', message);
+        }
     }
 
     // Get User ID from localStorage
     const userId = localStorage.getItem('tg_userId');
     if (!userId) {
-      console.error('User ID not found. Trading Journal cannot be loaded. Please ensure you are logged in.');
-      showNotification('User ID not found. Please log in again.', 'error');
-      if (loader) loader.classList.add('hidden');
-      return;
+        console.error('User ID not found. Trading Journal cannot be loaded. Please ensure you are logged in.');
+        showNotification('User ID not found. Please log in again.', 'error');
+        if (loader) loader.classList.add('hidden');
+        return;
     }
     let tradesData = [];
 
     console.log(`Trading Journal loaded for user: ${userId}`);
 
-    async function initializeUserSession() {
-      try {
-        await fetch(workerUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'createSheet', userId: userId }),
-        });
-      } catch (error) {
-        console.error('Auto sheet creation failed:', error);
-      }
-    }
-
-    // We can comment this out for now to ensure the rest of the script runs
-    // initializeUserSession();
-
     // Helper function for API calls
     async function makeApiCall(action, payload) {
-      if (loader) loader.classList.remove('hidden');
-      try {
-        const response = await fetch(workerUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action, ...payload, userId }),
-        });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const result = await response.json();
-        if (result.status === 'Error') {
-          throw new Error(result.error);
+        if (loader) loader.classList.remove('hidden');
+        try {
+            const response = await fetch(workerUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, ...payload, userId }),
+            });
+            if (!response.ok) throw new Error('Network response was not ok');
+            const result = await response.json();
+            if (result.status === 'Error') {
+                throw new Error(result.error);
+            }
+            return result;
+        } catch (error) {
+            showNotification(`Error: ${error.message}`, 'error');
+            console.error(`API call for ${action} failed:`, error);
+            return null;
+        } finally {
+            if (loader) loader.classList.add('hidden');
         }
-        return result;
-      } catch (error) {
-        showNotification(`Error: ${error.message}`, 'error');
-        console.error(`API call for ${action} failed:`, error);
-        return null;
-      } finally {
-        if (loader) loader.classList.add('hidden');
-      }
     }
 
-    // Load trades from sheets
+    // ... (rest of your functions like loadTrades, tradeForm.addEventListener, etc., remain the same) ...
+
     async function loadTrades() {
       const result = await makeApiCall('readTrades');
       if (result && Array.isArray(result.trades)) {
@@ -493,13 +479,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initial call to load trades
     await loadTrades();
-  } catch (e) {
-    console.error('Fatal error in script:', e);
-    const notification = document.getElementById('notification');
-    if (notification) {
-      notification.textContent = `A fatal error occurred: ${e.message}`;
-      notification.style.color = '#FF4040';
-      notification.classList.remove('hidden');
-    }
-  }
-});
+
+    // Call initializeUserSession
+    await initializeUserSession();
+}
+
+// Attach the function to the global window object
+window.initTradingJournal = initializeTradingJournal;
