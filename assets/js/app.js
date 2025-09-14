@@ -24,20 +24,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Attach event listeners for sidebar navigation
-    sidebar.addEventListener('click', (e) => {
-        const navItem = e.target.closest('.nav-item');
-        if (navItem) {
-            e.preventDefault();
-            const moduleName = navItem.dataset.module;
-            if (moduleName) {
-                if (moduleName === 'logout') {
-                    handleLogout();
-                    return;
+    if (sidebar) {
+        sidebar.addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (navItem) {
+                e.preventDefault();
+                const moduleName = navItem.dataset.module;
+                if (moduleName) {
+                    if (moduleName === 'logout') {
+                        handleLogout();
+                        return;
+                    }
+                    window.location.hash = '#' + moduleName;
                 }
-                window.location.hash = '#' + moduleName;
             }
-        }
-    });
+        });
+    }
 
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
@@ -59,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
 
         if (isAuthenticated()) {
-            // Logged in: Hide auth, show main app and notes
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) mainAppContainer.style.display = 'flex';
@@ -68,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 stickyNotesToggleBtn.style.display = 'block';
             }
         } else {
-            // Logged out: Hide main app and notes, show auth
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) mainAppContainer.style.display = 'none';
@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hideLoader();
     };
 
-    // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
         const cssPath = `modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
@@ -112,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (!loadedModules.has(moduleName)) {
                 let scriptPath;
-                
                 if (moduleName === 'auth') {
                     scriptPath = `modules/auth/auth.js`;
                 } else if (moduleName === 'dashboard') {
@@ -160,16 +158,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             loadModuleCSS(moduleName);
             
-            // NEW LOGIC: Call the initialization function after HTML and script are loaded
-            if (window.initAuth && moduleName === 'auth') {
-                 window.initAuth();
-            } else if (window.initDashboard && moduleName === 'dashboard') {
-                 window.initDashboard();
-            } else if (window.initTradingJournal && moduleName === 'trading-journal') {
-                 window.initTradingJournal();
-            }
-
-            console.log(`Module rendered: ${moduleName}`);
+            // Wait for Firebase to be ready before calling init functions
+            const checkAndInit = () => {
+                if (window.firebase && window.firebase.app) {
+                    if (window.initAuth && moduleName === 'auth') {
+                        window.initAuth();
+                    } else if (window.initDashboard && moduleName === 'dashboard') {
+                        window.initDashboard();
+                    } else if (window.initTradingJournal && moduleName === 'trading-journal') {
+                        window.initTradingJournal();
+                    }
+                    console.log(`Module rendered: ${moduleName}`);
+                } else {
+                    setTimeout(checkAndInit, 50); // Retry after a short delay
+                }
+            };
+            
+            checkAndInit();
 
         } catch (error) {
             console.error(`Error loading module ${moduleName}:`, error);
@@ -177,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Logout function
     function handleLogout() {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
@@ -185,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     }
 
-    // Initial route handling
     window.addEventListener('hashchange', router);
     router();
 });
