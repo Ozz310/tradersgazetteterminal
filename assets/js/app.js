@@ -125,11 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 script.src = scriptPath;
                 script.type = 'text/javascript';
 
-                await new Promise((resolve) => {
-                    script.onload = resolve;
-                    script.onerror = () => {
-                        console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
+                await new Promise((resolve, reject) => {
+                    script.onload = () => {
+                        console.log(`Script loaded for module: ${moduleName}`);
                         resolve();
+                    };
+                    script.onerror = () => {
+                        console.error(`Failed to load script for module: ${moduleName}.`);
+                        reject(new Error(`Failed to load script for ${moduleName}`));
                     };
                     document.head.appendChild(script);
                 });
@@ -156,16 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.innerHTML = cleanedHtml;
 
             loadModuleCSS(moduleName);
-
-            if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
-                window.tg_auth.initAuthModule(targetContainer);
-            } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
-                window.tg_dashboard.initDashboard();
-            } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
-                window.tg_modules[moduleName].init();
+            
+            // NEW LOGIC: Call the initialization function after HTML and script are loaded
+            if (window.initAuth && moduleName === 'auth') {
+                 window.initAuth();
+            } else if (window.initDashboard && moduleName === 'dashboard') {
+                 window.initDashboard();
+            } else if (window.initTradingJournal && moduleName === 'trading-journal') {
+                 window.initTradingJournal();
             }
 
-            console.log(`Module loaded: ${moduleName}`);
+            console.log(`Module rendered: ${moduleName}`);
 
         } catch (error) {
             console.error(`Error loading module ${moduleName}:`, error);
