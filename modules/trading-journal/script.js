@@ -1,6 +1,18 @@
 // This function contains all the core logic for the trading journal
 async function initializeTradingJournal() {
     try {
+        // Check for Firebase existence before proceeding
+        if (!window.firebase) {
+            console.error('Firebase not loaded. Make sure the Firebase SDK scripts are included in your HTML.');
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.textContent = 'A fatal error occurred: Firebase SDK not found.';
+                notification.style.color = '#FF4040';
+                notification.classList.remove('hidden');
+            }
+            return; // Exit the function if Firebase is not available
+        }
+        
         // Core Firebase globals - DO NOT EDIT THESE
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
@@ -458,7 +470,9 @@ async function initializeTradingJournal() {
                             data: pnlCounts,
                             backgroundColor: (context) => {
                                 const index = context.dataIndex;
-                                return pnlData[index] < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
+                                // Need to get the actual P&L value for the bar's bin, not just the count
+                                const pnlRangeStart = pnlBins[index];
+                                return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
                             },
                             borderColor: '#fff',
                             borderWidth: 1
