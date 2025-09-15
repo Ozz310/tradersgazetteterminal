@@ -43,32 +43,32 @@ document.addEventListener('DOMContentLoaded', () => {
         showLoader();
 
         const hash = window.location.hash || '#auth';
-        const moduleName = hash.substring(1) || 'auth';
+        let moduleName = hash.substring(1) || 'auth';
 
+        // Redirect to auth if not authenticated and trying to access a protected module
         if (moduleName !== 'auth' && !isAuthenticated()) {
             window.location.hash = '#auth';
-            return;
+            moduleName = 'auth';
         }
 
-        // Show the correct container based on auth state
-        if (isAuthenticated()) {
+        // Show/hide containers and sticky notes based on authentication state
+        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
+        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+        const isLoggedIn = isAuthenticated();
+
+        if (isLoggedIn) {
             mainAppContainer.classList.remove('hidden');
             authContainer.classList.add('hidden');
             backgroundSymbols.classList.add('hidden');
+            if (stickyNotesPanel && stickyNotesToggleBtn) {
+                stickyNotesPanel.classList.remove('hidden');
+                stickyNotesToggleBtn.classList.remove('hidden');
+            }
         } else {
             mainAppContainer.classList.add('hidden');
             authContainer.classList.remove('hidden');
             backgroundSymbols.classList.remove('hidden');
-        }
-
-        // Handle sticky notes visibility
-        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
-        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
-        if (stickyNotesPanel && stickyNotesToggleBtn) {
-            if (isAuthenticated()) {
-                stickyNotesPanel.classList.remove('hidden');
-                stickyNotesToggleBtn.classList.remove('hidden');
-            } else {
+            if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.classList.add('hidden');
                 stickyNotesToggleBtn.classList.add('hidden');
             }
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
         window.location.hash = '#auth';
-        router(); // Call the router to load the auth module
+        router();
     }
 
     // Attach event listeners for sidebar navigation
