@@ -37,40 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Toggles the visibility of the main app container and the auth container
-     * based on the authentication state.
-     */
-    const updateUIForAuthStatus = () => {
-        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
-        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
-        const isLoggedIn = isAuthenticated();
-
-        if (isLoggedIn) {
-            // Logged in: Hide auth, show main app and notes
-            if (authContainer) authContainer.classList.add('hidden');
-            if (backgroundSymbols) backgroundSymbols.classList.add('hidden');
-            if (mainAppContainer) mainAppContainer.classList.remove('hidden');
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.classList.remove('hidden');
-                stickyNotesToggleBtn.classList.remove('hidden');
-            }
-        } else {
-            // Logged out: Hide main app and notes, show auth
-            if (authContainer) authContainer.classList.remove('hidden');
-            if (backgroundSymbols) backgroundSymbols.classList.remove('hidden');
-            if (mainAppContainer) mainAppContainer.classList.add('hidden');
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.classList.add('hidden');
-                stickyNotesToggleBtn.classList.add('hidden');
-            }
-        }
-    };
-
-    /**
      * Handles the single-page application routing based on the URL hash.
      */
     const router = async () => {
-        // Show loader at the start of every routing action
         showLoader();
 
         const hash = window.location.hash || '#auth';
@@ -81,9 +50,34 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        updateUIForAuthStatus();
+        // Show the correct container based on auth state
+        if (isAuthenticated()) {
+            mainAppContainer.classList.remove('hidden');
+            authContainer.classList.add('hidden');
+            backgroundSymbols.classList.add('hidden');
+        } else {
+            mainAppContainer.classList.add('hidden');
+            authContainer.classList.remove('hidden');
+            backgroundSymbols.classList.remove('hidden');
+        }
+
+        // Handle sticky notes visibility
+        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
+        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+        if (stickyNotesPanel && stickyNotesToggleBtn) {
+            if (isAuthenticated()) {
+                stickyNotesPanel.classList.remove('hidden');
+                stickyNotesToggleBtn.classList.remove('hidden');
+            } else {
+                stickyNotesPanel.classList.add('hidden');
+                stickyNotesToggleBtn.classList.add('hidden');
+            }
+        }
+
+        // Load the requested module content
         await loadModule(moduleName);
 
+        // Update active navigation item
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -92,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
             activeNavItem.classList.add('active');
         }
         
-        // Hide loader after all routing and loading is complete
         hideLoader();
     };
 
@@ -191,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
         window.location.hash = '#auth';
-        window.location.reload();
+        router(); // Call the router to load the auth module
     }
 
     // Attach event listeners for sidebar navigation
