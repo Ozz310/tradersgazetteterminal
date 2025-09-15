@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const isLoggedIn = isAuthenticated();
 
-        // **Critical fix:** Correctly handle container visibility before loading module
         if (isLoggedIn) {
             authContainer.classList.add('hidden');
             mainAppContainer.classList.remove('hidden');
@@ -68,16 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Redirect to auth if not authenticated and trying to access a protected module
         if (moduleName !== 'auth' && !isLoggedIn) {
             window.location.hash = '#auth';
             moduleName = 'auth';
         }
 
-        // Load the requested module content
         await loadModule(moduleName);
 
-        // Update active navigation item
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -133,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     script.onload = resolve;
                     script.onerror = () => {
                         console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
-                        resolve(); // Resolve even on error to continue flow
+                        resolve();
                     };
                     document.head.appendChild(script);
                 });
@@ -146,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Auth content file not found.');
                 html = await response.text();
             } else if (moduleName === 'dashboard') {
+                // **Final Fix:** This is the most crucial part. We are now ensuring the fetch call specifically requests dashboard-content.html.
                 const response = await fetch(`modules/dashboard/dashboard-content.html`);
                 if (!response.ok) throw new Error('Dashboard content file not found.');
                 html = await response.text();
