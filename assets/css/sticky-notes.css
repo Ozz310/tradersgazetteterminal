@@ -2,9 +2,11 @@
 
 /* --- Sticky Notes Component Container --- */
 .sticky-notes-component-container {
+    /* Position the container at the bottom center */
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
 }
 
@@ -13,7 +15,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: var(--gold-accent); /* Use your defined gold accent variable */
+    background-color: var(--gold-accent);
     color: var(--dominant-black);
     border: none;
     cursor: pointer;
@@ -37,9 +39,11 @@
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    position: fixed;
+    /* Position the panel relative to the button container */
+    position: absolute;
     bottom: 90px;
-    right: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 350px;
     height: 450px;
     background: #2b2b2b;
@@ -229,7 +233,8 @@
 @media (max-width: 768px) {
     .sticky-notes-component-container {
         bottom: 10px;
-        right: 10px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .sticky-notes-toggle-btn {
@@ -240,6 +245,7 @@
     .sticky-notes-panel {
         width: calc(100% - 20px);
         bottom: 70px;
-        right: 10px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 }
