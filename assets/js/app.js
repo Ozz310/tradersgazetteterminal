@@ -70,8 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) mainAppContainer.style.display = 'flex';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.style.display = 'block';
-                stickyNotesToggleBtn.style.display = 'block';
+                // Ensure the component container exists and is visible
+                const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
+                if (stickyNotesContainer) {
+                    stickyNotesContainer.style.display = 'block';
+                }
+                // Hide the notes panel itself to start
+                stickyNotesPanel.classList.remove('open');
+                stickyNotesToggleBtn.classList.remove('active');
             }
         } else {
             // Logged out: Hide main app and notes, show auth
@@ -79,8 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) mainAppContainer.style.display = 'none';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.style.display = 'none';
-                stickyNotesToggleBtn.style.display = 'none';
+                const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
+                if (stickyNotesContainer) {
+                    stickyNotesContainer.style.display = 'none';
+                }
             }
         }
 
@@ -99,14 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        const cssPath = `modules/${moduleName}/style.css`;
-        const existingLink = document.querySelector(`link[href="${cssPath}"]`);
-        if (existingLink) return;
+        // Remove old CSS link if it exists to prevent style conflicts
+        const oldLink = document.querySelector('link.module-style');
+        if (oldLink) {
+            oldLink.remove();
+        }
 
-        const newLink = document.createElement('link');
-        newLink.rel = 'stylesheet';
-        newLink.href = cssPath;
-        document.head.appendChild(newLink);
+        if (moduleName !== 'dashboard' && moduleName !== 'auth') {
+            const cssPath = `modules/${moduleName}/style.css`;
+            const newLink = document.createElement('link');
+            newLink.rel = 'stylesheet';
+            newLink.href = cssPath;
+            newLink.classList.add('module-style'); // Add a class for easy removal
+            document.head.appendChild(newLink);
+        }
     };
 
     const loadModule = async (moduleName) => {
@@ -116,62 +130,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            if (!loadedModules.has(moduleName)) {
-                let scriptPath;
+            // Clean the target container before fetching new content
+            targetContainer.innerHTML = '';
+            
+            let htmlPath, scriptPath;
 
-                if (moduleName === 'auth') {
-                    scriptPath = `modules/auth/auth.js`;
-                } else if (moduleName === 'dashboard') {
-                    scriptPath = `modules/dashboard/dashboard.js`;
-                } else {
-                    scriptPath = `modules/${moduleName}/script.js`;
-                }
-
-                const script = document.createElement('script');
-                script.src = scriptPath;
-                script.type = 'text/javascript';
-
-                await new Promise((resolve) => {
-                    script.onload = resolve;
-                    script.onerror = () => {
-                        console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
-                        resolve();
-                    };
-                    document.head.appendChild(script);
-                });
-                loadedModules.set(moduleName, true);
-            }
-
-            let html;
+            // Define paths based on module name
             if (moduleName === 'auth') {
-                const response = await fetch(`modules/auth/auth.html`);
-                if (!response.ok) throw new Error('Auth content file not found.');
-                html = await response.text();
+                htmlPath = `modules/auth/auth.html`;
+                scriptPath = `modules/auth/auth.js`;
             } else if (moduleName === 'dashboard') {
-                const response = await fetch(`modules/dashboard/dashboard-content.html`);
-                if (!response.ok) throw new Error('Dashboard content file not found.');
-                html = await response.text();
+                htmlPath = `modules/dashboard/dashboard-content.html`;
+                scriptPath = `modules/dashboard/dashboard.js`;
             } else {
-                const htmlPath = `modules/${moduleName}/index.html`;
-                const response = await fetch(htmlPath);
-                if (!response.ok) throw new Error('HTML file not found.');
-                html = await response.text();
+                htmlPath = `modules/${moduleName}/index.html`;
+                scriptPath = `modules/${moduleName}/script.js`;
             }
 
-            const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
-            targetContainer.innerHTML = cleanedHtml;
+            // Fetch HTML content first
+            const htmlResponse = await fetch(htmlPath);
+            if (!htmlResponse.ok) {
+                throw new Error(`HTML content file not found for module: ${moduleName}`);
+            }
+            const html = await htmlResponse.text();
+            targetContainer.innerHTML = html;
 
+            // Load module-specific CSS
             loadModuleCSS(moduleName);
 
-            if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
-                window.tg_auth.initAuthModule(targetContainer);
-            } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
-                window.tg_dashboard.initDashboard();
-            } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
-                window.tg_modules[moduleName].init();
-            }
+            // Dynamically load and initialize the module script
+            const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
+            if (existingScript) existingScript.remove(); // Remove old script to prevent re-initialization issues
 
-            console.log(`Module loaded: ${moduleName}`);
+            const script = document.createElement('script');
+            script.src = scriptPath;
+            script.type = 'text/javascript';
+            script.async = true; // Ensure script is loaded asynchronously
+
+            script.onload = () => {
+                // Call the initialization function from the global scope (if it exists)
+                if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
+                    window.tg_modules[moduleName].init();
+                } else if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
+                    window.tg_auth.initAuthModule(targetContainer);
+                } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
+                    window.tg_dashboard.initDashboard();
+                } else {
+                    console.warn(`No specific init function found for module: ${moduleName}.`);
+                }
+                console.log(`Module loaded: ${moduleName}`);
+            };
+
+            script.onerror = () => {
+                console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
+            };
+
+            document.body.appendChild(script);
 
         } catch (error) {
             console.error(`Error loading module ${moduleName}:`, error);
