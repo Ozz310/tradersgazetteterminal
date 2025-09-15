@@ -8,7 +8,7 @@ const stickyNotes = (function() {
     const notesList = document.getElementById('notes-list');
 
     // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcYTv9Wx_doz44pCvRpXA6dv3BN0Oj00CG2_AULAenl_NWraJz5zw1saFfbwuZP9KTXw/exec';
+    const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
     
     const MAX_NOTES = 4;
     const MAX_ITEMS = 5;
@@ -48,12 +48,10 @@ const stickyNotes = (function() {
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                // **CRITICAL FIX:** Removed mode: 'no-cors'
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ notes: notes, userId: userId, action: 'saveNotes' }),
             });
 
-            // The 'no-cors' mode prevented this check from ever working.
             if (!response.ok) {
                 throw new Error(`Server responded with a non-200 status: ${response.status}`);
             }
