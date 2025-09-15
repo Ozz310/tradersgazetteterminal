@@ -42,12 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const router = async () => {
         showLoader();
 
-        const hash = window.location.hash || '#auth';
-        let moduleName = hash.substring(1) || 'auth';
-
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const isLoggedIn = isAuthenticated();
+
+        // **Final, critical fix: Force redirect if no hash is present**
+        if (!window.location.hash) {
+            window.location.hash = '#auth';
+            return; // Exit to prevent further execution on initial load
+        }
+        
+        const hash = window.location.hash || '#auth';
+        let moduleName = hash.substring(1) || 'auth';
 
         if (isLoggedIn) {
             authContainer.classList.add('hidden');
@@ -142,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Auth content file not found.');
                 html = await response.text();
             } else if (moduleName === 'dashboard') {
-                // **Final Fix:** This is the most crucial part. We are now ensuring the fetch call specifically requests dashboard-content.html.
                 const response = await fetch(`modules/dashboard/dashboard-content.html`);
                 if (!response.ok) throw new Error('Dashboard content file not found.');
                 html = await response.text();
