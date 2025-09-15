@@ -9,75 +9,79 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundSymbols = document.querySelector('.background-symbols');
     const loadedModules = new Map();
 
-    // Show the loader
+    /**
+     * Shows the global loader overlay.
+     */
     const showLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.remove('hidden');
         }
     };
 
-    // Hide the loader
+    /**
+     * Hides the global loader overlay.
+     */
     const hideLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.add('hidden');
         }
     };
 
-    // Attach event listeners for sidebar navigation
-    sidebar.addEventListener('click', (e) => {
-        const navItem = e.target.closest('.nav-item');
-        if (navItem) {
-            e.preventDefault();
-            const moduleName = navItem.dataset.module;
-            if (moduleName) {
-                if (moduleName === 'logout') {
-                    handleLogout();
-                    return;
-                }
-                window.location.hash = '#' + moduleName;
-            }
-        }
-    });
-
+    /**
+     * Checks if the user is authenticated by looking for a token in local storage.
+     * @returns {boolean} True if authenticated, false otherwise.
+     */
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
         return !!token;
     };
 
+    /**
+     * Toggles the visibility of the main app container and the auth container
+     * based on the authentication state.
+     */
+    const updateUIForAuthStatus = () => {
+        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
+        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+        const isLoggedIn = isAuthenticated();
+
+        if (isLoggedIn) {
+            // Logged in: Hide auth, show main app and notes
+            if (authContainer) authContainer.classList.add('hidden');
+            if (backgroundSymbols) backgroundSymbols.classList.add('hidden');
+            if (mainAppContainer) mainAppContainer.classList.remove('hidden');
+            if (stickyNotesPanel && stickyNotesToggleBtn) {
+                stickyNotesPanel.classList.remove('hidden');
+                stickyNotesToggleBtn.classList.remove('hidden');
+            }
+        } else {
+            // Logged out: Hide main app and notes, show auth
+            if (authContainer) authContainer.classList.remove('hidden');
+            if (backgroundSymbols) backgroundSymbols.classList.remove('hidden');
+            if (mainAppContainer) mainAppContainer.classList.add('hidden');
+            if (stickyNotesPanel && stickyNotesToggleBtn) {
+                stickyNotesPanel.classList.add('hidden');
+                stickyNotesToggleBtn.classList.add('hidden');
+            }
+        }
+    };
+
+    /**
+     * Handles the single-page application routing based on the URL hash.
+     */
     const router = async () => {
+        // Show loader at the start of every routing action
         showLoader();
+
         const hash = window.location.hash || '#auth';
         const moduleName = hash.substring(1) || 'auth';
 
         if (moduleName !== 'auth' && !isAuthenticated()) {
             window.location.hash = '#auth';
-            hideLoader();
             return;
         }
 
-        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
-        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
-
-        if (isAuthenticated()) {
-            // Logged in: Hide auth, show main app and notes
-            if (authContainer) authContainer.style.display = 'none';
-            if (backgroundSymbols) backgroundSymbols.style.display = 'none';
-            if (mainAppContainer) mainAppContainer.style.display = 'flex';
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.style.display = 'block';
-                stickyNotesToggleBtn.style.display = 'block';
-            }
-        } else {
-            // Logged out: Hide main app and notes, show auth
-            if (authContainer) authContainer.style.display = 'flex';
-            if (backgroundSymbols) backgroundSymbols.style.display = 'block';
-            if (mainAppContainer) mainAppContainer.style.display = 'none';
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.style.display = 'none';
-                stickyNotesToggleBtn.style.display = 'none';
-            }
-        }
-
+        updateUIForAuthStatus();
         await loadModule(moduleName);
 
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -87,11 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeNavItem) {
             activeNavItem.classList.add('active');
         }
-
+        
+        // Hide loader after all routing and loading is complete
         hideLoader();
     };
 
-    // Corrected function to dynamically load a module's CSS file
+    /**
+     * Dynamically loads a module's CSS file if it's not already loaded.
+     * @param {string} moduleName The name of the module.
+     */
     const loadModuleCSS = (moduleName) => {
         const cssPath = `modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
@@ -103,16 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(newLink);
     };
 
+    /**
+     * Dynamically loads the content and script of a module.
+     * @param {string} moduleName The name of the module to load.
+     */
     const loadModule = async (moduleName) => {
         let targetContainer = moduleContainer;
         if (moduleName === 'auth') {
             targetContainer = authContainer;
         }
-        
+
         try {
             if (!loadedModules.has(moduleName)) {
                 let scriptPath;
-                
                 if (moduleName === 'auth') {
                     scriptPath = `modules/auth/auth.js`;
                 } else if (moduleName === 'dashboard') {
@@ -120,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     scriptPath = `modules/${moduleName}/script.js`;
                 }
-                
+
                 const script = document.createElement('script');
                 script.src = scriptPath;
                 script.type = 'text/javascript';
@@ -151,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('HTML file not found.');
                 html = await response.text();
             }
-            
+
             const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
             targetContainer.innerHTML = cleanedHtml;
 
@@ -173,7 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Logout function
+    /**
+     * Handles user logout by clearing session data and reloading the page.
+     */
     function handleLogout() {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
@@ -181,7 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     }
 
-    // Initial route handling
+    // Attach event listeners for sidebar navigation
+    sidebar.addEventListener('click', (e) => {
+        const navItem = e.target.closest('.nav-item');
+        if (navItem) {
+            e.preventDefault();
+            const moduleName = navItem.dataset.module;
+            if (moduleName) {
+                if (moduleName === 'logout') {
+                    handleLogout();
+                    return;
+                }
+                window.location.hash = '#' + moduleName;
+            }
+        }
+    });
+
+    // Initial routing and setup
     window.addEventListener('hashchange', router);
     router();
 });
