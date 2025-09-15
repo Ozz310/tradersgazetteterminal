@@ -9,51 +9,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundSymbols = document.querySelector('.background-symbols');
     const loadedModules = new Map();
 
-    /**
-     * Shows the global loader overlay.
-     */
     const showLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.remove('hidden');
         }
     };
 
-    /**
-     * Hides the global loader overlay.
-     */
     const hideLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.add('hidden');
         }
     };
 
-    /**
-     * Checks if the user is authenticated by looking for a token in local storage.
-     * @returns {boolean} True if authenticated, false otherwise.
-     */
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
         return !!token;
     };
 
-    /**
-     * Handles the single-page application routing based on the URL hash.
-     */
     const router = async () => {
         showLoader();
 
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const isLoggedIn = isAuthenticated();
+        let moduleName = window.location.hash.substring(1);
 
-        // **Final, critical fix: Force redirect if no hash is present**
-        if (!window.location.hash) {
+        // **CRITICAL FIX: Force redirect to auth if not logged in and not on the auth page**
+        if (!isLoggedIn && moduleName !== 'auth') {
             window.location.hash = '#auth';
-            return; // Exit to prevent further execution on initial load
+            return;
+        }
+
+        // Handle root URL without a hash
+        if (window.location.hash === '') {
+            window.location.hash = '#auth';
+            return;
         }
         
-        const hash = window.location.hash || '#auth';
-        let moduleName = hash.substring(1) || 'auth';
+        // Ensure moduleName is correctly set after the checks
+        moduleName = window.location.hash.substring(1) || 'auth';
 
         if (isLoggedIn) {
             authContainer.classList.add('hidden');
@@ -73,11 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (moduleName !== 'auth' && !isLoggedIn) {
-            window.location.hash = '#auth';
-            moduleName = 'auth';
-        }
-
         await loadModule(moduleName);
 
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -91,10 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hideLoader();
     };
 
-    /**
-     * Dynamically loads a module's CSS file if it's not already loaded.
-     * @param {string} moduleName The name of the module.
-     */
     const loadModuleCSS = (moduleName) => {
         const cssPath = `modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
@@ -106,10 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(newLink);
     };
 
-    /**
-     * Dynamically loads the content and script of a module.
-     * @param {string} moduleName The name of the module to load.
-     */
     const loadModule = async (moduleName) => {
         let targetContainer = moduleContainer;
         if (moduleName === 'auth') {
@@ -179,9 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    /**
-     * Handles user logout by clearing session data and reloading the page.
-     */
     function handleLogout() {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
@@ -189,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         router();
     }
 
-    // Attach event listeners for sidebar navigation
     sidebar.addEventListener('click', (e) => {
         const navItem = e.target.closest('.nav-item');
         if (navItem) {
@@ -205,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial routing and setup
     window.addEventListener('hashchange', router);
     router();
 });
