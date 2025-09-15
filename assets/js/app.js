@@ -24,22 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Attach event listeners for sidebar navigation
-    if (sidebar) {
-        sidebar.addEventListener('click', (e) => {
-            const navItem = e.target.closest('.nav-item');
-            if (navItem) {
-                e.preventDefault();
-                const moduleName = navItem.dataset.module;
-                if (moduleName) {
-                    if (moduleName === 'logout') {
-                        handleLogout();
-                        return;
-                    }
-                    window.location.hash = '#' + moduleName;
+    sidebar.addEventListener('click', (e) => {
+        const navItem = e.target.closest('.nav-item');
+        if (navItem) {
+            e.preventDefault();
+            const moduleName = navItem.dataset.module;
+            if (moduleName) {
+                if (moduleName === 'logout') {
+                    handleLogout();
+                    return;
                 }
+                window.location.hash = '#' + moduleName;
             }
-        });
-    }
+        }
+    });
 
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
@@ -61,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
 
         if (isAuthenticated()) {
+            // Logged in: Hide auth, show main app and notes
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) mainAppContainer.style.display = 'flex';
@@ -69,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 stickyNotesToggleBtn.style.display = 'block';
             }
         } else {
+            // Logged out: Hide main app and notes, show auth
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) mainAppContainer.style.display = 'none';
@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hideLoader();
     };
 
+    // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
         const cssPath = `modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (!loadedModules.has(moduleName)) {
                 let scriptPath;
+                
                 if (moduleName === 'auth') {
                     scriptPath = `modules/auth/auth.js`;
                 } else if (moduleName === 'dashboard') {
@@ -123,14 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 script.src = scriptPath;
                 script.type = 'text/javascript';
 
-                await new Promise((resolve, reject) => {
-                    script.onload = () => {
-                        console.log(`Script loaded for module: ${moduleName}`);
-                        resolve();
-                    };
+                await new Promise((resolve) => {
+                    script.onload = resolve;
                     script.onerror = () => {
-                        console.error(`Failed to load script for module: ${moduleName}.`);
-                        reject(new Error(`Failed to load script for ${moduleName}`));
+                        console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
+                        resolve();
                     };
                     document.head.appendChild(script);
                 });
@@ -157,24 +156,16 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.innerHTML = cleanedHtml;
 
             loadModuleCSS(moduleName);
-            
-            // Wait for Firebase to be ready before calling init functions
-            const checkAndInit = () => {
-                if (window.firebase && window.firebase.app) {
-                    if (window.initAuth && moduleName === 'auth') {
-                        window.initAuth();
-                    } else if (window.initDashboard && moduleName === 'dashboard') {
-                        window.initDashboard();
-                    } else if (window.initTradingJournal && moduleName === 'trading-journal') {
-                        window.initTradingJournal();
-                    }
-                    console.log(`Module rendered: ${moduleName}`);
-                } else {
-                    setTimeout(checkAndInit, 50); // Retry after a short delay
-                }
-            };
-            
-            checkAndInit();
+
+            if (moduleName === 'auth' && window.tg_auth && window.tg_auth.initAuthModule) {
+                window.tg_auth.initAuthModule(targetContainer);
+            } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
+                window.tg_dashboard.initDashboard();
+            } else if (window.tg_modules && window.tg_modules[moduleName] && typeof window.tg_modules[moduleName].init === 'function') {
+                window.tg_modules[moduleName].init();
+            }
+
+            console.log(`Module loaded: ${moduleName}`);
 
         } catch (error) {
             console.error(`Error loading module ${moduleName}:`, error);
@@ -182,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Logout function
     function handleLogout() {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
@@ -189,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     }
 
+    // Initial route handling
     window.addEventListener('hashchange', router);
     router();
 });
