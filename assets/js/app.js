@@ -9,17 +9,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundSymbols = document.querySelector('.background-symbols');
     const loadedModules = new Map();
 
+    // Show the loader
     const showLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.remove('hidden');
         }
     };
 
+    // Hide the loader
     const hideLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.add('hidden');
         }
     };
+
+    // Attach event listeners for sidebar navigation
+    sidebar.addEventListener('click', (e) => {
+        const navItem = e.target.closest('.nav-item');
+        if (navItem) {
+            e.preventDefault();
+            const moduleName = navItem.dataset.module;
+            if (moduleName) {
+                if (moduleName === 'logout') {
+                    handleLogout();
+                    return;
+                }
+                window.location.hash = '#' + moduleName;
+            }
+        }
+    });
 
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
@@ -27,40 +45,42 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const router = async () => {
+        // **CRITICAL FIX: Check for legacy URL parameters and force a clean redirect**
+        if (window.location.search) {
+            window.location.href = window.location.origin + window.location.pathname + '#auth';
+            return;
+        }
+
         showLoader();
+        const hash = window.location.hash || '#auth';
+        const moduleName = hash.substring(1) || 'auth';
+
+        if (moduleName !== 'auth' && !isAuthenticated()) {
+            window.location.hash = '#auth';
+            hideLoader();
+            return;
+        }
 
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
-        const isLoggedIn = isAuthenticated();
-        let moduleName = window.location.hash.substring(1) || 'auth';
 
-        if (!isLoggedIn && moduleName !== 'auth') {
-            window.location.hash = '#auth';
-            return;
-        }
-
-        if (window.location.hash === '') {
-            window.location.hash = '#auth';
-            return;
-        }
-        
-        moduleName = window.location.hash.substring(1) || 'auth';
-
-        if (isLoggedIn) {
-            authContainer.classList.add('hidden');
-            mainAppContainer.classList.remove('hidden');
-            backgroundSymbols.classList.add('hidden');
+        if (isAuthenticated()) {
+            // Logged in: Hide auth, show main app and notes
+            if (authContainer) authContainer.style.display = 'none';
+            if (backgroundSymbols) backgroundSymbols.style.display = 'none';
+            if (mainAppContainer) mainAppContainer.style.display = 'flex';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.classList.remove('hidden');
-                stickyNotesToggleBtn.classList.remove('hidden');
+                stickyNotesPanel.style.display = 'block';
+                stickyNotesToggleBtn.style.display = 'block';
             }
         } else {
-            mainAppContainer.classList.add('hidden');
-            authContainer.classList.remove('hidden');
-            backgroundSymbols.classList.remove('hidden');
+            // Logged out: Hide main app and notes, show auth
+            if (authContainer) authContainer.style.display = 'flex';
+            if (backgroundSymbols) backgroundSymbols.style.display = 'block';
+            if (mainAppContainer) mainAppContainer.style.display = 'none';
             if (stickyNotesPanel && stickyNotesToggleBtn) {
-                stickyNotesPanel.classList.add('hidden');
-                stickyNotesToggleBtn.classList.add('hidden');
+                stickyNotesPanel.style.display = 'none';
+                stickyNotesToggleBtn.style.display = 'none';
             }
         }
 
@@ -73,10 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeNavItem) {
             activeNavItem.classList.add('active');
         }
-        
+
         hideLoader();
     };
 
+    // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
         const cssPath = `modules/${moduleName}/style.css`;
         const existingLink = document.querySelector(`link[href="${cssPath}"]`);
@@ -97,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (!loadedModules.has(moduleName)) {
                 let scriptPath;
+
                 if (moduleName === 'auth') {
                     scriptPath = `modules/auth/auth.js`;
                 } else if (moduleName === 'dashboard') {
@@ -109,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 script.src = scriptPath;
                 script.type = 'text/javascript';
 
-                await new Promise((resolve, reject) => {
+                await new Promise((resolve) => {
                     script.onload = resolve;
                     script.onerror = () => {
                         console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
@@ -120,23 +142,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadedModules.set(moduleName, true);
             }
 
-            let htmlPath;
-            if (moduleName === 'dashboard') {
-                // Correctly load the specific dashboard-content.html file
-                htmlPath = `modules/dashboard/dashboard-content.html`;
-            } else if (moduleName === 'auth') {
-                // Correctly load the auth.html file
-                htmlPath = `modules/auth/auth.html`;
+            let html;
+            if (moduleName === 'auth') {
+                const response = await fetch(`modules/auth/auth.html`);
+                if (!response.ok) throw new Error('Auth content file not found.');
+                html = await response.text();
+            } else if (moduleName === 'dashboard') {
+                const response = await fetch(`modules/dashboard/dashboard-content.html`);
+                if (!response.ok) throw new Error('Dashboard content file not found.');
+                html = await response.text();
             } else {
-                // Assume all other modules use an index.html file
-                htmlPath = `modules/${moduleName}/index.html`;
+                const htmlPath = `modules/${moduleName}/index.html`;
+                const response = await fetch(htmlPath);
+                if (!response.ok) throw new Error('HTML file not found.');
+                html = await response.text();
             }
-
-            const response = await fetch(htmlPath);
-            if (!response.ok) {
-                throw new Error(`HTML file not found: ${htmlPath}`);
-            }
-            const html = await response.text();
 
             const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
             targetContainer.innerHTML = cleanedHtml;
@@ -159,28 +179,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Logout function
     function handleLogout() {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
         window.location.hash = '#auth';
-        router();
+        window.location.reload();
     }
 
-    sidebar.addEventListener('click', (e) => {
-        const navItem = e.target.closest('.nav-item');
-        if (navItem) {
-            e.preventDefault();
-            const moduleName = navItem.dataset.module;
-            if (moduleName) {
-                if (moduleName === 'logout') {
-                    handleLogout();
-                    return;
-                }
-                window.location.hash = '#' + moduleName;
-            }
-        }
-    });
-
+    // Initial route handling
     window.addEventListener('hashchange', router);
     router();
 });
