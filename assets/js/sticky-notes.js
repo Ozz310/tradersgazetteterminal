@@ -1,3 +1,5 @@
+// /assets/js/sticky-notes.js
+
 const stickyNotes = (function() {
 
     const toggleBtn = document.getElementById('sticky-notes-toggle-btn');
@@ -20,7 +22,7 @@ const stickyNotes = (function() {
     // --- Backend API Functions ---
     async function fetchNotes() {
         try {
-            const response = await fetch(`${SCRIPT_URL}?userId=${userId}`);
+            const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
             const data = await response.json();
             if (data && data.notes) {
                 notes = data.notes;
@@ -46,10 +48,16 @@ const stickyNotes = (function() {
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                // **CRITICAL FIX:** Removed mode: 'no-cors'
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ notes: notes, userId: userId }),
+                body: JSON.stringify({ notes: notes, userId: userId, action: 'saveNotes' }),
             });
+
+            // The 'no-cors' mode prevented this check from ever working.
+            if (!response.ok) {
+                throw new Error(`Server responded with a non-200 status: ${response.status}`);
+            }
+
             console.log('Notes saved to backend.');
             localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         } catch (error) {
@@ -198,7 +206,6 @@ const stickyNotes = (function() {
     toggleBtn.addEventListener('click', () => {
         panel.classList.toggle('open');
         toggleBtn.classList.toggle('active');
-        // Now we can fetch notes when the panel is opened
         if (panel.classList.contains('open')) {
             fetchNotes();
         }
@@ -209,5 +216,4 @@ const stickyNotes = (function() {
         toggleBtn.classList.remove('active');
     });
 
-    // We no longer call fetchNotes() here. It will be called when the panel is opened.
 })();
