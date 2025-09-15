@@ -45,20 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const hash = window.location.hash || '#auth';
         let moduleName = hash.substring(1) || 'auth';
 
-        // Redirect to auth if not authenticated and trying to access a protected module
-        if (moduleName !== 'auth' && !isAuthenticated()) {
-            window.location.hash = '#auth';
-            moduleName = 'auth';
-        }
-
-        // Show/hide containers and sticky notes based on authentication state
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const isLoggedIn = isAuthenticated();
 
+        // **Critical fix:** Correctly handle container visibility before loading module
         if (isLoggedIn) {
-            mainAppContainer.classList.remove('hidden');
             authContainer.classList.add('hidden');
+            mainAppContainer.classList.remove('hidden');
             backgroundSymbols.classList.add('hidden');
             if (stickyNotesPanel && stickyNotesToggleBtn) {
                 stickyNotesPanel.classList.remove('hidden');
@@ -72,6 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 stickyNotesPanel.classList.add('hidden');
                 stickyNotesToggleBtn.classList.add('hidden');
             }
+        }
+
+        // Redirect to auth if not authenticated and trying to access a protected module
+        if (moduleName !== 'auth' && !isLoggedIn) {
+            window.location.hash = '#auth';
+            moduleName = 'auth';
         }
 
         // Load the requested module content
@@ -129,11 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 script.src = scriptPath;
                 script.type = 'text/javascript';
 
-                await new Promise((resolve) => {
+                await new Promise((resolve, reject) => {
                     script.onload = resolve;
                     script.onerror = () => {
                         console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
-                        resolve();
+                        resolve(); // Resolve even on error to continue flow
                     };
                     document.head.appendChild(script);
                 });
