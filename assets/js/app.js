@@ -32,21 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const isLoggedIn = isAuthenticated();
-        let moduleName = window.location.hash.substring(1);
+        let moduleName = window.location.hash.substring(1) || 'auth';
 
-        // **CRITICAL FIX: Force redirect to auth if not logged in and not on the auth page**
         if (!isLoggedIn && moduleName !== 'auth') {
             window.location.hash = '#auth';
             return;
         }
 
-        // Handle root URL without a hash
         if (window.location.hash === '') {
             window.location.hash = '#auth';
             return;
         }
         
-        // Ensure moduleName is correctly set after the checks
         moduleName = window.location.hash.substring(1) || 'auth';
 
         if (isLoggedIn) {
@@ -123,21 +120,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadedModules.set(moduleName, true);
             }
 
-            let html;
-            if (moduleName === 'auth') {
-                const response = await fetch(`modules/auth/auth.html`);
-                if (!response.ok) throw new Error('Auth content file not found.');
-                html = await response.text();
-            } else if (moduleName === 'dashboard') {
-                const response = await fetch(`modules/dashboard/dashboard-content.html`);
-                if (!response.ok) throw new Error('Dashboard content file not found.');
-                html = await response.text();
+            let htmlPath;
+            if (moduleName === 'dashboard') {
+                // Correctly load the specific dashboard-content.html file
+                htmlPath = `modules/dashboard/dashboard-content.html`;
+            } else if (moduleName === 'auth') {
+                // Correctly load the auth.html file
+                htmlPath = `modules/auth/auth.html`;
             } else {
-                const htmlPath = `modules/${moduleName}/index.html`;
-                const response = await fetch(htmlPath);
-                if (!response.ok) throw new Error('HTML file not found.');
-                html = await response.text();
+                // Assume all other modules use an index.html file
+                htmlPath = `modules/${moduleName}/index.html`;
             }
+
+            const response = await fetch(htmlPath);
+            if (!response.ok) {
+                throw new Error(`HTML file not found: ${htmlPath}`);
+            }
+            const html = await response.text();
 
             const cleanedHtml = html.replace(/&nbsp;/g, '').trim();
             targetContainer.innerHTML = cleanedHtml;
