@@ -5,7 +5,8 @@ window.initTradingJournal = async function() {
     console.log('Trading Journal module initializing...');
 
     // This script assumes the user ID is already in local storage from a login process.
-    const userId = localStorage.getItem('traders_gazette_user_id');
+    // CORRECTED: Reading from 'tg_userId' as per your setup
+    const userId = localStorage.getItem('tg_userId');
 
     if (!userId) {
         console.error('User not authenticated. A user ID is required to use this module.');
@@ -18,8 +19,8 @@ window.initTradingJournal = async function() {
         return; // Exit if no user ID
     }
 
-    // Core Backend URL - UPDATE THIS WITH YOUR DEPLOYED GAS URL
-    const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxcl15DTjMlwFjXMvXko1U50Obu6sPtdv7WkymN7lJq-qvgicxpT2Dn8brtFKS2r2xA/exec';
+    // Core Backend URL - UPDATE THIS WITH YOUR CLOUDFLARE WORKER URL
+    const API_ENDPOINT = 'YOUR_CLOUDFLARE_WORKER_URL_HERE';
 
     // DOM Elements - Declared once at the top
     const loader = document.getElementById('loader');
