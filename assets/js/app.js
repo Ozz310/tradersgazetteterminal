@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const router = async () => {
-        // **CRITICAL FIX: Check for legacy URL parameters and force a clean redirect**
+        // CRITICAL FIX: Check for legacy URL parameters and force a clean redirect
         if (window.location.search) {
             window.location.href = window.location.origin + window.location.pathname + '#auth';
             return;
@@ -61,35 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
-        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+        // Correctly handle sticky notes panel visibility
+        handleStickyNotesVisibility(moduleName);
 
         if (isAuthenticated()) {
             // Logged in: Hide auth, show main app and notes
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) mainAppContainer.style.display = 'flex';
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                // Ensure the component container exists and is visible
-                const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
-                if (stickyNotesContainer) {
-                    stickyNotesContainer.style.display = 'block';
-                }
-                // Hide the notes panel itself to start
-                stickyNotesPanel.classList.remove('open');
-                stickyNotesToggleBtn.classList.remove('active');
-            }
         } else {
             // Logged out: Hide main app and notes, show auth
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) mainAppContainer.style.display = 'none';
-            if (stickyNotesPanel && stickyNotesToggleBtn) {
-                const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
-                if (stickyNotesContainer) {
-                    stickyNotesContainer.style.display = 'none';
-                }
-            }
         }
 
         await loadModule(moduleName);
@@ -104,6 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hideLoader();
     };
+
+    const handleStickyNotesVisibility = (moduleName) => {
+        const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
+        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
+        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
+    
+        if (stickyNotesContainer && stickyNotesPanel && stickyNotesToggleBtn) {
+            const isNoteModule = (moduleName === 'dashboard' || moduleName === 'trading-journal');
+            if (isAuthenticated() && isNoteModule) {
+                stickyNotesContainer.style.display = 'block';
+                stickyNotesPanel.classList.remove('open');
+                stickyNotesToggleBtn.classList.remove('active');
+            } else {
+                stickyNotesContainer.style.display = 'none';
+                stickyNotesPanel.classList.remove('open');
+                stickyNotesToggleBtn.classList.remove('active');
+            }
+        }
+    };
+    
 
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
@@ -175,6 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.tg_auth.initAuthModule(targetContainer);
                 } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
                     window.tg_dashboard.initDashboard();
+                } else if (moduleName === 'trading-journal' && window.initTradingJournal) {
+                    window.initTradingJournal();
                 } else {
                     console.warn(`No specific init function found for module: ${moduleName}.`);
                 }
