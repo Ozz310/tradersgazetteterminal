@@ -20,7 +20,7 @@ window.initTradingJournal = async function() {
     }
 
     // Core Backend URL - UPDATE THIS WITH YOUR CLOUDFLARE WORKER URL
-    const API_ENDPOINT = 'YOUR_CLOUDFLARE_WORKER_URL_HERE';
+    const API_ENDPOINT = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
 
     // DOM Elements - Declared once at the top
     const loader = document.getElementById('loader');
