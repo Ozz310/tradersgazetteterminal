@@ -1,5 +1,9 @@
-// This function contains all the core logic for the trading journal
-async function initializeTradingJournal() {
+// /modules/trading-journal/script.js
+// This script contains all the core logic for the trading journal.
+// It is wrapped in a self-executing function to avoid global variable conflicts.
+window.initTradingJournal = async function() {
+    console.log('Trading Journal module initializing...');
+    
     try {
         // Check for Firebase existence before proceeding
         if (!window.firebase) {
@@ -115,7 +119,7 @@ async function initializeTradingJournal() {
                             const stopLoss = parseFloat(trade['Stop Loss']);
                             const pnlNet = parseFloat(trade['P&L Net']);
                             const positionSize = parseFloat(trade['Position Size']);
-        
+            
                             row.innerHTML = `
                                 <td>${trade.Date || ''}</td>
                                 <td>${trade.Symbol || ''}</td>
@@ -599,7 +603,4 @@ async function initializeTradingJournal() {
             notification.classList.remove('hidden');
         }
     }
-}
-
-// Attach the function to the global window object
-window.initTradingJournal = initializeTradingJournal;
+};
