@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let htmlPath, scriptPath;
 
-            // Define paths based on module name
+            // CORRECTED: Define paths based on module name using the provided file structure
             if (moduleName === 'auth') {
                 htmlPath = `modules/auth/auth.html`;
                 scriptPath = `modules/auth/auth.js`;
@@ -147,14 +147,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 htmlPath = `modules/dashboard/dashboard-content.html`;
                 scriptPath = `modules/dashboard/dashboard.js`;
             } else {
+                // For all other modules, use the index.html and script.js convention
                 htmlPath = `modules/${moduleName}/index.html`;
                 scriptPath = `modules/${moduleName}/script.js`;
+            }
+            // EXCEPTION: Trading Journal is an exception for script name
+            if (moduleName === 'trading-journal') {
+                scriptPath = `modules/trading-journal/script.js`;
             }
 
             // Fetch HTML content first
             const htmlResponse = await fetch(htmlPath);
             if (!htmlResponse.ok) {
-                throw new Error(`HTML content file not found for module: ${moduleName}`);
+                throw new Error(`HTML content file not found for module: ${moduleName}. Status: ${htmlResponse.status}`);
             }
             const html = await htmlResponse.text();
             targetContainer.innerHTML = html;
@@ -180,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (moduleName === 'dashboard' && window.tg_dashboard && window.tg_dashboard.initDashboard) {
                     window.tg_dashboard.initDashboard();
                 } else if (moduleName === 'trading-journal' && window.initTradingJournal) {
+                    // CORRECTED: Call the global init function for trading journal
                     window.initTradingJournal();
                 } else {
                     console.warn(`No specific init function found for module: ${moduleName}.`);
