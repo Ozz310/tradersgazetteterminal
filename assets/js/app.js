@@ -65,15 +65,21 @@ document.addEventListener('DOMContentLoaded', () => {
         handleStickyNotesVisibility(moduleName);
 
         if (isAuthenticated()) {
-            // Logged in: Hide auth, show main app and notes
+            // Logged in: Hide auth, show main app and notes, and REMOVE the hidden class
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
-            if (mainAppContainer) mainAppContainer.style.display = 'flex';
+            if (mainAppContainer) {
+                mainAppContainer.style.display = 'flex';
+                mainAppContainer.classList.remove('hidden'); // ADDED: Removes the hidden class
+            }
         } else {
             // Logged out: Hide main app and notes, show auth
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
-            if (mainAppContainer) mainAppContainer.style.display = 'none';
+            if (mainAppContainer) {
+                mainAppContainer.style.display = 'none';
+                mainAppContainer.classList.add('hidden'); // ADDED: Adds the hidden class back
+            }
         }
 
         await loadModule(moduleName);
