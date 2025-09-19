@@ -8,7 +8,8 @@ window.initTradingJournal = async function() {
         console.error('User not authenticated. A user ID is required to use this module.');
         const notification = document.getElementById('notification');
         if (notification) {
-            notification.textContent = 'Please log in or contact support. A fatal error occurred: User ID not found.';
+            notification.textContent = 'Please log in or contact support.
+A fatal error occurred: User ID not found.';
             notification.style.color = '#FF4040';
             notification.classList.remove('hidden');
         }
@@ -16,7 +17,6 @@ window.initTradingJournal = async function() {
     }
 
     const API_ENDPOINT = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
-
     const loader = document.getElementById('loader');
     const notification = document.getElementById('notification');
     const entryFormCard = document.getElementById('entry-form-card');
@@ -36,7 +36,6 @@ window.initTradingJournal = async function() {
     const closeCsvModal = document.getElementById('close-csv-modal');
     
     let tradesData = [];
-
     function showNotification(message, type = 'success') {
         if (notification) {
             notification.textContent = message;
@@ -71,6 +70,7 @@ window.initTradingJournal = async function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+           
                 },
                 body: JSON.stringify({ action, userId, ...data }),
             });
@@ -94,6 +94,7 @@ window.initTradingJournal = async function() {
             symbol: '',
             assetType: '',
             buySell: '',
+     
             entryPrice: null,
             exitPrice: null,
             takeProfit: null,
@@ -102,9 +103,9 @@ window.initTradingJournal = async function() {
             positionSize: null,
             strategyName: '',
             notes: '',
+ 
             dealId: ''
         };
-
         const numericFields = ['entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize'];
 
         // Check if the incoming data is an object with a 'symbol' key.
@@ -114,11 +115,13 @@ window.initTradingJournal = async function() {
             const keyMap = {
                 'Date': 'date', 'Symbol': 'symbol', 'Asset Type': 'assetType', 'Buy/Sell': 'buySell', 
                 'Entry Price': 'entryPrice', 'Exit Price': 'exitPrice', 'Take Profit': 'takeProfit', 
+ 
                 'Stop Loss': 'stopLoss', 'P&L Net': 'pnlNet', 'Position Size': 'positionSize', 
                 'Strategy Name': 'strategyName', 'Notes': 'notes', 'dealId': 'dealId'
             };
             for (const key in trade) {
-                const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
+                const mappedKey = keyMap[key] ||
+ key.toLowerCase().replace(/\s/g, '');
                 if (normalizedTrade.hasOwnProperty(mappedKey)) {
                     normalizedTrade[mappedKey] = trade[key];
                 }
@@ -140,11 +143,11 @@ window.initTradingJournal = async function() {
             const value = normalizedTrade[field];
             if (value === null || typeof value === 'undefined' || value === '' || value.toString().toUpperCase() === 'N/A') {
                 normalizedTrade[field] = null;
+   
             } else if (typeof value === 'string' && !isNaN(parseFloat(value))) {
                 normalizedTrade[field] = parseFloat(value);
             }
         });
-
         return normalizedTrade;
     }
 
@@ -192,25 +195,34 @@ window.initTradingJournal = async function() {
         if (tradeTableBody) {
             tradeTableBody.innerHTML = '';
             if (!tradesData || tradesData.length === 0) {
-                tradeTableBody.innerHTML = '<tr><td colspan="12" class="text-center text-gray-500">No trades yet. Add your first trade using the form above.</td></tr>';
+                tradeTableBody.innerHTML = '<tr><td colspan="12" class="text-center text-gray-500">No trades yet.
+Add your first trade using the form above.</td></tr>';
             } else {
                 tradesData.forEach(trade => {
                     const row = document.createElement('tr');
                     // FIX: Correctly format the date for display in the table
+                   
                     const formattedDate = formatDate(trade.date);
                     row.innerHTML = `
                         <td>${formattedDate}</td>
                         <td>${trade.symbol || ''}</td>
+                        
                         <td>${trade.assetType || ''}</td>
                         <td>${trade.buySell || ''}</td>
                         <td>${trade.entryPrice === null || trade.entryPrice === '' ? 'N/A' : parseFloat(trade.entryPrice).toFixed(5)}</td>
                         <td>${trade.exitPrice === null || trade.exitPrice === '' ? 'N/A' : parseFloat(trade.exitPrice).toFixed(5)}</td>
+    
                         <td>${trade.takeProfit === null || trade.takeProfit === '' ? 'N/A' : parseFloat(trade.takeProfit).toFixed(5)}</td>
-                        <td>${trade.stopLoss === null || trade.stopLoss === '' ? 'N/A' : parseFloat(trade.stopLoss).toFixed(5)}</td>
-                        <td>${trade.pnlNet === null || trade.pnlNet === '' ? 'N/A' : parseFloat(trade.pnlNet).toFixed(2)}</td>
-                        <td>${trade.positionSize === null || trade.positionSize === '' ? 'N/A' : parseFloat(trade.positionSize).toFixed(2)}</td>
-                        <td>${trade.strategyName || ''}</td>
-                        <td>${trade.notes || ''}</td>
+                        <td>${trade.stopLoss === null ||
+ trade.stopLoss === '' ? 'N/A' : parseFloat(trade.stopLoss).toFixed(5)}</td>
+                        <td>${trade.pnlNet === null ||
+ trade.pnlNet === '' ? 'N/A' : parseFloat(trade.pnlNet).toFixed(2)}</td>
+                        <td>${trade.positionSize === null ||
+ trade.positionSize === '' ? 'N/A' : parseFloat(trade.positionSize).toFixed(2)}</td>
+                        <td>${trade.strategyName ||
+ ''}</td>
+                        <td>${trade.notes ||
+ ''}</td>
                     `;
                     tradeTableBody.appendChild(row);
                 });
@@ -224,31 +236,45 @@ window.initTradingJournal = async function() {
      * @returns {Array<Object>} An array of parsed trade objects.
      */
     function parseCsv(csvText) {
-        // Updated regex to handle quoted fields with commas inside
+        // FIX: The previous regex was unreliable. This is a more robust approach.
+        // It uses a while loop with regex.exec() to correctly parse all fields,
+        // including empty ones, and handles quoted strings.
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) return [];
 
         const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
         const trades = [];
         const numericFields = ['Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size'];
-        
+
         for (let i = 1; i < lines.length; i++) {
-            const rowRegex = /(".*?"|[^",]*)(?=\s*,|\s*$)/g; // Modified regex to handle empty trailing values
-            const currentLine = lines[i].match(rowRegex);
+            const currentLine = lines[i];
+            const rowRegex = /(".*?"|[^",\r\n]*)(?:,|$)/g;
+            const parsedRow = [];
+            let match;
             
-            // Check if the parsed row is null or if the number of columns doesn't match
-            if (!currentLine || currentLine.length !== headers.length) {
-                console.warn(`Skipping malformed row: ${lines[i]}`);
+            // Loop through matches to correctly parse each column
+            while ((match = rowRegex.exec(currentLine)) !== null) {
+                // If a quoted value is found, use capture group 1, otherwise use capture group 2
+                let value = match[1] || match[2] || '';
+                value = value.trim().replace(/^"|"$/g, '');
+                parsedRow.push(value);
+            }
+            
+            // Check if the number of columns matches the headers
+            if (parsedRow.length !== headers.length) {
+                console.warn(`Skipping malformed row: ${currentLine}`);
                 continue;
             }
             
             const trade = {};
             for (let j = 0; j < headers.length; j++) {
+ 
                 const key = headers[j];
-                let value = currentLine[j] ? currentLine[j].trim().replace(/^"|"$/g, '') : null;
+                let value = parsedRow[j];
 
                 // Handle 'N/A' and empty strings specifically for numerical fields
                 if (value && value.toUpperCase() === 'N/A') {
+           
                     value = null; // Set to null to explicitly handle missing data
                 }
 
@@ -276,11 +302,13 @@ window.initTradingJournal = async function() {
                 symbol: trade['Symbol'],
                 assetType: trade['Asset Type'],
                 buySell: trade['Buy/Sell'],
+ 
                 entryPrice: trade['Entry Price'],
                 exitPrice: trade['Exit Price'],
                 takeProfit: trade['Take Profit'],
                 stopLoss: trade['Stop Loss'],
                 pnlNet: trade['P&L Net'],
+           
                 positionSize: trade['Position Size'],
                 strategyName: trade['Strategy Name'],
                 notes: trade['Notes'],
@@ -299,16 +327,19 @@ window.initTradingJournal = async function() {
                 const ctx = canvas.getContext('2d');
                 if (ctx) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
+                   
                     ctx.fillStyle = '#d4af37';
                     ctx.font = '16px Arial';
                     ctx.textAlign = 'center';
                     ctx.fillText('No trades to display.', canvas.width / 2, canvas.height / 2);
                 }
+       
             });
             return;
         }
 
-        const timeFrame = timeFrameSelect ? timeFrameSelect.value : 'all';
+        const timeFrame = timeFrameSelect ?
+ timeFrameSelect.value : 'all';
         let filteredTrades = [...trades];
 
         if (timeFrame !== 'all') {
@@ -317,7 +348,8 @@ window.initTradingJournal = async function() {
                 const tradeDate = new Date(trade.date);
                 const timeDiff = now.getTime() - tradeDate.getTime();
                 if (timeFrame === '7days') return timeDiff <= 7 * 24 * 60 * 60 * 1000;
-                if (timeFrame === '30days') return timeDiff <= 30 * 24 * 60 * 60 * 1000;
+                if (timeFrame === '30days') return timeDiff <= 30 
+ * 24 * 60 * 60 * 1000;
                 return true;
             });
         }
@@ -333,6 +365,7 @@ window.initTradingJournal = async function() {
             // Normalize the date to YYYY-MM-DD for correct daily aggregation
             const date = trade.date ? formatDate(trade.date) : 'No Date';
             acc[date] = (acc[date] || 0) + (parseFloat(trade.pnlNet) || 0);
+            
             return acc;
         }, {});
         const timeLabels = Object.keys(timePnlData).sort();
@@ -341,7 +374,6 @@ window.initTradingJournal = async function() {
             acc.push(lastPnl + timePnlData[date]);
             return acc;
         }, []);
-        
         const timePnlCtx = document.getElementById('timePnlChart');
         if(timePnlCtx) {
             timePnlChart = new Chart(timePnlCtx, {
@@ -349,39 +381,49 @@ window.initTradingJournal = async function() {
                 data: {
                     labels: timeLabels,
                     datasets: [{
+   
                         label: 'Cumulative P&L',
                         data: cumulativePnl,
                         borderColor: '#d4af37',
-                        backgroundColor: (context) => {
+                        backgroundColor: (context) => 
+ {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
                             gradient.addColorStop(0, 'rgba(212, 175, 55, 0.4)');
+   
                             gradient.addColorStop(1, 'rgba(212, 175, 55, 0)');
                             return gradient;
                         },
+                  
                         borderWidth: 2,
                         pointBackgroundColor: '#d4af37',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
+                  
                         pointHoverBorderColor: '#d4af37',
                         tension: 0.4
                     }]
                 },
                 options: {
+               
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         x: { 
+                          
                             title: { display: true, text: 'Date', color: '#d4af37' }, 
                             ticks: { color: '#fff' }, 
                             grid: { color: 'rgba(255,255,255,0.1)' },
+                        
                             type: 'time',
                             time: { unit: 'day' } // FIX: Added unit for date-fns adapter
                         },
-                        y: { beginAtZero: true, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        y: { beginAtZero: true, title: { display: true, 
+ text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
                         legend: { labels: { color: '#d4af37' } },
+             
                         tooltip: { backgroundColor: '#252525', titleColor: '#d4af37', bodyColor: '#fff', titleFont: { weight: 'bold' } }
                     },
                     animation: { duration: 1000, easing: 'easeInOutQuad' }
@@ -403,29 +445,36 @@ window.initTradingJournal = async function() {
                 data: {
                     labels: assetLabels,
                     datasets: [{
+       
                         label: 'P&L by Asset Type',
                         data: assetData,
                         backgroundColor: (context) => {
+                           
                             const value = context.raw;
                             return value >= 0 ? 'rgba(50, 205, 50, 0.8)' : 'rgba(255, 99, 132, 0.8)';
                         },
                         borderColor: '#fff',
+      
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
+       
                     maintainAspectRatio: false,
                     scales: {
                         x: { title: { display: true, text: 'Asset Type', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                   
                         y: { beginAtZero: false, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
-                        legend: { labels: { color: '#d4af37' } },
+                        legend: { labels: { color: '#d4af37' } 
+ },
                         tooltip: { backgroundColor: '#252525', titleColor: '#d4af37', bodyColor: '#fff', titleFont: { weight: 'bold' } }
                     },
                     animation: { duration: 1000, easing: 'easeInOutQuad' }
                 }
+ 
             });
         }
         
@@ -435,6 +484,7 @@ window.initTradingJournal = async function() {
             if (pnl > 0) acc.win++;
             else if (pnl < 0) acc.loss++;
             else acc.breakEven++;
+    
             return acc;
         }, { win: 0, loss: 0, breakEven: 0 });
         const winLossCtx = document.getElementById('winLossChart');
@@ -444,18 +494,22 @@ window.initTradingJournal = async function() {
                 data: {
                     labels: ['Wins', 'Losses', 'Break-Even'],
                     datasets: [{
+ 
                         data: [winLossData.win, winLossData.loss, winLossData.breakEven],
                         backgroundColor: ['#32CD32', '#FF4040', '#d4af37'],
                         borderColor: '#fff',
+                      
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+  
                     plugins: {
                         legend: { position: 'top', labels: { color: '#d4af37' } },
                         tooltip: { backgroundColor: '#252525', titleColor: '#d4af37', bodyColor: '#fff', titleFont: { weight: 'bold' } }
+           
                     },
                     animation: { duration: 1000, easing: 'easeInOutQuad' }
                 }
@@ -488,13 +542,13 @@ window.initTradingJournal = async function() {
         pnlValues.forEach(pnl => {
             for (let i = 0; i < pnlBins.length; i++) {
                 // Ensure the last bin includes the max value
-                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
+                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl 
+ < pnlBins[i].upper)) {
                     pnlBins[i].count++;
                     break;
                 }
             }
         });
-
         const pnlCounts = pnlBins.map(bin => bin.count);
         
         const pnlDistributionCtx = document.getElementById('pnlDistributionChart');
@@ -504,28 +558,35 @@ window.initTradingJournal = async function() {
                 data: {
                     labels: pnlLabels,
                     datasets: [{
+       
                         label: 'P&L Distribution',
                         data: pnlCounts,
                         backgroundColor: (context) => {
-                            const index = context.dataIndex;
+                            const 
+ index = context.dataIndex;
                             const pnlRangeStart = pnlBins[index].lower;
                             return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
                         },
+  
                         borderColor: '#fff',
                         borderWidth: 1
                     }]
                 },
-                options: {
+                
+ options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, 
+ ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(255,255,255,0.1)' } },
                         y: { beginAtZero: true, title: { display: true, text: 'Count', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
+                 
                     plugins: {
                         legend: { labels: { color: '#d4af37' } },
                         tooltip: { backgroundColor: '#252525', titleColor: '#d4af37', bodyColor: '#fff', titleFont: { weight: 'bold' } }
                     },
+        
                     animation: { duration: 1000, easing: 'easeInOutQuad' }
                 }
             });
@@ -538,28 +599,30 @@ window.initTradingJournal = async function() {
                 entryFormCard.classList.toggle('hidden');
                 if (!entryFormCard.classList.contains('hidden')) {
                     if (uploadCsvModal) uploadCsvModal.classList.add('hidden');
+ 
                 }
             });
-
             tradeForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 toggleLoader(true);
                 const tradeData = {
                     date: document.getElementById('date').value,
                     symbol: document.getElementById('symbol').value,
+   
                     assetType: document.getElementById('assetType').value,
                     buySell: document.getElementById('buySell').value,
                     entryPrice: parseFloat(document.getElementById('entryPrice').value) || 0,
                     exitPrice: parseFloat(document.getElementById('exitPrice').value) || 0,
+               
                     takeProfit: parseFloat(document.getElementById('takeProfit').value) || 0,
                     stopLoss: parseFloat(document.getElementById('stopLoss').value) || 0,
                     pnlNet: parseFloat(document.getElementById('pnlNet').value) || 0,
-                    positionSize: parseFloat(document.getElementById('positionSize').value) || 0,
+                    positionSize: parseFloat(document.getElementById('positionSize').value) ||
+ 0,
                     strategyName: document.getElementById('strategyName').value,
                     notes: document.getElementById('notes').value
                 };
-                
-                const response = await callBackend('writeTrade', { tradeData: tradeData });
+            const response = await callBackend('writeTrade', { tradeData: tradeData });
                 
                 if (response.status === 'Error') {
                     console.error("Error adding document: ", response.error);
@@ -578,30 +641,30 @@ window.initTradingJournal = async function() {
                 uploadCsvModal.classList.remove('hidden');
                 if (entryFormCard) entryFormCard.classList.add('hidden');
             });
-            
             closeCsvModal.addEventListener('click', () => {
                 uploadCsvModal.classList.add('hidden');
             });
-            
             window.addEventListener('click', (e) => {
                 if (e.target === uploadCsvModal) uploadCsvModal.classList.add('hidden');
             });
-
             uploadCsvForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 toggleLoader(true);
                 const fileInput = document.getElementById('csv-file');
                 const file = fileInput.files[0];
                 if (!file) {
+        
                     showNotification('Please select a file.', 'error');
                     toggleLoader(false);
                     return;
                 }
                 
-                const reader = new FileReader();
+            
+            const reader = new FileReader();
                 reader.onload = async (event) => {
                     const csvText = event.target.result;
                     // FIX: Process the raw CSV into a consistent, backend-friendly format
+                  
                     const parsedTrades = parseCsv(csvText);
                     const tradesInApiFormat = convertCsvToApiFormat(parsedTrades);
 
@@ -612,8 +675,7 @@ window.initTradingJournal = async function() {
                     }
                     
                     const response = await callBackend('writeTradesBulk', { trades: tradesInApiFormat });
-                    
-                    if (response.status === 'Error') {
+            if (response.status === 'Error') {
                         console.error("Error uploading trades in bulk:", response.error);
                         showNotification("Error uploading trades. Please try again.", "error");
                     } else {
@@ -632,10 +694,10 @@ window.initTradingJournal = async function() {
                 tableTab.classList.add('active');
                 analyticsTab.classList.remove('active');
                 tableView.style.display = 'block';
+        
                 analyticsView.style.display = 'none';
                 updateTradeTable();
             });
-            
             analyticsTab.addEventListener('click', () => {
                 analyticsTab.classList.add('active');
                 tableTab.classList.remove('active');
@@ -656,22 +718,27 @@ window.initTradingJournal = async function() {
                 if (!tradesData || tradesData.length === 0) {
                     showNotification('No data to export.', 'error');
                     return;
+ 
                 }
                 const headers = ['Date', 'Symbol', 'Asset Type', 'Buy/Sell', 'Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size', 'Strategy Name', 'Notes'];
                 const csvRows = [headers.map(h => toCsvString(h)).join(',')];
                 tradesData.forEach(trade => {
+        
                     const row = [
                         // FIX: Ensure formatted date is used for CSV export
                         toCsvString(formatDate(trade.date)),
                         toCsvString(trade.symbol),
+    
                         toCsvString(trade.assetType),
                         toCsvString(trade.buySell),
                         toCsvString(trade.entryPrice),
                         toCsvString(trade.exitPrice),
+        
                         toCsvString(trade.takeProfit),
                         toCsvString(trade.stopLoss),
                         toCsvString(trade.pnlNet),
                         toCsvString(trade.positionSize),
+            
                         toCsvString(trade.strategyName),
                         toCsvString(trade.notes)
                     ];
@@ -685,21 +752,24 @@ window.initTradingJournal = async function() {
             exportAnalyticsCsv.addEventListener('click', () => {
                 if (!tradesData || tradesData.length === 0) {
                     showNotification('No data to export.', 'error');
+                
                     return;
                 }
                 const timePnlData = tradesData.reduce((acc, trade) => {
                     // FIX: Ensure formatted date is used for analytics CSV export
                     const date = formatDate(trade.date);
+     
                     acc[date] = (acc[date] || 0) + parseFloat(trade.pnlNet || 0);
                     return acc;
                 }, {});
                 const timeLabels = Object.keys(timePnlData).sort();
-                const timeData = timeLabels.map(date => timePnlData[date]);
+                const timeData = timeLabels.map(date 
+ => timePnlData[date]);
                 
                 const csvRows = ['Date,P&L'];
                 timeLabels.forEach((date, index) => {
                     csvRows.push(`${toCsvString(date)},${toCsvString(timeData[index].toFixed(2))}`);
-                });
+ });
                 
                 downloadCSV(csvRows.join('\n'), 'analytics_pnl.csv');
             });
