@@ -183,7 +183,7 @@ window.initTradingJournal = async function() {
             console.log('Trades loaded from backend:', tradesData);
         }
         updateTradeTable();
-        updateCharts();
+        // Do not call updateCharts here, it's called by analyticsTab.
         toggleLoader(false);
     }
     
@@ -348,7 +348,7 @@ window.initTradingJournal = async function() {
                             ticks: { color: '#fff' }, 
                             grid: { color: 'rgba(255,255,255,0.1)' },
                             type: 'time',
-                            time: { unit: 'day' }
+                            time: { unit: 'day' } // FIX: Added unit for date-fns adapter
                         },
                         y: { beginAtZero: true, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
