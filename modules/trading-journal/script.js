@@ -35,7 +35,6 @@ window.initTradingJournal = async function() {
     const closeCsvModal = document.getElementById('close-csv-modal');
     
     let tradesData = [];
-    let headers = ['Date', 'Symbol', 'Asset Type', 'Buy/Sell', 'Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size', 'Strategy Name', 'Notes', 'dealId'];
 
     function showNotification(message, type = 'success') {
         if (notification) {
@@ -82,6 +81,34 @@ window.initTradingJournal = async function() {
         }
     }
 
+    // New utility function to format data consistently
+    function normalizeDataKeys(data, headers) {
+        const keyMap = {
+            'Date': 'date',
+            'Symbol': 'symbol',
+            'Asset Type': 'assetType',
+            'Buy/Sell': 'buySell',
+            'Entry Price': 'entryPrice',
+            'Exit Price': 'exitPrice',
+            'Take Profit': 'takeProfit',
+            'Stop Loss': 'stopLoss',
+            'P&L Net': 'pnlNet',
+            'Position Size': 'positionSize',
+            'Strategy Name': 'strategyName',
+            'Notes': 'notes',
+            'dealId': 'dealId'
+        };
+
+        return data.map(row => {
+            const trade = {};
+            headers.forEach((header, i) => {
+                const key = keyMap[header] || header.toLowerCase().replace(/\s/g, '');
+                trade[key] = row[i];
+            });
+            return trade;
+        });
+    }
+
     async function loadTrades() {
         toggleLoader(true);
         const response = await callBackend('readTrades');
@@ -93,13 +120,8 @@ window.initTradingJournal = async function() {
             const fetchedHeaders = response.headers;
             const fetchedData = response.trades;
             if (fetchedData && fetchedHeaders) {
-                tradesData = fetchedData.map(row => {
-                    const trade = {};
-                    fetchedHeaders.forEach((header, i) => {
-                        trade[header] = row[i];
-                    });
-                    return trade;
-                });
+                // Normalize fetched data keys
+                tradesData = normalizeDataKeys(fetchedData, fetchedHeaders);
             } else {
                  tradesData = [];
             }
@@ -109,7 +131,7 @@ window.initTradingJournal = async function() {
         updateCharts(); // Call updateCharts after trades are loaded
         toggleLoader(false);
     }
-
+    
     function updateTradeTable() {
         const tradeTableBody = document.getElementById('trade-table-body');
         if (tradeTableBody) {
@@ -119,26 +141,27 @@ window.initTradingJournal = async function() {
             } else {
                 tradesData.forEach(trade => {
                     const row = document.createElement('tr');
-                    const entryPrice = parseFloat(trade['Entry Price']);
-                    const exitPrice = parseFloat(trade['Exit Price']);
-                    const takeProfit = parseFloat(trade['Take Profit']);
-                    const stopLoss = parseFloat(trade['Stop Loss']);
-                    const pnlNet = parseFloat(trade['P&L Net']);
-                    const positionSize = parseFloat(trade['Position Size']);
+                    // The `trade` object keys are now guaranteed to be consistent
+                    const entryPrice = parseFloat(trade.entryPrice);
+                    const exitPrice = parseFloat(trade.exitPrice);
+                    const takeProfit = parseFloat(trade.takeProfit);
+                    const stopLoss = parseFloat(trade.stopLoss);
+                    const pnlNet = parseFloat(trade.pnlNet);
+                    const positionSize = parseFloat(trade.positionSize);
                     
                     row.innerHTML = `
-                        <td>${trade.Date || ''}</td>
-                        <td>${trade.Symbol || ''}</td>
-                        <td>${trade['Asset Type'] || ''}</td>
-                        <td>${trade['Buy/Sell'] || ''}</td>
+                        <td>${trade.date || ''}</td>
+                        <td>${trade.symbol || ''}</td>
+                        <td>${trade.assetType || ''}</td>
+                        <td>${trade.buySell || ''}</td>
                         <td>${!isNaN(entryPrice) ? entryPrice.toFixed(5) : 'N/A'}</td>
                         <td>${!isNaN(exitPrice) ? exitPrice.toFixed(5) : 'N/A'}</td>
                         <td>${!isNaN(takeProfit) ? takeProfit.toFixed(5) : 'N/A'}</td>
                         <td>${!isNaN(stopLoss) ? stopLoss.toFixed(5) : 'N/A'}</td>
                         <td>${!isNaN(pnlNet) ? pnlNet.toFixed(2) : 'N/A'}</td>
                         <td>${!isNaN(positionSize) ? positionSize.toFixed(2) : 'N/A'}</td>
-                        <td>${trade['Strategy Name'] || ''}</td>
-                        <td>${trade.Notes || ''}</td>
+                        <td>${trade.strategyName || ''}</td>
+                        <td>${trade.notes || ''}</td>
                     `;
                     tradeTableBody.appendChild(row);
                 });
@@ -169,6 +192,7 @@ window.initTradingJournal = async function() {
     let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
 
     async function updateCharts() {
+        // Here we can use the normalized tradesData
         const trades = tradesData;
         if (!trades || trades.length === 0) {
             document.querySelectorAll('.chart-card canvas').forEach(canvas => {
@@ -190,7 +214,7 @@ window.initTradingJournal = async function() {
         if (timeFrame !== 'all') {
             const now = new Date();
             filteredTrades = trades.filter(trade => {
-                const tradeDate = new Date(trade.Date);
+                const tradeDate = new Date(trade.date);
                 const timeDiff = now.getTime() - tradeDate.getTime();
                 if (timeFrame === '7days') return timeDiff <= 7 * 24 * 60 * 60 * 1000;
                 if (timeFrame === '30days') return timeDiff <= 30 * 24 * 60 * 60 * 1000;
@@ -204,8 +228,8 @@ window.initTradingJournal = async function() {
         if (pnlDistributionChart) pnlDistributionChart.destroy();
 
         const timePnlData = filteredTrades.reduce((acc, trade) => {
-            const date = trade.Date;
-            acc[date] = (acc[date] || 0) + parseFloat(trade['P&L Net'] || 0);
+            const date = trade.date;
+            acc[date] = (acc[date] || 0) + parseFloat(trade.pnlNet || 0);
             return acc;
         }, {});
         const timeLabels = Object.keys(timePnlData).sort();
@@ -257,7 +281,7 @@ window.initTradingJournal = async function() {
         }
 
         const assetPnlData = filteredTrades.reduce((acc, trade) => {
-            acc[trade['Asset Type']] = (acc[trade['Asset Type']] || 0) + parseFloat(trade['P&L Net'] || 0);
+            acc[trade.assetType] = (acc[trade.assetType] || 0) + parseFloat(trade.pnlNet || 0);
             return acc;
         }, {});
         const assetLabels = Object.keys(assetPnlData);
@@ -296,7 +320,7 @@ window.initTradingJournal = async function() {
         }
         
         const winLossData = filteredTrades.reduce((acc, trade) => {
-            const pnl = parseFloat(trade['P&L Net'] || 0);
+            const pnl = parseFloat(trade.pnlNet || 0);
             if (pnl > 0) acc.win++;
             else if (pnl < 0) acc.loss++;
             else acc.breakEven++;
@@ -327,7 +351,7 @@ window.initTradingJournal = async function() {
             });
         }
 
-        const pnlData = filteredTrades.map(trade => parseFloat(trade['P&L Net'] || 0));
+        const pnlData = filteredTrades.map(trade => parseFloat(trade.pnlNet || 0));
         const pnlBins = [-1000, -500, -100, 0, 100, 500, 1000, Infinity];
         const pnlDistribution = pnlBins.slice(0, -1).map((bin, i) => ({
             label: `${bin} to ${pnlBins[i + 1] === Infinity ? '∞' : pnlBins[i + 1]}`,
@@ -497,18 +521,18 @@ window.initTradingJournal = async function() {
                 const csvRows = [headers.map(h => toCsvString(h)).join(',')];
                 tradesData.forEach(trade => {
                     const row = [
-                        toCsvString(trade.Date),
-                        toCsvString(trade.Symbol),
-                        toCsvString(trade['Asset Type']),
-                        toCsvString(trade['Buy/Sell']),
-                        toCsvString(trade['Entry Price']),
-                        toCsvString(trade['Exit Price']),
-                        toCsvString(trade['Take Profit']),
-                        toCsvString(trade['Stop Loss']),
-                        toCsvString(trade['P&L Net']),
-                        toCsvString(trade['Position Size']),
-                        toCsvString(trade['Strategy Name']),
-                        toCsvString(trade.Notes)
+                        toCsvString(trade.date),
+                        toCsvString(trade.symbol),
+                        toCsvString(trade.assetType),
+                        toCsvString(trade.buySell),
+                        toCsvString(trade.entryPrice),
+                        toCsvString(trade.exitPrice),
+                        toCsvString(trade.takeProfit),
+                        toCsvString(trade.stopLoss),
+                        toCsvString(trade.pnlNet),
+                        toCsvString(trade.positionSize),
+                        toCsvString(trade.strategyName),
+                        toCsvString(trade.notes)
                     ];
                     csvRows.push(row.join(','));
                 });
@@ -523,8 +547,8 @@ window.initTradingJournal = async function() {
                     return;
                 }
                 const timePnlData = tradesData.reduce((acc, trade) => {
-                    const date = trade.Date;
-                    acc[date] = (acc[date] || 0) + parseFloat(trade['P&L Net'] || 0);
+                    const date = trade.date;
+                    acc[date] = (acc[date] || 0) + parseFloat(trade.pnlNet || 0);
                     return acc;
                 }, {});
                 const timeLabels = Object.keys(timePnlData).sort();
