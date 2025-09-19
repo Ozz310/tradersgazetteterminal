@@ -87,38 +87,57 @@ window.initTradingJournal = async function() {
      * @returns {Object} A normalized trade object.
      */
     function normalizeTradeKeys(trade) {
-        const keyMap = {
-            'Date': 'date', 'Symbol': 'symbol', 'Asset Type': 'assetType', 'Buy/Sell': 'buySell', 'Entry Price': 'entryPrice', 'Exit Price': 'exitPrice',
-            'Take Profit': 'takeProfit', 'Stop Loss': 'stopLoss', 'P&L Net': 'pnlNet', 'Position Size': 'positionSize', 'Strategy Name': 'strategyName',
-            'Notes': 'notes', 'dealId': 'dealId'
+        // This is the consistent key structure we want for our frontend
+        const normalizedTrade = {
+            date: '',
+            symbol: '',
+            assetType: '',
+            buySell: '',
+            entryPrice: null,
+            exitPrice: null,
+            takeProfit: null,
+            stopLoss: null,
+            pnlNet: null,
+            positionSize: null,
+            strategyName: '',
+            notes: '',
+            dealId: ''
         };
 
         const numericFields = ['entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize'];
-        
-        const normalizedTrade = {};
-        
-        // -- FINAL MODIFIED CODE --
-        // Check if the trade object has the expected 'symbol' key, which indicates a good object format
-        if (trade && trade.symbol) {
+
+        // Check if the incoming data is an object with a 'symbol' key.
+        // This assumes data from the 'writeTrade' action has descriptive keys.
+        if (trade && typeof trade === 'object' && !Array.isArray(trade) && trade.symbol) {
             // Case 1: Data is a well-formed object with descriptive string keys
+            const keyMap = {
+                'Date': 'date', 'Symbol': 'symbol', 'Asset Type': 'assetType', 'Buy/Sell': 'buySell', 
+                'Entry Price': 'entryPrice', 'Exit Price': 'exitPrice', 'Take Profit': 'takeProfit', 
+                'Stop Loss': 'stopLoss', 'P&L Net': 'pnlNet', 'Position Size': 'positionSize', 
+                'Strategy Name': 'strategyName', 'Notes': 'notes', 'dealId': 'dealId'
+            };
             for (const key in trade) {
                 const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
-                normalizedTrade[mappedKey] = trade[key];
+                if (normalizedTrade.hasOwnProperty(mappedKey)) {
+                    normalizedTrade[mappedKey] = trade[key];
+                }
             }
-        } else {
-            // Case 2: Data is an array or object with numeric keys (from Google Sheets)
-            const indexMap = ['date', 'symbol', 'assetType', 'buySell', 'entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
-            for (let i = 0; i < indexMap.length; i++) {
-                const key = indexMap[i];
-                // Use a direct lookup by index 'i' on the trade object
-                normalizedTrade[key] = trade[i];
-            }
+        } else if (trade && Array.isArray(trade)) {
+            // Case 2: Data is an array of values (common with Google Sheets API)
+            // We use a fixed index map to assign the values correctly.
+            const indexMap = ['date', 'symbol', 'assetType', 'buySell', 'entryPrice', 'exitPrice', 
+                              'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
+            indexMap.forEach((key, index) => {
+                if (trade[index] !== undefined && normalizedTrade.hasOwnProperty(key)) {
+                    normalizedTrade[key] = trade[index];
+                }
+            });
         }
-
-        // Ensure numeric fields are correctly parsed or set to null
+        
+        // Final sanity check and type conversion for numeric fields
         numericFields.forEach(field => {
             const value = normalizedTrade[field];
-            if (value === 'N/A' || value === '' || value === null || typeof value === 'undefined') {
+            if (value === null || typeof value === 'undefined' || value === '' || value.toString().toUpperCase() === 'N/A') {
                 normalizedTrade[field] = null;
             } else if (typeof value === 'string' && !isNaN(parseFloat(value))) {
                 normalizedTrade[field] = parseFloat(value);
@@ -127,7 +146,6 @@ window.initTradingJournal = async function() {
 
         return normalizedTrade;
     }
-    // -- END FINAL MODIFIED CODE --
 
     // Refactored to handle both backend and CSV data
     async function loadTrades() {
@@ -160,22 +178,21 @@ window.initTradingJournal = async function() {
                 tradeTableBody.innerHTML = '<tr><td colspan="12" class="text-center text-gray-500">No trades yet. Add your first trade using the form above.</td></tr>';
             } else {
                 tradesData.forEach(trade => {
-                    const normalizedTrade = normalizeTradeKeys(trade);
-                    
+                    // We can use the trade object directly here since it's already normalized by loadTrades()
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${normalizedTrade.date || ''}</td>
-                        <td>${normalizedTrade.symbol || ''}</td>
-                        <td>${normalizedTrade.assetType || ''}</td>
-                        <td>${normalizedTrade.buySell || ''}</td>
-                        <td>${normalizedTrade.entryPrice === null || normalizedTrade.entryPrice === '' ? 'N/A' : parseFloat(normalizedTrade.entryPrice).toFixed(5)}</td>
-                        <td>${normalizedTrade.exitPrice === null || normalizedTrade.exitPrice === '' ? 'N/A' : parseFloat(normalizedTrade.exitPrice).toFixed(5)}</td>
-                        <td>${normalizedTrade.takeProfit === null || normalizedTrade.takeProfit === '' ? 'N/A' : parseFloat(normalizedTrade.takeProfit).toFixed(5)}</td>
-                        <td>${normalizedTrade.stopLoss === null || normalizedTrade.stopLoss === '' ? 'N/A' : parseFloat(normalizedTrade.stopLoss).toFixed(5)}</td>
-                        <td>${normalizedTrade.pnlNet === null || normalizedTrade.pnlNet === '' ? 'N/A' : parseFloat(normalizedTrade.pnlNet).toFixed(2)}</td>
-                        <td>${normalizedTrade.positionSize === null || normalizedTrade.positionSize === '' ? 'N/A' : parseFloat(normalizedTrade.positionSize).toFixed(2)}</td>
-                        <td>${normalizedTrade.strategyName || ''}</td>
-                        <td>${normalizedTrade.notes || ''}</td>
+                        <td>${trade.date || ''}</td>
+                        <td>${trade.symbol || ''}</td>
+                        <td>${trade.assetType || ''}</td>
+                        <td>${trade.buySell || ''}</td>
+                        <td>${trade.entryPrice === null || trade.entryPrice === '' ? 'N/A' : parseFloat(trade.entryPrice).toFixed(5)}</td>
+                        <td>${trade.exitPrice === null || trade.exitPrice === '' ? 'N/A' : parseFloat(trade.exitPrice).toFixed(5)}</td>
+                        <td>${trade.takeProfit === null || trade.takeProfit === '' ? 'N/A' : parseFloat(trade.takeProfit).toFixed(5)}</td>
+                        <td>${trade.stopLoss === null || trade.stopLoss === '' ? 'N/A' : parseFloat(trade.stopLoss).toFixed(5)}</td>
+                        <td>${trade.pnlNet === null || trade.pnlNet === '' ? 'N/A' : parseFloat(trade.pnlNet).toFixed(2)}</td>
+                        <td>${trade.positionSize === null || trade.positionSize === '' ? 'N/A' : parseFloat(trade.positionSize).toFixed(2)}</td>
+                        <td>${trade.strategyName || ''}</td>
+                        <td>${trade.notes || ''}</td>
                     `;
                     tradeTableBody.appendChild(row);
                 });
@@ -557,20 +574,19 @@ window.initTradingJournal = async function() {
                 const headers = ['Date', 'Symbol', 'Asset Type', 'Buy/Sell', 'Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size', 'Strategy Name', 'Notes'];
                 const csvRows = [headers.map(h => toCsvString(h)).join(',')];
                 tradesData.forEach(trade => {
-                    const normalizedTrade = normalizeTradeKeys(trade);
                     const row = [
-                        toCsvString(normalizedTrade.date),
-                        toCsvString(normalizedTrade.symbol),
-                        toCsvString(normalizedTrade.assetType),
-                        toCsvString(normalizedTrade.buySell),
-                        toCsvString(normalizedTrade.entryPrice),
-                        toCsvString(normalizedTrade.exitPrice),
-                        toCsvString(normalizedTrade.takeProfit),
-                        toCsvString(normalizedTrade.stopLoss),
-                        toCsvString(normalizedTrade.pnlNet),
-                        toCsvString(normalizedTrade.positionSize),
-                        toCsvString(normalizedTrade.strategyName),
-                        toCsvString(normalizedTrade.notes)
+                        toCsvString(trade.date),
+                        toCsvString(trade.symbol),
+                        toCsvString(trade.assetType),
+                        toCsvString(trade.buySell),
+                        toCsvString(trade.entryPrice),
+                        toCsvString(trade.exitPrice),
+                        toCsvString(trade.takeProfit),
+                        toCsvString(trade.stopLoss),
+                        toCsvString(trade.pnlNet),
+                        toCsvString(trade.positionSize),
+                        toCsvString(trade.strategyName),
+                        toCsvString(trade.notes)
                     ];
                     csvRows.push(row.join(','));
                 });
@@ -585,9 +601,8 @@ window.initTradingJournal = async function() {
                     return;
                 }
                 const timePnlData = tradesData.reduce((acc, trade) => {
-                    const normalizedTrade = normalizeTradeKeys(trade);
-                    const date = normalizedTrade.date;
-                    acc[date] = (acc[date] || 0) + parseFloat(normalizedTrade.pnlNet || 0);
+                    const date = trade.date;
+                    acc[date] = (acc[date] || 0) + parseFloat(trade.pnlNet || 0);
                     return acc;
                 }, {});
                 const timeLabels = Object.keys(timePnlData).sort();
