@@ -23,7 +23,7 @@ window.initTradingJournal = async function() {
     const uploadCsvModal = document.getElementById('upload-csv-modal');
     const timeFrameSelect = document.getElementById('time-frame');
     const exportTableCsv = document.getElementById('export-table-csv');
-    const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
+    const exportAnalyticsCsv = document = document.getElementById('export-analytics-csv');
     const tableTab = document.getElementById('table-tab');
     const analyticsTab = document.getElementById('analytics-tab');
     const tableView = document.getElementById('table-view');
@@ -282,7 +282,8 @@ window.initTradingJournal = async function() {
         if (pnlDistributionChart) pnlDistributionChart.destroy();
 
         const timePnlData = filteredTrades.reduce((acc, trade) => {
-            const date = trade.date;
+            // Normalize the date to YYYY-MM-DD for correct daily aggregation
+            const date = trade.date ? trade.date.substring(0, 10) : 'No Date';
             acc[date] = (acc[date] || 0) + (parseFloat(trade.pnlNet) || 0);
             return acc;
         }, {});
