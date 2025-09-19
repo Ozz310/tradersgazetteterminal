@@ -148,6 +148,22 @@ window.initTradingJournal = async function() {
         return normalizedTrade;
     }
 
+    /**
+     * @description Formats an ISO date string (YYYY-MM-DDTHH:MM:SS.sssZ) to a readable YYYY-MM-DD format.
+     * @param {string} dateString - The raw date string.
+     * @returns {string} The formatted date string.
+     */
+    function formatDate(dateString) {
+        if (!dateString) {
+            return '';
+        }
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     // Refactored to handle both backend and CSV data
     async function loadTrades() {
         toggleLoader(true);
@@ -179,10 +195,11 @@ window.initTradingJournal = async function() {
                 tradeTableBody.innerHTML = '<tr><td colspan="12" class="text-center text-gray-500">No trades yet. Add your first trade using the form above.</td></tr>';
             } else {
                 tradesData.forEach(trade => {
-                    // We can use the trade object directly here since it's already normalized by loadTrades()
                     const row = document.createElement('tr');
+                    // FIX: Correctly format the date for display in the table
+                    const formattedDate = formatDate(trade.date);
                     row.innerHTML = `
-                        <td>${trade.date || ''}</td>
+                        <td>${formattedDate}</td>
                         <td>${trade.symbol || ''}</td>
                         <td>${trade.assetType || ''}</td>
                         <td>${trade.buySell || ''}</td>
@@ -286,7 +303,7 @@ window.initTradingJournal = async function() {
         // 1. Cumulative P&L Chart
         const timePnlData = filteredTrades.reduce((acc, trade) => {
             // Normalize the date to YYYY-MM-DD for correct daily aggregation
-            const date = trade.date ? trade.date.substring(0, 10) : 'No Date';
+            const date = trade.date ? formatDate(trade.date) : 'No Date';
             acc[date] = (acc[date] || 0) + (parseFloat(trade.pnlNet) || 0);
             return acc;
         }, {});
@@ -326,7 +343,13 @@ window.initTradingJournal = async function() {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'Date', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                        x: { 
+                            title: { display: true, text: 'Date', color: '#d4af37' }, 
+                            ticks: { color: '#fff' }, 
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            type: 'time',
+                            time: { unit: 'day' }
+                        },
                         y: { beginAtZero: true, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
@@ -608,7 +631,8 @@ window.initTradingJournal = async function() {
                 const csvRows = [headers.map(h => toCsvString(h)).join(',')];
                 tradesData.forEach(trade => {
                     const row = [
-                        toCsvString(trade.date),
+                        // FIX: Ensure formatted date is used for CSV export
+                        toCsvString(formatDate(trade.date)),
                         toCsvString(trade.symbol),
                         toCsvString(trade.assetType),
                         toCsvString(trade.buySell),
@@ -634,7 +658,8 @@ window.initTradingJournal = async function() {
                     return;
                 }
                 const timePnlData = tradesData.reduce((acc, trade) => {
-                    const date = trade.date;
+                    // FIX: Ensure formatted date is used for analytics CSV export
+                    const date = formatDate(trade.date);
                     acc[date] = (acc[date] || 0) + parseFloat(trade.pnlNet || 0);
                     return acc;
                 }, {});
