@@ -81,7 +81,6 @@ window.initTradingJournal = async function() {
         }
     }
 
-    // -- START MODIFIED CODE --
     /**
      * @description Normalizes incoming trade data to a consistent object structure.
      * @param {Object|Array} trade - The raw trade data from either the backend or CSV.
@@ -89,40 +88,32 @@ window.initTradingJournal = async function() {
      */
     function normalizeTradeKeys(trade) {
         const keyMap = {
-            'Date': 'date',
-            'Symbol': 'symbol',
-            'Asset Type': 'assetType',
-            'Buy/Sell': 'buySell',
-            'Entry Price': 'entryPrice',
-            'Exit Price': 'exitPrice',
-            'Take Profit': 'takeProfit',
-            'Stop Loss': 'stopLoss',
-            'P&L Net': 'pnlNet',
-            'Position Size': 'positionSize',
-            'Strategy Name': 'strategyName',
-            'Notes': 'notes',
-            'dealId': 'dealId'
+            'Date': 'date', 'Symbol': 'symbol', 'Asset Type': 'assetType', 'Buy/Sell': 'buySell', 'Entry Price': 'entryPrice', 'Exit Price': 'exitPrice',
+            'Take Profit': 'takeProfit', 'Stop Loss': 'stopLoss', 'P&L Net': 'pnlNet', 'Position Size': 'positionSize', 'Strategy Name': 'strategyName',
+            'Notes': 'notes', 'dealId': 'dealId'
         };
 
         const numericFields = ['entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize'];
         
         const normalizedTrade = {};
         
-        // Case 1: Data is an object with string keys (from CSV or new entry)
-        if (typeof trade === 'object' && !Array.isArray(trade)) {
+        // -- START MODIFIED CODE --
+        // Check if the trade object has descriptive keys, or if it's an array/object with numeric keys
+        const isArrayLike = Array.isArray(trade) || Object.keys(trade).every(key => !isNaN(parseInt(key)));
+
+        if (!isArrayLike) {
+            // Case 1: Data is an object with descriptive string keys (from form, CSV)
             for (const key in trade) {
                 const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
                 normalizedTrade[mappedKey] = trade[key];
             }
-        } 
-        // Case 2: Data is an array with index-based keys (from Google Sheets backend)
-        else if (Array.isArray(trade) || (typeof trade === 'object' && Object.keys(trade).every(key => !isNaN(parseInt(key))))) {
+        } else {
+            // Case 2: Data is an array or object with numeric keys (from Google Sheets)
             const indexMap = ['date', 'symbol', 'assetType', 'buySell', 'entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
-            for (let i = 0; i < trade.length; i++) {
+            for (let i = 0; i < indexMap.length; i++) {
                 const key = indexMap[i];
-                if (key) {
-                    normalizedTrade[key] = trade[i];
-                }
+                const value = trade[i] !== undefined ? trade[i] : (trade[i] === null ? null : trade[key]);
+                normalizedTrade[key] = value;
             }
         }
 
