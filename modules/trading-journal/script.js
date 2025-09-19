@@ -97,12 +97,10 @@ window.initTradingJournal = async function() {
         
         const normalizedTrade = {};
         
-        // -- START MODIFIED CODE --
-        // Check if the trade object has descriptive keys, or if it's an array/object with numeric keys
-        const isArrayLike = Array.isArray(trade) || Object.keys(trade).every(key => !isNaN(parseInt(key)));
-
-        if (!isArrayLike) {
-            // Case 1: Data is an object with descriptive string keys (from form, CSV)
+        // -- FINAL MODIFIED CODE --
+        // Check if the trade object has the expected 'symbol' key, which indicates a good object format
+        if (trade && trade.symbol) {
+            // Case 1: Data is a well-formed object with descriptive string keys
             for (const key in trade) {
                 const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
                 normalizedTrade[mappedKey] = trade[key];
@@ -112,15 +110,15 @@ window.initTradingJournal = async function() {
             const indexMap = ['date', 'symbol', 'assetType', 'buySell', 'entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
             for (let i = 0; i < indexMap.length; i++) {
                 const key = indexMap[i];
-                const value = trade[i] !== undefined ? trade[i] : (trade[i] === null ? null : trade[key]);
-                normalizedTrade[key] = value;
+                // Use a direct lookup by index 'i' on the trade object
+                normalizedTrade[key] = trade[i];
             }
         }
 
         // Ensure numeric fields are correctly parsed or set to null
         numericFields.forEach(field => {
             const value = normalizedTrade[field];
-            if (value === 'N/A' || value === '') {
+            if (value === 'N/A' || value === '' || value === null || typeof value === 'undefined') {
                 normalizedTrade[field] = null;
             } else if (typeof value === 'string' && !isNaN(parseFloat(value))) {
                 normalizedTrade[field] = parseFloat(value);
@@ -129,7 +127,7 @@ window.initTradingJournal = async function() {
 
         return normalizedTrade;
     }
-    // -- END MODIFIED CODE --
+    // -- END FINAL MODIFIED CODE --
 
     // Refactored to handle both backend and CSV data
     async function loadTrades() {
