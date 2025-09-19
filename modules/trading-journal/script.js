@@ -139,30 +139,23 @@ window.initTradingJournal = async function() {
                 tradesData.forEach(trade => {
                     const normalizedTrade = normalizeTradeKeys(trade);
                     
-                    const entryPrice = parseFloat(normalizedTrade.entryPrice);
-                    const exitPrice = parseFloat(normalizedTrade.exitPrice);
-                    const takeProfit = parseFloat(normalizedTrade.takeProfit);
-                    const stopLoss = parseFloat(normalizedTrade.stopLoss);
-                    const pnlNet = parseFloat(normalizedTrade.pnlNet);
-                    const positionSize = parseFloat(normalizedTrade.positionSize);
-                    
                     // -- START MODIFIED CODE --
                     const row = document.createElement('tr');
-                    // -- END MODIFIED CODE --
                     row.innerHTML = `
                         <td>${normalizedTrade.date || ''}</td>
                         <td>${normalizedTrade.symbol || ''}</td>
                         <td>${normalizedTrade.assetType || ''}</td>
                         <td>${normalizedTrade.buySell || ''}</td>
-                        <td>${normalizedTrade.entryPrice === null ? 'N/A' : normalizedTrade.entryPrice.toFixed(5)}</td>
-                        <td>${normalizedTrade.exitPrice === null ? 'N/A' : normalizedTrade.exitPrice.toFixed(5)}</td>
-                        <td>${normalizedTrade.takeProfit === null ? 'N/A' : normalizedTrade.takeProfit.toFixed(5)}</td>
-                        <td>${normalizedTrade.stopLoss === null ? 'N/A' : normalizedTrade.stopLoss.toFixed(5)}</td>
-                        <td>${normalizedTrade.pnlNet === null ? 'N/A' : normalizedTrade.pnlNet.toFixed(2)}</td>
-                        <td>${normalizedTrade.positionSize === null ? 'N/A' : normalizedTrade.positionSize.toFixed(2)}</td>
+                        <td>${normalizedTrade.entryPrice === null || normalizedTrade.entryPrice === '' ? 'N/A' : parseFloat(normalizedTrade.entryPrice).toFixed(5)}</td>
+                        <td>${normalizedTrade.exitPrice === null || normalizedTrade.exitPrice === '' ? 'N/A' : parseFloat(normalizedTrade.exitPrice).toFixed(5)}</td>
+                        <td>${normalizedTrade.takeProfit === null || normalizedTrade.takeProfit === '' ? 'N/A' : parseFloat(normalizedTrade.takeProfit).toFixed(5)}</td>
+                        <td>${normalizedTrade.stopLoss === null || normalizedTrade.stopLoss === '' ? 'N/A' : parseFloat(normalizedTrade.stopLoss).toFixed(5)}</td>
+                        <td>${normalizedTrade.pnlNet === null || normalizedTrade.pnlNet === '' ? 'N/A' : parseFloat(normalizedTrade.pnlNet).toFixed(2)}</td>
+                        <td>${normalizedTrade.positionSize === null || normalizedTrade.positionSize === '' ? 'N/A' : parseFloat(normalizedTrade.positionSize).toFixed(2)}</td>
                         <td>${normalizedTrade.strategyName || ''}</td>
                         <td>${normalizedTrade.notes || ''}</td>
                     `;
+                    // -- END MODIFIED CODE --
                     tradeTableBody.appendChild(row);
                 });
             }
