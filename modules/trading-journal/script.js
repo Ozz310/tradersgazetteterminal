@@ -1,12 +1,9 @@
 // /modules/trading-journal/script.js
 // This script contains all the core logic for the trading journal.
-// It is wrapped in a self-executing function to avoid global variable conflicts.
 window.initTradingJournal = async function() {
     console.log('Trading Journal module initializing...');
 
-    // This script assumes the user ID is already in local storage from a login process.
     const userId = localStorage.getItem('tg_userId');
-
     if (!userId) {
         console.error('User not authenticated. A user ID is required to use this module.');
         const notification = document.getElementById('notification');
@@ -15,13 +12,11 @@ window.initTradingJournal = async function() {
             notification.style.color = '#FF4040';
             notification.classList.remove('hidden');
         }
-        return; // Exit if no user ID
+        return;
     }
 
-    // Core Backend URL - UPDATE THIS WITH YOUR CLOUDFLARE WORKER URL
     const API_ENDPOINT = 'https://traders-gazette-proxy.mohammadosama310.workers.dev/';
 
-    // DOM Elements - Declared once at the top
     const loader = document.getElementById('loader');
     const notification = document.getElementById('notification');
     const userIdDisplay = document.getElementById('user-id-display');
@@ -40,12 +35,9 @@ window.initTradingJournal = async function() {
     const uploadCsvForm = document.getElementById('upload-csv-form');
     const closeCsvModal = document.getElementById('close-csv-modal');
     
-    // Global state for trades
     let tradesData = [];
     let headers = ['Date', 'Symbol', 'Asset Type', 'Buy/Sell', 'Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size', 'Strategy Name', 'Notes', 'dealId'];
 
-
-    // Helper function to show notifications
     function showNotification(message, type = 'success') {
         if (notification) {
             notification.textContent = message;
@@ -55,7 +47,6 @@ window.initTradingJournal = async function() {
         }
     }
     
-    // Helper function to show/hide the loader
     function toggleLoader(show) {
         if (loader) {
             if (show) loader.classList.remove('hidden');
@@ -63,7 +54,6 @@ window.initTradingJournal = async function() {
         }
     }
 
-    // Helper function to format data for CSV
     function toCsvString(data) {
         if (data === null || typeof data === 'undefined') {
             return '';
@@ -76,7 +66,6 @@ window.initTradingJournal = async function() {
         return str;
     }
 
-    // New backend communication logic using fetch()
     async function callBackend(action, data) {
         try {
             const response = await fetch(API_ENDPOINT, {
@@ -94,7 +83,6 @@ window.initTradingJournal = async function() {
         }
     }
 
-    // Load trades from the backend
     async function loadTrades() {
         toggleLoader(true);
         const response = await callBackend('readTrades');
@@ -103,7 +91,6 @@ window.initTradingJournal = async function() {
             showNotification(`Failed to load trades: ${response.error}`, 'error');
             tradesData = [];
         } else {
-            // Transform the array of arrays from the backend into an array of objects
             const fetchedHeaders = response.headers;
             const fetchedData = response.trades;
             tradesData = fetchedData.map(row => {
@@ -119,7 +106,6 @@ window.initTradingJournal = async function() {
         toggleLoader(false);
     }
 
-    // Update the trade table in the UI
     function updateTradeTable() {
         const tradeTableBody = document.getElementById('trade-table-body');
         if (tradeTableBody) {
@@ -169,14 +155,13 @@ window.initTradingJournal = async function() {
                 for (let j = 0; j < headers.length; j++) {
                     trade[headers[j]] = currentLine[j].trim();
                 }
-                trade.dealId = `csv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`; // Add a unique ID for duplicate checking
+                trade.dealId = `csv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
                 trades.push(trade);
             }
         }
         return trades;
     }
 
-    // Charts Logic
     let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
 
     async function updateCharts() {
@@ -381,106 +366,11 @@ window.initTradingJournal = async function() {
         }
     }
     
-    // Tab switching
-    if (tableTab && analyticsTab && tableView && analyticsView) {
-        tableTab.addEventListener('click', () => {
-            tableTab.classList.add('active');
-            analyticsTab.classList.remove('active');
-            tableView.style.display = 'block';
-            analyticsView.style.display = 'none';
-            loadTrades(); // Reload on tab switch to ensure fresh data
-        });
-        
-        analyticsTab.addEventListener('click', () => {
-            analyticsTab.classList.add('active');
-            tableTab.classList.remove('active');
-            analyticsView.style.display = 'block';
-            tableView.style.display = 'none';
-            updateCharts();
-        });
-    }
-    
-    if (timeFrameSelect) {
-        timeFrameSelect.addEventListener('change', () => {
-            updateCharts();
-        });
-    }
-    
-    // CSV Export Logic
-    if (exportTableCsv) {
-        exportTableCsv.addEventListener('click', () => {
-            if (!tradesData || tradesData.length === 0) {
-                showNotification('No data to export.', 'error');
-                return;
-            }
-            const headers = ['Date', 'Symbol', 'Asset Type', 'Buy/Sell', 'Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size', 'Strategy Name', 'Notes'];
-            const csvRows = [headers.map(h => toCsvString(h)).join(',')];
-            tradesData.forEach(trade => {
-                const row = [
-                    toCsvString(trade.Date),
-                    toCsvString(trade.Symbol),
-                    toCsvString(trade['Asset Type']),
-                    toCsvString(trade['Buy/Sell']),
-                    toCsvString(trade['Entry Price']),
-                    toCsvString(trade['Exit Price']),
-                    toCsvString(trade['Take Profit']),
-                    toCsvString(trade['Stop Loss']),
-                    toCsvString(trade['P&L Net']),
-                    toCsvString(trade['Position Size']),
-                    toCsvString(trade['Strategy Name']),
-                    toCsvString(trade.Notes)
-                ];
-                csvRows.push(row.join(','));
-            });
-            downloadCSV(csvRows.join('\n'), 'trade_journal.csv');
-        });
-    }
-    
-    if (exportAnalyticsCsv) {
-        exportAnalyticsCsv.addEventListener('click', () => {
-            if (!tradesData || tradesData.length === 0) {
-                showNotification('No data to export.', 'error');
-                return;
-            }
-            const timePnlData = tradesData.reduce((acc, trade) => {
-                const date = trade.Date;
-                acc[date] = (acc[date] || 0) + parseFloat(trade['P&L Net'] || 0);
-                return acc;
-            }, {});
-            const timeLabels = Object.keys(timePnlData).sort();
-            const timeData = timeLabels.map(date => timePnlData[date]);
-            
-            const csvRows = ['Date,P&L'];
-            timeLabels.forEach((date, index) => {
-                csvRows.push(`${toCsvString(date)},${toCsvString(timeData[index].toFixed(2))}`);
-            });
-            
-            downloadCSV(csvRows.join('\n'), 'analytics_pnl.csv');
-        });
-    }
-
-    function downloadCSV(csv, filename) {
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showNotification('CSV Downloaded Successfully');
-    }
-
-    /**
-     * Separated UI initialization logic to ensure buttons and forms are always visible.
-     */
     function initializeUI() {
         if (userIdDisplay) {
             userIdDisplay.textContent = `User ID: ${userId}`;
         }
         
-        // Trade Form Submission (Manual Entry)
         if (addEntryButton && tradeForm && entryFormCard) {
             addEntryButton.addEventListener('click', () => {
                 entryFormCard.classList.toggle('hidden');
@@ -507,7 +397,7 @@ window.initTradingJournal = async function() {
                     notes: document.getElementById('notes').value
                 };
                 
-                const response = await callBackend('writeTrade', { tradeData });
+                const response = await callBackend('writeTrade', { tradeData: tradeData });
                 
                 if (response.status === 'Error') {
                     console.error("Error adding document: ", response.error);
@@ -515,13 +405,12 @@ window.initTradingJournal = async function() {
                 } else {
                     showNotification('Trade Saved Successfully');
                     tradeForm.reset();
-                    loadTrades(); // Reload data to show the new trade
+                    loadTrades();
                 }
                 toggleLoader(false);
             });
         }
 
-        // CSV Upload Modal
         if (uploadCsvButton && uploadCsvForm && uploadCsvModal && closeCsvModal) {
             uploadCsvButton.addEventListener('click', () => {
                 uploadCsvModal.classList.remove('hidden');
@@ -558,7 +447,7 @@ window.initTradingJournal = async function() {
                         return;
                     }
                     
-                    const response = await callBackend('writeTradesBulk', { trades });
+                    const response = await callBackend('writeTradesBulk', { trades: trades });
                     
                     if (response.status === 'Error') {
                         console.error("Error uploading trades in bulk:", response.error);
@@ -566,7 +455,7 @@ window.initTradingJournal = async function() {
                     } else {
                         showNotification(`Uploaded ${response.newTradesCount} trades successfully.`);
                         uploadCsvModal.classList.add('hidden');
-                        loadTrades(); // Reload data to show the new trades
+                        loadTrades();
                     }
                     toggleLoader(false);
                 };
@@ -574,14 +463,13 @@ window.initTradingJournal = async function() {
             });
         }
         
-        // Tab switching
         if (tableTab && analyticsTab && tableView && analyticsView) {
             tableTab.addEventListener('click', () => {
                 tableTab.classList.add('active');
                 analyticsTab.classList.remove('active');
                 tableView.style.display = 'block';
                 analyticsView.style.display = 'none';
-                loadTrades(); // Reload on tab switch to ensure fresh data
+                loadTrades();
             });
             
             analyticsTab.addEventListener('click', () => {
@@ -599,7 +487,6 @@ window.initTradingJournal = async function() {
             });
         }
         
-        // CSV Export Logic
         if (exportTableCsv) {
             exportTableCsv.addEventListener('click', () => {
                 if (!tradesData || tradesData.length === 0) {
@@ -665,7 +552,6 @@ window.initTradingJournal = async function() {
             showNotification('CSV Downloaded Successfully');
         }
 
-        // Initial data load and UI initialization when the module is loaded
         initializeUI();
         loadTrades();
     }
