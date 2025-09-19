@@ -19,7 +19,6 @@ window.initTradingJournal = async function() {
 
     const loader = document.getElementById('loader');
     const notification = document.getElementById('notification');
-    const userIdDisplay = document.getElementById('user-id-display');
     const entryFormCard = document.getElementById('entry-form-card');
     const uploadCsvModal = document.getElementById('upload-csv-modal');
     const timeFrameSelect = document.getElementById('time-frame');
@@ -86,7 +85,7 @@ window.initTradingJournal = async function() {
     async function loadTrades() {
         toggleLoader(true);
         const response = await callBackend('readTrades');
-        if (response.status === 'Error') {
+        if (response.status === 'Error' || !response.trades) {
             console.error(`Failed to load trades: ${response.error}`);
             showNotification(`Failed to load trades: ${response.error}`, 'error');
             tradesData = [];
@@ -107,6 +106,7 @@ window.initTradingJournal = async function() {
             console.log('Trades loaded from backend:', tradesData);
         }
         updateTradeTable();
+        updateCharts(); // Call updateCharts after trades are loaded
         toggleLoader(false);
     }
 
@@ -371,10 +371,6 @@ window.initTradingJournal = async function() {
     }
     
     function initializeUI() {
-        if (userIdDisplay) {
-            userIdDisplay.textContent = `User ID: ${userId}`;
-        }
-        
         if (addEntryButton && tradeForm && entryFormCard) {
             addEntryButton.addEventListener('click', () => {
                 entryFormCard.classList.toggle('hidden');
@@ -473,7 +469,7 @@ window.initTradingJournal = async function() {
                 analyticsTab.classList.remove('active');
                 tableView.style.display = 'block';
                 analyticsView.style.display = 'none';
-                loadTrades();
+                updateTradeTable();
             });
             
             analyticsTab.addEventListener('click', () => {
@@ -555,8 +551,9 @@ window.initTradingJournal = async function() {
             URL.revokeObjectURL(url);
             showNotification('CSV Downloaded Successfully');
         }
-
-        initializeUI();
-        loadTrades();
     }
+    
+    // Initial calls to set up the module
+    initializeUI();
+    loadTrades();
 }
