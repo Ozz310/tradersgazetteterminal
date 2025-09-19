@@ -138,7 +138,6 @@ window.initTradingJournal = async function() {
             } else {
                 tradesData.forEach(trade => {
                     const normalizedTrade = normalizeTradeKeys(trade);
-                    const row = document.createElement('tr');
                     
                     const entryPrice = parseFloat(normalizedTrade.entryPrice);
                     const exitPrice = parseFloat(normalizedTrade.exitPrice);
@@ -147,47 +146,73 @@ window.initTradingJournal = async function() {
                     const pnlNet = parseFloat(normalizedTrade.pnlNet);
                     const positionSize = parseFloat(normalizedTrade.positionSize);
                     
+                    // -- START MODIFIED CODE --
                     row.innerHTML = `
                         <td>${normalizedTrade.date || ''}</td>
                         <td>${normalizedTrade.symbol || ''}</td>
                         <td>${normalizedTrade.assetType || ''}</td>
                         <td>${normalizedTrade.buySell || ''}</td>
-                        <td>${!isNaN(entryPrice) ? entryPrice.toFixed(5) : 'N/A'}</td>
-                        <td>${!isNaN(exitPrice) ? exitPrice.toFixed(5) : 'N/A'}</td>
-                        <td>${!isNaN(takeProfit) ? takeProfit.toFixed(5) : 'N/A'}</td>
-                        <td>${!isNaN(stopLoss) ? stopLoss.toFixed(5) : 'N/A'}</td>
-                        <td>${!isNaN(pnlNet) ? pnlNet.toFixed(2) : 'N/A'}</td>
-                        <td>${!isNaN(positionSize) ? positionSize.toFixed(2) : 'N/A'}</td>
+                        <td>${normalizedTrade.entryPrice === null ? 'N/A' : normalizedTrade.entryPrice.toFixed(5)}</td>
+                        <td>${normalizedTrade.exitPrice === null ? 'N/A' : normalizedTrade.exitPrice.toFixed(5)}</td>
+                        <td>${normalizedTrade.takeProfit === null ? 'N/A' : normalizedTrade.takeProfit.toFixed(5)}</td>
+                        <td>${normalizedTrade.stopLoss === null ? 'N/A' : normalizedTrade.stopLoss.toFixed(5)}</td>
+                        <td>${normalizedTrade.pnlNet === null ? 'N/A' : normalizedTrade.pnlNet.toFixed(2)}</td>
+                        <td>${normalizedTrade.positionSize === null ? 'N/A' : normalizedTrade.positionSize.toFixed(2)}</td>
                         <td>${normalizedTrade.strategyName || ''}</td>
                         <td>${normalizedTrade.notes || ''}</td>
                     `;
+                    // -- END MODIFIED CODE --
                     tradeTableBody.appendChild(row);
                 });
             }
         }
     }
     
+    // -- START MODIFIED CODE --
+    /**
+     * @description Parses a CSV text string, handling "N/A" values and ensuring correct data types for numeric fields.
+     * @param {string} csvText - The raw CSV content.
+     * @returns {Array<Object>} An array of parsed trade objects.
+     */
     function parseCsv(csvText) {
         const lines = csvText.split('\n').filter(line => line.trim() !== '');
         if (lines.length < 2) return [];
 
         const headers = lines[0].split(',').map(h => h.trim());
         const trades = [];
+        const numericFields = ['Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size'];
+
         for (let i = 1; i < lines.length; i++) {
             const currentLine = lines[i].split(',');
-            if (currentLine.length === headers.length) {
-                const trade = {};
-                for (let j = 0; j < headers.length; j++) {
-                    const key = headers[j];
-                    trade[key] = currentLine[j].trim();
-                }
-                trade.dealId = `csv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-                trades.push(trade);
+            if (currentLine.length !== headers.length) {
+                // Skip malformed rows
+                continue;
             }
+            
+            const trade = {};
+            for (let j = 0; j < headers.length; j++) {
+                const key = headers[j];
+                let value = currentLine[j] ? currentLine[j].trim() : null;
+
+                // Handle 'N/A' and empty strings specifically for numerical fields
+                if (value && value.toUpperCase() === 'N/A') {
+                    value = null; // Set to null to explicitly handle missing data
+                }
+
+                if (numericFields.includes(key)) {
+                    const parsedValue = parseFloat(value);
+                    trade[key] = isNaN(parsedValue) ? null : parsedValue;
+                } else {
+                    trade[key] = value;
+                }
+            }
+            trade.dealId = `csv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+            trades.push(trade);
         }
         return trades;
     }
-
+    // -- END MODIFIED CODE --
+    
     let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
 
     async function updateCharts() {
