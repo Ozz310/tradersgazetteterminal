@@ -126,7 +126,7 @@ window.initTradingJournal = async function() {
             // Case 2: Data is an array of values (common with Google Sheets API)
             // We use a fixed index map to assign the values correctly.
             const indexMap = ['date', 'symbol', 'assetType', 'buySell', 'entryPrice', 'exitPrice', 
-                              'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
+                             'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
             indexMap.forEach((key, index) => {
                 if (trade[index] !== undefined && normalizedTrade.hasOwnProperty(key)) {
                     normalizedTrade[key] = trade[index];
@@ -247,7 +247,7 @@ window.initTradingJournal = async function() {
 
     async function updateCharts() {
         // Use normalized tradesData directly
-        const trades = tradesData.map(trade => normalizeTradeKeys(trade));
+        const trades = tradesData;
         if (!trades || trades.length === 0) {
             document.querySelectorAll('.chart-card canvas').forEach(canvas => {
                 const ctx = canvas.getContext('2d');
@@ -283,7 +283,7 @@ window.initTradingJournal = async function() {
 
         const timePnlData = filteredTrades.reduce((acc, trade) => {
             const date = trade.date;
-            acc[date] = (acc[date] || 0) + parseFloat(trade.pnlNet || 0);
+            acc[date] = (acc[date] || 0) + (parseFloat(trade.pnlNet) || 0);
             return acc;
         }, {});
         const timeLabels = Object.keys(timePnlData).sort();
@@ -335,7 +335,7 @@ window.initTradingJournal = async function() {
         }
 
         const assetPnlData = filteredTrades.reduce((acc, trade) => {
-            acc[trade.assetType] = (acc[trade.assetType] || 0) + parseFloat(trade.pnlNet || 0);
+            acc[trade.assetType] = (acc[trade.assetType] || 0) + (parseFloat(trade.pnlNet) || 0);
             return acc;
         }, {});
         const assetLabels = Object.keys(assetPnlData);
@@ -374,7 +374,7 @@ window.initTradingJournal = async function() {
         }
         
         const winLossData = filteredTrades.reduce((acc, trade) => {
-            const pnl = parseFloat(trade.pnlNet || 0);
+            const pnl = parseFloat(trade.pnlNet) || 0;
             if (pnl > 0) acc.win++;
             else if (pnl < 0) acc.loss++;
             else acc.breakEven++;
@@ -405,7 +405,7 @@ window.initTradingJournal = async function() {
             });
         }
 
-        const pnlData = filteredTrades.map(trade => parseFloat(trade.pnlNet || 0));
+        const pnlData = filteredTrades.map(trade => parseFloat(trade.pnlNet) || 0);
         const pnlBins = [-1000, -500, -100, 0, 100, 500, 1000, Infinity];
         const pnlDistribution = pnlBins.slice(0, -1).map((bin, i) => ({
             label: `${bin} to ${pnlBins[i + 1] === Infinity ? '∞' : pnlBins[i + 1]}`,
