@@ -23,7 +23,8 @@ window.initTradingJournal = async function() {
     const uploadCsvModal = document.getElementById('upload-csv-modal');
     const timeFrameSelect = document.getElementById('time-frame');
     const exportTableCsv = document.getElementById('export-table-csv');
-    const exportAnalyticsCsv = document = document.getElementById('export-analytics-csv');
+    // Corrected typo in variable declaration
+    const exportAnalyticsCsv = document.getElementById('export-analytics-csv');
     const tableTab = document.getElementById('table-tab');
     const analyticsTab = document.getElementById('analytics-tab');
     const tableView = document.getElementById('table-view');
@@ -276,11 +277,13 @@ window.initTradingJournal = async function() {
             });
         }
 
+        // Destroy existing chart instances to prevent duplicates
         if (timePnlChart) timePnlChart.destroy();
         if (assetPnlChart) assetPnlChart.destroy();
         if (winLossChart) winLossChart.destroy();
         if (pnlDistributionChart) pnlDistributionChart.destroy();
 
+        // 1. Cumulative P&L Chart
         const timePnlData = filteredTrades.reduce((acc, trade) => {
             // Normalize the date to YYYY-MM-DD for correct daily aggregation
             const date = trade.date ? trade.date.substring(0, 10) : 'No Date';
@@ -335,6 +338,7 @@ window.initTradingJournal = async function() {
             });
         }
 
+        // 2. P&L by Asset Type Chart
         const assetPnlData = filteredTrades.reduce((acc, trade) => {
             acc[trade.assetType] = (acc[trade.assetType] || 0) + (parseFloat(trade.pnlNet) || 0);
             return acc;
@@ -374,6 +378,7 @@ window.initTradingJournal = async function() {
             });
         }
         
+        // 3. Win/Loss/Break-Even Chart
         const winLossData = filteredTrades.reduce((acc, trade) => {
             const pnl = parseFloat(trade.pnlNet) || 0;
             if (pnl > 0) acc.win++;
@@ -406,14 +411,41 @@ window.initTradingJournal = async function() {
             });
         }
 
-        const pnlData = filteredTrades.map(trade => parseFloat(trade.pnlNet) || 0);
-        const pnlBins = [-1000, -500, -100, 0, 100, 500, 1000, Infinity];
-        const pnlDistribution = pnlBins.slice(0, -1).map((bin, i) => ({
-            label: `${bin} to ${pnlBins[i + 1] === Infinity ? '∞' : pnlBins[i + 1]}`,
-            count: pnlData.filter(pnl => pnl >= bin && pnl < pnlBins[i + 1]).length
-        }));
-        const pnlLabels = pnlDistribution.map(bin => bin.label);
-        const pnlCounts = pnlDistribution.map(bin => bin.count);
+        // 4. P&L Distribution Chart (FIXED & IMPROVED)
+        // Get all P&L values
+        const pnlValues = filteredTrades.map(trade => parseFloat(trade.pnlNet) || 0);
+        if (pnlValues.length === 0) {
+            return;
+        }
+
+        // Dynamically determine min and max P&L and create bins
+        const minPnl = Math.min(...pnlValues);
+        const maxPnl = Math.max(...pnlValues);
+        const binCount = 10; // Let's create 10 bins for a good distribution
+        const binSize = (maxPnl - minPnl) / binCount;
+        const pnlBins = [];
+        const pnlLabels = [];
+
+        for (let i = 0; i < binCount; i++) {
+            const lowerBound = minPnl + i * binSize;
+            const upperBound = (i === binCount - 1) ? maxPnl : lowerBound + binSize;
+            pnlBins.push({ lower: lowerBound, upper: upperBound, count: 0 });
+            pnlLabels.push(`${lowerBound.toFixed(2)} to ${upperBound.toFixed(2)}`);
+        }
+
+        // Count trades in each bin
+        pnlValues.forEach(pnl => {
+            for (let i = 0; i < pnlBins.length; i++) {
+                // Ensure the last bin includes the max value
+                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
+                    pnlBins[i].count++;
+                    break;
+                }
+            }
+        });
+
+        const pnlCounts = pnlBins.map(bin => bin.count);
+        
         const pnlDistributionCtx = document.getElementById('pnlDistributionChart');
         if(pnlDistributionCtx) {
             pnlDistributionChart = new Chart(pnlDistributionCtx, {
@@ -425,7 +457,7 @@ window.initTradingJournal = async function() {
                         data: pnlCounts,
                         backgroundColor: (context) => {
                             const index = context.dataIndex;
-                            const pnlRangeStart = pnlBins[index];
+                            const pnlRangeStart = pnlBins[index].lower;
                             return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
                         },
                         borderColor: '#fff',
@@ -436,7 +468,7 @@ window.initTradingJournal = async function() {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(255,255,255,0.1)' } },
                         y: { beginAtZero: true, title: { display: true, text: 'Count', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
