@@ -147,6 +147,8 @@ window.initTradingJournal = async function() {
                     const positionSize = parseFloat(normalizedTrade.positionSize);
                     
                     // -- START MODIFIED CODE --
+                    const row = document.createElement('tr');
+                    // -- END MODIFIED CODE --
                     row.innerHTML = `
                         <td>${normalizedTrade.date || ''}</td>
                         <td>${normalizedTrade.symbol || ''}</td>
@@ -161,14 +163,12 @@ window.initTradingJournal = async function() {
                         <td>${normalizedTrade.strategyName || ''}</td>
                         <td>${normalizedTrade.notes || ''}</td>
                     `;
-                    // -- END MODIFIED CODE --
                     tradeTableBody.appendChild(row);
                 });
             }
         }
     }
     
-    // -- START MODIFIED CODE --
     /**
      * @description Parses a CSV text string, handling "N/A" values and ensuring correct data types for numeric fields.
      * @param {string} csvText - The raw CSV content.
@@ -211,7 +211,6 @@ window.initTradingJournal = async function() {
         }
         return trades;
     }
-    // -- END MODIFIED CODE --
     
     let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
 
