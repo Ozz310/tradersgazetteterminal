@@ -81,7 +81,12 @@ window.initTradingJournal = async function() {
         }
     }
 
-    // New utility function to normalize keys of a single trade object
+    // -- START MODIFIED CODE --
+    /**
+     * @description Normalizes incoming trade data to a consistent object structure.
+     * @param {Object|Array} trade - The raw trade data from either the backend or CSV.
+     * @returns {Object} A normalized trade object.
+     */
     function normalizeTradeKeys(trade) {
         const keyMap = {
             'Date': 'date',
@@ -98,13 +103,42 @@ window.initTradingJournal = async function() {
             'Notes': 'notes',
             'dealId': 'dealId'
         };
+
+        const numericFields = ['entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize'];
+        
         const normalizedTrade = {};
-        for (const key in trade) {
-            const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
-            normalizedTrade[mappedKey] = trade[key];
+        
+        // Case 1: Data is an object with string keys (from CSV or new entry)
+        if (typeof trade === 'object' && !Array.isArray(trade)) {
+            for (const key in trade) {
+                const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
+                normalizedTrade[mappedKey] = trade[key];
+            }
+        } 
+        // Case 2: Data is an array with index-based keys (from Google Sheets backend)
+        else if (Array.isArray(trade) || (typeof trade === 'object' && Object.keys(trade).every(key => !isNaN(parseInt(key))))) {
+            const indexMap = ['date', 'symbol', 'assetType', 'buySell', 'entryPrice', 'exitPrice', 'takeProfit', 'stopLoss', 'pnlNet', 'positionSize', 'strategyName', 'notes', 'dealId'];
+            for (let i = 0; i < trade.length; i++) {
+                const key = indexMap[i];
+                if (key) {
+                    normalizedTrade[key] = trade[i];
+                }
+            }
         }
+
+        // Ensure numeric fields are correctly parsed or set to null
+        numericFields.forEach(field => {
+            const value = normalizedTrade[field];
+            if (value === 'N/A' || value === '') {
+                normalizedTrade[field] = null;
+            } else if (typeof value === 'string' && !isNaN(parseFloat(value))) {
+                normalizedTrade[field] = parseFloat(value);
+            }
+        });
+
         return normalizedTrade;
     }
+    // -- END MODIFIED CODE --
 
     // Refactored to handle both backend and CSV data
     async function loadTrades() {
@@ -139,7 +173,6 @@ window.initTradingJournal = async function() {
                 tradesData.forEach(trade => {
                     const normalizedTrade = normalizeTradeKeys(trade);
                     
-                    // -- START MODIFIED CODE --
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${normalizedTrade.date || ''}</td>
@@ -155,7 +188,6 @@ window.initTradingJournal = async function() {
                         <td>${normalizedTrade.strategyName || ''}</td>
                         <td>${normalizedTrade.notes || ''}</td>
                     `;
-                    // -- END MODIFIED CODE --
                     tradeTableBody.appendChild(row);
                 });
             }
