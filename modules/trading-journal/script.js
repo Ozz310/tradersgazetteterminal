@@ -221,9 +221,8 @@ window.initTradingJournal = async function() {
      * @returns {Array<Object>} An array of parsed trade objects.
      */
     function parseCsv(csvText) {
-        // FIX: The previous regex was unreliable. This is a more robust approach.
-        // It uses a while loop with regex.exec() to correctly parse all fields,
-        // including empty ones, and handles quoted strings.
+        // FIX: The previous regex parsing method was causing a RangeError.
+        // This is a new, more robust parsing approach.
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) return [];
 
@@ -233,19 +232,27 @@ window.initTradingJournal = async function() {
 
         for (let i = 1; i < lines.length; i++) {
             const currentLine = lines[i];
-            const rowRegex = /(".*?"|[^",\r\n]*)(?:,|$)/g;
+            
+            // This regex captures a field which can be a quoted string or a non-comma value.
+            const rowRegex = /(".*?"|[^",]*)(?:,|$)/g;
             const parsedRow = [];
             let match;
             
-            // Loop through matches to correctly parse each column
+            // Loop through all matches to extract each field
             while ((match = rowRegex.exec(currentLine)) !== null) {
-                // If a quoted value is found, use capture group 1, otherwise use capture group 2
-                let value = match[1] || match[2] || '';
+                // The `match[1]` contains the captured group (the field value)
+                let value = match[1] || '';
+                // Remove surrounding quotes if they exist
                 value = value.trim().replace(/^"|"$/g, '');
                 parsedRow.push(value);
             }
             
-            // Check if the number of columns matches the headers
+            // The regex might return an extra empty string at the end if the line ends with a comma.
+            // Remove it to match the header length.
+            if (currentLine.endsWith(',') && parsedRow.length > headers.length) {
+                parsedRow.pop();
+            }
+
             if (parsedRow.length !== headers.length) {
                 console.warn(`Skipping malformed row: ${currentLine}`);
                 continue;
