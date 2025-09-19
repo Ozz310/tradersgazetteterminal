@@ -224,24 +224,27 @@ window.initTradingJournal = async function() {
      * @returns {Array<Object>} An array of parsed trade objects.
      */
     function parseCsv(csvText) {
-        const lines = csvText.split('\n').filter(line => line.trim() !== '');
+        // Updated regex to handle quoted fields with commas inside
+        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) return [];
 
-        const headers = lines[0].split(',').map(h => h.trim());
+        const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
         const trades = [];
         const numericFields = ['Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size'];
 
         for (let i = 1; i < lines.length; i++) {
-            const currentLine = lines[i].split(',');
+            const rowRegex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
+            const currentLine = lines[i].match(rowRegex) || [];
+            
             if (currentLine.length !== headers.length) {
-                // Skip malformed rows
+                console.warn(`Skipping malformed row: ${lines[i]}`);
                 continue;
             }
             
             const trade = {};
             for (let j = 0; j < headers.length; j++) {
                 const key = headers[j];
-                let value = currentLine[j] ? currentLine[j].trim() : null;
+                let value = currentLine[j] ? currentLine[j].trim().replace(/^"|"$/g, '') : null;
 
                 // Handle 'N/A' and empty strings specifically for numerical fields
                 if (value && value.toUpperCase() === 'N/A') {
@@ -255,12 +258,36 @@ window.initTradingJournal = async function() {
                     trade[key] = value;
                 }
             }
-            trade.dealId = `csv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
             trades.push(trade);
         }
         return trades;
     }
-    
+
+    /**
+     * @description Converts parsed CSV data keys to the backend's expected API format.
+     * @param {Array<Object>} trades - Array of parsed trade objects from CSV.
+     * @returns {Array<Object>} Array of trades with normalized keys for API upload.
+     */
+    function convertCsvToApiFormat(trades) {
+        return trades.map(trade => {
+            return {
+                date: trade['Date'],
+                symbol: trade['Symbol'],
+                assetType: trade['Asset Type'],
+                buySell: trade['Buy/Sell'],
+                entryPrice: trade['Entry Price'],
+                exitPrice: trade['Exit Price'],
+                takeProfit: trade['Take Profit'],
+                stopLoss: trade['Stop Loss'],
+                pnlNet: trade['P&L Net'],
+                positionSize: trade['Position Size'],
+                strategyName: trade['Strategy Name'],
+                notes: trade['Notes'],
+                dealId: `csv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`
+            };
+        });
+    }
+
     let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
 
     async function updateCharts() {
@@ -573,15 +600,17 @@ window.initTradingJournal = async function() {
                 const reader = new FileReader();
                 reader.onload = async (event) => {
                     const csvText = event.target.result;
-                    const trades = parseCsv(csvText);
-                    
-                    if (trades.length === 0) {
+                    // FIX: Process the raw CSV into a consistent, backend-friendly format
+                    const parsedTrades = parseCsv(csvText);
+                    const tradesInApiFormat = convertCsvToApiFormat(parsedTrades);
+
+                    if (tradesInApiFormat.length === 0) {
                         showNotification('No valid trades found in CSV.', 'error');
                         toggleLoader(false);
                         return;
                     }
                     
-                    const response = await callBackend('writeTradesBulk', { trades: trades });
+                    const response = await callBackend('writeTradesBulk', { trades: tradesInApiFormat });
                     
                     if (response.status === 'Error') {
                         console.error("Error uploading trades in bulk:", response.error);
