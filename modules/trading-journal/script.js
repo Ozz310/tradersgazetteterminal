@@ -231,12 +231,13 @@ window.initTradingJournal = async function() {
         const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
         const trades = [];
         const numericFields = ['Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size'];
-
+        
         for (let i = 1; i < lines.length; i++) {
-            const rowRegex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
-            const currentLine = lines[i].match(rowRegex) || [];
+            const rowRegex = /(".*?"|[^",]*)(?=\s*,|\s*$)/g; // Modified regex to handle empty trailing values
+            const currentLine = lines[i].match(rowRegex);
             
-            if (currentLine.length !== headers.length) {
+            // Check if the parsed row is null or if the number of columns doesn't match
+            if (!currentLine || currentLine.length !== headers.length) {
                 console.warn(`Skipping malformed row: ${lines[i]}`);
                 continue;
             }
