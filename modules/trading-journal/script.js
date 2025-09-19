@@ -93,13 +93,17 @@ window.initTradingJournal = async function() {
         } else {
             const fetchedHeaders = response.headers;
             const fetchedData = response.trades;
-            tradesData = fetchedData.map(row => {
-                const trade = {};
-                fetchedHeaders.forEach((header, i) => {
-                    trade[header] = row[i];
+            if (fetchedData && fetchedHeaders) {
+                tradesData = fetchedData.map(row => {
+                    const trade = {};
+                    fetchedHeaders.forEach((header, i) => {
+                        trade[header] = row[i];
+                    });
+                    return trade;
                 });
-                return trade;
-            });
+            } else {
+                 tradesData = [];
+            }
             console.log('Trades loaded from backend:', tradesData);
         }
         updateTradeTable();
