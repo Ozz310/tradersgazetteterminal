@@ -62,9 +62,6 @@ function init() {
         });
     });
 
-    // Add a click event listener to the close button to close the modal.
-    closeBtn.addEventListener('click', closeModal);
-
     // Add a global click event listener to close the modal when clicking outside of it.
     window.addEventListener('click', (event) => {
         if (event.target === modal) {
@@ -72,6 +69,10 @@ function init() {
         }
     });
 
+    // Adjusting card container position after it's loaded to ensure proper 20px offset.
+    const contentContainer = document.querySelector('.ebooks-content-container');
+    contentContainer.style.paddingLeft = '20px';
+    
     // A simple console log to confirm the module has been initialized.
     console.log('Trading E-books module initialized successfully.');
 }
