@@ -23,15 +23,19 @@
 }
 
 .trading-ebooks .ebooks-content-container {
-    width: 100%;
+    /* New fix to override parent padding */
+    width: calc(100% + 50px);
+    margin-left: -50px;
+
+    /* Original styles remain */
     max-width: 1200px;
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
     justify-content: flex-start;
-    padding-left: 0; /* Removing this to override it below */
-    position: relative; /* Force a positioning context */
-    left: 5px; /* Manually shift the element */
+    padding-left: 5px; 
+    position: relative; 
+    left: 5px; 
 }
 
 .trading-ebooks .gallery-card {
