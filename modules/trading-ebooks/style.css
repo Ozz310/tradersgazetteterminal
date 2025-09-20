@@ -12,7 +12,7 @@
 
 .trading-ebooks .ebooks-banner {
     width: calc(100% + 40px); /* Extends beyond container to touch sidebar */
-    height: 250px;
+    height: 300px; /* INCREASED HEIGHT */
     position: relative;
     margin-left: -20px; /* Aligns with the sidebar */
     margin-top: -20px; /* Removes top padding to touch the top border */
@@ -33,14 +33,14 @@
     flex-wrap: wrap;
     gap: 30px;
     justify-content: flex-start;
-    padding: 20px 0 20px 20px; /* Pushed the cards closer to the sidebar */
+    padding: 20px 0 20px 100px; /* MOVED CARDS 100 PIXELS AWAY FROM SIDEBAR */
 }
 
 .trading-ebooks .gallery-card {
     background: linear-gradient(145deg, var(--dark-bg-color), var(--darker-bg-color));
-    padding: 10px;
-    width: 200px;
-    height: 350px;
+    padding: 15px; /* INCREASED PADDING */
+    width: 250px; /* INCREASED WIDTH */
+    height: 400px; /* INCREASED HEIGHT */
     border-radius: 8px;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -64,7 +64,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-bottom: 10px;
+    padding-bottom: 15px; /* INCREASED PADDING */
 }
 
 .trading-ebooks .book-cover {
@@ -78,14 +78,14 @@
     color: var(--gold-color);
     font-size: 1.5rem;
     margin: 0;
-    font-family: 'Playfair Display', serif; /* ELEGANT FONT FOR TITLES */
+    font-family: 'Playfair Display', serif;
 }
 
 .trading-ebooks .book-info p {
     color: var(--text-color);
     font-size: 0.9rem;
     margin-top: 10px;
-    font-family: 'Roboto', sans-serif; /* CLEAN SANS-SERIF FONT FOR BODY TEXT */
+    font-family: 'Roboto', sans-serif;
 }
 
 /* Modal Styling */
@@ -142,8 +142,8 @@
     color: var(--gold-color);
     font-size: 2.5rem;
     text-align: center;
-    font-family: 'Playfair Display', serif; /* MATCHES CARD TITLE FONT */
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); /* SOFT GOLD GLOW EFFECT */
+    font-family: 'Playfair Display', serif;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
 }
 
 .trading-ebooks .book-video-container {
@@ -165,14 +165,14 @@
 
 .trading-ebooks .modal-body p {
     color: var(--text-color);
-    font-size: 1.1rem; /* INCREASED FONT SIZE FOR READABILITY */
+    font-size: 1.1rem;
     line-height: 1.6;
-    font-family: 'Roboto', sans-serif; /* CLEAN SANS-SERIF FONT */
+    font-family: 'Roboto', sans-serif;
 }
 
 .trading-ebooks .buy-button {
-    background-color: #A08D4D; /* DARKER GOLD FOR BETTER CONTRAST */
-    color: #F8F8F8; /* KEPT WHITE/LIGHT GRAY TEXT */
+    background-color: #A08D4D;
+    color: #F8F8F8;
     padding: 12px 25px;
     text-decoration: none;
     font-weight: bold;
@@ -184,6 +184,6 @@
 }
 
 .trading-ebooks .buy-button:hover {
-    background-color: var(--gold-color); /* BRIGHTER GOLD ON HOVER */
+    background-color: var(--gold-color);
     transform: translateY(-2px);
 }
