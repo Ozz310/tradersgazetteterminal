@@ -1,280 +1,99 @@
 /* --- Sticky Notes Component Container --- */
 .sticky-notes-component-container {
-    /* Position the container at the bottom center */
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
+    /* Position the container at the right-center for desktop */
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 1000;
+    /* This transition will smoothly slide the entire container */
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* --- Sticky Notes Toggle Button --- */
 .sticky-notes-toggle-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    /* Inverted colors for a more on-brand look */
-    background-color: var(--dominant-black);
-    color: var(--gold-accent);
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    /* Inverted colors for a more on-brand look */
+    background-color: #1a1a1a; /* Using var(--dominant-black); from main.css */
+    color: #F0D788; /* Using var(--gold-accent); from main.css */
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .sticky-notes-toggle-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1); /* Changed from translateY to a more prominent scale effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .sticky-notes-toggle-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    /* Position the panel relative to the button container */
-    position: absolute;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 350px;
-    height: 450px;
-    background: #2b2b2b;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    display: none;
-    flex-direction: column;
-    z-index: 999;
-    overflow: hidden;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* Position the panel relative to the button container */
+    position: absolute;
+    top: 0;
+    right: 80px; /* Aligned to the right of the button */
+    width: 350px;
+    height: 450px;
+    background: #2b2b2b;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+    /* Use 'right' for a smooth slide effect */
+    transition: right 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .sticky-notes-panel.active {
-    display: flex;
+    display: flex;
+    right: calc(80px + 350px - 40px); /* Adjust to slide in and reveal the button */
+    right: 80px; /* Aligned to the right of the button */
 }
 
-.sticky-notes-panel .panel-header {
-    background: #3a3a3a;
-    color: white;
-    padding: 15px 20px;
-    border-bottom: 1px solid #4a4a4a;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.sticky-notes-panel .panel-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: var(--gold-accent);
-}
-
-.sticky-notes-panel .close-panel-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-}
-
-.sticky-notes-panel .close-panel-btn:hover {
-    opacity: 1;
-}
-
-/* Notes List Container */
-.notes-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-/* Individual Note Styling */
-.note-item {
-    background-color: #3a3a3a;
-    border-left: 4px solid var(--gold-accent);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
-    height: auto;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.note-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.note-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 8px;
-    margin-bottom: 8px;
-}
-
-.note-header h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--white-color);
-}
-
-.note-body {
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-.todo-list, .bullet-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.todo-list li, .bullet-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: #d1d1d1;
-    margin-bottom: 5px;
-    position: relative;
-}
-
-/* New CSS for checkbox and text animation */
-.todo-list li.checked {
-    color: #888;
-    transition: color 0.5s ease;
-}
-
-.todo-list li.checked span {
-    text-decoration: line-through;
-}
-
-.todo-list li input[type="checkbox"] {
-    accent-color: var(--gold-accent);
-    flex-shrink: 0;
-    transition: transform 0.3s ease;
-}
-
-.todo-list li.checked input[type="checkbox"] {
-    transform: scale(0.9);
-}
-
-.todo-list li span, .bullet-list li span {
-    outline: none;
-    cursor: text;
-}
-
-.bullet-list li::before {
-    content: '•';
-    color: var(--gold-accent);
-    font-weight: bold;
-}
-
-.delete-task-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s ease;
-    visibility: hidden;
-    position: absolute;
-    right: 0;
-}
-
-.todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
-    visibility: visible;
-}
-
-.note-footer {
-    padding-top: 10px;
-    border-top: 1px dashed rgba(255, 255, 255, 0.1);
-    text-align: center;
-}
-
-.add-item-btn {
-    background: none;
-    border: none;
-    color: #d1d1d1;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.add-item-btn:hover {
-    color: var(--gold-accent);
-}
-
-.note-delete-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    align-self: flex-end;
-}
-
-.note-delete-btn:hover {
-    color: #c0392b;
-}
-
-/* --- Mobile Responsiveness --- */
+/* New CSS to fix the mobile layout */
 @media (max-width: 768px) {
-    .sticky-notes-component-container {
-        /* Align to bottom-right of the screen for mobile */
-        bottom: 70px; /* Aligned with the bottom nav bar */
-        left: auto;
-        right: 20px;
-        transform: translateX(0);
-    }
+    .sticky-notes-component-container {
+        /* Mobile: fixed to the right-center of the screen */
+        top: 50%;
+        right: 0;
+        bottom: auto;
+        left: auto;
+        transform: translateY(-50%);
+    }
 
-    .sticky-notes-toggle-btn {
-        width: 50px;
-        height: 50px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
+    .sticky-notes-toggle-btn {
+        width: 50px;
+        height: 50px;
+    }
 
-    .sticky-notes-panel {
-        /* Initial state for mobile (hidden off-screen) */
-        position: fixed; /* Use fixed position for screen-wide movement */
-        top: 0;
-        right: -100%; /* Hidden off the right side of the screen */
-        bottom: 0;
-        left: auto;
-        width: 100%;
-        height: 100%;
-        max-width: 400px; /* Ensure it doesn't get too wide on tablets */
-        transform: translateX(0);
-        transition: right 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        border-radius: 0; /* No rounded corners for full screen on mobile */
-        border-left: 1px solid #4a4a4a;
-    }
+    .sticky-notes-panel {
+        /* Mobile: Initially hidden off-screen to the right */
+        top: 0;
+        right: -100%; /* Hides the panel off the right side of the screen */
+        bottom: 0;
+        left: auto;
+        width: 100%;
+        height: 100%;
+        max-width: 350px; /* A consistent max-width for better UI on small devices */
+        border-radius: 0;
+        transition: right 0.5s ease-in-out;
+    }
 
-    /* Active state for mobile */
-    .sticky-notes-panel.active {
-        display: flex;
-        right: 0; /* Slide into view from the right */
-        animation: none; /* Override desktop animation */
-    }
+    .sticky-notes-panel.active {
+        /* Mobile: Slides in from the right */
+        right: 0;
+    }
 }
