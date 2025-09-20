@@ -1,13 +1,11 @@
 /* --- Sticky Notes Component Container --- */
 .sticky-notes-component-container {
-    /* Position the container at the right-center for desktop */
+    /* Position the container at the bottom-center for desktop */
     position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
-    /* This transition will smoothly slide the entire container */
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* --- Sticky Notes Toggle Button --- */
@@ -15,9 +13,8 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    /* Inverted colors for a more on-brand look */
-    background-color: #1a1a1a; /* Using var(--dominant-black); from main.css */
-    color: #F0D788; /* Using var(--gold-accent); from main.css */
+    background-color: #1a1a1a;
+    color: #F0D788;
     border: none;
     cursor: pointer;
     font-size: 24px;
@@ -29,7 +26,7 @@
 }
 
 .sticky-notes-toggle-btn:hover {
-    transform: scale(1.1); /* Changed from translateY to a more prominent scale effect */
+    transform: scale(1.1);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -40,10 +37,10 @@
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    /* Position the panel relative to the button container */
     position: absolute;
-    top: 0;
-    right: 80px; /* Aligned to the right of the button */
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
     width: 350px;
     height: 450px;
     background: #2b2b2b;
@@ -53,24 +50,22 @@
     flex-direction: column;
     z-index: 999;
     overflow: hidden;
-    /* Use 'right' for a smooth slide effect */
-    transition: right 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.sticky-notes-panel.active {
+.sticky-notes-panel.open {
     display: flex;
-    right: calc(80px + 350px - 40px); /* Adjust to slide in and reveal the button */
-    right: 80px; /* Aligned to the right of the button */
+    transform: translateX(-50%) scale(1);
 }
 
-/* New CSS to fix the mobile layout */
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .sticky-notes-component-container {
         /* Mobile: fixed to the right-center of the screen */
-        top: 50%;
-        right: 0;
         bottom: auto;
         left: auto;
+        top: 50%;
+        right: 0;
         transform: translateY(-50%);
     }
 
@@ -81,18 +76,20 @@
 
     .sticky-notes-panel {
         /* Mobile: Initially hidden off-screen to the right */
+        position: fixed;
         top: 0;
-        right: -100%; /* Hides the panel off the right side of the screen */
+        right: -100%;
         bottom: 0;
         left: auto;
         width: 100%;
         height: 100%;
-        max-width: 350px; /* A consistent max-width for better UI on small devices */
+        max-width: 350px;
         border-radius: 0;
+        transform: none; /* Reset transform for mobile slide effect */
         transition: right 0.5s ease-in-out;
     }
 
-    .sticky-notes-panel.active {
+    .sticky-notes-panel.open {
         /* Mobile: Slides in from the right */
         right: 0;
     }
