@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authContainer = document.getElementById('auth-container');
     const loaderOverlay = document.getElementById('loader-overlay');
     const backgroundSymbols = document.querySelector('.background-symbols');
+    const bottomNav = document.querySelector('.bottom-nav');
     const loadedModules = new Map();
 
     // Show the loader
@@ -39,6 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // New event listener for mobile bottom navigation
+    if (bottomNav) {
+        bottomNav.addEventListener('click', (e) => {
+            const navItem = e.target.closest('.bottom-nav-item');
+            if (navItem) {
+                e.preventDefault();
+                const moduleName = navItem.dataset.module;
+                if (moduleName) {
+                    window.location.hash = '#' + moduleName;
+                }
+            }
+        });
+    }
+
     const isAuthenticated = () => {
         const token = localStorage.getItem('tg_token');
         return !!token;
@@ -70,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) {
                 mainAppContainer.style.display = 'flex';
-                mainAppContainer.classList.remove('hidden'); // ADDED: Removes the hidden class
+                mainAppContainer.classList.remove('hidden');
             }
         } else {
             // Logged out: Hide main app and notes, show auth
@@ -78,42 +93,37 @@ document.addEventListener('DOMContentLoaded', () => {
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) {
                 mainAppContainer.style.display = 'none';
-                mainAppContainer.classList.add('hidden'); // ADDED: Adds the hidden class back
+                mainAppContainer.classList.add('hidden');
             }
         }
 
         await loadModule(moduleName);
 
-        document.querySelectorAll('.nav-item').forEach(item => {
+        // Update active class for both desktop and mobile navs
+        document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(item => {
             item.classList.remove('active');
         });
-        const activeNavItem = document.querySelector(`.nav-item[data-module="${moduleName}"]`);
-        if (activeNavItem) {
-            activeNavItem.classList.add('active');
-        }
+        const activeNavItems = document.querySelectorAll(`[data-module="${moduleName}"]`);
+        activeNavItems.forEach(item => {
+            item.classList.add('active');
+        });
 
         hideLoader();
     };
 
     const handleStickyNotesVisibility = (moduleName) => {
         const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
-        const stickyNotesPanel = document.getElementById('sticky-notes-panel');
-        const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
-        
-        if (stickyNotesContainer && stickyNotesPanel && stickyNotesToggleBtn) {
-            const isNoteModule = (moduleName === 'dashboard' || moduleName === 'trading-journal');
-            if (isAuthenticated() && isNoteModule) {
+        if (stickyNotesContainer) {
+            // Always show sticky notes container if authenticated
+            if (isAuthenticated()) {
                 stickyNotesContainer.style.display = 'block';
-                stickyNotesPanel.classList.remove('open');
-                stickyNotesToggleBtn.classList.remove('active');
             } else {
                 stickyNotesContainer.style.display = 'none';
-                stickyNotesPanel.classList.remove('open');
-                stickyNotesToggleBtn.classList.remove('active');
             }
         }
+        // Note: The `sticky-notes.js` script handles the toggling of the panel itself.
     };
-        
+        
 
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
@@ -142,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Clean the target container before fetching new content
             targetContainer.innerHTML = '';
-                        
+            
             let htmlPath, scriptPath;
 
             // CORRECTED: Define paths based on module name using the provided file structure
