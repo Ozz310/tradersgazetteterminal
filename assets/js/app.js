@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
         const stickyNotesPanel = document.getElementById('sticky-notes-panel');
         const stickyNotesToggleBtn = document.getElementById('sticky-notes-toggle-btn');
-    
+        
         if (stickyNotesContainer && stickyNotesPanel && stickyNotesToggleBtn) {
             const isNoteModule = (moduleName === 'dashboard' || moduleName === 'trading-journal');
             if (isAuthenticated() && isNoteModule) {
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    
+        
 
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Clean the target container before fetching new content
             targetContainer.innerHTML = '';
-            
+                        
             let htmlPath, scriptPath;
 
             // CORRECTED: Define paths based on module name using the provided file structure
@@ -193,6 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (moduleName === 'trading-journal' && window.initTradingJournal) {
                     // CORRECTED: Call the global init function for trading journal
                     window.initTradingJournal();
+                } else if (moduleName === 'trading-ebooks' && window.init) { // NEW: Handle trading-ebooks module
+                    window.init();
                 } else {
                     console.warn(`No specific init function found for module: ${moduleName}.`);
                 }
