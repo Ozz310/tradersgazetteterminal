@@ -29,7 +29,9 @@
     flex-wrap: wrap;
     gap: 30px;
     justify-content: flex-start;
-    padding-left: 5px; /* Moves the container to be 5 pixels away from the navigation border. */
+    padding-left: 0; /* Removing this to override it below */
+    position: relative; /* Force a positioning context */
+    left: 5px; /* Manually shift the element */
 }
 
 .trading-ebooks .gallery-card {
