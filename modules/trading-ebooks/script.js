@@ -45,6 +45,11 @@ function init() {
      * Closes the ebook modal by removing the 'open' class.
      */
     function closeModal() {
+        // Stop the video when the modal is closed to prevent it from playing in the background.
+        const iframe = document.querySelector('#modal-body iframe');
+        if (iframe) {
+            iframe.src = '';
+        }
         modal.classList.remove('open');
     }
 
