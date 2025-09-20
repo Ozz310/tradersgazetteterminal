@@ -12,18 +12,14 @@
 
 .trading-ebooks .ebooks-banner {
     width: calc(100% + 40px); /* Extends beyond container to touch sidebar */
-    height: 320px; /* SLIGHTLY INCREASED HEIGHT */
+    height: 350px; /* INCREASED HEIGHT */
     position: relative;
     margin-left: -20px; /* Aligns with the sidebar */
     margin-top: -20px; /* Removes top padding to touch the top border */
+    background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Trading%20E%20books.png?raw=true');
+    background-size: cover;
+    background-position: center bottom; /* MOVES IMAGE DOWN TO SHOW TABLETS */
     overflow: hidden;
-}
-
-.trading-ebooks .banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: bottom; /* MOVED IMAGE DOWN */
 }
 
 .trading-ebooks .ebooks-content-container {
@@ -33,7 +29,16 @@
     flex-wrap: wrap;
     gap: 30px;
     justify-content: flex-start;
-    padding: 20px 0 20px 50px; /* MOVED CARDS 50 PIXELS AWAY */
+    padding: 20px 0 20px 20px; /* THIS WILL BE ADJUSTED IN JAVASCRIPT */
+}
+
+/* New CSS class for the positioning */
+.ebooks-card-container {
+    width: calc(100% - 20px);
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 20px;
+    margin-left: 20px; /* pushes from the left */
 }
 
 .trading-ebooks .gallery-card {
