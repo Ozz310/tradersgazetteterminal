@@ -8,7 +8,6 @@ window.initTradingJournal = async function() {
         console.error('User not authenticated. A user ID is required to use this module.');
         const notification = document.getElementById('notification');
         if (notification) {
-            // FIX: Corrected the string literal to prevent a SyntaxError.
             notification.textContent = 'Please log in or contact support. A fatal error occurred: User ID not found.';
             notification.style.color = '#FF4040';
             notification.classList.remove('hidden');
@@ -222,7 +221,8 @@ window.initTradingJournal = async function() {
      */
     function parseCsv(csvText) {
         // FIX: The previous regex parsing method was causing a RangeError.
-        // This is a new, more robust parsing approach.
+        // This is a new, more robust parsing approach that correctly handles
+        // trailing commas and quoted values.
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) return [];
 
@@ -232,25 +232,23 @@ window.initTradingJournal = async function() {
 
         for (let i = 1; i < lines.length; i++) {
             const currentLine = lines[i];
-            
-            // This regex captures a field which can be a quoted string or a non-comma value.
-            const rowRegex = /(".*?"|[^",]*)(?:,|$)/g;
             const parsedRow = [];
             let match;
             
+            // This new regex is more precise and correctly handles fields
+            // that are either quoted or unquoted.
+            const rowRegex = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
+
             // Loop through all matches to extract each field
             while ((match = rowRegex.exec(currentLine)) !== null) {
-                // The `match[1]` contains the captured group (the field value)
-                let value = match[1] || '';
-                // Remove surrounding quotes if they exist
-                value = value.trim().replace(/^"|"$/g, '');
-                parsedRow.push(value);
+                // The value is in capture group 1 (for quoted) or 2 (for unquoted).
+                let value = match[1] || match[2] || '';
+                parsedRow.push(value.trim());
             }
-            
-            // The regex might return an extra empty string at the end if the line ends with a comma.
-            // Remove it to match the header length.
-            if (currentLine.endsWith(',') && parsedRow.length > headers.length) {
-                parsedRow.pop();
+
+            // Remove leading empty string if the first field was quoted
+            if (currentLine.startsWith('"') && parsedRow[0] === '') {
+                parsedRow.shift();
             }
 
             if (parsedRow.length !== headers.length) {
