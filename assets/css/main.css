@@ -41,7 +41,7 @@ body {
 
 /* Sidebar Styling */
 .sidebar {
-    width: 250px; /* Adjusted for a sleeker look */
+    width: 250px;
     background-color: var(--sidebar-color);
     display: flex;
     flex-direction: column;
@@ -67,7 +67,7 @@ body {
 }
 
 .sidebar-logo:hover {
-    transform: scale(1.05); /* Added hover effect to the logo */
+    transform: scale(1.05);
 }
 
 .sidebar-nav ul {
@@ -83,22 +83,22 @@ body {
     color: var(--text-color);
     text-decoration: none;
     font-weight: 500;
-    position: relative; /* Added for gold bar positioning */
+    position: relative;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    margin-bottom: 25px; /* Added for better vertical spacing */
+    margin-bottom: 25px;
 }
 
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.05); /* Subtle background change on hover */
+    background-color: rgba(255, 255, 255, 0.05);
     color: var(--gold-color);
-    transform: translateX(5px); /* Smooth hover effect */
+    transform: translateX(5px);
 }
 
 .nav-item.active {
     background-color: rgba(240, 215, 136, 0.05);
     color: var(--gold-color);
     font-weight: 700;
-    border-left: none; /* Removed old border, replacing with ::before */
+    border-left: none;
 }
 
 /* New, more elegant active state indicator */
@@ -198,10 +198,24 @@ body {
     z-index: 98;
 }
 
+/* Sticky Notes Component Styles */
+.sticky-notes-component-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+    display: none; /* Default to hidden, show on logged in state */
+}
+
+/* Mobile nav is only shown on mobile. Hide on desktop. */
+.bottom-nav {
+    display: none;
+}
+
 /* --- Mobile Specific Styles (Max-width 768px) --- */
 @media (max-width: 768px) {
     .sidebar {
-        display: none; /* Hide the desktop sidebar */
+        display: none;
     }
 
     .mobile-nav-toggle {
@@ -210,16 +224,16 @@ body {
     
     .content-wrapper {
         margin-left: 0;
-        padding-bottom: 70px; /* Add padding to prevent content from being hidden */
+        padding-bottom: 70px;
     }
     
     .module-container {
-        padding-bottom: 70px; /* Same padding for module container */
+        padding-bottom: 70px;
     }
 
     /* Bottom Navigation Bar */
     .bottom-nav {
-        display: flex; /* Show the bottom navigation */
+        display: flex;
         position: fixed;
         bottom: 0;
         left: 0;
