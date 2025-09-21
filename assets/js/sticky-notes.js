@@ -6,6 +6,7 @@ const stickyNotes = (function() {
     const panel = document.getElementById('sticky-notes-panel');
     const closeBtn = document.querySelector('.close-panel-btn');
     const notesList = document.getElementById('notes-list');
+    const loaderOverlay = document.getElementById('loader-overlay'); // Get the loader element
 
     // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
     const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
@@ -19,8 +20,22 @@ const stickyNotes = (function() {
     const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
     const userId = 'single_user_id';
 
+    // --- Loader Functions ---
+    function showLoader() {
+        if (loaderOverlay) {
+            loaderOverlay.classList.remove('hidden');
+        }
+    }
+
+    function hideLoader() {
+        if (loaderOverlay) {
+            loaderOverlay.classList.add('hidden');
+        }
+    }
+    
     // --- Backend API Functions ---
     async function fetchNotes() {
+        showLoader(); // Show loader before fetching
         try {
             const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
             const data = await response.json();
@@ -39,6 +54,8 @@ const stickyNotes = (function() {
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
+        } finally {
+            hideLoader(); // Hide loader after fetch is complete (success or error)
         }
     }
 
@@ -205,7 +222,7 @@ const stickyNotes = (function() {
         panel.classList.toggle('open');
         toggleBtn.classList.toggle('active');
         if (panel.classList.contains('open')) {
-            fetchNotes();
+            fetchNotes(); // Fetch notes when the panel is opened
         }
     });
 
