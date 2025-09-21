@@ -1,79 +1,20 @@
 /* --- Core Container for the Sticky Notes Module --- */
 .sticky-notes-component-container {
-    position: fixed !important;
-    z-index: 1000 !important;
-}
-
-/* --- Sticky Notes Toggle Button (The '+' Icon) --- */
-.sticky-notes-toggle-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #1a1a1a;
-    color: #F0D788;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
-}
-
-.sticky-notes-toggle-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.sticky-notes-toggle-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* --- Sticky Notes Panel - The Note Container --- */
-.sticky-notes-panel {
-    position: absolute;
-    width: 350px;
-    height: 450px;
-    background: #2b2b2b;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    display: none;
-    flex-direction: column;
-    z-index: 999;
-    overflow: hidden;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.sticky-notes-panel.open {
-    display: flex;
-}
-
-/* --- Micro-Interaction Animations --- */
-@keyframes fadeInSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.note-item .bullet-item,
-.note-item .todo-item {
-    animation: fadeInSlideUp 0.3s ease-out;
+    /* Position the container at the bottom center */
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
 }
 
 /* --- Loader Overlay - Full Screen with Pulsing Gold Glow --- */
 .loader-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(26, 26, 26, 0.95);
     display: flex;
     justify-content: center;
@@ -113,34 +54,231 @@
     }
 }
 
-/* --- Responsive Layout for Desktop and Mobile --- */
-@media (min-width: 769px) {
-    .sticky-notes-component-container {
-        /* Desktop positioning: bottom center */
-        bottom: 20px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-    }
-
-    .sticky-notes-panel {
-        bottom: 90px !important;
-        left: 50% !important;
-        transform: translateX(-50%) scale(0.9) !important;
-    }
-    
-    .sticky-notes-panel.open {
-        transform: translateX(-50%) scale(1) !important;
-    }
+/* --- Sticky Notes Toggle Button --- */
+.sticky-notes-toggle-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #1a1a1a;
+    color: #F0D788;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
 }
 
+.sticky-notes-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sticky-notes-toggle-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Sticky Notes Panel --- */
+.sticky-notes-panel {
+    /* Position the panel relative to the button container */
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 450px;
+    background: #2b2b2b;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.sticky-notes-panel.open {
+    display: flex;
+}
+
+.sticky-notes-panel .panel-header {
+    background: #3a3a3a;
+    color: white;
+    padding: 15px 20px;
+    border-bottom: 1px solid #4a4a4a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sticky-notes-panel .panel-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--gold-accent);
+}
+
+.sticky-notes-panel .close-panel-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.sticky-notes-panel .close-panel-btn:hover {
+    opacity: 1;
+}
+
+/* Notes List Container */
+.notes-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Individual Note Styling */
+.note-item {
+    background-color: #3a3a3a;
+    border-left: 4px solid #F0D788;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    height: auto;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.note-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.note-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: #ffffff;
+}
+
+.note-body {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.todo-list, .bullet-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.todo-list li, .bullet-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #d1d1d1;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.todo-list li input[type="checkbox"] {
+    accent-color: #F0D788;
+    flex-shrink: 0;
+}
+
+.todo-list li.checked span {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.todo-list li span, .bullet-list li span {
+    outline: none;
+    cursor: text;
+}
+
+.bullet-list li::before {
+    content: '•';
+    color: #F0D788;
+    font-weight: bold;
+}
+
+.delete-item-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+}
+
+.todo-list li:hover .delete-item-btn, .bullet-list li:hover .delete-item-btn {
+    visibility: visible;
+}
+
+.note-footer {
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.add-item-btn {
+    background: none;
+    border: none;
+    color: #d1d1d1;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.add-item-btn:hover {
+    color: #F0D788;
+}
+
+.note-delete-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    align-self: flex-end;
+}
+
+.note-delete-btn:hover {
+    color: #c0392b;
+}
+
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .sticky-notes-component-container {
-        /* Mobile positioning: right-center */
-        bottom: auto !important;
-        left: auto !important;
-        top: 50% !important;
-        right: 20px !important;
-        transform: translateY(-50%) !important;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .sticky-notes-toggle-btn {
@@ -149,21 +287,9 @@
     }
 
     .sticky-notes-panel {
-        /* Mobile panel slides in from the right */
-        position: fixed !important;
-        top: 0 !important;
-        right: -100% !important;
-        bottom: 0 !important;
-        left: auto !important;
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 350px !important;
-        border-radius: 0 !important;
-        transform: none !important;
-        transition: right 0.5s ease-in-out;
-    }
-
-    .sticky-notes-panel.open {
-        right: 0 !important;
+        width: calc(100% - 20px);
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 }
