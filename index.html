@@ -108,23 +108,25 @@
     <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
 
     <div class="sticky-notes-component-container">
+        <div class="sticky-notes-panel" id="sticky-notes-panel">
+            <div class="panel-header">
+                <h3>My Notes & Tasks</h3>
+                <button class="close-panel-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="notes-list" class="notes-list">
+                </div>
+        </div>
         <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
             <i class="fas fa-plus"></i>
         </button>
-        <div id="sticky-notes-panel" class="sticky-notes-panel">
-            <div class="panel-header">
-                <h3>My Notes & Tasks</h3>
-                <button class="close-panel-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="notes-list" id="notes-list">
-            </div>
-        </div>
     </div>
     
     <div id="loader-overlay" class="loader-overlay">
         <div class="loader-container">
             <div class="loader"></div>
-            <div class="loader-text">Loading...</div>
+            <p class="loader-text">Loading...</p>
         </div>
     </div>
     
@@ -133,6 +135,3 @@
     <script src="modules/auth/auth.js"></script>
 </body>
 </html>
-
-
-
