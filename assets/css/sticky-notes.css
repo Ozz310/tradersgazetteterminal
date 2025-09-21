@@ -4,7 +4,7 @@
     position: fixed;
     bottom: 0;
     left: 250px; /* Aligns with the end of the sidebar */
-    width: calc(100vw - 250px); /* Spans the remaining width of the screen */
+    width: calc(100vw - 250px - 17px); /* Spans the remaining width of the screen, accounting for the scrollbar */
     z-index: 1000;
     /* Use flexbox to easily position items */
     display: flex;
@@ -109,7 +109,7 @@
     position: fixed;
     bottom: 90px;
     left: 250px; /* Aligns with the end of the sidebar */
-    width: calc(100vw - 250px); /* Spans the remaining width of the screen */
+    width: calc(100vw - 250px - 17px); /* Spans the remaining width of the screen, accounting for the scrollbar */
     height: 450px;
     background: #2b2b2b;
     border-radius: 12px;
@@ -219,7 +219,7 @@
     font-size: 0.95rem;
     line-height: 1.5;
     /* FIX: Changed font color to a darker tone for readability */
-    color: #b3b3b3; 
+    color: #666666; 
     margin-bottom: 5px;
     position: relative;
 }
