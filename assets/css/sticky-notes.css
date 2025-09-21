@@ -1,10 +1,10 @@
 /* --- Core Container for the Sticky Notes Module --- */
 .sticky-notes-component-container {
-    /* Position the container at the bottom center */
+    /* Position the container at the bottom left */
     position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 0;
+    left: 0;
+    width: 100vw;
     z-index: 1000;
 }
 
@@ -82,15 +82,21 @@
     justify-content: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    
+    /* Center the button within its new full-width container */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
 }
 
 .sticky-notes-toggle-btn:hover {
-    transform: translateY(-2px);
+    transform: translateX(-50%) translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .sticky-notes-toggle-btn:active {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -99,9 +105,8 @@
     /* Position the panel relative to the button container */
     position: absolute;
     bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 350px;
+    left: 0;
+    width: 100vw;
     height: 450px;
     background: #2b2b2b;
     border-radius: 12px;
@@ -290,13 +295,16 @@
 @media (max-width: 768px) {
     .sticky-notes-component-container {
         bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
+        left: 0;
+        transform: none;
+        width: 100vw;
     }
-
+    
     .sticky-notes-toggle-btn {
         width: 50px;
         height: 50px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .sticky-notes-panel {
