@@ -124,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Note: The `sticky-notes.js` script handles the toggling of the panel itself.
     };
         
-
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
         // Remove old CSS link if it exists to prevent style conflicts
@@ -142,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(newLink);
         }
     };
-
+    
+    // START OF UPDATED loadModule FUNCTION
     const loadModule = async (moduleName) => {
         let targetContainer = moduleContainer;
         if (moduleName === 'auth') {
@@ -179,6 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const html = await htmlResponse.text();
             targetContainer.innerHTML = html;
+
+            // Wait for the browser to render the new HTML before loading the script
+            await new Promise(resolve => setTimeout(resolve, 0));
 
             // Load module-specific CSS
             loadModuleCSS(moduleName);
@@ -222,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
         }
     };
+    // END OF UPDATED loadModule FUNCTION
 
     // Logout function
     function handleLogout() {
