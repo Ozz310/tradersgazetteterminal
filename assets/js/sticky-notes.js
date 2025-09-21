@@ -326,3 +326,4 @@ const stickyNotes = (function() {
     isOnline = navigator.onLine;
 
 })();
+
