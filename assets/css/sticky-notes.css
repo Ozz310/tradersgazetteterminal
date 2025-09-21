@@ -359,25 +359,42 @@
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    .sticky-notes-component-container {
-        bottom: 10px;
-        left: 0;
-        transform: none;
-        width: 100vw;
-    }
-    
+    /* Reposition the toggle button to the right-center of the screen */
     .sticky-notes-toggle-btn {
-        width: 50px;
-        height: 50px;
-        left: 50%;
-        transform: translateX(-50%);
+        position: fixed; /* Use fixed to keep it in a consistent position */
+        top: 50%;
+        right: 20px;
+        left: auto; /* Override the desktop left position */
+        transform: translateY(-50%); /* Center vertically */
     }
 
+    /* Adjust the toggle button active state for the new position */
+    .sticky-notes-toggle-btn.active {
+        transform: translateY(-50%) rotate(45deg);
+    }
+    
+    /* Modify the panel to be a full-screen overlay */
     .sticky-notes-panel {
-        width: calc(100% - 20px);
-        bottom: 70px;
-        left: 50%;
-        transform: translateX(-50%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0; /* No rounded corners for full screen */
+        background: rgba(26, 26, 26, 0.95);
+        transform: scale(0.95) translateY(0); /* Adjust the entrance animation */
+    }
+    
+    /* Make the notes list scrollable on small screens */
+    .notes-list {
+        display: block; /* Stack the notes vertically on mobile */
+        padding: 10px;
+    }
+    
+    /* Remove padding and margins for a cleaner mobile layout */
+    .sticky-notes-component-container, .sticky-notes-panel {
+        width: 100%;
+        left: 0;
     }
 }
 
