@@ -140,20 +140,6 @@
     color: #F0D788;
 }
 
-.sticky-notes-panel .close-panel-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-}
-
-.sticky-notes-panel .close-panel-btn:hover {
-    opacity: 1;
-}
-
 /* Notes List Container */
 .notes-list {
     flex-grow: 1;
