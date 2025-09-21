@@ -198,7 +198,8 @@
     font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
-    color: #ffffff;
+    /* FIX: Changed note title font to charcoal black */
+    color: #36454F;
 }
 
 .note-body {
@@ -218,8 +219,8 @@
     gap: 10px;
     font-size: 0.95rem;
     line-height: 1.5;
-    /* FIX: Changed font color to a darker tone for readability */
-    color: #666666; 
+    /* FIX: Changed list item font to charcoal black */
+    color: #36454F;
     margin-bottom: 5px;
     position: relative;
 }
@@ -266,6 +267,8 @@
     padding-top: 10px;
     border-top: 1px dashed rgba(255, 255, 255, 0.1);
     text-align: center;
+    /* FIX: Changed 'Limit of 5 items reached' warning color to charcoal black */
+    color: #36454F;
 }
 
 .add-item-btn {
