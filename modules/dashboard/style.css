@@ -168,3 +168,11 @@
     font-size: 1rem;
     font-weight: 400;
 }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    /* Rule to hide the top-left menu on mobile */
+    .dashboard-page h1 {
+        display: none;
+    }
+}
