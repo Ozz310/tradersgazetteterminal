@@ -6,6 +6,9 @@
     left: 0;
     width: 100vw;
     z-index: 1000;
+    /* Use flexbox to easily position items */
+    display: flex;
+    justify-content: center;
 }
 
 /* --- Loader Overlay - Full Screen with Pulsing Gold Glow --- */
@@ -83,11 +86,11 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
     
-    /* Center the button within its new full-width container */
+    /* Position the button at the bottom center within its container */
     position: absolute;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 20px;
 }
 
 .sticky-notes-toggle-btn:hover {
@@ -102,8 +105,8 @@
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    /* Position the panel relative to the button container */
-    position: absolute;
+    /* Position the panel relative to the body */
+    position: fixed;
     bottom: 90px;
     left: 0;
     width: 100vw;
