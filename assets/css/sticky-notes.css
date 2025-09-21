@@ -1,61 +1,7 @@
 /* --- Core Container for the Sticky Notes Module --- */
 .sticky-notes-component-container {
-    /* Position container on the right for mobile, and center-bottom for desktop */
     position: fixed;
     z-index: 1000;
-}
-
-/* --- Loader Overlay - Full Screen with Pulsing Gold Glow --- */
-.loader-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(26, 26, 26, 0.95);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.loader-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Loader Spin and Pulsing Glow */
-.loader {
-    width: 60px;
-    height: 60px;
-    border: 5px solid rgba(240, 215, 136, 0.2);
-    border-radius: 50%;
-    border-top-color: #F0D788;
-    animation: spin 1s linear infinite, glow 1.5s ease-in-out infinite alternate;
-}
-
-.loader-text {
-    margin-top: 20px;
-    color: #F0D788;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes glow {
-    from {
-        box-shadow: 0 0 5px #F0D788;
-    }
-    to {
-        box-shadow: 0 0 20px #F0D788, 0 0 30px #F0D788;
-    }
 }
 
 /* --- Sticky Notes Toggle Button (The '+' Icon) --- */
@@ -121,6 +67,52 @@
     animation: fadeInSlideUp 0.3s ease-out;
 }
 
+/* --- Loader Overlay - Full Screen with Pulsing Gold Glow --- */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 26, 26, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.loader-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Loader Spin and Pulsing Glow */
+.loader {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(240, 215, 136, 0.2);
+    border-radius: 50%;
+    border-top-color: #F0D788;
+    animation: spin 1s linear infinite, glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 5px #F0D788;
+    }
+    to {
+        box-shadow: 0 0 20px #F0D788, 0 0 30px #F0D788;
+    }
+}
+
 /* --- Responsive Layout for Desktop and Mobile --- */
 @media (min-width: 769px) {
     .sticky-notes-component-container {
@@ -167,7 +159,7 @@
         height: 100%;
         max-width: 350px;
         border-radius: 0;
-        transform: none; /* Reset transform for mobile slide effect */
+        transform: none;
         transition: right 0.5s ease-in-out;
     }
 
