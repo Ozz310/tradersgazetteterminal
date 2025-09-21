@@ -17,13 +17,30 @@ const stickyNotes = (function() {
 
     const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
     const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
-    const userId = 'single_user_id';
+    
+    // CRITICAL FIX: Dynamically get the userId from local storage
+    const getUserId = () => localStorage.getItem('tg_userId');
+    const showLoader = () => document.getElementById('loader-overlay').classList.remove('hidden');
+    const hideLoader = () => document.getElementById('loader-overlay').classList.add('hidden');
 
     // --- Backend API Functions ---
     async function fetchNotes() {
+        const userId = getUserId();
+        if (!userId) {
+            console.warn('User ID not found. Cannot fetch notes.');
+            return;
+        }
+
+        showLoader();
+
         try {
             const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
             const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
             if (data && data.notes) {
                 notes = data.notes;
             } else {
@@ -32,6 +49,7 @@ const stickyNotes = (function() {
             renderNotes();
         } catch (error) {
             console.error('Error fetching notes:', error);
+            // Fallback to local storage if API call fails
             const savedNotes = localStorage.getItem('traders-gazette-notes');
             if (savedNotes) {
                 notes = JSON.parse(savedNotes);
@@ -39,12 +57,18 @@ const stickyNotes = (function() {
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
+        } finally {
+            hideLoader();
         }
     }
 
     async function saveNotes() {
-        if (isSaving) return;
+        const userId = getUserId();
+        if (!userId || isSaving) return;
+        
         isSaving = true;
+        showLoader();
+
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -52,16 +76,19 @@ const stickyNotes = (function() {
                 body: JSON.stringify({ notes: notes, userId: userId, action: 'saveNotes' }),
             });
 
-            if (!response.ok) {
-                throw new Error(`Server responded with a non-200 status: ${response.status}`);
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                throw new Error(`Server responded with an error: ${data.error || response.statusText}`);
             }
 
-            console.log('Notes saved to backend.');
+            console.log('Notes saved to backend successfully.');
             localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         } catch (error) {
             console.error('Error saving notes:', error);
         } finally {
             isSaving = false;
+            hideLoader();
         }
     }
     
@@ -93,6 +120,7 @@ const stickyNotes = (function() {
                     <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
                         <input type="checkbox" ${isChecked ? 'checked' : ''}>
                         <span contenteditable="true">${text}</span>
+                        <button class="delete-item-btn"><i class="fas fa-times"></i></button>
                     </li>
                 `;
             });
@@ -101,6 +129,7 @@ const stickyNotes = (function() {
                 itemsHTML += `
                     <li class="bullet-item" data-bullet-index="${i}">
                         <span contenteditable="true">${item.replace(/^\* /, '')}</span>
+                        <button class="delete-item-btn"><i class="fas fa-times"></i></button>
                     </li>
                 `;
             });
@@ -153,6 +182,24 @@ const stickyNotes = (function() {
             });
         });
 
+        notesList.querySelectorAll('.delete-item-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const noteItem = e.target.closest('.note-item');
+                const noteIndex = noteItem.getAttribute('data-index');
+                const listItem = e.target.closest('li');
+                const itemIndex = listItem.getAttribute('data-task-index') || listItem.getAttribute('data-bullet-index');
+
+                const noteContent = notes[noteIndex].split('\n').map(s => s.trim()).filter(s => s);
+                const [title, ...items] = noteContent;
+                items.splice(itemIndex, 1);
+                
+                notes[noteIndex] = `${title}\n${items.join('\n')}`;
+                renderNotes();
+                saveNotes();
+            });
+        });
+
+
         notesList.querySelectorAll('.todo-item input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
                 const noteItem = e.target.closest('.note-item');
@@ -187,8 +234,14 @@ const stickyNotes = (function() {
             element.addEventListener('blur', (e) => {
                 const noteItem = e.target.closest('.note-item');
                 const index = noteItem.getAttribute('data-index');
-                const updatedContent = Array.from(noteItem.querySelectorAll('[contenteditable="true"]')).map(el => {
-                    return e.target.closest('.todo-item') ? `[${el.closest('.todo-item').querySelector('input').checked ? 'x' : ' '}]${el.textContent.trim()}` : el.textContent.trim();
+                const updatedContent = Array.from(noteItem.querySelectorAll('[contenteditable="true"]')).map((el, i) => {
+                    const isToDoItem = el.closest('.todo-item');
+                    if (isToDoItem) {
+                        const isChecked = isToDoItem.querySelector('input').checked;
+                        return `[${isChecked ? 'x' : ' '}]${el.textContent.trim()}`;
+                    } else {
+                        return `* ${el.textContent.trim()}`;
+                    }
                 });
                 
                 const lines = updatedContent.join('\n');
@@ -202,14 +255,10 @@ const stickyNotes = (function() {
 
     // --- Event Listeners for Panel ---
     toggleBtn.addEventListener('click', () => {
-        // Add haptic feedback for mobile devices
         if ('vibrate' in navigator) {
-            navigator.vibrate(50); // Vibrate for 50ms
+            navigator.vibrate(50);
         }
         panel.classList.toggle('open');
-        // The `app.js` file now handles the 'active' class on the toggle button
-        // so we remove this line to prevent conflicting logic.
-        // toggleBtn.classList.toggle('active');
         if (panel.classList.contains('open')) {
             fetchNotes();
         }
@@ -218,5 +267,4 @@ const stickyNotes = (function() {
     closeBtn.addEventListener('click', () => {
         panel.classList.remove('open');
     });
-
 })();
