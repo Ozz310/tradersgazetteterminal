@@ -159,6 +159,37 @@
     color: #F0D788;
 }
 
+/* ADDED: Styles for the new sync button and status message */
+.sync-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sync-btn {
+    background: none;
+    border: none;
+    color: #F0D788;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease;
+}
+
+.sync-btn:hover {
+    transform: scale(1.1);
+}
+
+.sync-btn.syncing .sync-icon {
+    animation: spin 1.5s linear infinite;
+}
+
+.sync-status {
+    font-size: 0.85rem;
+    color: #f7f7f7;
+    transition: opacity 0.3s ease;
+    opacity: 1;
+}
+
 /* Notes List Container */
 .notes-list {
     flex-grow: 1;
