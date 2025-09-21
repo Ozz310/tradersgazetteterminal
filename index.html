@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="assets/css/sticky-notes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="modules/auth/style.css">
-    <link rel="stylesheet" href="assets/css/loader.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
 <body>
@@ -105,19 +104,13 @@
         </main>
     </div>
     <div id="auth-container" class="module-container"></div>
-    <div id="loader-overlay" class="loader-overlay hidden">
-        <div class="loader-container">
-            <div class="loader"></div>
-            <div class="loader-text">Loading...</div>
-        </div>
-    </div>
     <div id="mobile-overlay" class="mobile-overlay"></div>
     <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
+
     <div class="sticky-notes-component-container">
         <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
             <i class="fas fa-plus"></i>
         </button>
-        
         <div id="sticky-notes-panel" class="sticky-notes-panel">
             <div class="panel-header">
                 <h3>My Notes & Tasks</h3>
@@ -127,6 +120,14 @@
             </div>
         </div>
     </div>
+    
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="loader-container">
+            <div class="loader"></div>
+            <div class="loader-text">Loading...</div>
+        </div>
+    </div>
+    
     <script src="assets/js/app.js"></script>
     <script src="assets/js/sticky-notes.js"></script>
     <script src="modules/auth/auth.js"></script>
