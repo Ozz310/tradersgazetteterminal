@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const deleteButton = `<button class="note-delete-btn"><i class="fas fa-eraser"></i></button>`;
             const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
-            const limitMessage = `<p class="limit-message">${filteredItems.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
+            const limitMessage = `<p class="limit-message ${filteredItems.length >= MAX_ITEMS ? 'limit-reached-message' : ''}">${filteredItems.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
             
             return `
                 <div class="note-header">
@@ -160,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
-
 
         function addEventListenersToNotes() {
             notesList.querySelectorAll('.add-item-btn').forEach(btn => {
