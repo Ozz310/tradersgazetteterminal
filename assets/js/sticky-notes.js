@@ -138,10 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
             syncStatus.textContent = 'Syncing...';
             
             try {
-                const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=saveNotes`, {
+                const response = await fetch(`${SCRIPT_URL}?action=saveNotes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ notes: notes }),
+                    body: JSON.stringify({ userId: userId, notes: notes }),
                 });
 
                 if (!response.ok) {
