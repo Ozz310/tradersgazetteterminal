@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let notes = [];
         let isSaving = false;
 
-        const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
+        // UPDATED: Note colors are now controlled by CSS for a unified design.
         const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
         let userId = 'single_user_id'; // Placeholder for user ID
 
@@ -39,12 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
         async function fetchNotes() {
             showLoader(); // Show loader before fetching
             try {
-                // Ensure userId is retrieved from local storage or session
-                // For now, it's a static value.
                 const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
                 const data = await response.json();
                 if (data && data.notes) {
-                    // Initialize notes with titles if the backend data is empty
                     const fetchedNotes = data.notes.map((note, index) => {
                         return note || `${defaultNoteTitles[index]}:\n\n`;
                     });
@@ -101,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const noteItem = document.createElement('div');
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
-                noteItem.style.backgroundColor = noteColors[index];
+                // Note: We remove the inline style as note colors are now controlled by CSS.
                 noteItem.innerHTML = createNoteContent(note, index);
                 notesList.appendChild(noteItem);
             });
@@ -116,31 +113,37 @@ document.addEventListener('DOMContentLoaded', function() {
             let itemsHTML = '';
             const filteredItems = items.filter(s => s.trim()); // Filter out empty lines
             
-            if (isToDo) {
-                filteredItems.forEach((item, i) => {
-                    const isChecked = item.trim().startsWith('[x]');
-                    const text = item.replace(/\[x\]|\[\s\]/g, '').trim(); // Correctly remove check mark
-                    itemsHTML += `
-                        <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
-                            <input type="checkbox" ${isChecked ? 'checked' : ''}>
-                            <span contenteditable="true">${text}</span>
-                            <button class="delete-task-btn"><i class="fas fa-trash"></i></button>
-                        </li>
-                    `;
-                });
+            if (filteredItems.length === 0) {
+                // ADDED: Empty state guidance
+                itemsHTML = `<li class="empty-state-text">Click 'Add ${isToDo ? 'Task' : 'Note'}' to begin.</li>`;
             } else {
-                filteredItems.forEach((item, i) => {
-                    const text = item.replace(/^\* /, '').trim();
-                    itemsHTML += `
-                        <li class="bullet-item" data-bullet-index="${i}">
-                            <span contenteditable="true">${text}</span>
-                            <button class="delete-task-btn"><i class="fas fa-trash"></i></button>
-                        </li>
-                    `;
-                });
+                if (isToDo) {
+                    filteredItems.forEach((item, i) => {
+                        const isChecked = item.trim().startsWith('[x]');
+                        const text = item.replace(/\[x\]|\[\s\]/g, '').trim(); // Correctly remove check mark
+                        itemsHTML += `
+                            <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
+                                <input type="checkbox" ${isChecked ? 'checked' : ''}>
+                                <span contenteditable="true">${text}</span>
+                                <button class="delete-task-btn"><i class="fas fa-trash-can"></i></button>
+                            </li>
+                        `;
+                    });
+                } else {
+                    filteredItems.forEach((item, i) => {
+                        const text = item.replace(/^\* /, '').trim();
+                        itemsHTML += `
+                            <li class="bullet-item" data-bullet-index="${i}">
+                                <span contenteditable="true">${text}</span>
+                                <button class="delete-task-btn"><i class="fas fa-trash-can"></i></button>
+                            </li>
+                        `;
+                    });
+                }
             }
 
-            const deleteButton = `<button class="note-delete-btn"><i class="fas fa-eraser"></i></button>`;
+            // UPDATED: Changed the delete button icon from 'eraser' to 'trash-can'
+            const deleteButton = `<button class="note-delete-btn"><i class="fas fa-trash-can"></i></button>`;
             const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
             const limitMessage = `<p class="limit-message ${filteredItems.length >= MAX_ITEMS ? 'limit-reached-message' : ''}">${filteredItems.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
             
@@ -172,8 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const newItem = btn.getAttribute('data-type') === 'task' ? '[ ] New Task' : '* New Note';
                         notes[index] += `\n${newItem}`;
                         renderNotes();
-                        // Find the new element and focus on it for a better UX
-                        const newElement = notesList.querySelector(`.note-item[data-index="${index}"] .note-body [contenteditable="true"]:last-child`);
+                        // ADDED: Find the new element and focus on it for a better UX
+                        const newElement = notesList.querySelector(`.note-item[data-index="${index}"] .note-body [contenteditable="true"]:last-of-type`);
                         if(newElement) newElement.focus();
                         saveNotes();
                     }
@@ -196,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const noteItem = e.target.closest('.note-item');
                     const noteIndex = noteItem.getAttribute('data-index');
                     const listItem = e.target.closest('li');
-                    const taskIndex = listItem.getAttribute('data-task-index') || listItem.getAttribute('data-bullet-index');
+                    const taskIndex = Array.from(listItem.parentNode.children).indexOf(listItem);
                     
                     const [title, ...items] = notes[noteIndex].split('\n');
                     items.splice(taskIndex, 1);
@@ -210,15 +213,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 checkbox.addEventListener('change', (e) => {
                     const noteItem = e.target.closest('.note-item');
                     const index = noteItem.getAttribute('data-index');
-                    const taskIndex = e.target.closest('.todo-item').getAttribute('data-task-index');
+                    const taskIndex = Array.from(e.target.closest('li').parentNode.children).indexOf(e.target.closest('li'));
                     
                     const [title, ...items] = notes[index].split('\n');
                     const isChecked = e.target.checked;
-                    const updatedItem = isChecked ? `[x]${items[taskIndex].replace('[ ]', '').trim()}` : `[ ] ${items[taskIndex].replace('[x]', '').trim()}`;
+                    const updatedItem = isChecked ? `[x] ${items[taskIndex].replace(/\[x\]|\[\s\]/g, '').trim()}` : `[ ] ${items[taskIndex].replace(/\[x\]|\[\s\]/g, '').trim()}`;
                     items[taskIndex] = updatedItem;
                     
                     notes[index] = [title, ...items].join('\n');
-                    // We don't render again here to avoid losing focus, just save
                     saveNotes();
                 });
             });
@@ -247,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- Event Listeners for Panel ---
         toggleBtn.addEventListener('click', () => {
+            // UPDATED: Added a transition class for the new animations
             panel.classList.toggle('open');
             toggleBtn.classList.toggle('active');
             if (panel.classList.contains('open')) {
