@@ -236,7 +236,7 @@
     font-weight: bold;
 }
 
-.delete-item-btn {
+.delete-task-btn {
     background: none;
     border: none;
     color: #e74c3c;
@@ -249,7 +249,7 @@
     right: 0;
 }
 
-.todo-list li:hover .delete-item-btn, .bullet-list li:hover .delete-item-btn {
+.todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
     visibility: visible;
 }
 
