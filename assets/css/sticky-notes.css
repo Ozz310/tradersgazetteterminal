@@ -100,7 +100,7 @@
 
 .sticky-notes-toggle-btn:active {
     transform: translateX(-50%) translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* --- Sticky Notes Panel --- */
@@ -247,6 +247,15 @@
 
 .todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
     visibility: visible;
+}
+
+/* New rule for the 'limit reached' text */
+.limit-reached-message {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #36454F; /* Charcoal Black */
+    opacity: 0.7; /* Make it visible but still feel like a message */
+    margin-top: 10px;
 }
 
 .note-footer {
