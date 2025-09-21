@@ -267,14 +267,15 @@
     padding-top: 10px;
     border-top: 1px dashed rgba(255, 255, 255, 0.1);
     text-align: center;
-    /* FIX: Changed 'Limit of 5 items reached' warning color to charcoal black */
+    /* FIX: Changed footer text color to charcoal black for readability */
     color: #36454F;
 }
 
 .add-item-btn {
     background: none;
     border: none;
-    color: #d1d1d1;
+    /* FIX: Changed add button font color to charcoal black for readability */
+    color: #36454F;
     font-weight: 500;
     cursor: pointer;
     transition: color 0.2s ease;
