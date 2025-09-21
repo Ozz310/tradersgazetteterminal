@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const notesList = document.getElementById('notes-list');
         const loaderOverlay = document.getElementById('loader-overlay'); // Get the loader element
 
-        // YOUR DEPLOYMENT URL - DO NOT CHANGE THIS LINE
+        // UPDATED: Use the correct Cloudflare Worker URL
         const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
         
         const MAX_NOTES = 4;
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let notes = [];
         let isSaving = false;
 
-        // UPDATED: Reverted to the original color scheme with sharper tones
         const noteColors = ['#F7F7F7', '#FFEBCC', '#FFCCCC', '#D6FFD6'];
         const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
         let userId = 'single_user_id'; // Placeholder for user ID
@@ -40,19 +39,20 @@ document.addEventListener('DOMContentLoaded', function() {
         async function fetchNotes() {
             showLoader(); // Show loader before fetching
             try {
+                // UPDATED: Use a GET request with query parameters
                 const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
                 const data = await response.json();
+                
                 if (data && data.notes) {
-                    const fetchedNotes = data.notes.map((note, index) => {
-                        return note || `${defaultNoteTitles[index]}:\n\n`;
-                    });
-                    notes = fetchedNotes.length > 0 ? fetchedNotes : defaultNoteTitles.map(title => `${title}:\n\n`);
+                    notes = data.notes;
                 } else {
+                    // Initialize with default titles if no notes are found
                     notes = defaultNoteTitles.map(title => `${title}:\n\n`);
                 }
                 renderNotes();
             } catch (error) {
                 console.error('Error fetching notes:', error);
+                // Fallback to localStorage on error
                 const savedNotes = localStorage.getItem('traders-gazette-notes');
                 if (savedNotes) {
                     notes = JSON.parse(savedNotes);
@@ -69,10 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isSaving) return;
             isSaving = true;
             try {
-                const response = await fetch(SCRIPT_URL, {
+                // UPDATED: Use a POST request with a JSON body and query parameters
+                const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=saveNotes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ notes: notes, userId: userId, action: 'saveNotes' }),
+                    body: JSON.stringify({ notes: notes }),
                 });
 
                 if (!response.ok) {
@@ -99,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const noteItem = document.createElement('div');
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
-                // REVERTED: Re-added the inline style to apply the specific note colors.
                 noteItem.style.backgroundColor = noteColors[index];
                 noteItem.innerHTML = createNoteContent(note, index);
                 notesList.appendChild(noteItem);
@@ -251,7 +251,17 @@ document.addEventListener('DOMContentLoaded', function() {
             panel.classList.toggle('open');
             toggleBtn.classList.toggle('active');
             if (panel.classList.contains('open')) {
-                fetchNotes(); // Fetch notes when the panel is opened
+                // Check localStorage for quick display first
+                const savedNotes = localStorage.getItem('traders-gazette-notes');
+                if (savedNotes) {
+                    notes = JSON.parse(savedNotes);
+                    renderNotes();
+                } else {
+                    // Show loader and fetch from backend if no local data
+                    fetchNotes(); 
+                }
+                // Always fetch in the background to sync with backend
+                fetchNotes();
             }
         });
 
