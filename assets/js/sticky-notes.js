@@ -1,5 +1,3 @@
-// /assets/js/sticky-notes.js
-
 const stickyNotes = (function() {
 
     const toggleBtn = document.getElementById('sticky-notes-toggle-btn');
@@ -19,25 +17,38 @@ const stickyNotes = (function() {
     const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
     const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
     
-    // CRITICAL FIX: Dynamically get the userId from local storage
     const getUserId = () => localStorage.getItem('tg_userId');
     const showLoader = () => document.getElementById('loader-overlay').classList.remove('hidden');
     const hideLoader = () => document.getElementById('loader-overlay').classList.add('hidden');
-
+    
     // --- Backend API Functions ---
-    async function fetchNotes() {
+    async function fetchNotes(initialLoad = false) {
         const userId = getUserId();
         if (!userId) {
             console.warn('User ID not found. Cannot fetch notes.');
             return;
         }
 
-        if (!isOnline) {
-            handleOfflineMode();
-            return;
+        // --- Caching Logic ---
+        const cachedNotes = localStorage.getItem('traders-gazette-notes');
+        if (cachedNotes) {
+            notes = JSON.parse(cachedNotes);
+            renderNotes();
+        } else if (initialLoad) {
+            // Set default notes if no cache exists on initial load
+            notes = defaultNoteTitles.map(title => `${title}:\n\n`);
+            renderNotes();
         }
 
-        showLoader();
+        if (!isOnline) {
+            console.warn('Network connection unavailable. Operating in offline mode.');
+            return;
+        }
+        
+        // Show loader only if we don't have cached data to show immediately
+        if (!cachedNotes) {
+            showLoader();
+        }
 
         try {
             const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
@@ -53,10 +64,13 @@ const stickyNotes = (function() {
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
+            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
+
         } catch (error) {
             console.error('Error fetching notes:', error);
-            // Fallback to local storage if API call fails
-            handleOfflineMode();
+            if (!cachedNotes) {
+                 handleOfflineMode(); // Fallback to offline mode only if no cache
+            }
         } finally {
             hideLoader();
         }
@@ -66,9 +80,11 @@ const stickyNotes = (function() {
         const userId = getUserId();
         if (!userId || isSaving) return;
         
+        // Immediate save to local storage for instant feedback
+        localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
+        
         if (!isOnline) {
-            console.warn('Currently offline. Not saving to backend.');
-            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
+            console.warn('Currently offline. Notes saved locally, will sync later.');
             return;
         }
 
@@ -89,7 +105,6 @@ const stickyNotes = (function() {
             }
 
             console.log('Notes saved to backend successfully.');
-            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         } catch (error) {
             console.error('Error saving notes:', error);
         } finally {
@@ -110,8 +125,6 @@ const stickyNotes = (function() {
             notesList.appendChild(noteItem);
         });
         addEventListenersToNotes();
-        
-        // New: Check and update accessibility
         updateAccessibility();
     }
 
@@ -176,7 +189,6 @@ const stickyNotes = (function() {
                     notes[index] += `\n${newItem}`;
                     renderNotes();
                     saveNotes();
-                    // Haptic feedback for adding an item
                     if ('vibrate' in navigator) {
                         navigator.vibrate(20);
                     }
@@ -192,7 +204,6 @@ const stickyNotes = (function() {
                 notes[index] = `${noteTitle}:\n\n`;
                 renderNotes();
                 saveNotes();
-                // Haptic feedback for clearing a note
                 if ('vibrate' in navigator) {
                     navigator.vibrate(50);
                 }
@@ -213,7 +224,6 @@ const stickyNotes = (function() {
                 notes[noteIndex] = `${title}\n${items.join('\n')}`;
                 renderNotes();
                 saveNotes();
-                 // Haptic feedback for deleting an item
                 if ('vibrate' in navigator) {
                     navigator.vibrate(30);
                 }
@@ -235,7 +245,6 @@ const stickyNotes = (function() {
                 notes[index] = [title, ...items].join('\n');
                 renderNotes();
                 saveNotes();
-                // Haptic feedback for checking/unchecking a task
                 if ('vibrate' in navigator) {
                     navigator.vibrate(10);
                 }
@@ -278,7 +287,6 @@ const stickyNotes = (function() {
         });
     }
 
-    // New: Handle offline mode gracefully
     function handleOfflineMode() {
         console.warn('Network connection unavailable. Operating in offline mode.');
         const savedNotes = localStorage.getItem('traders-gazette-notes');
@@ -290,7 +298,6 @@ const stickyNotes = (function() {
         renderNotes();
     }
     
-    // New: Accessibility (A11Y) updates
     function updateAccessibility() {
         document.querySelector('.sticky-notes-toggle-btn').setAttribute('aria-label', 'Toggle sticky notes panel');
         document.querySelector('.close-panel-btn').setAttribute('aria-label', 'Close sticky notes panel');
@@ -311,19 +318,17 @@ const stickyNotes = (function() {
         panel.classList.remove('open');
     });
 
-    // New: Listen for online/offline events
     window.addEventListener('online', () => {
         isOnline = true;
         console.log('Network connection re-established. Attempting to sync notes...');
-        // Optional: Implement a sync function here to upload pending changes
+        // Optional: Call a sync function to upload local changes
     });
     window.addEventListener('offline', () => {
         isOnline = false;
         console.warn('Network connection lost. Switching to offline mode.');
     });
 
-    // Initial check for online status
+    // --- Initial setup ---
     isOnline = navigator.onLine;
-
+    fetchNotes(true); // Pre-fetch notes on page load to prime the cache
 })();
-
