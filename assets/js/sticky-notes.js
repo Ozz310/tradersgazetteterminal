@@ -14,6 +14,7 @@ const stickyNotes = (function() {
     const MAX_ITEMS = 5;
     let notes = [];
     let isSaving = false;
+    let isOnline = navigator.onLine;
 
     const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
     const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
@@ -28,6 +29,11 @@ const stickyNotes = (function() {
         const userId = getUserId();
         if (!userId) {
             console.warn('User ID not found. Cannot fetch notes.');
+            return;
+        }
+
+        if (!isOnline) {
+            handleOfflineMode();
             return;
         }
 
@@ -50,13 +56,7 @@ const stickyNotes = (function() {
         } catch (error) {
             console.error('Error fetching notes:', error);
             // Fallback to local storage if API call fails
-            const savedNotes = localStorage.getItem('traders-gazette-notes');
-            if (savedNotes) {
-                notes = JSON.parse(savedNotes);
-            } else {
-                notes = defaultNoteTitles.map(title => `${title}:\n\n`);
-            }
-            renderNotes();
+            handleOfflineMode();
         } finally {
             hideLoader();
         }
@@ -66,6 +66,12 @@ const stickyNotes = (function() {
         const userId = getUserId();
         if (!userId || isSaving) return;
         
+        if (!isOnline) {
+            console.warn('Currently offline. Not saving to backend.');
+            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
+            return;
+        }
+
         isSaving = true;
         showLoader();
 
@@ -104,6 +110,9 @@ const stickyNotes = (function() {
             notesList.appendChild(noteItem);
         });
         addEventListenersToNotes();
+        
+        // New: Check and update accessibility
+        updateAccessibility();
     }
 
     function createNoteContent(note, index) {
@@ -118,9 +127,9 @@ const stickyNotes = (function() {
                 const text = isChecked ? item.substring(3).trim() : item;
                 itemsHTML += `
                     <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''}>
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} aria-label="Toggle task completion">
                         <span contenteditable="true">${text}</span>
-                        <button class="delete-item-btn"><i class="fas fa-times"></i></button>
+                        <button class="delete-item-btn" aria-label="Delete task"><i class="fas fa-times"></i></button>
                     </li>
                 `;
             });
@@ -129,14 +138,14 @@ const stickyNotes = (function() {
                 itemsHTML += `
                     <li class="bullet-item" data-bullet-index="${i}">
                         <span contenteditable="true">${item.replace(/^\* /, '')}</span>
-                        <button class="delete-item-btn"><i class="fas fa-times"></i></button>
+                        <button class="delete-item-btn" aria-label="Delete note"><i class="fas fa-times"></i></button>
                     </li>
                 `;
             });
         }
 
-        const deleteButton = `<button class="note-delete-btn"><i class="fas fa-eraser"></i></button>`;
-        const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
+        const deleteButton = `<button class="note-delete-btn" aria-label="Clear all notes"><i class="fas fa-eraser"></i></button>`;
+        const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}" aria-label="Add new ${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
         const limitMessage = `<p class="limit-message">${items.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
         
         return `
@@ -167,6 +176,10 @@ const stickyNotes = (function() {
                     notes[index] += `\n${newItem}`;
                     renderNotes();
                     saveNotes();
+                    // Haptic feedback for adding an item
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(20);
+                    }
                 }
             });
         });
@@ -179,6 +192,10 @@ const stickyNotes = (function() {
                 notes[index] = `${noteTitle}:\n\n`;
                 renderNotes();
                 saveNotes();
+                // Haptic feedback for clearing a note
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(50);
+                }
             });
         });
 
@@ -196,6 +213,10 @@ const stickyNotes = (function() {
                 notes[noteIndex] = `${title}\n${items.join('\n')}`;
                 renderNotes();
                 saveNotes();
+                 // Haptic feedback for deleting an item
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(30);
+                }
             });
         });
 
@@ -214,6 +235,10 @@ const stickyNotes = (function() {
                 notes[index] = [title, ...items].join('\n');
                 renderNotes();
                 saveNotes();
+                // Haptic feedback for checking/unchecking a task
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
             });
         });
 
@@ -253,6 +278,24 @@ const stickyNotes = (function() {
         });
     }
 
+    // New: Handle offline mode gracefully
+    function handleOfflineMode() {
+        console.warn('Network connection unavailable. Operating in offline mode.');
+        const savedNotes = localStorage.getItem('traders-gazette-notes');
+        if (savedNotes) {
+            notes = JSON.parse(savedNotes);
+        } else {
+            notes = defaultNoteTitles.map(title => `${title}:\n\n`);
+        }
+        renderNotes();
+    }
+    
+    // New: Accessibility (A11Y) updates
+    function updateAccessibility() {
+        document.querySelector('.sticky-notes-toggle-btn').setAttribute('aria-label', 'Toggle sticky notes panel');
+        document.querySelector('.close-panel-btn').setAttribute('aria-label', 'Close sticky notes panel');
+    }
+
     // --- Event Listeners for Panel ---
     toggleBtn.addEventListener('click', () => {
         if ('vibrate' in navigator) {
@@ -267,4 +310,19 @@ const stickyNotes = (function() {
     closeBtn.addEventListener('click', () => {
         panel.classList.remove('open');
     });
+
+    // New: Listen for online/offline events
+    window.addEventListener('online', () => {
+        isOnline = true;
+        console.log('Network connection re-established. Attempting to sync notes...');
+        // Optional: Implement a sync function here to upload pending changes
+    });
+    window.addEventListener('offline', () => {
+        isOnline = false;
+        console.warn('Network connection lost. Switching to offline mode.');
+    });
+
+    // Initial check for online status
+    isOnline = navigator.onLine;
+
 })();
