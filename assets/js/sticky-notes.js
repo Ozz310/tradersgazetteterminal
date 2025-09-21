@@ -1,3 +1,5 @@
+// /assets/js/sticky-notes.js
+
 const stickyNotes = (function() {
 
     const toggleBtn = document.getElementById('sticky-notes-toggle-btn');
@@ -12,85 +14,37 @@ const stickyNotes = (function() {
     const MAX_ITEMS = 5;
     let notes = [];
     let isSaving = false;
-    let isOnline = navigator.onLine;
 
     const noteColors = ['#F0F0F0', '#F7E7C4', '#F0D4D4', '#E1F0D4'];
     const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
-    
-    const getUserId = () => localStorage.getItem('tg_userId');
-    const showLoader = () => document.getElementById('loader-overlay').classList.remove('hidden');
-    const hideLoader = () => document.getElementById('loader-overlay').classList.add('hidden');
-    
+    const userId = 'single_user_id';
+
     // --- Backend API Functions ---
-    async function fetchNotes(initialLoad = false) {
-        const userId = getUserId();
-        if (!userId) {
-            console.warn('User ID not found. Cannot fetch notes.');
-            return;
-        }
-
-        // --- Caching Logic ---
-        const cachedNotes = localStorage.getItem('traders-gazette-notes');
-        if (cachedNotes) {
-            notes = JSON.parse(cachedNotes);
-            renderNotes();
-        } else if (initialLoad) {
-            // Set default notes if no cache exists on initial load
-            notes = defaultNoteTitles.map(title => `${title}:\n\n`);
-            renderNotes();
-        }
-
-        if (!isOnline) {
-            console.warn('Network connection unavailable. Operating in offline mode.');
-            return;
-        }
-        
-        // Show loader only if we don't have cached data to show immediately
-        if (!cachedNotes) {
-            showLoader();
-        }
-
+    async function fetchNotes() {
         try {
             const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
             const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.error);
-            }
-
             if (data && data.notes) {
                 notes = data.notes;
             } else {
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
-            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
-
         } catch (error) {
             console.error('Error fetching notes:', error);
-            if (!cachedNotes) {
-                 handleOfflineMode(); // Fallback to offline mode only if no cache
+            const savedNotes = localStorage.getItem('traders-gazette-notes');
+            if (savedNotes) {
+                notes = JSON.parse(savedNotes);
+            } else {
+                notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
-        } finally {
-            hideLoader();
+            renderNotes();
         }
     }
 
     async function saveNotes() {
-        const userId = getUserId();
-        if (!userId || isSaving) return;
-        
-        // Immediate save to local storage for instant feedback
-        localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
-        
-        if (!isOnline) {
-            console.warn('Currently offline. Notes saved locally, will sync later.');
-            return;
-        }
-
+        if (isSaving) return;
         isSaving = true;
-        showLoader();
-
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -98,18 +52,16 @@ const stickyNotes = (function() {
                 body: JSON.stringify({ notes: notes, userId: userId, action: 'saveNotes' }),
             });
 
-            const data = await response.json();
-
-            if (!response.ok || data.error) {
-                throw new Error(`Server responded with an error: ${data.error || response.statusText}`);
+            if (!response.ok) {
+                throw new Error(`Server responded with a non-200 status: ${response.status}`);
             }
 
-            console.log('Notes saved to backend successfully.');
+            console.log('Notes saved to backend.');
+            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         } catch (error) {
             console.error('Error saving notes:', error);
         } finally {
             isSaving = false;
-            hideLoader();
         }
     }
     
@@ -125,7 +77,6 @@ const stickyNotes = (function() {
             notesList.appendChild(noteItem);
         });
         addEventListenersToNotes();
-        updateAccessibility();
     }
 
     function createNoteContent(note, index) {
@@ -140,9 +91,8 @@ const stickyNotes = (function() {
                 const text = isChecked ? item.substring(3).trim() : item;
                 itemsHTML += `
                     <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} aria-label="Toggle task completion">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''}>
                         <span contenteditable="true">${text}</span>
-                        <button class="delete-item-btn" aria-label="Delete task"><i class="fas fa-times"></i></button>
                     </li>
                 `;
             });
@@ -151,14 +101,13 @@ const stickyNotes = (function() {
                 itemsHTML += `
                     <li class="bullet-item" data-bullet-index="${i}">
                         <span contenteditable="true">${item.replace(/^\* /, '')}</span>
-                        <button class="delete-item-btn" aria-label="Delete note"><i class="fas fa-times"></i></button>
                     </li>
                 `;
             });
         }
 
-        const deleteButton = `<button class="note-delete-btn" aria-label="Clear all notes"><i class="fas fa-eraser"></i></button>`;
-        const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}" aria-label="Add new ${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
+        const deleteButton = `<button class="note-delete-btn"><i class="fas fa-eraser"></i></button>`;
+        const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
         const limitMessage = `<p class="limit-message">${items.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
         
         return `
@@ -189,9 +138,6 @@ const stickyNotes = (function() {
                     notes[index] += `\n${newItem}`;
                     renderNotes();
                     saveNotes();
-                    if ('vibrate' in navigator) {
-                        navigator.vibrate(20);
-                    }
                 }
             });
         });
@@ -204,32 +150,8 @@ const stickyNotes = (function() {
                 notes[index] = `${noteTitle}:\n\n`;
                 renderNotes();
                 saveNotes();
-                if ('vibrate' in navigator) {
-                    navigator.vibrate(50);
-                }
             });
         });
-
-        notesList.querySelectorAll('.delete-item-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const noteItem = e.target.closest('.note-item');
-                const noteIndex = noteItem.getAttribute('data-index');
-                const listItem = e.target.closest('li');
-                const itemIndex = listItem.getAttribute('data-task-index') || listItem.getAttribute('data-bullet-index');
-
-                const noteContent = notes[noteIndex].split('\n').map(s => s.trim()).filter(s => s);
-                const [title, ...items] = noteContent;
-                items.splice(itemIndex, 1);
-                
-                notes[noteIndex] = `${title}\n${items.join('\n')}`;
-                renderNotes();
-                saveNotes();
-                if ('vibrate' in navigator) {
-                    navigator.vibrate(30);
-                }
-            });
-        });
-
 
         notesList.querySelectorAll('.todo-item input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
@@ -245,9 +167,6 @@ const stickyNotes = (function() {
                 notes[index] = [title, ...items].join('\n');
                 renderNotes();
                 saveNotes();
-                if ('vibrate' in navigator) {
-                    navigator.vibrate(10);
-                }
             });
         });
 
@@ -268,14 +187,8 @@ const stickyNotes = (function() {
             element.addEventListener('blur', (e) => {
                 const noteItem = e.target.closest('.note-item');
                 const index = noteItem.getAttribute('data-index');
-                const updatedContent = Array.from(noteItem.querySelectorAll('[contenteditable="true"]')).map((el, i) => {
-                    const isToDoItem = el.closest('.todo-item');
-                    if (isToDoItem) {
-                        const isChecked = isToDoItem.querySelector('input').checked;
-                        return `[${isChecked ? 'x' : ' '}]${el.textContent.trim()}`;
-                    } else {
-                        return `* ${el.textContent.trim()}`;
-                    }
+                const updatedContent = Array.from(noteItem.querySelectorAll('[contenteditable="true"]')).map(el => {
+                    return e.target.closest('.todo-item') ? `[${el.closest('.todo-item').querySelector('input').checked ? 'x' : ' '}]${el.textContent.trim()}` : el.textContent.trim();
                 });
                 
                 const lines = updatedContent.join('\n');
@@ -287,28 +200,10 @@ const stickyNotes = (function() {
         });
     }
 
-    function handleOfflineMode() {
-        console.warn('Network connection unavailable. Operating in offline mode.');
-        const savedNotes = localStorage.getItem('traders-gazette-notes');
-        if (savedNotes) {
-            notes = JSON.parse(savedNotes);
-        } else {
-            notes = defaultNoteTitles.map(title => `${title}:\n\n`);
-        }
-        renderNotes();
-    }
-    
-    function updateAccessibility() {
-        document.querySelector('.sticky-notes-toggle-btn').setAttribute('aria-label', 'Toggle sticky notes panel');
-        document.querySelector('.close-panel-btn').setAttribute('aria-label', 'Close sticky notes panel');
-    }
-
     // --- Event Listeners for Panel ---
     toggleBtn.addEventListener('click', () => {
-        if ('vibrate' in navigator) {
-            navigator.vibrate(50);
-        }
         panel.classList.toggle('open');
+        toggleBtn.classList.toggle('active');
         if (panel.classList.contains('open')) {
             fetchNotes();
         }
@@ -316,19 +211,7 @@ const stickyNotes = (function() {
 
     closeBtn.addEventListener('click', () => {
         panel.classList.remove('open');
+        toggleBtn.classList.remove('active');
     });
 
-    window.addEventListener('online', () => {
-        isOnline = true;
-        console.log('Network connection re-established. Attempting to sync notes...');
-        // Optional: Call a sync function to upload local changes
-    });
-    window.addEventListener('offline', () => {
-        isOnline = false;
-        console.warn('Network connection lost. Switching to offline mode.');
-    });
-
-    // --- Initial setup ---
-    isOnline = navigator.onLine;
-    fetchNotes(true); // Pre-fetch notes on page load to prime the cache
 })();
