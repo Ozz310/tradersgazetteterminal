@@ -1,22 +1,21 @@
-<div class="loader-overlay" id="loader-overlay">
-    <div class="loader-container">
-        <div class="loader"></div>
-        <p class="loader-text">Loading...</p>
-    </div>
-</div>
-
-<div class="sticky-notes-component-container">
-    <div class="sticky-notes-panel" id="sticky-notes-panel">
-        <div class="panel-header">
-            <h3>My Notes & Tasks</h3>
-            <button class="close-panel-btn">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div id="notes-list" class="notes-list">
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h1>Welcome to Your Dashboard</h1>
+    </header>
+    
+    <div class="dashboard-widgets">
+        <div class="widget clock-widget">
+            <div class="widget-header">
+                <h2>Local Time</h2>
             </div>
+            <div class="widget-body">
+                <div class="clock">
+                    <div class="hand hour-hand"></div>
+                    <div class="hand minute-hand"></div>
+                    <div class="hand second-hand"></div>
+                    <div class="center-point"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
-        <i class="fas fa-plus"></i>
-    </button>
 </div>
