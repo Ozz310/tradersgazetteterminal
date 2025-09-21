@@ -1,6 +1,5 @@
 // /assets/js/sticky-notes.js
 
-// Refactored to wait for the DOM to load before execution.
 document.addEventListener('DOMContentLoaded', function() {
     const stickyNotes = (function() {
 
@@ -8,9 +7,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const panel = document.getElementById('sticky-notes-panel');
         const closeBtn = document.querySelector('.close-panel-btn');
         const notesList = document.getElementById('notes-list');
-        const loaderOverlay = document.getElementById('loader-overlay'); // Get the loader element
+        const loaderOverlay = document.getElementById('loader-overlay'); 
         const syncBtn = document.getElementById('sync-notes-btn');
         const syncStatus = document.getElementById('sync-status');
+        const conflictModalOverlay = document.getElementById('conflict-modal-overlay');
+        const useLocalBtn = document.getElementById('use-local-btn');
+        const useCloudBtn = document.getElementById('use-cloud-btn');
 
         const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
         
@@ -22,7 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const noteColors = ['#F7F7F7', '#FFEBCC', '#FFCCCC', '#D6FFD6'];
         const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
         
-        // --- Loader Functions ---
+        // --- Helper Functions ---
+        function arraysAreEqual(arr1, arr2) {
+            if (arr1.length !== arr2.length) return false;
+            for (let i = 0; i < arr1.length; i++) {
+                if (arr1[i] !== arr2[i]) return false;
+            }
+            return true;
+        }
+
+        // --- Loader & Modal Functions ---
         function showLoader() {
             if (loaderOverlay) {
                 loaderOverlay.classList.remove('hidden');
@@ -35,7 +46,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // ADDED: Function to get the current userId from local storage
+        function showConflictModal() {
+            if (conflictModalOverlay) {
+                conflictModalOverlay.classList.remove('hidden');
+            }
+        }
+
+        function hideConflictModal() {
+            if (conflictModalOverlay) {
+                conflictModalOverlay.classList.add('hidden');
+            }
+        }
+
         function getUserId() {
             return localStorage.getItem('tg_userId');
         }
@@ -65,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // --- Backend API Functions ---
-        async function fetchNotesFromBackend() {
+        async function fetchNotesFromBackend(forceSync = false) {
             const userId = getUserId(); 
             if (!userId) {
                 console.error('User ID not found. Cannot fetch notes from backend.');
@@ -73,29 +95,34 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                showLoader();
-                syncStatus.textContent = 'Syncing...';
+                if (!forceSync) showLoader();
                 const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
                 const data = await response.json();
                 
                 if (data && data.notes) {
-                    notes = data.notes;
-                    saveNotesLocally(); // Save to local storage after fetching
-                    syncStatus.textContent = 'Synced!';
-                    setTimeout(() => syncStatus.textContent = '', 2000);
+                    const cloudNotes = data.notes;
+                    if (!arraysAreEqual(notes, cloudNotes)) {
+                        // Conflict detected
+                        notesToMerge = cloudNotes; // Store for the modal
+                        showConflictModal();
+                    } else if (forceSync) {
+                        syncStatus.textContent = 'Already synced!';
+                        setTimeout(() => syncStatus.textContent = '', 2000);
+                    }
                 } else {
-                    console.warn('No notes found on backend, initializing with defaults.');
-                    notes = defaultNoteTitles.map(title => `${title}:\n\n`);
-                    syncStatus.textContent = 'No notes found on cloud.';
-                    setTimeout(() => syncStatus.textContent = '', 2000);
+                    if (forceSync) {
+                        syncStatus.textContent = 'No notes found on cloud.';
+                        setTimeout(() => syncStatus.textContent = '', 2000);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching notes from backend:', error);
-                syncStatus.textContent = 'Sync failed!';
-                setTimeout(() => syncStatus.textContent = '', 2000);
+                if (forceSync) {
+                    syncStatus.textContent = 'Sync failed!';
+                    setTimeout(() => syncStatus.textContent = '', 2000);
+                }
             } finally {
-                hideLoader();
-                renderNotes();
+                if (!forceSync) hideLoader();
             }
         }
 
@@ -295,7 +322,8 @@ document.addEventListener('DOMContentLoaded', function() {
             panel.classList.toggle('open');
             toggleBtn.classList.toggle('active');
             if (panel.classList.contains('open')) {
-                loadNotesLocally(); // Always load from local storage first for instant display
+                loadNotesLocally();
+                fetchNotesFromBackend(); // Check for conflicts in the background
             }
         });
 
@@ -304,12 +332,24 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleBtn.classList.remove('active');
         });
 
-        // ADDED: Sync button event listener
         if (syncBtn) {
             syncBtn.addEventListener('click', () => {
                 syncNotesToBackend();
             });
         }
+
+        // --- Conflict Modal Event Listeners ---
+        useLocalBtn.addEventListener('click', () => {
+            hideConflictModal();
+            syncNotesToBackend();
+        });
+
+        useCloudBtn.addEventListener('click', () => {
+            hideConflictModal();
+            notes = notesToMerge;
+            saveNotesLocally();
+            renderNotes();
+        });
         
     })();
 });
