@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let notes = [];
         let isSaving = false;
 
-        // UPDATED: Note colors are now controlled by CSS for a unified design.
+        // UPDATED: Reverted to the original color scheme with sharper tones
+        const noteColors = ['#F7F7F7', '#FFEBCC', '#FFCCCC', '#D6FFD6'];
         const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
         let userId = 'single_user_id'; // Placeholder for user ID
 
@@ -98,7 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const noteItem = document.createElement('div');
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
-                // Note: We remove the inline style as note colors are now controlled by CSS.
+                // REVERTED: Re-added the inline style to apply the specific note colors.
+                noteItem.style.backgroundColor = noteColors[index];
                 noteItem.innerHTML = createNoteContent(note, index);
                 notesList.appendChild(noteItem);
             });
@@ -114,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const filteredItems = items.filter(s => s.trim()); // Filter out empty lines
             
             if (filteredItems.length === 0) {
-                // ADDED: Empty state guidance
                 itemsHTML = `<li class="empty-state-text">Click 'Add ${isToDo ? 'Task' : 'Note'}' to begin.</li>`;
             } else {
                 if (isToDo) {
@@ -142,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // UPDATED: Changed the delete button icon from 'eraser' to 'trash-can'
             const deleteButton = `<button class="note-delete-btn"><i class="fas fa-trash-can"></i></button>`;
             const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">Add ${isToDo ? 'Task' : 'Note'}</button>`;
             const limitMessage = `<p class="limit-message ${filteredItems.length >= MAX_ITEMS ? 'limit-reached-message' : ''}">${filteredItems.length >= MAX_ITEMS ? `Limit of ${MAX_ITEMS} items reached.` : ''}</p>`;
@@ -175,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         const newItem = btn.getAttribute('data-type') === 'task' ? '[ ] New Task' : '* New Note';
                         notes[index] += `\n${newItem}`;
                         renderNotes();
-                        // ADDED: Find the new element and focus on it for a better UX
                         const newElement = notesList.querySelector(`.note-item[data-index="${index}"] .note-body [contenteditable="true"]:last-of-type`);
                         if(newElement) newElement.focus();
                         saveNotes();
@@ -249,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- Event Listeners for Panel ---
         toggleBtn.addEventListener('click', () => {
-            // UPDATED: Added a transition class for the new animations
             panel.classList.toggle('open');
             toggleBtn.classList.toggle('active');
             if (panel.classList.contains('open')) {
