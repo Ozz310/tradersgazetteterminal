@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const MAX_ITEMS = 5;
         let notes = [];
         let isSaving = false;
+        let notesToMerge = []; // Global variable to hold cloud notes during a conflict
 
         const noteColors = ['#F7F7F7', '#FFEBCC', '#FFCCCC', '#D6FFD6'];
         const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
@@ -31,6 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (arr1[i] !== arr2[i]) return false;
             }
             return true;
+        }
+
+        function isMobile() {
+            return window.matchMedia("(max-width: 768px)").matches;
         }
 
         // --- Loader & Modal Functions ---
