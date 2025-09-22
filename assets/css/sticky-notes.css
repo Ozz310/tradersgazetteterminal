@@ -1,491 +1,491 @@
 /* --- Core Container for the Sticky Notes Module --- */
 .sticky-notes-component-container {
-    /* Position the container relative to the body content area */
-    position: fixed;
-    bottom: 0;
-    left: 250px; /* Aligns with the end of the sidebar */
-    width: calc(100vw - 250px - 17px); /* Spans the remaining width of the screen, accounting for the scrollbar */
-    z-index: 1000;
-    /* Use flexbox to easily position items */
-    display: flex;
-    justify-content: center;
+    /* Position the container relative to the main content area */
+    position: fixed;
+    bottom: 20px; /* Aligns with the bottom of the viewport */
+    right: 20px; /* Aligns with the right of the viewport */
+    width: auto; /* Allow content to dictate width */
+    z-index: 1000; /* Ensure it's on top of most content */
+    display: flex;
+    justify-content: flex-end; /* Align to the right side of the container */
+    align-items: flex-end;
 }
 
 /* --- Loader Overlay - Full Screen with Pulsing Gold Glow --- */
 .loader-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(26, 26, 26, 0.95);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 26, 26, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .loader-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .loader-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Loader Spin and Pulsing Glow */
 .loader {
-    width: 60px;
-    height: 60px;
-    border: 5px solid rgba(240, 215, 136, 0.2);
-    border-radius: 50%;
-    border-top-color: #F0D788;
-    animation: spin 1s linear infinite, glow 1.5s ease-in-out infinite alternate;
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(240, 215, 136, 0.2);
+    border-radius: 50%;
+    border-top-color: #F0D788;
+    animation: spin 1s linear infinite, glow 1.5s ease-in-out infinite alternate;
 }
 
 .loader-text {
-    margin-top: 20px;
-    color: #F0D788;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
+    margin-top: 20px;
+    color: #F0D788;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes glow {
-    from {
-        box-shadow: 0 0 5px #F0D788;
-    }
-    to {
-        box-shadow: 0 0 20px #F0D788, 0 0 30px #F0D788;
-    }
+    from {
+        box-shadow: 0 0 5px #F0D788;
+    }
+    to {
+        box-shadow: 0 0 20px #F0D788, 0 0 30px #F0D788;
+    }
 }
 
 /* --- Sticky Notes Toggle Button (FAB) --- */
 .sticky-notes-toggle-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #1a1a1a;
-    color: #F0D788;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
-    
-    /* Position the button at the bottom center within its container */
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    
-    /* ADDED: Initial rotation for the + icon */
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #1a1a1a;
+    color: #F0D788;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    
+    /* NEW: Removed absolute positioning inside a flex container */
+    position: static;
+    
+    /* ADDED: Initial rotation for the + icon */
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* ADDED: Rotation for the active 'X' state */
 .sticky-notes-toggle-btn.active {
-    transform: translateX(-50%) rotate(45deg);
+    transform: rotate(45deg); /* No need for translateX as it's not absolutely positioned */
 }
 
 .sticky-notes-toggle-btn:hover {
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .sticky-notes-toggle-btn:active {
-    transform: translateX(-50%) translateY(0);
-    box-shadow: 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    box-shadow: 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    /* Position the panel relative to the body */
-    position: fixed;
-    bottom: 90px;
-    left: 250px; /* Aligns with the end of the sidebar */
-    width: calc(100vw - 250px - 17px); /* Spans the remaining width of the screen, accounting for the scrollbar */
-    height: 450px;
-    background: rgba(26, 26, 26, 0.8); /* UPDATED: Semi-transparent background for glassmorphism */
-    backdrop-filter: blur(10px); /* UPDATED: Adds the frosted glass effect */
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    
-    /* ADDED: Fluid animation properties */
-    transform: scale(0.8) translateY(10%);
-    opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
-    pointer-events: none; /* Prevents interaction when hidden */
-    
-    display: flex;
-    flex-direction: column;
-    z-index: 999;
-    overflow: hidden;
+    /* Position the panel relative to the body */
+    position: fixed;
+    bottom: 90px;
+    right: 20px; /* Aligns with the right of the viewport */
+    width: 350px; /* Set a fixed width for a better look */
+    height: 450px;
+    background: rgba(26, 26, 26, 0.8); /* UPDATED: Semi-transparent background for glassmorphism */
+    backdrop-filter: blur(10px); /* UPDATED: Adds the frosted glass effect */
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    
+    /* ADDED: Fluid animation properties */
+    transform-origin: bottom right; /* Animate from the bottom right corner */
+    transform: scale(0.8) translateY(10%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+    pointer-events: none; /* Prevents interaction when hidden */
+    
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
 }
 
 .sticky-notes-panel.open {
-    /* UPDATED: Panel shows up with full size and opacity */
-    transform: scale(1) translateY(0);
-    opacity: 1;
-    pointer-events: auto; /* Allows interaction when open */
+    /* UPDATED: Panel shows up with full size and opacity */
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: auto; /* Allows interaction when open */
 }
 
 .sticky-notes-panel .panel-header {
-    background: #3a3a3a;
-    color: white;
-    padding: 15px 20px;
-    border-bottom: 1px solid #4a4a4a;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #3a3a3a;
+    color: white;
+    padding: 15px 20px;
+    border-bottom: 1px solid #4a4a4a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .sticky-notes-panel .panel-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #F0D788;
+    margin: 0;
+    font-size: 1.2rem;
+    color: #F0D788;
 }
 
 /* ADDED: Styles for the new sync button and status message */
 .sync-actions-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .sync-btn {
-    background: none;
-    border: none;
-    color: #F0D788;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease;
+    background: none;
+    border: none;
+    color: #F0D788;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease;
 }
 
 .sync-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .sync-btn.syncing .sync-icon {
-    animation: spin 1.5s linear infinite;
+    animation: spin 1.5s linear infinite;
 }
 
 .sync-status {
-    font-size: 0.85rem;
-    color: #f7f7f7;
-    transition: opacity 0.3s ease;
-    opacity: 1;
+    font-size: 0.85rem;
+    color: #f7f7f7;
+    transition: opacity 0.3s ease;
+    opacity: 1;
 }
 
 /* Notes List Container */
 .notes-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
 }
 
 /* Individual Note Styling */
 .note-item {
-    /* REVERTED: Re-added the left border and removed the background color */
-    background-color: #3a3a3a;
-    border-left: 4px solid #F0D788; /* Consistent gold accent bar */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
-    height: auto;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* REVERTED: Re-added the left border and removed the background color */
+    background-color: #3a3a3a;
+    border-left: 4px solid #F0D788; /* Consistent gold accent bar */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    height: auto;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .note-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .note-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
 }
 
 .note-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    /* REVERTED: Font color back to Charcoal Black */
-    color: #36454F;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    /* REVERTED: Font color back to Charcoal Black */
+    color: #36454F;
 }
 
 .note-body {
-    flex-grow: 1;
-    overflow-y: auto;
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 .todo-list, .bullet-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
 .todo-list li, .bullet-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    /* REVERTED: Font color back to Charcoal Black */
-    color: #36454F;
-    margin-bottom: 5px;
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    /* REVERTED: Font color back to Charcoal Black */
+    color: #36454F;
+    margin-bottom: 5px;
+    position: relative;
 }
 
 .todo-list li input[type="checkbox"] {
-    accent-color: #F0D788;
-    flex-shrink: 0;
+    accent-color: #F0D788;
+    flex-shrink: 0;
 }
 
 .todo-list li.checked span {
-    text-decoration: line-through;
-    color: #888;
+    text-decoration: line-through;
+    color: #888;
 }
 
 .todo-list li span, .bullet-list li span {
-    outline: none;
-    cursor: text;
+    outline: none;
+    cursor: text;
 }
 
 .bullet-list li::before {
-    content: '•';
-    color: #F0D788;
-    font-weight: bold;
+    content: '•';
+    color: #F0D788;
+    font-weight: bold;
 }
 
 .delete-task-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s ease;
-    visibility: hidden;
-    position: absolute;
-    right: 0;
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    visibility: hidden;
+    position: absolute;
+    right: 0;
 }
 
 .todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
-    visibility: visible;
+    visibility: visible;
 }
 
 /* NEW: Empty state text styling */
 .empty-state-text {
-    font-style: italic;
-    font-size: 0.9rem;
-    color: rgba(54, 69, 79, 0.6); /* UPDATED: Empty state color to blend with Charcoal Black */
-    text-align: center;
-    width: 100%;
-    margin-top: 15px;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: rgba(54, 69, 79, 0.6); /* UPDATED: Empty state color to blend with Charcoal Black */
+    text-align: center;
+    width: 100%;
+    margin-top: 15px;
 }
 
 /* New rule for the 'limit reached' text */
 .limit-reached-message {
-    font-size: 0.9rem;
-    text-align: center;
-    /* REVERTED: Font color back to Charcoal Black */
-    color: #36454F;
-    opacity: 0.7; /* Make it visible but still feel like a message */
-    margin-top: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    /* REVERTED: Font color back to Charcoal Black */
+    color: #36454F;
+    opacity: 0.7; /* Make it visible but still feel like a message */
+    margin-top: 10px;
 }
 
 .note-footer {
-    padding-top: 10px;
-    border-top: 1px dashed rgba(0, 0, 0, 0.1);
-    text-align: center;
-    /* REVERTED: Font color back to Charcoal Black */
-    color: #36454F;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* REVERTED: Font color back to Charcoal Black */
+    color: #36454F;
 }
 
 .add-item-btn {
-    background: none;
-    border: none;
-    /* REVERTED: Font color back to Charcoal Black */
-    color: #36454F;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    /* REVERTED: Font color back to Charcoal Black */
+    color: #36454F;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 
 .add-item-btn:hover {
-    color: #F0D788;
-    text-shadow: 0 0 5px rgba(240, 215, 136, 0.5); /* Adds a subtle glow effect */
+    color: #F0D788;
+    text-shadow: 0 0 5px rgba(240, 215, 136, 0.5); /* Adds a subtle glow effect */
 }
 
 .note-delete-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    align-self: flex-end;
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    align-self: flex-end;
 }
 
 .note-delete-btn:hover {
-    color: #c0392b;
+    color: #c0392b;
 }
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    /* Reposition the toggle button to the right-center of the screen */
-    .sticky-notes-toggle-btn {
-        position: fixed; /* Use fixed to keep it in a consistent position */
-        top: 50%;
-        right: 20px;
-        left: auto; /* Override the desktop left position */
-        transform: translateY(-50%); /* Center vertically */
-    }
+    /* Reposition the toggle button to the right-center of the screen */
+    .sticky-notes-toggle-btn {
+        position: fixed; /* Use fixed to keep it in a consistent position */
+        top: 50%;
+        right: 20px;
+        left: auto; /* Override the desktop left position */
+        transform: translateY(-50%); /* Center vertically */
+    }
 
-    /* Adjust the toggle button active state for the new position */
-    .sticky-notes-toggle-btn.active {
-        transform: translateY(-50%) rotate(45deg);
-    }
-    
-    /* Modify the panel to be a full-screen overlay */
-    .sticky-notes-panel {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0; /* No rounded corners for full screen */
-        background: rgba(26, 26, 26, 0.95);
-        transform: scale(0.95) translateY(0); /* Adjust the entrance animation */
-    }
-    
-    /* Make the notes list scrollable on small screens */
-    .notes-list {
-        display: block; /* Stack the notes vertically on mobile */
-        padding: 10px;
-        /* Added to fix scrolling issue */
-        padding-bottom: 80px;
-    }
-    
-    /* Remove padding and margins for a cleaner mobile layout */
-    .sticky-notes-component-container, .sticky-notes-panel {
-        width: 100%;
-        left: 0;
-    }
+    /* Adjust the toggle button active state for the new position */
+    .sticky-notes-toggle-btn.active {
+        transform: translateY(-50%) rotate(45deg);
+    }
+    
+    /* Modify the panel to be a full-screen overlay */
+    .sticky-notes-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0; /* Ensures the panel goes to the bottom of the viewport */
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0; /* No rounded corners for full screen */
+        background: rgba(26, 26, 26, 0.95);
+        transform: scale(0.95) translateY(0); /* Adjust the entrance animation */
+    }
+    
+    /* Make the notes list scrollable on small screens */
+    .notes-list {
+        display: block; /* Stack the notes vertically on mobile */
+        padding: 10px;
+        /* Added to fix scrolling issue */
+        padding-bottom: 80px;
+    }
+    
+    /* Remove padding and margins for a cleaner mobile layout */
+    .sticky-notes-component-container, .sticky-notes-panel {
+        width: 100%;
+        left: 0;
+    }
 }
 
 /* --- NEW: Conflict Modal Styles --- */
 .conflict-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(26, 26, 26, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 26, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .conflict-modal-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .conflict-modal {
-    background: #1a1a1a;
-    border: 1px solid #4a4a4a;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-    padding: 30px;
-    text-align: center;
-    max-width: 450px;
-    width: 90%;
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: #1a1a1a;
+    border: 1px solid #4a4a4a;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .conflict-modal-overlay:not(.hidden) .conflict-modal {
-    transform: scale(1);
+    transform: scale(1);
 }
 
 .modal-header h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #F0D788;
-    border-bottom: 2px solid #F0D788;
-    padding-bottom: 10px;
+    margin: 0;
+    font-size: 1.5rem;
+    color: #F0D788;
+    border-bottom: 2px solid #F0D788;
+    padding-bottom: 10px;
 }
 
 .modal-body p {
-    color: #f7f7f7;
-    font-size: 1rem;
-    margin: 20px 0;
+    color: #f7f7f7;
+    font-size: 1rem;
+    margin: 20px 0;
 }
 
 .modal-footer {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
 .modal-btn {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .modal-btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 .primary-btn {
-    background-color: #F0D788;
-    color: #1a1a1a;
+    background-color: #F0D788;
+    color: #1a1a1a;
 }
 
 .primary-btn:hover {
-    background-color: #FFD480;
+    background-color: #FFD480;
 }
 
 .secondary-btn {
-    background-color: #3a3a3a;
-    color: #f7f7f7;
-    border: 1px solid #4a4a4a;
+    background-color: #3a3a3a;
+    color: #f7f7f7;
+    border: 1px solid #4a4a4a;
 }
 
 .secondary-btn:hover {
-    background-color: #4a4a4a;
+    background-color: #4a4a4a;
 }
