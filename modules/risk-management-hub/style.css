@@ -6,6 +6,7 @@
     flex-direction: column;
     align-items: center;
     min-height: calc(100vh - 40px);
+    font-family: 'Poppins', sans-serif; /* A more modern font */
 }
 
 .risk-management-hub .risk-management-cover-photo {
@@ -32,6 +33,8 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
 .risk-management-hub .header-title {
@@ -40,6 +43,8 @@
     color: var(--gold-color);
     text-align: center;
     margin-bottom: 0;
+    font-family: 'Playfair Display', serif; /* Or another elegant serif for headings */
+    letter-spacing: 2px;
 }
 
 .risk-management-hub .main-content-flex {
@@ -88,7 +93,7 @@
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     color: #1a1a1a;
     border-color: var(--gold-color);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(240, 215, 136, 0.4), inset 0 2px 4px rgba(0,0,0,0.4);
 }
 
 .risk-management-hub .menu-button:hover:not(.active) {
@@ -102,9 +107,10 @@
     background-color: var(--accent-color);
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(240, 215, 136, 0.1);
     border: 1px solid var(--border-color);
     flex: 1;
+    min-width: 300px;
 }
 
 .risk-management-hub .results-panel {
@@ -119,6 +125,7 @@
 
 .risk-management-hub .calculator-tab {
     display: none;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .risk-management-hub .calculator-tab.active {
@@ -137,8 +144,14 @@
     border-radius: 8px;
 }
 
+.risk-management-hub .info-icon {
+    font-style: italic;
+    color: var(--gold-color);
+    font-size: 1.1em;
+}
+
 .risk-management-hub .input-group {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .risk-management-hub label {
@@ -239,8 +252,15 @@
     100% { transform: rotate(360deg); }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .risk-management-hub .result-area {
     padding-top: 5px;
+    position: relative;
+    min-height: 200px;
 }
 
 .risk-management-hub .result-title {
@@ -248,12 +268,36 @@
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.risk-management-hub .empty-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #666;
+    font-size: 1rem;
+    font-style: italic;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.risk-management-hub .empty-state.hidden {
+    opacity: 0;
 }
 
 .risk-management-hub .results-grid {
-    display: grid;
+    display: none;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.risk-management-hub .results-group {
+    display: contents;
 }
 
 .risk-management-hub .result-card {
@@ -264,6 +308,7 @@
     border: 1px solid #4a4a4a;
     transition: all 0.3s ease;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    position: relative;
 }
 
 .risk-management-hub .result-card.success-border {
@@ -299,6 +344,24 @@
     box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.4) !important;
 }
 
+.risk-management-hub .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.risk-management-hub .copy-btn:hover {
+    opacity: 1;
+    color: var(--gold-color);
+}
+
 .risk-management-hub .branding {
     margin-top: 10px;
     padding-top: 10px;
@@ -321,7 +384,6 @@
 .risk-management-hub .branding img {
     max-width: 150px;
     height: auto;
-    /* NEW: Corrected URL for the logo */
     content: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.15.jpeg?raw=true');
     filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4));
     transition: filter 0.3s ease;
@@ -391,8 +453,8 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
-    background: var(--dark-gold-color);
+.risk-management-hub input[type="range"]::-webkit-slider-thumb:hover {
+    background: #FFD480;
 }
 
 .risk-management-hub input[type="range"]::-moz-range-thumb {
@@ -406,7 +468,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .risk-management-hub input[type="range"]::-moz-range-thumb:hover {
-    background: var(--dark-gold-color);
+    background: #FFD480;
 }
 
 .risk-management-hub input[type="range"]::-ms-thumb {
@@ -420,7 +482,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .risk-management-hub input[type="range"]::-ms-thumb:hover {
-    background: var(--dark-gold-color);
+    background: #FFD480;
 }
 
 .risk-management-hub input[type="range"]::-ms-track {
