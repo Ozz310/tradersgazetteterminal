@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loaderOverlay = document.getElementById('loader-overlay');
     const backgroundSymbols = document.querySelector('.background-symbols');
     const bottomNav = document.querySelector('.bottom-nav');
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle'); // Get the mobile toggle button
     const loadedModules = new Map();
 
     // Show the loader
@@ -79,21 +80,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Correctly handle sticky notes panel visibility
         handleStickyNotesVisibility(moduleName);
 
+        // --- NEW LOGIC TO MANAGE UI BASED ON AUTHENTICATION STATE ---
         if (isAuthenticated()) {
-            // Logged in: Hide auth, show main app and notes, and REMOVE the hidden class
+            // Logged in: Hide auth, show main app, notes, and bottom nav
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) {
                 mainAppContainer.style.display = 'flex';
                 mainAppContainer.classList.remove('hidden');
             }
+            // All pages will now use a bottom slider menu for mobile, so we hide the top toggle
+            if (mobileNavToggle) {
+                mobileNavToggle.style.display = 'none';
+            }
         } else {
-            // Logged out: Hide main app and notes, show auth
+            // Logged out: Hide main app and notes, show auth page
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) {
                 mainAppContainer.style.display = 'none';
                 mainAppContainer.classList.add('hidden');
+            }
+            // The mobile toggle button is not needed on the auth page
+            if (mobileNavToggle) {
+                mobileNavToggle.style.display = 'none';
             }
         }
 
@@ -123,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Note: The `sticky-notes.js` script handles the toggling of the panel itself.
     };
-        
+
     // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
         // Remove old CSS link if it exists to prevent style conflicts
@@ -141,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(newLink);
         }
     };
-    
+
     // START OF UPDATED loadModule FUNCTION
     const loadModule = async (moduleName) => {
         let targetContainer = moduleContainer;
@@ -152,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Clean the target container before fetching new content
             targetContainer.innerHTML = '';
-            
+
             let htmlPath, scriptPath;
 
             // CORRECTED: Define paths based on module name using the provided file structure
