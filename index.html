@@ -96,16 +96,61 @@
                     <i class="fas fa-newspaper"></i>
                     <span class="bottom-nav-label">News</span>
                 </a>
-                <a href="#" class="bottom-nav-item" data-module="contact-us">
-                    <i class="fas fa-envelope"></i>
-                    <span class="bottom-nav-label">Contact</span>
+                <a href="#" class="bottom-nav-item" data-module="more">
+                    <i class="fas fa-bars"></i>
+                    <span class="bottom-nav-label">More</span>
                 </a>
             </nav>
         </main>
     </div>
     <div id="auth-container" class="module-container"></div>
-    <div id="mobile-overlay" class="mobile-overlay"></div>
-    <button id="mobile-nav-toggle" class="mobile-nav-toggle"><i class="fas fa-bars"></i></button>
+
+    <div id="full-mobile-menu" class="full-mobile-menu hidden">
+        <div class="menu-header">
+            <h3>Menu</h3>
+            <button class="close-menu-btn" data-module="close-menu"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <ul>
+                <li><a href="#" class="mobile-nav-item" data-module="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="trading-ebooks">
+                    <i class="fas fa-book-reader"></i>
+                    <span>Trading E-Books</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="analysis-hub">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analysis Hub</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="risk-management-hub">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Risk Management Hub</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="news-aggregator">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News Room</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="trading-journal">
+                    <i class="fas fa-book"></i>
+                    <span>Trading Journal</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="cfd-brokers">
+                    <i class="fas fa-handshake"></i>
+                    <span>CFD Brokers</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="contact-us">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Us</span>
+                </a></li>
+                <li><a href="#" class="mobile-nav-item" data-module="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log Out</span>
+                </a></li>
+            </ul>
+        </nav>
+    </div>
 
     <div class="sticky-notes-component-container">
         <div class="sticky-notes-panel" id="sticky-notes-panel">
