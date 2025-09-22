@@ -18,7 +18,10 @@
 
             <div class="calculator-panel">
                 <div id="marginCalculator" class="calculator-tab active">
-                    <p class="calculator-info">(i) Rates update EOD</p>
+                    <p class="calculator-info">
+                        <span class="info-icon">i</span>
+                        Rates update EOD
+                    </p>
                     <div class="input-group">
                         <label for="accountCurrency">Account Currency:</label>
                         <select id="accountCurrency">
@@ -134,35 +137,48 @@
                 </div>
                 <div class="result-area" id="resultArea">
                     <h3 class="result-title">Calculation Results</h3>
-                    <div class="results-grid">
-                        <div class="result-card" id="cardMarginRate">
-                            <p>Current Rate (<span id="ratePairDisplay">EUR/USD</span>):</p>
-                            <span id="currentRateDisplay">N/A</span>
-                            <p class="timestamp" id="timestampMargin"></p>
+                    <div class="empty-state" id="emptyStateMessage">
+                        <p>Run a calculation to see results.</p>
+                    </div>
+                    <div class="results-grid" style="display: none;">
+                        <div class="results-group" id="marginResults">
+                            <div class="result-card" id="cardMarginRate">
+                                <p>Current Rate (<span id="ratePairDisplay">EUR/USD</span>):</p>
+                                <span id="currentRateDisplay">N/A</span>
+                                <p class="timestamp" id="timestampMargin"></p>
+                            </div>
+                            <div class="result-card" id="cardMarginRequired">
+                                <p>Required Margin:</p>
+                                <span id="requiredMarginDisplay">N/A</span> <span id="marginCurrencySymbol"></span>
+                                <button class="copy-btn" data-target="requiredMarginDisplay"><i class="fas fa-copy"></i></button>
+                            </div>
+                            <div class="result-card" id="cardMarginPip">
+                                <p>Pip/Point Value:</p>
+                                <span id="pipValueDisplay">N/A</span> <span id="pipValueCurrencySymbol"></span>
+                                <button class="copy-btn" data-target="pipValueDisplay"><i class="fas fa-copy"></i></button>
+                            </div>
                         </div>
-                        <div class="result-card" id="cardMarginRequired">
-                            <p>Required Margin:</p>
-                            <span id="requiredMarginDisplay">N/A</span> <span id="marginCurrencySymbol"></span>
-                        </div>
-                        <div class="result-card" id="cardMarginPip">
-                            <p>Pip/Point Value:</p>
-                            <span id="pipValueDisplay">N/A</span> <span id="pipValueCurrencySymbol"></span>
-                        </div>
-                        <div class="result-card" id="cardRRRisk">
-                            <p>Risk Amount:</p>
-                            <span id="riskAmountDisplay">N/A</span>
-                        </div>
-                        <div class="result-card" id="cardRRStopLoss">
-                            <p>Stop Loss (Pips/Points):</p>
-                            <span id="stopLossPipsDisplay">N/A</span>
-                        </div>
-                        <div class="result-card" id="cardRRUnits">
-                            <p>Recommended Units:</p>
-                            <span id="recommendedUnitsDisplay">N/A</span>
-                        </div>
-                        <div class="result-card" id="cardRRRatio">
-                            <p>Risk/Reward Ratio:</p>
-                            <span id="rrRatioDisplay">N/A</span>
+                        <div class="results-group" id="rrResults">
+                            <div class="result-card" id="cardRRRisk">
+                                <p>Risk Amount:</p>
+                                <span id="riskAmountDisplay">N/A</span>
+                                <button class="copy-btn" data-target="riskAmountDisplay"><i class="fas fa-copy"></i></button>
+                            </div>
+                            <div class="result-card" id="cardRRStopLoss">
+                                <p>Stop Loss (Pips/Points):</p>
+                                <span id="stopLossPipsDisplay">N/A</span>
+                                <button class="copy-btn" data-target="stopLossPipsDisplay"><i class="fas fa-copy"></i></button>
+                            </div>
+                            <div class="result-card" id="cardRRUnits">
+                                <p>Recommended Units:</p>
+                                <span id="recommendedUnitsDisplay">N/A</span>
+                                <button class="copy-btn" data-target="recommendedUnitsDisplay"><i class="fas fa-copy"></i></button>
+                            </div>
+                            <div class="result-card" id="cardRRRatio">
+                                <p>Risk/Reward Ratio:</p>
+                                <span id="rrRatioDisplay">N/A</span>
+                                <button class="copy-btn" data-target="rrRatioDisplay"><i class="fas fa-copy"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
