@@ -28,6 +28,7 @@ let pipValueCurrencySymbol;
 
 let capitalInput;
 let riskPercentInput;
+let riskPercentValueSpan;
 let instrumentRRSelect;
 let entryPriceInput;
 let stopLossPriceInput;
@@ -36,6 +37,11 @@ let riskAmountDisplay;
 let stopLossPipsDisplay;
 let recommendedUnitsDisplay;
 let rrRatioDisplay;
+
+let emptyStateMessage;
+let resultGrid;
+let marginResultsGroup;
+let rrResultsGroup;
 
 let allResultCards;
 let marginCards;
@@ -64,6 +70,7 @@ function initRiskManagementHub() {
     
     capitalInput = document.getElementById('capital');
     riskPercentInput = document.getElementById('riskPercent');
+    riskPercentValueSpan = document.getElementById('riskPercentValue');
     instrumentRRSelect = document.getElementById('instrumentRR');
     entryPriceInput = document.getElementById('entryPrice');
     stopLossPriceInput = document.getElementById('stopLossPrice');
@@ -73,6 +80,11 @@ function initRiskManagementHub() {
     recommendedUnitsDisplay = document.getElementById('recommendedUnitsDisplay');
     rrRatioDisplay = document.getElementById('rrRatioDisplay');
     
+    emptyStateMessage = document.getElementById('emptyStateMessage');
+    resultGrid = document.querySelector('.results-grid');
+    marginResultsGroup = document.getElementById('marginResults');
+    rrResultsGroup = document.getElementById('rrResults');
+
     allResultCards = document.querySelectorAll('.result-card');
     marginCards = document.querySelectorAll('#cardMarginRate, #cardMarginRequired, #cardMarginPip');
     rrCards = document.querySelectorAll('#cardRRRisk, #cardRRStopLoss, #cardRRUnits, #cardRRRatio');
@@ -109,7 +121,7 @@ function addModuleEventListeners() {
     
     if (riskPercentInput) {
         riskPercentInput.oninput = function() {
-            document.getElementById('riskPercentValue').textContent = this.value;
+            riskPercentValueSpan.textContent = this.value;
         };
     }
     
@@ -125,6 +137,8 @@ function addModuleEventListeners() {
 function handleTabSwitch(targetId) {
     const switchButtons = document.querySelectorAll('.menu-button[data-target]');
     const calculatorTabs = document.querySelectorAll('.calculator-tab');
+    const emptyStateMessage = document.getElementById('emptyStateMessage');
+    const resultGrid = document.querySelector('.results-grid');
 
     switchButtons.forEach(btn => btn.classList.remove('active'));
     calculatorTabs.forEach(tab => tab.classList.remove('active'));
@@ -138,11 +152,12 @@ function handleTabSwitch(targetId) {
     }
 
     resetResults();
-    const calculatorType = (targetId === 'marginCalculator') ? 'margin' : 'rr';
-    showRelevantResults(calculatorType);
+    emptyStateMessage.classList.remove('hidden');
+    resultGrid.style.display = 'none';
 }
 
 function showMessage(message, type = 'info') {
+    if (!messageText || !messageBox) return;
     messageText.textContent = message;
     messageBox.classList.add('show');
     messageBox.style.backgroundColor = (type === 'error') ? '#d32f2f' : '#333';
@@ -150,18 +165,21 @@ function showMessage(message, type = 'info') {
 }
 
 function hideMessage() {
-    messageBox.classList.remove('show');
+    if (messageBox) {
+        messageBox.classList.remove('show');
+    }
 }
 
 function showLoading(spinner) {
-    if (spinner) spinner.classList.add('show');
+    if (spinner) spinner.style.display = 'inline-block';
 }
 
 function hideLoading(spinner) {
-    if (spinner) spinner.classList.remove('show');
+    if (spinner) spinner.style.display = 'none';
 }
 
 function resetResults() {
+    if (!allResultCards) return;
     allResultCards.forEach(card => card.classList.remove('success-border'));
     if (ratePairDisplay) ratePairDisplay.textContent = 'N/A';
     if (currentRateDisplay) currentRateDisplay.textContent = 'N/A';
@@ -174,15 +192,6 @@ function resetResults() {
     if (stopLossPipsDisplay) stopLossPipsDisplay.textContent = 'N/A';
     if (recommendedUnitsDisplay) recommendedUnitsDisplay.textContent = 'N/A';
     if (rrRatioDisplay) rrRatioDisplay.textContent = 'N/A';
-}
-
-function showRelevantResults(calculatorType) {
-    allResultCards.forEach(card => card.style.display = 'none');
-    if (calculatorType === 'margin') {
-        marginCards.forEach(card => card.style.display = 'block');
-    } else if (calculatorType === 'rr') {
-        rrCards.forEach(card => card.style.display = 'block');
-    }
 }
 
 function validateInputs(inputs) {
@@ -251,7 +260,7 @@ function getPipPointDetails(symbol) {
         case 'metal':
             isPipCalculable = true;
             valueLabel = 'Point Value';
-            pipSize = 1;
+            pipSize = 0.01; // XAUUSD moves in cents
             break;
         default:
             isPipCalculable = false;
@@ -299,11 +308,14 @@ async function calculateMargin() {
     if (activeTab) {
         activeTab.classList.add('active');
     }
-    showRelevantResults('margin');
     
     showLoading(loadingSpinnerMargin);
     
-    marginCards.forEach(card => card.classList.remove('success-border'));
+    allResultCards.forEach(card => card.classList.remove('success-border'));
+    marginResultsGroup.style.display = 'contents';
+    rrResultsGroup.style.display = 'none';
+    resultGrid.style.display = 'grid';
+    emptyStateMessage.classList.add('hidden');
 
     const selectedSymbol = currencyPairSelect.value;
     const assetType = getAssetType(selectedSymbol);
@@ -333,11 +345,12 @@ async function calculateMargin() {
         return;
     }
     const currentPrice = baseRates[quoteCurrencyOfPair];
+    
     ratePairDisplay.textContent = `${baseCurrencyOfPair}/${quoteCurrencyOfPair}`;
     currentRateDisplay.textContent = currentPrice.toFixed(5);
     timestampMargin.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
     
-    let marginRequiredInBaseCurrency = (currentPrice * tradeSizeUnits) / leverage;
+    let marginRequiredInBaseCurrency = (tradeSizeUnits / leverage);
 
     let finalMarginAmount = marginRequiredInBaseCurrency;
     
@@ -396,11 +409,15 @@ async function calculateRiskRewardAndPosition() {
     if (activeTab) {
         activeTab.classList.add('active');
     }
-    showRelevantResults('rr');
     
     showLoading(loadingSpinnerRR);
     
-    rrCards.forEach(card => card.classList.remove('success-border'));
+    allResultCards.forEach(card => card.classList.remove('success-border'));
+    rrResultsGroup.style.display = 'contents';
+    marginResultsGroup.style.display = 'none';
+    resultGrid.style.display = 'grid';
+    emptyStateMessage.classList.add('hidden');
+    
     if (riskAmountDisplay) riskAmountDisplay.textContent = 'N/A';
     if (stopLossPipsDisplay) stopLossPipsDisplay.textContent = 'N/A';
     if (recommendedUnitsDisplay) recommendedUnitsDisplay.textContent = 'N/A';
@@ -419,6 +436,7 @@ async function calculateRiskRewardAndPosition() {
     const stopLossPrice = parseFloat(stopLossPriceInput.value);
     const takeProfitPrice = parseFloat(takeProfitPriceInput.value);
     const selectedSymbol = instrumentRRSelect.value;
+    const accountCurrency = accountCurrencySelect.value;
     
     const assetType = getAssetType(selectedSymbol);
     if (assetType === 'unknown') {
@@ -455,22 +473,27 @@ async function calculateRiskRewardAndPosition() {
     if (priceDifference > 0) {
         const { quote: quoteCurrencyOfPair } = parseSymbol(selectedSymbol);
         
-        let pipValueInQuote = pipSize * 1;
+        let pipValueInQuote = pipSize * 100000;
+        if (assetType === 'metal') {
+            // Gold is quoted in USD per ounce, so the pip value is in USD
+            pipValueInQuote = 1; 
+        }
+
         let pipValueInAccount = pipValueInQuote;
 
-        if (quoteCurrencyOfPair !== 'USD') {
+        if (quoteCurrencyOfPair !== accountCurrency) {
             const conversionRates = await fetchConversionRates(quoteCurrencyOfPair);
-            if (conversionRates && conversionRates['USD']) {
-                pipValueInAccount = pipValueInQuote * conversionRates['USD'];
+            if (conversionRates && conversionRates[accountCurrency]) {
+                pipValueInAccount = pipValueInQuote * conversionRates[accountCurrency];
             } else {
-                showMessage(`Could not fetch conversion rate from ${quoteCurrencyOfPair} to USD.`, 'error');
+                showMessage(`Could not fetch conversion rate from ${quoteCurrencyOfPair} to ${accountCurrency}.`, 'error');
                 hideLoading(loadingSpinnerRR);
                 return;
             }
         }
         
-        if (pipValueInAccount > 0) {
-            recommendedUnits = (riskAmount / pipValueInAccount) / stopLossPips;
+        if (pipValueInAccount > 0 && stopLossPips > 0) {
+            recommendedUnits = (riskAmount / (stopLossPips * pipValueInAccount)) * 100000;
         }
     }
 
@@ -478,23 +501,30 @@ async function calculateRiskRewardAndPosition() {
     const riskDistance = Math.abs(entryPrice - stopLossPrice);
     const rewardDistance = Math.abs(entryPrice - takeProfitPrice);
     if (riskDistance !== 0 && !isNaN(rewardDistance) && rewardDistance >= 0) {
-        rrRatio = (rewardDistance / riskDistance).toFixed(2);
+        const calculatedRatio = (rewardDistance / riskDistance);
+        if (calculatedRatio > 0) {
+             rrRatio = `1:${calculatedRatio.toFixed(2)}`;
+        }
     }
     
-    riskAmountDisplay.textContent = `$${riskAmount.toFixed(2)}`;
+    riskAmountDisplay.textContent = `${riskAmount.toFixed(2)} ${accountCurrency}`;
     stopLossPipsDisplay.textContent = `${stopLossPips.toFixed(1)} ${assetType === 'forex' ? 'pips' : 'points'}`;
     recommendedUnitsDisplay.textContent = recommendedUnits.toFixed(0);
-    rrRatioDisplay.textContent = `1:${rrRatio}`;
+    rrRatioDisplay.textContent = rrRatio;
 
     document.getElementById('cardRRRisk').classList.add('success-border');
     document.getElementById('cardRRStopLoss').classList.add('success-border');
     document.getElementById('cardRRUnits').classList.add('success-border');
-    document.getElementById('cardRRRatio').classList.add('success-border');
+    if (takeProfitPriceInput.value) {
+        document.getElementById('cardRRRatio').classList.add('success-border');
+    }
 
     hideLoading(loadingSpinnerRR);
 }
 
 async function fetchAndDisplayInitialRate() {
+    if (!currencyPairSelect || !ratePairDisplay || !currentRateDisplay) return;
+    
     const selectedSymbol = currencyPairSelect.value;
     const { base: baseCurrency, quote: quoteCurrency } = parseSymbol(selectedSymbol);
 
@@ -509,3 +539,7 @@ async function fetchAndDisplayInitialRate() {
         currentRateDisplay.textContent = 'N/A';
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    initRiskManagementHub();
+});
