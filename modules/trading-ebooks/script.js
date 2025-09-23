@@ -29,7 +29,7 @@ function initTradingEbooks() {
 
     // This function is called by the YouTube API once it's ready.
     window.onYouTubeIframeAPIReady = function() {
-        console.log('YouTube API Ready');
+        console.log('YouTube API Ready.');
     }
 
     /**
@@ -40,14 +40,25 @@ function initTradingEbooks() {
         if (player) {
             player.destroy(); // Destroy any existing player
         }
+
+        // Check if the user is on a mobile device based on screen width
+        const isMobile = window.innerWidth <= 768;
+
+        const playerVars = {
+            'playsinline': 1,
+            'autoplay': 1,
+            'rel': 0,
+            'controls': 1
+        };
+
+        // Conditionally add the mute parameter for mobile devices only
+        if (isMobile) {
+            playerVars.mute = 1;
+        }
+
         player = new YT.Player('video-placeholder', {
             videoId: videoId,
-            playerVars: {
-                'playsinline': 1,
-                'autoplay': 1,
-                'rel': 0,
-                'controls': 1
-            },
+            playerVars: playerVars,
             events: {
                 'onReady': function(event) {
                     event.target.playVideo();
