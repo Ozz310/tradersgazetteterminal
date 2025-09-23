@@ -94,7 +94,7 @@
     height: 100%;
     background-color: rgba(0,0,0,0.8);
     overflow: auto;
-    backdrop-filter: blur(5px); /* Adds a subtle blur effect */
+    backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
 
@@ -197,6 +197,12 @@
 
 /* --- Mobile Specific Styles --- */
 @media (max-width: 768px) {
+    /* Adjust banner height for mobile */
+    .trading-ebooks .ebooks-banner {
+        height: 200px; /* Reduced height for mobile view */
+        background-position: center center; /* Centralize the image for better viewing */
+    }
+
     .trading-ebooks .ebooks-content-container {
         flex-direction: column;
         align-items: center;
