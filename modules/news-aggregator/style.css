@@ -3,21 +3,20 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Aligns content to the top */
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
-    min-height: calc(100vh - 40px); /* Ensures it takes up at least the viewport height minus header/footer */
+    min-height: calc(100vh - 40px);
 }
 
 .news-aggregator .news-header-banner {
     width: 100%;
-    height: 280px; /* Fixed height for the banner container on desktop */
+    height: 280px;
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* NEW: Background properties for responsive image handling */
-    background-size: 110%; /* ADJUSTMENT: "Zoom out" the image a bit */
-    background-position: center center; /* Centered for the new image focus */
+    background-size: 120%; /* ADJUSTMENT: Zoomed out more to prevent blur */
+    background-position: center center;
     background-repeat: no-repeat;
 }
 
@@ -26,7 +25,7 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 700px; /* Fixed height for desktop view */
+    height: 700px;
     box-sizing: border-box;
     width: 100%;
 }
@@ -172,7 +171,7 @@
 
     .news-aggregator .news-header-banner {
         height: 200px;
-        background-size: 110%; /* Apply zoom out to mobile as well */
+        background-size: 120%; /* Apply zoom out to mobile as well */
         background-position: center center;
     }
 }
