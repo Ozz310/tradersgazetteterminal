@@ -167,7 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     scriptPath = `modules/auth/auth.js`;
                     break;
                 case 'dashboard':
-                    htmlPath = `modules/dashboard/dashboard-content.html`;
+                    // FIX: This path has been updated to point to the correct file
+                    htmlPath = `modules/dashboard/index.html`;
                     scriptPath = `modules/dashboard/dashboard.js`;
                     break;
                 case 'trading-journal':
