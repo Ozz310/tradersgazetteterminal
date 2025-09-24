@@ -3,7 +3,8 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* FIX: Align content to the top to remove the gap */
+    justify-content: flex-start;
     align-items: center;
     min-height: calc(100vh - 40px);
     width: 100%;
@@ -11,19 +12,16 @@
 
 .news-aggregator .news-header-banner {
     width: 100%;
-    /* Set a fixed height for the banner container on desktop */
-    height: 250px;
+    /* FIX: A little bigger for desktop view */
+    height: 280px;
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     /* NEW: Background properties for responsive image handling */
     background-size: cover;
-    background-position: center 60%; /* This centers the image and moves the focus point up 10% */
+    /* FIX: Shift image horizontally to the left to show the main design and text */
+    background-position: 70% center;
     background-repeat: no-repeat;
-}
-
-.news-aggregator .news-header-banner img {
-    /* REMOVED: This is no longer needed as we are using a div with a background image */
 }
 
 .news-aggregator .news-content-flex {
@@ -176,7 +174,7 @@
     }
 
     .news-aggregator .news-header-banner {
-        height: 200px; /* NEW: Set a consistent height on mobile */
-        background-position: center 60%; /* Same positioning as desktop */
+        height: 200px;
+        background-position: center 60%;
     }
 }
