@@ -10,6 +10,7 @@
 
 .news-aggregator .news-header-banner {
     width: 100%;
+    height: auto;
     margin-bottom: 20px;
 }
 
@@ -18,13 +19,15 @@
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    object-fit: cover; /* NEW: Ensures the image covers the area */
+    object-position: center; /* NEW: Centers the image content */
 }
 
 .news-aggregator .news-content-flex {
     display: flex;
     gap: 20px;
     align-items: stretch;
-    flex-wrap: wrap; /* NEW: Allows items to wrap onto the next line */
+    flex-wrap: wrap; 
     height: 700px;
     box-sizing: border-box;
     width: 100%;
@@ -38,10 +41,9 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     overflow: hidden;
-    background-color: var(--accent-color); /* Added for better mobile UX */
+    background-color: var(--accent-color);
 }
 
-/* Updated selector to use the div ID */
 #youtube-player {
     position: absolute;
     top: 0;
@@ -63,37 +65,34 @@
     box-sizing: border-box;
 }
 
-/* ... (rest of the CSS remains unchanged) ... */
+/* ... (rest of the desktop CSS remains unchanged) ... */
 
 /* Mobile responsiveness: stack elements vertically */
 @media (max-width: 768px) {
     .news-aggregator .news-content-flex {
         flex-direction: column;
-        height: auto; /* Allow height to adjust dynamically */
+        height: auto;
     }
 
     .news-aggregator .youtube-live-container,
     .news-aggregator .news-aggregator-container {
         flex-basis: auto;
-        height: auto;
-        min-width: unset; /* Remove min-width to prevent overflow */
+        min-width: unset;
         width: 100%;
+        height: auto; /* Ensure containers can grow */
     }
-
+    
     .news-aggregator .youtube-live-container {
         padding-top: 56.25%; /* 16:9 aspect ratio for the video container */
         position: relative;
-    }
-    
-    #youtube-player {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        height: 0;
     }
     
     .news-aggregator .news-aggregator-container {
         margin-top: 20px;
+    }
+
+    .news-aggregator .news-header-banner img {
+        height: 250px; /* NEW: Set a fixed height for mobile banner to crop the image */
     }
 }
