@@ -1,113 +1,90 @@
 // /modules/dashboard/dashboard.js
-// This script contains the logic for the dashboard module and live data widgets.
 
-window.tg_dashboard = {
-    /**
-     * Initializes the dashboard module and all its widgets.
-     */
-    initDashboard: function() {
-        const dashboardContainer = document.querySelector('.dashboard-container');
-        if (!dashboardContainer) {
-            console.error('Dashboard container not found. Dashboard module cannot be initialized.');
-            return;
-        }
+// Declare a global object to avoid conflicts
+window.tg_dashboard = window.tg_dashboard || {};
 
-        console.log('Dashboard module initialized.');
-        
-        // Web app URL from your deployed Apps Script
-        const CRYPTO_API_URL = "https://script.google.com/macros/s/AKfycby30g1dfVEp_LtnM2GO7FxzFoMCCIXYPV2MaOnUeRgmIOVWHYbpZMl7jI_dhnXzOFxw/exec";
+(function() {
 
-        /**
-         * Fetches crypto data and renders the price marquee.
-         */
-        const fetchAndRenderCryptoMarquee = async () => {
-            const container = document.getElementById('crypto-ticker-container');
-            if (!container) return;
+    // Main initialization function for the dashboard module
+    function initDashboard() {
+        // Corrected selector to match the unified HTML structure
+        const dashboardContainer = document.querySelector('.dashboard-page');
+        
+        // This is a crucial check to ensure the module is loaded correctly
+        if (!dashboardContainer) {
+            console.error('Dashboard container not found. Dashboard module cannot be initialized.');
+            return;
+        }
+        
+        console.log('Dashboard module initialized successfully.');
+        
+        // Call helper functions to set up various dashboard widgets
+        setupLiveClock();
+        setupCryptoTicker();
+        // Add more functions here as new widgets are created
+    }
 
-            // Show loading state while fetching
-            container.innerHTML = `<div class="loading-state"><p>Loading crypto market data...</p></div>`;
+    // Function to set up the live clock widget
+    function setupLiveClock() {
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+        const digitalTime = document.getElementById('digital-time');
+        const digitalDate = document.getElementById('digital-date');
 
-            try {
-                const response = await fetch(CRYPTO_API_URL);
-                const data = await response.json();
+        if (!hourHand || !minuteHand || !secondHand || !digitalTime || !digitalDate) {
+            console.error('Clock elements not found. Live clock cannot be set up.');
+            return;
+        }
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to fetch data.');
-                }
-                
-                if (data.length === 0) {
-                    container.innerHTML = `<div class="loading-state"><p>No crypto data available.</p></div>`;
-                    return;
-                }
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
 
-                // Create a temporary container to hold the full marquee content
-                const tempDiv = document.createElement('div');
-                
-                // Build the marquee content dynamically
-                data.forEach(coin => {
-                    const priceChange = parseFloat(coin.price_change_percentage_24h);
-                    const isPositive = priceChange >= 0;
-                    const priceChangeClass = isPositive ? 'price-change-up' : 'price-change-down';
-                    
-                    const itemHTML = `
-                        <div class="crypto-item">
-                            <img src="${coin.image}" class="crypto-icon" alt="${coin.name} logo">
-                            <span class="crypto-name">${coin.name}</span>
-                            <span class="crypto-symbol">${coin.symbol}</span>
-                            <span class="crypto-price">$${coin.current_price}</span>
-                            <span class="${priceChangeClass}">${priceChange.toFixed(2)}%</span>
-                        </div>
-                    `;
-                    tempDiv.innerHTML += itemHTML;
-                });
+            // Calculate degrees for hands
+            const secondDegrees = seconds * 6;
+            const minuteDegrees = minutes * 6 + (seconds / 60) * 6;
+            const hourDegrees = (hours % 12) * 30 + (minutes / 60) * 30;
 
-                // Clear and append the new content
-                container.innerHTML = tempDiv.innerHTML;
+            // Apply rotation to hands
+            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
-                // Restart the animation by forcing a reflow
-                container.style.animation = 'none';
-                container.offsetHeight; 
-                container.style.animation = null; 
+            // Update digital display
+            const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            digitalTime.textContent = formattedTime;
+            digitalDate.textContent = formattedDate;
+        }
 
-                console.log('Crypto marquee data rendered successfully.');
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call to prevent delay
+    }
 
-            } catch (error) {
-                console.error('Error fetching crypto data:', error);
-                container.innerHTML = `<div class="loading-state"><p>Error loading data. Please try again later.</p></div>`;
-            }
-        };
+    // Function to fetch and set up the crypto ticker
+    function setupCryptoTicker() {
+        const tickerContainer = document.getElementById('crypto-ticker-container');
+        if (!tickerContainer) {
+            console.error('Crypto ticker container not found. Crypto ticker cannot be set up.');
+            return;
+        }
 
-        /**
-         * Updates the analog clock's hands based on the current time.
-         */
-        const updateAnalogClock = () => {
-            const now = new Date();
-            const seconds = now.getSeconds();
-            const minutes = now.getMinutes();
-            const hours = now.getHours();
-            
-            // Calculate degrees with offset (+90) for CSS transform to start from the top
-            const secondDegrees = (seconds / 60) * 360;
-            const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6);
-            const hourDegrees = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30);
-            
-            const secondHand = document.querySelector('.second-hand');
-            const minuteHand = document.querySelector('.minute-hand');
-            const hourHand = document.querySelector('.hour-hand');
+        // Placeholder for a future API call. For now, we will add static content.
+        const staticContent = `
+            <span class="crypto-item">BTC/USD <span class="price">65,432.10</span> <span class="change up">+2.3%</span></span>
+            <span class="crypto-item">ETH/USD <span class="price">3,456.78</span> <span class="change down">-1.5%</span></span>
+            <span class="crypto-item">SOL/USD <span class="price">145.21</span> <span class="change up">+5.1%</span></span>
+            <span class="crypto-item">XRP/USD <span class="price">0.485</span> <span class="change up">+0.8%</span></span>
+            <span class="crypto-item">ADA/USD <span class="price">0.389</span> <span class="change down">-0.2%</span></span>
+        `;
 
-            if (secondHand) secondHand.style.transform = `rotate(${secondDegrees}deg)`;
-            if (minuteHand) minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
-            if (hourHand) hourHand.style.transform = `rotate(${hourDegrees}deg)`;
-        };
+        tickerContainer.innerHTML = staticContent;
+    }
 
-        // Run once on initialization
-        fetchAndRenderCryptoMarquee();
-        updateAnalogClock();
-
-        // Update the marquee data every 5 minutes (300000 ms) to match the backend trigger
-        setInterval(fetchAndRenderCryptoMarquee, 300000);
-
-        // Update the analog clock every second
-        setInterval(updateAnalogClock, 1000);
-    }
-};
+    // Expose the init function to the global scope
+    window.tg_dashboard.initDashboard = initDashboard;
+})();
