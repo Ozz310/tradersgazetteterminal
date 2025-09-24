@@ -11,13 +11,12 @@
 
 .news-aggregator .news-header-banner {
     width: 100%;
-    /* ADJUSTMENT: Increased height for desktop to better fit the 'contain' image */
     height: 300px; 
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* ADJUSTMENT: Use 'contain' to ensure the entire image is always visible */
-    background-size: contain; 
+    /* NEW: Use 'cover' to ensure the image fills the full placeholder area */
+    background-size: cover; 
     background-position: center center;
     background-repeat: no-repeat;
 }
@@ -172,8 +171,8 @@
     }
 
     .news-aggregator .news-header-banner {
-        height: 180px; /* Adjusted mobile height to better fit 'contain' */
-        background-size: contain;
+        height: 180px;
+        background-size: cover; /* Use cover on mobile as well */
         background-position: center center;
     }
 }
