@@ -10,7 +10,7 @@ function loadScript(url, callback) {
 function initNewsAggregator() {
     // API Key and URL for the Google Apps Script
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
-    
+
     let allNewsArticles = [];
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
 
@@ -30,7 +30,7 @@ function initNewsAggregator() {
     async function fetchNews() {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
-        
+
         // Show skeleton loader
         newsList.innerHTML = `
             <div class="skeleton-wrapper">
@@ -86,7 +86,7 @@ function initNewsAggregator() {
             let url = article.URL || '#';
             const publishedTime = article['Published Time'] || 'N/A';
             const tickers = article.Tickers || '';
-            
+
             if (url !== '') {
                 url = url.replace(/^"|"$/g, '').trim();
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -94,7 +94,7 @@ function initNewsAggregator() {
                 }
                 try { new URL(url); } catch (e) { url = '#'; }
             } else { url = '#'; }
-            
+
             const isBreaking = index === 0;
             const breakingRibbonHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More</a>` : '';
@@ -104,7 +104,7 @@ function initNewsAggregator() {
             articleDiv.classList.add('news-article');
             const displaySummary = summary ? summary.substring(0, 300) : '';
             const summaryHtml = displaySummary ? `<p>${displaySummary}${summary.length > 300 ? '...' : ''}</p>` : '<p>No summary available.</p>';
-            
+
             articleDiv.innerHTML = `
                 ${breakingRibbonHtml}
                 <h2><a href="${url}" target="_blank" rel="noopener noreferrer">${headline}</a></h2>
@@ -116,29 +116,8 @@ function initNewsAggregator() {
             newsList.appendChild(articleDiv);
         });
     }
-    
+
     // Initial fetch and auto-refresh
     fetchNews();
     setInterval(fetchNews, AUTO_REFRESH_INTERVAL_MS);
 }
-
-// NEW: YouTube Player API integration
-let youtubePlayer;
-function onYouTubeIframeAPIReady() {
-  youtubePlayer = new YT.Player('youtube-player', {
-    height: '100%',
-    width: '100%',
-    videoId: 'KQp-e_XQnDE',
-    playerVars: {
-      'autoplay': 0,
-      'controls': 1,
-      'modestbranding': 1,
-      'rel': 0
-    }
-  });
-}
-
-// Load the IFrame Player API code asynchronously.
-loadScript("https://www.youtube.com/iframe_api");
-
-initNewsAggregator();
