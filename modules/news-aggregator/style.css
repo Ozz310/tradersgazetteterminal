@@ -6,22 +6,26 @@
     /* FIX: Align content to the top to remove the gap */
     justify-content: flex-start;
     align-items: center;
-    min-height: calc(100vh - 40px);
+    /* Removed min-height to allow content to flow naturally from the top */
     width: 100%;
+    min-height: calc(100vh - 40px);
 }
 
 .news-aggregator .news-header-banner {
     width: 100%;
-    /* FIX: A little bigger for desktop view */
+    /* Set a fixed height for the banner container on desktop */
     height: 280px;
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     /* NEW: Background properties for responsive image handling */
     background-size: cover;
-    /* FIX: Shift image horizontally to the left to show the main design and text */
-    background-position: 70% center;
+    background-position: center center; /* NEW: Centered for the new image focus */
     background-repeat: no-repeat;
+}
+
+.news-aggregator .news-header-banner img {
+    /* REMOVED: This is no longer needed as we are using a div with a background image */
 }
 
 .news-aggregator .news-content-flex {
@@ -175,6 +179,6 @@
 
     .news-aggregator .news-header-banner {
         height: 200px;
-        background-position: center 60%;
+        background-position: center center;
     }
 }
