@@ -40,8 +40,8 @@ window.tg_dashboard = {
                     return;
                 }
 
-                // Clear previous content
-                container.innerHTML = '';
+                // Create a temporary container to hold the full marquee content
+                const tempDiv = document.createElement('div');
                 
                 // Build the marquee content dynamically
                 data.forEach(coin => {
@@ -51,15 +51,17 @@ window.tg_dashboard = {
                     
                     const itemHTML = `
                         <div class="crypto-item">
-                            <img src="${coin.image}" class="crypto-icon" alt="${coin.name} logo">
                             <span class="crypto-name">${coin.name}</span>
                             <span class="crypto-symbol">${coin.symbol}</span>
                             <span class="crypto-price">$${coin.current_price}</span>
                             <span class="${priceChangeClass}">${priceChange.toFixed(2)}%</span>
                         </div>
                     `;
-                    container.innerHTML += itemHTML;
+                    tempDiv.innerHTML += itemHTML;
                 });
+
+                // Clear and append the new content
+                container.innerHTML = tempDiv.innerHTML;
 
                 // Restart the animation by forcing a reflow
                 container.style.animation = 'none';
@@ -75,33 +77,36 @@ window.tg_dashboard = {
         };
 
         /**
-         * Updates the digital clock with the current time and date.
+         * Updates the analog clock's hands based on the current time.
          */
-        const updateDigitalClock = () => {
+        const updateAnalogClock = () => {
             const now = new Date();
-            const timeElement = document.getElementById('digital-time');
-            const dateElement = document.getElementById('digital-date');
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+            
+            // Calculate degrees with offset (+90) for CSS transform to start from the top
+            const secondDegrees = (seconds / 60) * 360;
+            const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+            const hourDegrees = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30);
+            
+            const secondHand = document.querySelector('.second-hand');
+            const minuteHand = document.querySelector('.minute-hand');
+            const hourHand = document.querySelector('.hour-hand');
 
-            if (!timeElement || !dateElement) {
-                console.error('Digital clock elements not found.');
-                return;
-            }
-
-            const timeString = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-            const dateString = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-            timeElement.textContent = timeString;
-            dateElement.textContent = dateString;
+            if (secondHand) secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+            if (minuteHand) minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+            if (hourHand) hourHand.style.transform = `rotate(${hourDegrees}deg)`;
         };
 
         // Run once on initialization
         fetchAndRenderCryptoMarquee();
-        updateDigitalClock();
+        updateAnalogClock();
 
         // Update the marquee data every 5 minutes (300000 ms) to match the backend trigger
         setInterval(fetchAndRenderCryptoMarquee, 300000);
 
-        // Update the digital clock every second
-        setInterval(updateDigitalClock, 1000);
+        // Update the analog clock every second
+        setInterval(updateAnalogClock, 1000);
     }
 };
