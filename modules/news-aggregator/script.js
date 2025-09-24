@@ -8,6 +8,7 @@ function loadScript(url, callback) {
 
 // --- Main initialization function to be called by app.js ---
 function initNewsAggregator() {
+    // API Key and URL for the Google Apps Script
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
     
     let allNewsArticles = [];
@@ -127,9 +128,9 @@ function onYouTubeIframeAPIReady() {
   youtubePlayer = new YT.Player('youtube-player', {
     height: '100%',
     width: '100%',
-    videoId: 'KQp-e_XQnDE', // This is the ID from the current URL
+    videoId: 'KQp-e_XQnDE',
     playerVars: {
-      'autoplay': 1,
+      'autoplay': 0,
       'controls': 1,
       'modestbranding': 1,
       'rel': 0
@@ -140,7 +141,4 @@ function onYouTubeIframeAPIReady() {
 // Load the IFrame Player API code asynchronously.
 loadScript("https://www.youtube.com/iframe_api");
 
-// We still need a way to trigger the initNewsAggregator, so we call it here.
-// This assumes the main app.js will handle the module loading.
-// A more robust solution would be to integrate this with the app's routing.
 initNewsAggregator();
