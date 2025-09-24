@@ -6,20 +6,25 @@
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 40px);
+    width: 100%; /* Ensure aggregator takes full width available */
 }
 
 .news-aggregator .news-header-banner {
     width: 100%;
+    /* Max height for desktop, allowing content to fit below */
+    max-height: 250px; /* Adjusted for better content fit, can be tuned */
     margin-bottom: 20px;
+    overflow: hidden; /* Crucial: Hides parts of the image that exceed the container */
+    border-radius: 8px; /* Maintain consistent design */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4); /* Maintain consistent design */
 }
 
 .news-aggregator .news-header-banner img {
     width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    object-fit: cover;
-    object-position: center;
+    height: 100%; /* Make image fill the parent banner div */
+    object-fit: cover; /* Ensures the image covers the entire area, cropping if necessary */
+    object-position: center; /* Centers the image content within the container */
+    border-radius: 8px; /* Inherit border-radius from parent, or explicitly set */
 }
 
 .news-aggregator .news-content-flex {
@@ -27,7 +32,7 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 700px;
+    height: 700px; /* Fixed height for desktop view */
     box-sizing: border-box;
     width: 100%;
 }
@@ -40,6 +45,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     overflow: hidden;
+    background-color: var(--accent-color); /* Added for better mobile UX if video hasn't loaded */
 }
 
 .news-aggregator .youtube-live-container iframe {
@@ -115,7 +121,6 @@
     /* ... ribbon styling ... */
 }
 
-/* NEW: Branding section CSS */
 .news-aggregator .news-branding-footer {
     display: flex;
     flex-direction: column;
@@ -150,7 +155,7 @@
     .news-aggregator .news-content-flex {
         flex-direction: column;
         height: auto;
-        flex-wrap: wrap; /* NEW: Enable wrapping for proper stacking */
+        flex-wrap: wrap;
     }
 
     .news-aggregator .youtube-live-container,
@@ -171,7 +176,8 @@
         margin-top: 20px;
     }
 
-    .news-aggregator .news-header-banner img {
-        height: 250px;
+    .news-aggregator .news-header-banner {
+        /* On mobile, allow the height to be more flexible, but ensure the image still covers */
+        max-height: 200px; /* Slightly smaller height on mobile to focus on the design */
     }
 }
