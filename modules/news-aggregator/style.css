@@ -19,8 +19,8 @@
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    object-fit: cover; /* NEW: Ensures the image covers the area */
-    object-position: center; /* NEW: Centers the image content */
+    object-fit: cover;
+    object-position: center;
 }
 
 .news-aggregator .news-content-flex {
@@ -65,7 +65,88 @@
     box-sizing: border-box;
 }
 
-/* ... (rest of the desktop CSS remains unchanged) ... */
+.news-aggregator .news-title { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    color: var(--gold-color); 
+    text-align: center; 
+    margin-bottom: 20px; 
+    padding-bottom: 10px; 
+    border-bottom: 2px solid var(--gold-color); 
+} 
+
+.news-aggregator .news-list { 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    scrollbar-width: none; 
+} 
+
+.news-aggregator .news-list::-webkit-scrollbar { 
+    display: none; 
+} 
+
+.news-aggregator .news-article { 
+    background-color: var(--border-color); 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease; 
+} 
+
+.news-aggregator .news-article:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5); 
+} 
+
+.news-aggregator .news-article h2 { 
+    margin: 0 0 5px 0; 
+    font-size: 1.2rem; 
+} 
+
+.news-aggregator .news-article a { 
+    color: var(--gold-color); 
+    text-decoration: none; 
+} 
+
+.news-aggregator .news-article p { 
+    font-size: 0.9rem; 
+    color: var(--text-color); 
+} 
+
+.news-aggregator .breaking-ribbon { 
+    /* ... ribbon styling ... */ 
+} 
+
+/* NEW: Branding section CSS */ 
+.news-aggregator .news-branding-footer { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
+    padding-top: 15px; 
+    border-top: 1px solid var(--border-color); 
+    margin-top: auto; 
+} 
+
+.news-aggregator .news-branding-footer img { 
+    max-width: 100px; 
+    height: auto; 
+    filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4)); 
+    transition: filter 0.3s ease; 
+} 
+
+.news-aggregator .news-branding-footer img:hover { 
+    filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.7)); 
+} 
+
+.news-aggregator .news-branding-footer p { 
+    margin: 0; 
+    color: var(--gold-color); 
+    font-size: 0.8rem; 
+    font-weight: 500; 
+    text-shadow: 0 0 5px rgba(240, 215, 136, 0.4); 
+} 
+
 
 /* Mobile responsiveness: stack elements vertically */
 @media (max-width: 768px) {
@@ -79,11 +160,11 @@
         flex-basis: auto;
         min-width: unset;
         width: 100%;
-        height: auto; /* Ensure containers can grow */
+        height: auto;
     }
     
     .news-aggregator .youtube-live-container {
-        padding-top: 56.25%; /* 16:9 aspect ratio for the video container */
+        padding-top: 56.25%;
         position: relative;
         height: 0;
     }
@@ -93,6 +174,6 @@
     }
 
     .news-aggregator .news-header-banner img {
-        height: 250px; /* NEW: Set a fixed height for mobile banner to crop the image */
+        height: 250px;
     }
 }
