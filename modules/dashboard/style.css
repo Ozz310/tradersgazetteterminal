@@ -262,3 +262,12 @@
         text-align: center;
     }
 }
+
+/*
+ * The Trader's Gazette - Temporary Feature Hiding
+ * Added a rule to hide the crypto marquee widget while the backend is being developed.
+ * To show the widget again, simply remove this rule.
+ */
+.crypto-marquee-widget {
+    display: none;
+}
