@@ -11,10 +11,10 @@ window.tg_dashboard = window.tg_dashboard || {};
 
     // State object to manage timer IDs and prevent memory leaks on module unload
     let dashboardTimers = {};
+    let activeTimeZone = '';
 
     /**
      * The main initialization function for the dashboard module.
-     * It sets up all widgets and starts their update loops.
      */
     function initDashboard() {
         const dashboardContainer = document.querySelector('.dashboard-page');
@@ -27,65 +27,140 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         // Setup individual widgets
         setupLiveClock();
+        setupTimeZoneButtons();
     }
 
     /**
      * Sets up the live analog and digital clock.
-     * Uses setInterval to update the clock every second for smooth animation.
      */
     function setupLiveClock() {
+        // Run the update function initially and every second
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        updateClock(timezone);
+        updateSessionIndicator();
+        dashboardTimers.clock = setInterval(() => {
+            updateClock(activeTimeZone);
+            updateSessionIndicator();
+        }, 1000);
+    }
+
+    /**
+     * Updates the clock hands and digital display based on a specified timezone.
+     * @param {string} timezone The IANA timezone name (e.g., 'America/New_York').
+     */
+    function updateClock(timezone) {
+        if (!timezone) {
+            // Fallback to local timezone if none is specified
+            timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        }
+        activeTimeZone = timezone;
+
         const hourHand = document.getElementById('hourHand');
         const minuteHand = document.getElementById('minuteHand');
         const digitalTime = document.getElementById('digital-time');
         const digitalDate = document.getElementById('digital-date');
 
-        if (!hourHand || !minuteHand || !digitalTime || !digitalDate) {
-            console.error('One or more clock elements not found.');
-            return;
+        const now = new Date();
+        const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        const formattedTime = new Intl.DateTimeFormat('en-US', options).format(now);
+        
+        const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
+        
+        // Calculate rotation degrees for each hand
+        const minuteDegrees = (minutes * 60 + seconds) / 3600 * 360;
+        const hourDegrees = (hours % 12 * 3600 + minutes * 60 + seconds) / 43200 * 360;
+        
+        // Apply the rotation using CSS transform
+        minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+        hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+
+        // Update digital display
+        const timeOptions = { timeZone: timezone, hour: '2-digit', minute: '2-digit' };
+        const dateOptions = { timeZone: timezone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        
+        digitalTime.textContent = new Intl.DateTimeFormat('en-US', timeOptions).format(now);
+        digitalDate.textContent = new Intl.DateTimeFormat('en-US', dateOptions).format(now);
+    }
+
+    /**
+     * Sets up event listeners for the time zone buttons.
+     */
+    function setupTimeZoneButtons() {
+        const buttons = document.querySelectorAll('.tz-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const timezone = button.dataset.timezone;
+                updateClock(timezone);
+            });
+        });
+    }
+
+    /**
+     * Updates the session indicator with a glowing border and text.
+     */
+    function updateSessionIndicator() {
+        const clockCard = document.getElementById('clock-card');
+        const indicator = document.getElementById('session-indicator');
+        const now = new Date();
+        const nowUTC = now.getUTCHours() * 60 + now.getUTCMinutes(); // Total minutes from midnight UTC
+
+        // Trading sessions in minutes from midnight UTC
+        const sessions = {
+            'Sydney': { start: 1320, end: 420, class: 'session-sydney', text: 'Sydney Session Active' },
+            'Tokyo': { start: 0, end: 540, class: 'session-tokyo', text: 'Tokyo Session Active' },
+            'London': { start: 480, end: 1020, class: 'session-london', text: 'London Session Active' },
+            'New York': { start: 780, end: 1320, class: 'session-ny', text: 'New York Session Active' }
+        };
+
+        let sessionFound = false;
+        // Reset classes and text first
+        clockCard.classList.remove('session-sydney', 'session-tokyo', 'session-london', 'session-ny');
+        indicator.textContent = 'Market Closed';
+
+        // Check for active sessions (including overlaps)
+        if ((nowUTC >= sessions.Sydney.start) || (nowUTC < sessions.Sydney.end)) {
+            clockCard.classList.add(sessions.Sydney.class);
+            indicator.textContent = sessions.Sydney.text;
+            sessionFound = true;
         }
-
-        /**
-         * Function to update the clock hands and digital display.
-         * The rotation is calculated using milliseconds for smoother animation.
-         */
-        function updateClock() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-
-            // Calculate rotation degrees for each hand with continuous movement
-            const minuteDegrees = ((minutes * 60 + now.getSeconds()) / 3600) * 360;
-            const hourDegrees = ((hours % 12 * 3600 + minutes * 60 + now.getSeconds()) / 43200) * 360;
-
-            // Apply the rotation using CSS transform
-            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
-            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
-
-            // Update digital display
-            const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            digitalTime.textContent = formattedTime;
-            digitalDate.textContent = formattedDate;
+        if ((nowUTC >= sessions.Tokyo.start) && (nowUTC < sessions.Tokyo.end)) {
+            clockCard.classList.add(sessions.Tokyo.class);
+            indicator.textContent = sessions.Tokyo.text;
+            sessionFound = true;
         }
-
-        // Run the update function initially and every second
-        updateClock(); // Initial call to avoid delay
-        dashboardTimers.clock = setInterval(updateClock, 1000);
+        if ((nowUTC >= sessions.London.start) && (nowUTC < sessions.London.end)) {
+            clockCard.classList.add(sessions.London.class);
+            indicator.textContent = sessions.London.text;
+            sessionFound = true;
+        }
+        if ((nowUTC >= sessions['New York'].start) && (nowUTC < sessions['New York'].end)) {
+            clockCard.classList.add(sessions['New York'].class);
+            indicator.textContent = sessions['New York'].text;
+            sessionFound = true;
+        }
+        
+        // Handle overlaps - most significant sessions take precedence in text
+        if (nowUTC >= 780 && nowUTC < 1020) { // NY and London overlap
+            indicator.textContent = 'NY & London Overlap - High Liquidity';
+        } else if (nowUTC >= 480 && nowUTC < 540) { // Tokyo and London overlap
+            indicator.textContent = 'Tokyo & London Overlap';
+        } else if (nowUTC >= 0 && nowUTC < 420) { // Tokyo and Sydney overlap
+            indicator.textContent = 'Sydney & Tokyo Overlap';
+        }
     }
 
     /**
      * A cleanup function to be called when the module is unloaded.
-     * This prevents timers from running in the background and causing memory leaks.
      */
     function cleanupDashboard() {
         if (dashboardTimers.clock) {
             clearInterval(dashboardTimers.clock);
         }
-        dashboardTimers = {}; // Reset the state
+        dashboardTimers = {};
     }
 
     // Expose the public functions to the global scope
     window.tg_dashboard.initDashboard = initDashboard;
-    window.tg_dashboard.cleanup = cleanupDashboard; // Expose cleanup function
+    window.tg_dashboard.cleanup = cleanupDashboard;
 
 })();
