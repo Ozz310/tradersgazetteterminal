@@ -45,33 +45,37 @@ window.tg_dashboard = window.tg_dashboard || {};
             return;
         }
 
-        // Function to update the clock hands and digital display
+        /**
+         * Function to update the clock hands and digital display.
+         * The rotation is calculated using milliseconds for smoother animation.
+         */
         function updateClock() {
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
+            const milliseconds = now.getMilliseconds();
 
-            // Calculate rotation degrees for each hand
-            const secondDegrees = (seconds / 60) * 360;
-            const minuteDegrees = ((minutes + seconds / 60) / 60) * 360;
-            const hourDegrees = ((hours % 12 + minutes / 60) / 12) * 360;
+            // Calculate rotation degrees for each hand with continuous movement
+            const secondDegrees = (seconds * 60 + milliseconds / 16.66) / 60 * 360; // 16.66ms per frame (approx. 60fps)
+            const minuteDegrees = ((minutes * 60 + seconds) / 3600) * 360;
+            const hourDegrees = ((hours % 12 * 3600 + minutes * 60 + seconds) / 43200) * 360;
 
             // Apply the rotation using CSS transform
             secondHand.style.transform = `rotate(${secondDegrees}deg)`;
             minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
             hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
-            // Update digital display for user-friendliness
-            const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            // Update digital display
+            const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             digitalTime.textContent = formattedTime;
             digitalDate.textContent = formattedDate;
         }
 
-        // Run the update function every second and store the timer ID
+        // Run the update function initially and every 16ms for smooth animation
         updateClock(); // Initial call to avoid delay
-        dashboardTimers.clock = setInterval(updateClock, 1000);
+        dashboardTimers.clock = setInterval(updateClock, 16); // ~60fps for smooth movement
     }
 
     /**
