@@ -4,26 +4,67 @@
     --black-tone-3: #1c1c1c;
     --gold-accent: #ffd700;
     --white-text-color: #f0f0f0;
+    --light-grey-placeholder: #222222;
 
-    /* Session Glow Colors */
-    --sydney-glow: #00bcd4; /* Cyan */
-    --tokyo-glow: #e91e63; /* Pink */
-    --london-glow: #4caf50; /* Green */
-    --ny-glow: #ff5722;    /* Orange */
-    --frankfurt-glow: #8e44ad; /* Purple */
+    /* Session Text Colors */
+    --sydney-color: #00bcd4; /* Cyan */
+    --tokyo-color: #e91e63; /* Pink */
+    --london-color: #4caf50; /* Green */
+    --ny-color: #ff5722;    /* Orange */
+    --frankfurt-color: #8e44ad; /* Purple */
 }
 
+/* Base styles for the dashboard */
 .dashboard-page {
-    /* Existing styles */
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--black-tone-3);
+    color: var(--white-text-color);
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    overflow-x: hidden;
 }
 
-/* Updated styles for the live clock container */
+.dashboard-cover-photo {
+    width: 100%;
+    height: 300px;
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Gemini_Generated_Image_lpa2swlpa2swlpa2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.dashboard-widgets-grid {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    width: 100%;
+}
+
+.widget-card {
+    /* Removed background-color and box-shadow */
+    background-color: var(--light-grey-placeholder);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.widget-main-info {
+    transition: box-shadow 0.5s ease-in-out;
+}
+
+/* Base styles for the analog clock */
 .live-clock-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 2rem;
 }
 
 .analog-clock {
@@ -36,38 +77,6 @@
     box-shadow: none;
     z-index: 1;
 }
-
-/* New CSS for the session glow effect */
-.widget-main-info {
-    /* Remove background and border for a seamless look */
-    background: transparent;
-    border: none;
-    padding: 0;
-    
-    /* Add transition for the glow effect */
-    transition: box-shadow 0.5s ease-in-out;
-}
-
-.session-sydney {
-    box-shadow: 0 0 15px var(--sydney-glow);
-}
-
-.session-tokyo {
-    box-shadow: 0 0 15px var(--tokyo-glow);
-}
-
-.session-london {
-    box-shadow: 0 0 15px var(--london-glow);
-}
-
-.session-ny {
-    box-shadow: 0 0 15px var(--ny-glow);
-}
-
-.session-frankfurt {
-    box-shadow: 0 0 15px var(--frankfurt-glow);
-}
-
 
 .analog-dial {
     position: relative;
@@ -90,7 +99,7 @@
     width: 2px;
     height: 8px;
     background-color: var(--white-text-color);
-    transform-origin: 0 125px; /* Center-point is half of clock width/height */
+    transform-origin: 0 125px;
 }
 
 .tick.hour {
@@ -154,21 +163,23 @@
     opacity: 0.8;
 }
 
-/* New CSS for Time Zone Buttons and Session Indicator */
+/* Styles for Time Zone Buttons and Session Indicator */
 .time-zone-selector {
     display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap to next line on small screens */
     justify-content: center;
-    gap: 1rem;
+    gap: 0.5rem; /* Reduced gap for mobile */
     margin-top: 1rem;
+    max-width: 100%;
 }
 
 .tz-button {
     background-color: transparent;
     border: 1px solid var(--gold-accent);
     color: var(--gold-accent);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: bold;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -183,10 +194,44 @@
 
 .session-indicator {
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--white-text-color);
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+/* New CSS for the session indicator text color */
+.session-sydney {
+    color: var(--sydney-color);
+}
+
+.session-tokyo {
+    color: var(--tokyo-color);
+}
+
+.session-london {
+    color: var(--london-color);
+}
+
+.session-ny {
+    color: var(--ny-color);
+}
+
+.session-frankfurt {
+    color: var(--frankfurt-color);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 600px) {
+    .widget-card {
+        padding: 1rem;
+    }
+    .analog-clock {
+        width: 200px;
+        height: 200px;
+    }
+    #digital-time {
+        font-size: 2.5rem;
+    }
 }
