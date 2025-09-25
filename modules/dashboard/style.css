@@ -18,13 +18,12 @@
     width: 210px; /* Adjusted: Increased size to accommodate tick marks */
     height: 210px; /* Adjusted: Increased size to accommodate tick marks */
     border-radius: 50%;
-    background-color: var(--black-tone-3); /* Dark clock background */
-    border: 3px solid var(--gold-accent); /* Gold border for the clock face */
+    background-color: var(--black-tone-3); /* The dark background circle */
+    border: 3px solid var(--gold-accent); /* Golden border for the clock face */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1;
-    /* Removed redundant `border` property as it's already defined */
 }
 .analog-dial {
     position: relative;
@@ -81,8 +80,7 @@
     width: 2px;
     height: 5px;
     background-color: var(--gold-accent);
-    /* CRITICAL FIX: Adjusted transform-origin to match the new size, and to position ticks correctly */
-    transform-origin: 0 105px; /* (210px / 2) = 105px */
+    transform-origin: 0 105px; /* Adjusted: (210px / 2) = 105px */
 }
 .digital-display {
     text-align: center;
