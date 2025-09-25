@@ -10,6 +10,7 @@
     /* Existing styles */
 }
 
+/* Updated styles for the live clock container */
 .live-clock-container {
     display: flex;
     flex-direction: column;
@@ -78,12 +79,6 @@
     width: 3px;
     height: 80px;
     background-color: var(--white-text-color);
-}
-
-.second-hand {
-    width: 1px;
-    height: 90px;
-    background-color: var(--gold-accent);
 }
 
 .analog-center {
