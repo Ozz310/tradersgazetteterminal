@@ -10,63 +10,60 @@
     /* Existing styles */
 }
 
-/* Updated styles for the live clock container */
 .live-clock-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-top: 2rem;
-    position: relative;
-    width: 100%;
 }
 
 .analog-clock {
     position: relative;
-    width: 250px; /* Increased size for visual presence */
+    width: 250px;
     height: 250px;
     border-radius: 50%;
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle ring for depth */
+    background-color: var(--black-tone-3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 1;
 }
 
 .analog-dial {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     width: 100%;
     height: 100%;
 }
 
-/* Hour and minute markers using pseudo-elements */
-.analog-clock::before, .analog-clock::after {
-    content: '';
+.tick-marks {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(var(--rotation));
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
 }
 
-.analog-clock::before { /* Hour markers */
-    background: radial-gradient(transparent, transparent 110px, var(--white-text-color) 111px, transparent 112px, transparent 125px);
+.tick {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 8px;
+    background-color: var(--white-text-color);
+    transform-origin: 0 125px; /* Center-point is half of clock width/height */
 }
 
-.analog-clock::after { /* Minute markers */
-    background: radial-gradient(transparent, transparent 115px, rgba(255, 255, 255, 0.3) 116px, transparent 117px, transparent 125px);
+.tick.hour {
+    height: 15px;
+    background-color: var(--gold-accent);
 }
 
-/* Hand styles with transition for smooth movement */
 .analog-hand {
     position: absolute;
+    bottom: 50%;
     left: 50%;
     transform-origin: bottom center;
-    transition: transform 0.05s linear; /* Smooth animation for all hands */
+    transition: transform 0.05s linear;
     border-radius: 2px;
     z-index: 2;
 }
@@ -74,35 +71,19 @@
 .hour-hand {
     width: 4px;
     height: 60px;
-    bottom: 50%;
     background-color: var(--white-text-color);
 }
 
 .minute-hand {
     width: 3px;
     height: 80px;
-    bottom: 50%;
     background-color: var(--white-text-color);
 }
 
 .second-hand {
     width: 1px;
     height: 90px;
-    bottom: 50%;
-    background-color: var(--gold-accent); /* Gold accent for the second hand */
-}
-
-/* Subtle counterbalance for the second hand */
-.second-hand::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5px;
-    height: 5px;
     background-color: var(--gold-accent);
-    border-radius: 50%;
 }
 
 .analog-center {
@@ -123,12 +104,12 @@
     margin-top: 2rem;
     color: var(--white-text-color);
     letter-spacing: 2px;
-    font-family: 'Segoe UI', 'Roboto', sans-serif; /* Modern, clean font */
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
 #digital-time {
     font-size: 3rem;
-    font-weight: 300; /* Lighter font weight for a clean look */
+    font-weight: 300;
     color: var(--gold-accent);
     display: block;
 }
