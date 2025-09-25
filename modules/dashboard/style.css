@@ -30,10 +30,10 @@
     height: 280px; /* Set height to match image */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_huzdathuzdathuzd.png');
     
-    /* NEW: Fixes the image scaling and positioning */
-    background-size: contain;
+    /* NEW: Fixes the image scaling to fill the container */
+    background-size: cover;
     background-repeat: no-repeat;
-    background-position: center top;
+    background-position: center;
 }
 
 .dashboard-widgets-grid {
