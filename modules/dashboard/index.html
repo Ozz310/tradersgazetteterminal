@@ -2,7 +2,7 @@
     <div class="dashboard-cover-photo" style="background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Gemini_Generated_Image_lpa2swlpa2swlpa2.png');"></div>
 
     <div class="dashboard-widgets-grid">
-        <div class="widget-card widget-main-info">
+        <div class="widget-card widget-main-info" id="clock-card">
             <h2 class="widget-title">Dashboard</h2>
             <div class="live-clock-container">
                 <div class="analog-clock">
@@ -31,9 +31,12 @@
                     <span id="digital-date"></span>
                 </div>
             </div>
-            <div class="calendar-container">
+            <div class="time-zone-selector">
+                <button class="tz-button" data-timezone="America/New_York">NY</button>
+                <button class="tz-button" data-timezone="Europe/London">LON</button>
+                <button class="tz-button" data-timezone="Asia/Tokyo">TYO</button>
             </div>
+            <div id="session-indicator" class="session-indicator"></div>
         </div>
     </div>
 </div>
-
