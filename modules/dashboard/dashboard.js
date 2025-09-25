@@ -36,11 +36,10 @@ window.tg_dashboard = window.tg_dashboard || {};
     function setupLiveClock() {
         const hourHand = document.getElementById('hourHand');
         const minuteHand = document.getElementById('minuteHand');
-        const secondHand = document.getElementById('secondHand');
         const digitalTime = document.getElementById('digital-time');
         const digitalDate = document.getElementById('digital-date');
 
-        if (!hourHand || !minuteHand || !secondHand || !digitalTime || !digitalDate) {
+        if (!hourHand || !minuteHand || !digitalTime || !digitalDate) {
             console.error('One or more clock elements not found.');
             return;
         }
@@ -53,29 +52,25 @@ window.tg_dashboard = window.tg_dashboard || {};
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
-            const milliseconds = now.getMilliseconds();
 
             // Calculate rotation degrees for each hand with continuous movement
-            const secondDegrees = (seconds * 60 + milliseconds / 16.66) / 60 * 360; // 16.66ms per frame (approx. 60fps)
-            const minuteDegrees = ((minutes * 60 + seconds) / 3600) * 360;
-            const hourDegrees = ((hours % 12 * 3600 + minutes * 60 + seconds) / 43200) * 360;
+            const minuteDegrees = ((minutes * 60 + now.getSeconds()) / 3600) * 360;
+            const hourDegrees = ((hours % 12 * 3600 + minutes * 60 + now.getSeconds()) / 43200) * 360;
 
             // Apply the rotation using CSS transform
-            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
             minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
             hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
             // Update digital display
-            const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             digitalTime.textContent = formattedTime;
             digitalDate.textContent = formattedDate;
         }
 
-        // Run the update function initially and every 16ms for smooth animation
+        // Run the update function initially and every second
         updateClock(); // Initial call to avoid delay
-        dashboardTimers.clock = setInterval(updateClock, 16); // ~60fps for smooth movement
+        dashboardTimers.clock = setInterval(updateClock, 1000);
     }
 
     /**
