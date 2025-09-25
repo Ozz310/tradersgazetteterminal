@@ -4,6 +4,12 @@
     --black-tone-3: #1c1c1c;
     --gold-accent: #ffd700;
     --white-text-color: #f0f0f0;
+
+    /* Session Glow Colors */
+    --sydney-glow: #00bcd4; /* Cyan */
+    --tokyo-glow: #e91e63; /* Pink */
+    --london-glow: #4caf50; /* Green */
+    --ny-glow: #ff5722;    /* Orange */
 }
 
 .dashboard-page {
@@ -28,6 +34,27 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 1;
+}
+
+/* New CSS for the session glow effect */
+.widget-main-info {
+    transition: box-shadow 0.5s ease-in-out;
+}
+
+.session-sydney {
+    box-shadow: 0 0 15px var(--sydney-glow);
+}
+
+.session-tokyo {
+    box-shadow: 0 0 15px var(--tokyo-glow);
+}
+
+.session-london {
+    box-shadow: 0 0 15px var(--london-glow);
+}
+
+.session-ny {
+    box-shadow: 0 0 15px var(--ny-glow);
 }
 
 .analog-dial {
@@ -113,4 +140,40 @@
     font-size: 1rem;
     font-weight: 200;
     opacity: 0.8;
+}
+
+/* New CSS for Time Zone Buttons and Session Indicator */
+.time-zone-selector {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.tz-button {
+    background-color: transparent;
+    border: 1px solid var(--gold-accent);
+    color: var(--gold-accent);
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.tz-button:hover {
+    background-color: var(--gold-accent);
+    color: var(--black-tone-3);
+}
+
+.session-indicator {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--white-text-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
