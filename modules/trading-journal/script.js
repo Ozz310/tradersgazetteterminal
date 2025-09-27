@@ -509,10 +509,14 @@ window.initTradingJournal = async function() {
                             ticks: { color: '#fff' }, 
                             grid: { color: 'rgba(255,255,255,0.1)' },
                             type: 'time',
-                            time: { unit: 'day' } // FIX: Added unit for date-fns adapter
+                            time: { unit: 'day' } 
                         },
-                        y: { beginAtZero: true, title: { display: true, 
-                        text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: 'P&L', color: '#d4af37' }, 
+                            ticks: { color: '#fff' }, 
+                            grid: { color: 'rgba(255,255,255,0.1)' } 
+                        }
                     },
                     plugins: {
                         legend: { labels: { color: '#d4af37' } },
@@ -555,8 +559,7 @@ window.initTradingJournal = async function() {
                         y: { beginAtZero: false, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
-                        legend: { labels: { color: '#d4af37' } 
-                    },
+                        legend: { labels: { color: '#d4af37' } }, // FIXED: Ensure this is properly closed
                         tooltip: { backgroundColor: '#252525', titleColor: '#d4af37', bodyColor: '#fff', titleFont: { weight: 'bold' } }
                     },
                     animation: { duration: 1000, easing: 'easeInOutQuad' }
@@ -622,9 +625,8 @@ window.initTradingJournal = async function() {
         // Count trades in each bin
         pnlValues.forEach(pnl => {
             for (let i = 0; i < pnlBins.length; i++) {
-                // Ensure the last bin includes the max value
-                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl 
-                < pnlBins[i].upper)) {
+                // FIXED THE SYNTAX ERROR: Ensure the conditional expression is one single line for safety
+                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
                     pnlBins[i].count++;
                     break;
                 }
@@ -654,9 +656,17 @@ window.initTradingJournal = async function() {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, 
-                        ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        y: { beginAtZero: true, title: { display: true, text: 'Count', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        x: { 
+                            title: { display: true, text: 'P&L Range', color: '#d4af37' }, 
+                            ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, 
+                            grid: { color: 'rgba(255,255,255,0.1)' } 
+                        },
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: 'Count', color: '#d4af37' }, 
+                            ticks: { color: '#fff' }, 
+                            grid: { color: 'rgba(255,255,255,0.1)' } 
+                        }
                     },
                     plugins: {
                         legend: { labels: { color: '#d4af37' } },
@@ -689,8 +699,7 @@ window.initTradingJournal = async function() {
                     takeProfit: parseFloat(document.getElementById('takeProfit').value) || 0,
                     stopLoss: parseFloat(document.getElementById('stopLoss').value) || 0,
                     pnlNet: parseFloat(document.getElementById('pnlNet').value) || 0,
-                    positionSize: parseFloat(document.getElementById('positionSize').value) ||
-                    0,
+                    positionSize: parseFloat(document.getElementById('positionSize').value) || 0,
                     strategyName: document.getElementById('strategyName').value,
                     notes: document.getElementById('notes').value
                 };
@@ -825,8 +834,7 @@ window.initTradingJournal = async function() {
                     return acc;
                 }, {});
                 const timeLabels = Object.keys(timePnlData).sort();
-                const timeData = timeLabels.map(date 
-                => timePnlData[date]);
+                const timeData = timeLabels.map(date => timePnlData[date]);
                 
                 const csvRows = ['Date,P&L'];
                 timeLabels.forEach((date, index) => {
