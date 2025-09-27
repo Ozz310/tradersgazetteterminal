@@ -34,7 +34,22 @@ window.initTradingJournal = async function() {
     const uploadCsvForm = document.getElementById('upload-csv-form');
     const closeCsvModal = document.getElementById('close-csv-modal');
     
+    // --- NEW ELEMENT REFERENCES ---
+    const tradeCardView = document.getElementById('trade-card-view');
+    // --- END NEW ELEMENT REFERENCES ---
+    
     let tradesData = [];
+
+    // --- NEW HELPER FUNCTION ---
+    /**
+     * @description Checks if the current viewport is considered "mobile" based on the CSS media query breakpoint (768px).
+     * @returns {boolean} True if the screen width is 768px or less.
+     */
+    function isMobileView() {
+        return window.matchMedia('(max-width: 768px)').matches;
+    }
+    // --- END NEW HELPER FUNCTION ---
+    
     function showNotification(message, type = 'success') {
         if (notification) {
             notification.textContent = message;
@@ -115,7 +130,8 @@ window.initTradingJournal = async function() {
                 'Strategy Name': 'strategyName', 'Notes': 'notes', 'dealId': 'dealId'
             };
             for (const key in trade) {
-                const mappedKey = keyMap[key] || key.toLowerCase().replace(/\s/g, '');
+                const mappedKey = keyMap[key] ||
+                key.toLowerCase().replace(/\s/g, '');
                 if (normalizedTrade.hasOwnProperty(mappedKey)) {
                     normalizedTrade[mappedKey] = trade[key];
                 }
@@ -182,37 +198,141 @@ window.initTradingJournal = async function() {
         // Do not call updateCharts here, it's called by analyticsTab.
         toggleLoader(false);
     }
-    
+
+    // --- NEW HELPER FUNCTION: CREATE CARD HTML ---
+    /**
+     * @description Generates the HTML string for a single mobile trade card.
+     * @param {Object} trade - The normalized trade data object.
+     * @returns {string} The HTML string for the trade card.
+     */
+    function createTradeCard(trade) {
+        const formattedDate = formatDate(trade.date);
+        const pnlNet = parseFloat(trade.pnlNet) || 0;
+        const pnlDisplay = pnlNet === 0 ? '0.00' : pnlNet.toFixed(2);
+        const pnlClass = pnlNet > 0 ? 'profit' : (pnlNet < 0 ? 'loss' : 'neutral');
+        const currencySymbol = '$'; // Assuming USD or a generic symbol
+
+        // Helper function for safe display of values
+        const safeDisplay = (value, fixed = 5) => 
+            value === null || value === '' ? 'N/A' : parseFloat(value).toFixed(fixed);
+
+        return `
+            <div class="trade-card ${pnlClass}">
+                <div class="card-header">
+                    <div class="card-symbol">${trade.symbol || 'N/A'} (${trade.assetType || 'N/A'})</div>
+                    <div class="card-pnl" style="color: ${pnlNet > 0 ? '#1aff70' : (pnlNet < 0 ? '#ff4d4d' : '#f1f1f1')}">
+                        ${currencySymbol}${pnlDisplay}
+                    </div>
+                </div>
+                <div class="card-detail">
+                    <span class="card-label">Date:</span>
+                    <span class="card-value">${formattedDate}</span>
+                </div>
+                <div class="card-detail">
+                    <span class="card-label">Side:</span>
+                    <span class="card-value">${trade.buySell || 'N/A'}</span>
+                </div>
+                <div class="card-detail">
+                    <span class="card-label">Strategy:</span>
+                    <span class="card-value">${trade.strategyName || 'N/A'}</span>
+                </div>
+                <div class="card-detail">
+                    <span class="card-label">Position Size:</span>
+                    <span class="card-value">${safeDisplay(trade.positionSize, 2)}</span>
+                </div>
+                <div class="card-detail">
+                    <span class="card-label">Entry Price:</span>
+                    <span class="card-value">${safeDisplay(trade.entryPrice)}</span>
+                </div>
+                <div class="card-detail">
+                    <span class="card-label">Exit Price:</span>
+                    <span class="card-value">${safeDisplay(trade.exitPrice)}</span>
+                </div>
+                ${trade.notes ? `
+                    <div class="card-detail notes-section">
+                        <span class="card-label">Notes:</span>
+                        <p class="card-value">${trade.notes}</p>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+    // --- END NEW HELPER FUNCTION ---
+
+    // --- MODIFIED FUNCTION: updateTradeTable ---
     function updateTradeTable() {
         const tradeTableBody = document.getElementById('trade-table-body');
-        if (tradeTableBody) {
-            tradeTableBody.innerHTML = '';
-            if (!tradesData || tradesData.length === 0) {
-                tradeTableBody.innerHTML = '<tr><td colspan="12" class="text-center text-gray-500">No trades yet. Add your first trade using the form above.</td></tr>';
-            } else {
+        const journalTableWrapper = document.querySelector('.journal-table-wrapper');
+        
+        // Clear previous content in both views
+        if (tradeTableBody) tradeTableBody.innerHTML = '';
+        if (tradeCardView) tradeCardView.innerHTML = '';
+        
+        if (!tradesData || tradesData.length === 0) {
+            // Display empty state in the correct view based on screen size
+            const targetElement = isMobileView() ? tradeCardView : tradeTableBody;
+            const emptyHtml = isMobileView() ? 
+                '<div class="trade-card-list"><div class="trade-card"><p style="text-align: center; color: #888;">No trades yet. Add your first trade using the form above.</p></div></div>' :
+                '<tr><td colspan="12" style="text-align: center; color: #888;">No trades yet. Add your first trade using the form above.</td></tr>';
+
+            if (targetElement) {
+                targetElement.innerHTML = emptyHtml;
+            }
+
+            // Ensure only the necessary wrapper is visible (handled by CSS, but good to check)
+            if (journalTableWrapper) {
+                journalTableWrapper.style.display = isMobileView() ? 'none' : 'block';
+            }
+            if (tradeCardView) {
+                 // On mobile, tradeCardView should be visible (CSS handles this, but explicitly show/hide wrappers)
+            }
+
+            return;
+        }
+
+        if (isMobileView()) {
+            // MOBILE: Render Card View
+            if (journalTableWrapper) journalTableWrapper.style.display = 'none';
+            if (tradeCardView) {
+                tradeCardView.style.display = 'grid'; // Ensure grid display for cards
                 tradesData.forEach(trade => {
-                    const row = document.createElement('tr');
-                    // FIX: Correctly format the date for display in the table
-                    const formattedDate = formatDate(trade.date);
-                    row.innerHTML = `
-                        <td>${formattedDate}</td>
-                        <td>${trade.symbol || ''}</td>
-                        <td>${trade.assetType || ''}</td>
-                        <td>${trade.buySell || ''}</td>
-                        <td>${trade.entryPrice === null || trade.entryPrice === '' ? 'N/A' : parseFloat(trade.entryPrice).toFixed(5)}</td>
-                        <td>${trade.exitPrice === null || trade.exitPrice === '' ? 'N/A' : parseFloat(trade.exitPrice).toFixed(5)}</td>
-                        <td>${trade.takeProfit === null || trade.takeProfit === '' ? 'N/A' : parseFloat(trade.takeProfit).toFixed(5)}</td>
-                        <td>${trade.stopLoss === null || trade.stopLoss === '' ? 'N/A' : parseFloat(trade.stopLoss).toFixed(5)}</td>
-                        <td>${trade.pnlNet === null || trade.pnlNet === '' ? 'N/A' : parseFloat(trade.pnlNet).toFixed(2)}</td>
-                        <td>${trade.positionSize === null || trade.positionSize === '' ? 'N/A' : parseFloat(trade.positionSize).toFixed(2)}</td>
-                        <td>${trade.strategyName || ''}</td>
-                        <td>${trade.notes || ''}</td>
-                    `;
-                    tradeTableBody.appendChild(row);
+                    tradeCardView.innerHTML += createTradeCard(trade);
                 });
             }
+        } else {
+            // DESKTOP: Render Table View
+            if (journalTableWrapper) journalTableWrapper.style.display = 'block';
+            if (tradeCardView) tradeCardView.style.display = 'none';
+
+            tradesData.forEach(trade => {
+                const row = document.createElement('tr');
+                // FIX: Correctly format the date for display in the table
+                const formattedDate = formatDate(trade.date);
+                
+                // Helper for fixed decimal display or 'N/A'
+                const displayFixed = (val, fixed) => 
+                    val === null || val === '' ? 'N/A' : parseFloat(val).toFixed(fixed);
+
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${trade.symbol || ''}</td>
+                    <td>${trade.assetType || ''}</td>
+                    <td>${trade.buySell || ''}</td>
+                    <td>${displayFixed(trade.entryPrice, 5)}</td>
+                    <td>${displayFixed(trade.exitPrice, 5)}</td>
+                    <td>${displayFixed(trade.takeProfit, 5)}</td>
+                    <td>${displayFixed(trade.stopLoss, 5)}</td>
+                    <td>${displayFixed(trade.pnlNet, 2)}</td>
+                    <td>${displayFixed(trade.positionSize, 2)}</td>
+                    <td>${trade.strategyName || ''}</td>
+                    <td>${trade.notes || ''}</td>
+                `;
+                tradeTableBody.appendChild(row);
+            });
         }
+        
     }
+    // --- END MODIFIED FUNCTION ---
     
     /**
      * @description Parses a CSV text string, handling "N/A" values and ensuring correct data types for numeric fields.
@@ -225,11 +345,9 @@ window.initTradingJournal = async function() {
         // trailing commas and quoted values.
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) return [];
-
         const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
         const trades = [];
         const numericFields = ['Entry Price', 'Exit Price', 'Take Profit', 'Stop Loss', 'P&L Net', 'Position Size'];
-
         for (let i = 1; i < lines.length; i++) {
             const currentLine = lines[i];
             const parsedRow = [];
@@ -322,7 +440,8 @@ window.initTradingJournal = async function() {
             return;
         }
 
-        const timeFrame = timeFrameSelect ? timeFrameSelect.value : 'all';
+        const timeFrame = timeFrameSelect ?
+        timeFrameSelect.value : 'all';
         let filteredTrades = [...trades];
 
         if (timeFrame !== 'all') {
@@ -365,7 +484,8 @@ window.initTradingJournal = async function() {
                         label: 'Cumulative P&L',
                         data: cumulativePnl,
                         borderColor: '#d4af37',
-                        backgroundColor: (context) => {
+                        backgroundColor: (context) => 
+                        {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
                             gradient.addColorStop(0, 'rgba(212, 175, 55, 0.4)');
@@ -391,7 +511,8 @@ window.initTradingJournal = async function() {
                             type: 'time',
                             time: { unit: 'day' } // FIX: Added unit for date-fns adapter
                         },
-                        y: { beginAtZero: true, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        y: { beginAtZero: true, title: { display: true, 
+                        text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
                         legend: { labels: { color: '#d4af37' } },
@@ -434,7 +555,8 @@ window.initTradingJournal = async function() {
                         y: { beginAtZero: false, title: { display: true, text: 'P&L', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
-                        legend: { labels: { color: '#d4af37' } },
+                        legend: { labels: { color: '#d4af37' } 
+                    },
                         tooltip: { backgroundColor: '#252525', titleColor: '#d4af37', bodyColor: '#fff', titleFont: { weight: 'bold' } }
                     },
                     animation: { duration: 1000, easing: 'easeInOutQuad' }
@@ -501,7 +623,8 @@ window.initTradingJournal = async function() {
         pnlValues.forEach(pnl => {
             for (let i = 0; i < pnlBins.length; i++) {
                 // Ensure the last bin includes the max value
-                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
+                if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 ? pnl <= pnlBins[i].upper : pnl 
+                < pnlBins[i].upper)) {
                     pnlBins[i].count++;
                     break;
                 }
@@ -531,7 +654,8 @@ window.initTradingJournal = async function() {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                        x: { title: { display: true, text: 'P&L Range', color: '#d4af37' }, 
+                        ticks: { color: '#fff', autoSkip: false, maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(255,255,255,0.1)' } },
                         y: { beginAtZero: true, title: { display: true, text: 'Count', color: '#d4af37' }, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
                     },
                     plugins: {
@@ -565,11 +689,12 @@ window.initTradingJournal = async function() {
                     takeProfit: parseFloat(document.getElementById('takeProfit').value) || 0,
                     stopLoss: parseFloat(document.getElementById('stopLoss').value) || 0,
                     pnlNet: parseFloat(document.getElementById('pnlNet').value) || 0,
-                    positionSize: parseFloat(document.getElementById('positionSize').value) || 0,
+                    positionSize: parseFloat(document.getElementById('positionSize').value) ||
+                    0,
                     strategyName: document.getElementById('strategyName').value,
                     notes: document.getElementById('notes').value
                 };
-            const response = await callBackend('writeTrade', { tradeData: tradeData });
+                const response = await callBackend('writeTrade', { tradeData: tradeData });
                 
                 if (response.status === 'Error') {
                     console.error("Error adding document: ", response.error);
@@ -605,11 +730,12 @@ window.initTradingJournal = async function() {
                     return;
                 }
                 
-            const reader = new FileReader();
+                const reader = new FileReader();
                 reader.onload = async (event) => {
                     const csvText = event.target.result;
                     // FIX: Process the raw CSV into a consistent, backend-friendly format
-                    const parsedTrades = parseCsv(csvText);
+                    const parsedTrades 
+                    = parseCsv(csvText);
                     const tradesInApiFormat = convertCsvToApiFormat(parsedTrades);
 
                     if (tradesInApiFormat.length === 0) {
@@ -619,7 +745,7 @@ window.initTradingJournal = async function() {
                     }
                     
                     const response = await callBackend('writeTradesBulk', { trades: tradesInApiFormat });
-            if (response.status === 'Error') {
+                    if (response.status === 'Error') {
                         console.error("Error uploading trades in bulk:", response.error);
                         showNotification("Error uploading trades. Please try again.", "error");
                     } else {
@@ -699,7 +825,8 @@ window.initTradingJournal = async function() {
                     return acc;
                 }, {});
                 const timeLabels = Object.keys(timePnlData).sort();
-                const timeData = timeLabels.map(date => timePnlData[date]);
+                const timeData = timeLabels.map(date 
+                => timePnlData[date]);
                 
                 const csvRows = ['Date,P&L'];
                 timeLabels.forEach((date, index) => {
@@ -722,6 +849,9 @@ window.initTradingJournal = async function() {
             URL.revokeObjectURL(url);
             showNotification('CSV Downloaded Successfully');
         }
+
+        // --- Add event listener for screen size change to update view type ---
+        window.addEventListener('resize', updateTradeTable);
     }
     
     // Initial calls to set up the module
