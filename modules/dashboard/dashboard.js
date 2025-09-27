@@ -22,10 +22,14 @@ window.tg_dashboard = window.tg_dashboard || {};
     }
 
     function setupLiveClock() {
+        // We use the local timezone on initial load
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         updateClock(timezone);
         updateSessionIndicator();
+        
+        // Timer is stored in dashboardTimers.clock
         dashboardTimers.clock = setInterval(() => {
+            // This interval runs the updateClock every second
             updateClock(activeTimeZone);
             updateSessionIndicator();
         }, 1000);
@@ -38,6 +42,15 @@ window.tg_dashboard = window.tg_dashboard || {};
         const digitalTime = document.getElementById('digital-time');
         const digitalDate = document.getElementById('digital-date');
 
+        // ✅ FIX: NULL CHECK AND SELF-CLEANUP
+        // If these elements are null, the module is no longer visible (unloaded/navigated away).
+        // Call the cleanup function to stop the timer, preventing the 'TypeError' loop.
+        if (!hourHand || !minuteHand || !digitalTime || !digitalDate) {
+            console.log('Clock elements not found. Cleaning up dashboard timer.');
+            cleanupDashboard();
+            return;
+        }
+
         const now = new Date();
         const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         const formattedTime = new Intl.DateTimeFormat('en-US', options).format(now);
@@ -47,6 +60,7 @@ window.tg_dashboard = window.tg_dashboard || {};
         const minuteDegrees = (minutes * 60 + seconds) / 3600 * 360;
         const hourDegrees = (hours % 12 * 3600 + minutes * 60 + seconds) / 43200 * 360;
         
+        // Line 50 (approximate): These lines now only execute if elements exist.
         minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
         hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
@@ -79,6 +93,13 @@ window.tg_dashboard = window.tg_dashboard || {};
     function updateSessionIndicator() {
         const clockCard = document.getElementById('clock-card');
         const indicator = document.getElementById('session-indicator');
+        
+        // ✅ CRITICAL NULL CHECK: Ensure these elements exist before manipulating style/content
+        if (!clockCard || !indicator) {
+            // Do not call cleanupDashboard here, as updateClock will handle it.
+            return; 
+        }
+        
         const now = new Date();
         const nowUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
 
@@ -130,13 +151,18 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
     }
 
+    /**
+     * @description Clears all dashboard timers. This is the intended cleanup mechanism.
+     */
     function cleanupDashboard() {
         if (dashboardTimers.clock) {
             clearInterval(dashboardTimers.clock);
+            console.log('Clock interval successfully cleared.');
         }
         dashboardTimers = {};
     }
 
+    // Expose the functions to the global scope for the router
     window.tg_dashboard.initDashboard = initDashboard;
     window.tg_dashboard.cleanup = cleanupDashboard;
 
