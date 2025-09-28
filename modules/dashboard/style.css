@@ -40,7 +40,7 @@
 
 .dashboard-widgets-grid {
     display: flex;
-    flex-wrap: wrap; /* Added for robustness, but was missing in user's provided code */
+    flex-wrap: wrap; 
     justify-content: center;
     padding: 2rem;
     width: 100%;
