@@ -40,6 +40,7 @@
 
 .dashboard-widgets-grid {
     display: flex;
+    flex-wrap: wrap; /* Added for robustness, but was missing in user's provided code */
     justify-content: center;
     padding: 2rem;
     width: 100%;
@@ -171,9 +172,9 @@
 }
 
 /* Styles for Time Zone Buttons and Session Indicator */
-/* CRITICAL FIX: Add !important to display:flex to override any conflicting global styles and force horizontal layout */
+/* CRITICAL FIX: Ensure buttons are horizontal */
 .time-zone-selector {
-    **display: flex !important;**
+    display: flex !important; /* Force flex to solve stacking issue */
     flex-wrap: wrap; 
     justify-content: center;
     gap: 0.5rem; 
@@ -248,10 +249,9 @@
         font-size: 2rem;
     }
     
-    **.time-zone-selector {**
-    **    margin-top: 1rem;**
-    **    gap: 0.3rem;**
-    **    /* Additional safeguard for small screens */**
-    **    justify-content: space-around;**
-    **}**
+    .time-zone-selector {
+        margin-top: 1rem;
+        gap: 0.3rem;
+        justify-content: space-around;
+    }
 }
