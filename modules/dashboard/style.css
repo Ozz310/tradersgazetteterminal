@@ -1,254 +1,257 @@
 /* /modules/dashboard/style.css */
 
 :root {
-    --black-tone-3: #1c1c1c;
-    --gold-accent: #ffd700;
-    --white-text-color: #f0f0f0;
-    --light-grey-placeholder: #222222;
+    --black-tone-3: #1c1c1c;
+    --gold-accent: #ffd700;
+    --white-text-color: #f0f0f0;
+    --light-grey-placeholder: #222222;
 
-    /* Session Text Colors */
-    --sydney-color: #00bcd4; /* Cyan */
-    --tokyo-color: #e91e63; /* Pink */
-    --london-color: #4caf50; /* Green */
-    --ny-color: #ff5722;    /* Orange */
-    --frankfurt-color: #8e44ad; /* Purple */
+    /* Session Text Colors */
+    --sydney-color: #00bcd4; /* Cyan */
+    --tokyo-color: #e91e63; /* Pink */
+    --london-color: #4caf50; /* Green */
+    --ny-color: #ff5722;    /* Orange */
+    --frankfurt-color: #8e44ad; /* Purple */
 }
 
 /* Base styles for the dashboard */
 .dashboard-page {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    background-color: var(--black-tone-3);
-    color: var(--white-text-color);
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
-    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--black-tone-3);
+    color: var(--white-text-color);
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    overflow-x: hidden;
 }
 
 .dashboard-cover-photo {
-    width: 100%;
-    height: 380px; 
-    /* NEW IMAGE URL: Make sure this is updated in index.html, but keeping old for local CSS reference */
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/DASHBOARD.png');
-    
-    background-size: cover;
-    background-repeat: no-repeat;
-    /* FIX 1: Optimizing for new image. 'center center' ensures the text is always prioritized 
-       in the middle of the placeholder, even when cropped. */
-    background-position: center center; 
+    width: 100%;
+    height: 380px; 
+    /* NEW IMAGE URL: Make sure this is updated in index.html, but keeping old for local CSS reference */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/DASHBOARD.png');
+    
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* FIX 1: Optimizing for new image. 'center center' ensures the text is always prioritized 
+       in the middle of the placeholder, even when cropped. */
+    background-position: center center; 
 }
 
 .dashboard-widgets-grid {
-    display: flex;
-    justify-content: center;
-    padding: 2rem;
-    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    width: 100%;
 }
 
 .widget-card {
-    background-color: var(--light-grey-placeholder);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 2.5rem 2rem; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    /* These properties already ensure centering on large screens */
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
+    background-color: var(--light-grey-placeholder);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 2.5rem 2rem; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* These properties already ensure centering on large screens */
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .widget-main-info {
-    transition: box-shadow 0.5s ease-in-out;
+    transition: box-shadow 0.5s ease-in-out;
 }
 
 /* Base styles for the analog clock */
 .live-clock-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; 
 }
 
 .analog-clock {
-    position: relative;
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-    z-index: 1;
+    position: relative;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    z-index: 1;
 }
 
 .analog-dial {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .tick-marks {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .tick {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 2px;
-    height: 8px;
-    background-color: var(--white-text-color);
-    transform-origin: 0 125px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 8px;
+    background-color: var(--white-text-color);
+    transform-origin: 0 125px;
 }
 
 .tick.hour {
-    height: 15px;
-    background-color: var(--gold-accent);
+    height: 15px;
+    background-color: var(--gold-accent);
 }
 
 .analog-hand {
-    position: absolute;
-    bottom: 50%;
-    left: 50%;
-    transform-origin: bottom center;
-    transition: transform 0.05s linear;
-    border-radius: 2px;
-    z-index: 2;
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    transition: transform 0.05s linear;
+    border-radius: 2px;
+    z-index: 2;
 }
 
 .hour-hand {
-    width: 4px;
-    height: 60px;
-    background-color: var(--white-text-color);
+    width: 4px;
+    height: 60px;
+    background-color: var(--white-text-color);
 }
 
 .minute-hand {
-    width: 3px;
-    height: 80px;
-    background-color: var(--white-text-color);
+    width: 3px;
+    height: 80px;
+    background-color: var(--white-text-color);
 }
 
 .analog-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: var(--gold-accent);
-    border: 2px solid var(--black-tone-3);
-    z-index: 3;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--gold-accent);
+    border: 2px solid var(--black-tone-3);
+    z-index: 3;
 }
 
 .digital-display {
-    text-align: center;
-    margin-top: 3rem; 
-    color: var(--white-text-color);
-    letter-spacing: 2px;
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    text-align: center;
+    margin-top: 3rem; 
+    color: var(--white-text-color);
+    letter-spacing: 2px;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
 #digital-time {
-    font-size: 3rem;
-    font-weight: 300;
-    color: var(--gold-accent);
-    display: block;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--gold-accent);
+    display: block;
 }
 
 #digital-date {
-    font-size: 1rem;
-    font-weight: 200;
-    opacity: 0.8;
+    font-size: 1rem;
+    font-weight: 200;
+    opacity: 0.8;
 }
 
 /* Styles for Time Zone Buttons and Session Indicator */
+/* CRITICAL FIX: Add !important to display:flex to override any conflicting global styles and force horizontal layout */
 .time-zone-selector {
-    display: flex;
-    flex-wrap: wrap; 
-    justify-content: center;
-    gap: 0.5rem; 
-    margin-top: 1.5rem; 
-    max-width: 100%;
+    **display: flex !important;**
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 0.5rem; 
+    margin-top: 1.5rem; 
+    max-width: 100%;
 }
 
 .tz-button {
-    background-color: transparent;
-    border: 1px solid var(--gold-accent);
-    color: var(--gold-accent);
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 0.4rem 0.8rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
+    background-color: transparent;
+    border: 1px solid var(--gold-accent);
+    color: var(--gold-accent);
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
 }
 
 .tz-button:hover,
 .tz-button.active {
-    background-color: var(--gold-accent);
-    color: var(--black-tone-3);
+    background-color: var(--gold-accent);
+    color: var(--black-tone-3);
 }
 
 .session-indicator {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* New CSS for the session indicator text color... (omitted) */
 
 /* Mobile responsive styles */
 @media (max-width: 600px) {
-    .dashboard-cover-photo {
-        height: 180px; 
-    }
+    .dashboard-cover-photo {
+        height: 180px; 
+    }
 
-    /* FIX 2: Reducing horizontal padding on the outer grid container on mobile 
-       to allow the centered widget-card more space, fixing the perceived offset. */
-    .dashboard-widgets-grid {
-        padding: 1rem; 
-    }
-    
-    .widget-card {
-        padding: 1.5rem 1rem; 
-    }
-    
-    .analog-clock {
-        width: 180px; 
-        height: 180px;
-    }
-    
-    .tick {
-        transform-origin: 0 90px;
-    }
+    /* FIX 2: Reducing horizontal padding on the outer grid container on mobile 
+       to allow the centered widget-card more space, fixing the perceived offset. */
+    .dashboard-widgets-grid {
+        padding: 1rem; 
+    }
+    
+    .widget-card {
+        padding: 1.5rem 1rem; 
+    }
+    
+    .analog-clock {
+        width: 180px; 
+        height: 180px;
+    }
+    
+    .tick {
+        transform-origin: 0 90px;
+    }
 
-    .hour-hand {
-        height: 50px;
-    }
+    .hour-hand {
+        height: 50px;
+    }
 
-    .minute-hand {
-        height: 70px;
-    }
+    .minute-hand {
+        height: 70px;
+    }
 
-    #digital-time {
-        font-size: 2rem;
-    }
-    
-    .time-zone-selector {
-        margin-top: 1rem;
-        gap: 0.3rem;
-    }
+    #digital-time {
+        font-size: 2rem;
+    }
+    
+    **.time-zone-selector {**
+    **    margin-top: 1rem;**
+    **    gap: 0.3rem;**
+    **    /* Additional safeguard for small screens */**
+    **    justify-content: space-around;**
+    **}**
 }
