@@ -6,8 +6,9 @@
     --text-color: #f0f0f0;
     --gold-color: #F0D788;
     --dark-gold-color: #DDAA33;
-    --accent-color: #4a4a4a; /* Original secondary dark color */
-    --active-bg-color: #333; /* 🛠️ NEW: Darker, solid background for active state, closer to Image 1 */
+    --accent-color: #4a4a4a; 
+    /* 🛠️ NEW VAR: Distinct, solid, dark-gold background color for active navigation state (based on Image 1) */
+    --nav-active-bg: #3e382b; 
     --border-color: #333;
     --font-primary: 'Roboto', sans-serif;
     --font-secondary: 'Merriweather', serif;
@@ -30,7 +31,7 @@ body {
     align-items: center;
     height: 100vh;
     width: 100%;
-    /* 🛠️ FIX from previous turn: Ensure Auth container has dark background */
+    /* 🛠️ RETAINED FIX: Ensure Auth container has dark background */
     background-color: var(--bg-color); 
 }
 
@@ -92,15 +93,15 @@ body {
 }
 
 .nav-item:hover {
-    /* 🛠️ FIX: Use a more solid background on hover for better contrast */
+    /* 🛠️ RETAINED FIX: Use a more solid background on hover for better contrast */
     background-color: rgba(255, 255, 255, 0.08); /* Slightly darker grey for hover */
     color: var(--gold-color);
     transform: translateX(5px);
 }
 
 .nav-item.active {
-    /* 🛠️ FIX: Change transparent background to solid dark color to match professional design (Image 1) */
-    background-color: var(--active-bg-color); /* #333 */
+    /* 🛠️ CORRECTED FIX: Use the new solid dark-gold color for correct contrast (Image 1) */
+    background-color: var(--nav-active-bg);
     color: var(--gold-color);
     font-weight: 700;
     border-left: none;
