@@ -55,8 +55,9 @@ a {
     flex-wrap: wrap;
 }
 
-/* ⭐ FINAL ENFORCED: LUXURY PRIMARY BUTTON STYLE (Matching Risk Hub) ⭐ */
-.submit-button {
+/* ⭐ FINAL ENFORCED: LUXURY PRIMARY BUTTON STYLE (Increased Specificity) ⭐ */
+.journal-content-container .submit-button, 
+.submit-button { /* Keep original selector for wider use if needed */
     background-color: #d4af37 !important; /* Force Solid Gold */
     color: #0d0d0d !important; /* Force Dominant Black */
     border: none !important;
@@ -72,6 +73,7 @@ a {
     min-width: 150px; 
 }
 
+.journal-content-container .submit-button:hover,
 .submit-button:hover {
     background-color: #e0c265 !important; /* Lighter gold on hover */
     transform: translateY(-2px);
@@ -88,7 +90,8 @@ a {
     padding: 5px;
 }
 
-/* ⭐ FINAL ENFORCED: INACTIVE TAB STYLE (Matching Risk Hub Secondary) ⭐ */
+/* ⭐ FINAL ENFORCED: INACTIVE TAB STYLE (Increased Specificity) ⭐ */
+.journal-content-container .tab, 
 .tab {
     flex: 1;
     text-align: center;
@@ -107,7 +110,8 @@ a {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Matching Risk Hub Active/Primary) ⭐ */
+/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Increased Specificity) ⭐ */
+.journal-content-container .tab.active,
 .tab.active {
     background-color: #0d0d0d !important; /* Force Pure Black for contrast */
     color: #d4af37 !important; /* Force Gold text */
@@ -115,6 +119,7 @@ a {
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8) !important;
 }
 
+.journal-content-container .tab:hover:not(.active),
 .tab:hover:not(.active) {
     /* Gold text on hover for better interaction feedback */
     color: #d4af37 !important; 
