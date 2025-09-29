@@ -2,7 +2,8 @@
 :root {
     --bg-color: #1a1a1a;
     --sidebar-color: #222;
-    --content-bg-color: #2a2a2a;
+    /* 🛠️ KEY CHANGE: The main content background color - matches dashboard/style.css fix */
+    --content-bg-color: #2a2a2a; 
     --text-color: #f0f0f0;
     --gold-color: #F0D788;
     --dark-gold-color: #DDAA33;
@@ -14,6 +15,14 @@
     --sidebar-width: 220px;
     /* 🛠️ NEW VAR: Subtle gold glow for accents (UI/UX enhancement) */
     --gold-shadow: 0 0 5px rgba(240, 215, 136, 0.6); 
+}
+
+/* 🛠️ CRITICAL FIX: Ensure ZERO gap from the top border */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Important for full height containers */
+    overflow: hidden; /* Prevent body scroll if content overflows */
 }
 
 /* Global Body Reset */
@@ -41,12 +50,12 @@ body {
 .terminal-container {
     height: 100vh;
     width: 100%;
-    /* Revert to standard Flexbox layout for desktop */
+    /* FIX: Revert to standard Flexbox layout for desktop */
     display: flex; 
     overflow: hidden; 
 }
 
-/* Sidebar Styling */
+/* Sidebar Styling - Top 1% UI/UX Refinements */
 .sidebar {
     width: var(--sidebar-width);
     background-color: var(--sidebar-color);
@@ -66,7 +75,7 @@ body {
 }
 
 .sidebar-logo {
-    /* 🛠️ UI/UX: Increased size */
+    /* 🛠️ UI/UX: Increased size and border thickness */
     width: 65px;
     height: 65px;
     border-radius: 50%;
@@ -79,7 +88,7 @@ body {
 }
 
 .sidebar-logo:hover {
-    transform: scale(1.05); /* Removed rotate(5deg) for cleaner look */
+    transform: scale(1.05);
     box-shadow: 0 0 15px var(--gold-color);
 }
 
@@ -92,7 +101,7 @@ body {
 .nav-item {
     display: flex;
     align-items: center;
-    /* 🛠️ UI/UX: Adjusted padding for larger hit area */
+    /* 🛠️ UI/UX: Adjusted padding for larger hit area and better vertical flow */
     padding: 18px 30px; 
     color: var(--text-color);
     text-decoration: none;
@@ -101,14 +110,14 @@ body {
     position: relative;
     transition: all 0.2s ease;
     /* 🛠️ UI/UX: Tightened spacing between items for modern look */
-    margin-bottom: 5px; 
+    margin-bottom: 2px;
 }
 
 .nav-item:hover {
     /* 🛠️ UI/UX: Lighter hover background */
     background-color: rgba(255, 255, 255, 0.05); 
     color: var(--gold-color);
-    transform: none; /* Removed translateX(5px) for smoother transitions */
+    transform: none;
 }
 
 .nav-item.active {
@@ -119,7 +128,7 @@ body {
     border-left: none;
 }
 
-/* New, more elegant active state indicator */
+/* New, more elegant active state indicator with glow */
 .nav-item.active::before {
     content: '';
     position: absolute;
@@ -175,26 +184,32 @@ body {
 
 /* Main Content Wrapper */
 .content-wrapper {
+    /* 🛠️ FIX: Allow wrapper to take up remaining space */
     flex-grow: 1; 
+    /* 🛠️ FIX: Ensure content wrapper takes up full available height for proper scrolling */
+    height: 100vh;
     overflow-y: hidden;
     background-color: var(--content-bg-color);
     display: flex;
     flex-direction: column;
+    /* 🛠️ FIX: Ensure it always covers 100% of the remaining width */
     width: calc(100% - var(--sidebar-width)); 
 }
 
 .module-container {
     flex-grow: 1;
     overflow-y: auto; 
-    /* Modules manage their internal padding */
+    /* FIX: Remove general padding here. Modules should manage their internal padding. */
     padding: 0; 
-    /* Hide scrollbar */
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    /* 🛠️ UI/UX: Added subtle inner shadow for depth (Recessed screen effect) */
+    box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.2);
+    /* Hide scrollbar for a cleaner look */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
 .module-container::-webkit-scrollbar {
-    display: none; 
+    display: none; /* Chrome, Safari, Opera */
 }
 
 
