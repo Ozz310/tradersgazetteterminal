@@ -1,3 +1,6 @@
+// Global object to manage module state and cleanup
+window.tg_news = {};
+
 // A universal way to load a script dynamically
 function loadScript(url, callback) {
     const script = document.createElement('script');
@@ -9,10 +12,14 @@ function loadScript(url, callback) {
 // --- Main initialization function to be called by app.js ---
 function initNewsAggregator() {
     // API Key and URL for the Google Apps Script
-    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
+    // The query parameter '?sheet=' will be appended by the feed source.
+    const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
 
-    let allNewsArticles = [];
+    let refreshIntervalId; // To store the interval ID for cleanup
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
+
+    // Store the currently active feed (defaults to 'general')
+    let activeFeed = 'general';
 
     function formatNewspaperDateline(dateString) {
         if (!dateString) return 'N/A';
@@ -27,9 +34,16 @@ function initNewsAggregator() {
         }
     }
 
-    async function fetchNews() {
+    // ⭐ CORE CHANGE: Fetch function accepts a feed source
+    async function fetchNews(feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
+
+        // Determine the Google Sheet Subsheet to fetch data from
+        // 'general' is the MarketAux sheet (default)
+        // 'cnbc' is the new CNBC sheet
+        const sheetName = feedSource === 'cnbc' ? 'CNBC' : 'MarketAux';
+        const fetchUrl = `${GOOGLE_SHEET_BASE_URL}?sheet=${sheetName}`;
 
         // Show skeleton loader
         newsList.innerHTML = `
@@ -53,17 +67,26 @@ function initNewsAggregator() {
         `;
 
         try {
-            const response = await fetch(GOOGLE_SHEET_URL);
+            const response = await fetch(fetchUrl);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const newsData = await response.json();
-            allNewsArticles = newsData.filter(article => article.Headline && article.Headline.trim() !== '');
-            displayNews(allNewsArticles);
+            
+            // Filter out articles with no headline
+            const articles = newsData.filter(article => {
+                // Handle different keys based on the source
+                const headlineKey = feedSource === 'cnbc' ? 'Title' : 'Headline';
+                return article[headlineKey] && article[headlineKey].trim() !== '';
+            });
+
+            displayNews(articles, feedSource);
         } catch (error) {
-            console.error('Error fetching news:', error);
-            newsList.innerHTML = '<p>Failed to retrieve news. Please try refreshing.</p>';
+            console.error(`Error fetching ${feedSource} news:`, error);
+            newsList.innerHTML = `<p>Failed to retrieve ${feedSource} news. Please check the network or server status.</p>`;
         }
     }
 
-    function displayNews(articlesToDisplay) {
+    // ⭐ CORE CHANGE: Display function handles different column names
+    function displayNews(articlesToDisplay, feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
 
@@ -73,20 +96,36 @@ function initNewsAggregator() {
             return;
         }
 
+        // Define column mapping based on the feed source
+        const map = feedSource === 'cnbc' ? {
+            headline: 'Title',
+            summary: 'Summary',
+            url: 'URL',
+            time: 'Date Created',
+            tickers: null // CNBC feed via RSS import doesn't have tickers
+        } : {
+            headline: 'Headline',
+            summary: 'Summary',
+            url: 'URL',
+            time: 'Published Time',
+            tickers: 'Tickers'
+        };
+
         articlesToDisplay.sort((a, b) => {
-            const dateA = new Date(a['Published Time']);
-            const dateB = new Date(b['Published Time']);
+            const dateA = new Date(a[map.time]);
+            const dateB = new Date(b[map.time]);
             if (isNaN(dateA) && isNaN(dateB)) return 0;
             if (isNaN(dateB)) return -1;
             if (isNaN(dateA)) return 1;
             return dateB - dateA;
         }).forEach((article, index) => {
-            const headline = article.Headline || '';
-            const summary = article.Summary || '';
-            let url = article.URL || '#';
-            const publishedTime = article['Published Time'] || 'N/A';
-            const tickers = article.Tickers || '';
+            const headline = article[map.headline] || '';
+            const summary = article[map.summary] || '';
+            let url = article[map.url] || '#';
+            const publishedTime = article[map.time] || 'N/A';
+            const tickers = map.tickers ? (article[map.tickers] || 'N/A') : 'N/A';
 
+            // Clean and validate URL
             if (url !== '') {
                 url = url.replace(/^"|"$/g, '').trim();
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -98,7 +137,7 @@ function initNewsAggregator() {
             const isBreaking = index === 0;
             const breakingRibbonHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More</a>` : '';
-            const tickersHtml = tickers ? `<div class="news-meta"><span>Tickers: ${tickers}</span></div>` : '';
+            const tickersHtml = `<div class="news-meta"><span>Tickers: ${tickers}</span></div>`;
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
@@ -117,7 +156,50 @@ function initNewsAggregator() {
         });
     }
 
-    // Initial fetch and auto-refresh
-    fetchNews();
-    setInterval(fetchNews, AUTO_REFRESH_INTERVAL_MS);
+    // ⭐ NEW FUNCTION: Handles the tab switching logic
+    function handleTabSwitch(e) {
+        const target = e.target.closest('.news-tab');
+        if (!target) return;
+
+        const newFeed = target.dataset.feed;
+        if (newFeed === activeFeed) return; // Already active
+
+        // Update active state in UI
+        document.querySelectorAll('.news-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        target.classList.add('active');
+
+        activeFeed = newFeed;
+
+        // Clear existing interval and start a new one for the new feed
+        clearInterval(refreshIntervalId);
+        startAutoRefresh(activeFeed);
+    }
+
+    // ⭐ NEW FUNCTION: Starts the auto refresh loop
+    function startAutoRefresh(feed) {
+        // Initial fetch
+        fetchNews(feed);
+        // Set up interval for refreshing the news
+        refreshIntervalId = setInterval(() => fetchNews(feed), AUTO_REFRESH_INTERVAL_MS);
+        console.log(`News Aggregator: Started auto-refresh for '${feed}'.`);
+    }
+
+    // ⭐ NEW FUNCTION: Public cleanup for app.js
+    window.tg_news.cleanup = function() {
+        if (refreshIntervalId) {
+            clearInterval(refreshIntervalId);
+            console.log('News Aggregator: Auto-refresh interval cleared.');
+        }
+    };
+
+    // --- Initialization ---
+    const newsTabsContainer = document.querySelector('.news-tabs');
+    if (newsTabsContainer) {
+        newsTabsContainer.addEventListener('click', handleTabSwitch);
+    }
+
+    // Initial fetch starts with the default feed
+    startAutoRefresh(activeFeed); 
 }
