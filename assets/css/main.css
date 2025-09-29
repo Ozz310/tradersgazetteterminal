@@ -82,6 +82,10 @@ body {
     text-align: center;
     /* 🛠️ UI/UX: Reduced bottom margin for tighter fit */
     margin-bottom: 25px;
+    padding-bottom: 20px; /* New padding for the divider gap */
+    /* 🔑 NEW: Subtle Gold Divider for Clean Separation */
+    border-bottom: 1px solid rgba(240, 215, 136, 0.2); 
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4); /* Inner shadow for depth */
 }
 
 .sidebar-logo {
@@ -133,8 +137,8 @@ body {
     font-weight: 400;
     position: relative;
     transition: all 0.2s ease;
-    /* 🛠️ UI/UX: Tightened spacing between items for modern look */
-    margin-bottom: 2px;
+    /* 💥 SPATIAL FIX: Increased bottom margin for better vertical separation (less clustered look) */
+    margin-bottom: 6px; /* Increased from 2px to 6px */
 }
 
 .nav-item:hover {
@@ -184,17 +188,19 @@ body {
 }
 
 .nav-label {
-    margin-left: 10px; /* Reduced margin to pull label closer to icon */
+    /* 💥 SPATIAL FIX: Reduced margin to pull label closer to icon (tighter visual unit) */
+    margin-left: 8px; /* Reduced from 10px to 8px */
     /* 🛠️ UI/UX: Explicitly set font size */
-    font-size: 0.9rem; /* Slightly reduced font size for cleaner typography */
+    font-size: 0.9rem; 
 }
 
 .sidebar-footer {
-    /* 💥 FLEX FIX: Ensure it is pushed to the bottom of the visible area */
+    /* 💥 FLEX FIX: Ensure it is pushed to the bottom of the visible area (anchored) */
     margin-top: auto; 
-    /* 🛠️ UI/UX: Reduced top padding for cleaner bottom boundary */
+    /* 🛠️ UI/UX: Match the new header divider style */
+    border-top: 1px solid rgba(240, 215, 136, 0.2);
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
     padding: 15px 0;
-    border-top: 1px solid var(--border-color);
 }
 
 .footer-link {
