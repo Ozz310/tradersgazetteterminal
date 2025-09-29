@@ -1,6 +1,8 @@
 /* /modules/dashboard/style.css */
 
 :root {
+    /* 🔑 NEW VAR: Define the content background color locally to match the content wrapper in main.css */
+    --content-page-bg: #2a2a2a;
     --black-tone-3: #1c1c1c;
     --gold-accent: #ffd700;
     --white-text-color: #f0f0f0;
@@ -19,7 +21,8 @@
     position: relative;
     width: 100%; 
     min-height: auto; 
-    background-color: var(--black-tone-3);
+    /* 🛠️ CRITICAL FIX: Changed background to match --content-bg-color (#2a2a2a) to eliminate the "weird black box" effect */
+    background-color: var(--content-page-bg); 
     color: var(--white-text-color);
     font-family: 'Segoe UI', 'Roboto', sans-serif;
     overflow-x: hidden;
@@ -58,7 +61,8 @@
 }
 
 .widget-card {
-    background-color: var(--light-grey-placeholder);
+    /* 🔑 FIX: Set the clock card background to the darker tone to sit nicely on the page background */
+    background-color: var(--black-tone-3); 
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
     padding: 2.5rem 2rem;  
@@ -69,8 +73,8 @@
     
     width: 100%;
     /* Set a maximum clean width for the widget */
-    max-width: 400px; 
-    margin: 0; 
+    max-width: 400px;  
+    margin: 0;  
 }
 
 .widget-main-info {
@@ -83,7 +87,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0; 
+    margin: 0;  
 }
 
 .analog-clock {
@@ -174,6 +178,8 @@
     font-weight: 300;
     color: var(--gold-accent);
     display: block;
+    /* 🛠️ UI/UX: Added gold text glow for radiant, premium look */
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.4); 
 }
 
 #digital-date {
