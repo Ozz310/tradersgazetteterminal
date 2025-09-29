@@ -284,7 +284,7 @@ textarea:focus {
     font-weight: 700;
 }
 
-/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes ⭐ */
+/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes (Top 1% Layout) ⭐ */
 .card-detail {
     display: flex;
     justify-content: space-between;
@@ -521,8 +521,8 @@ textarea:focus {
     .chart-card {
         height: 300px; /* Shorter height for mobile */
     }
+    /* ⭐ FIX: Ensure chart canvas respects 100% width, fixing horizontal scroll (Top 1% Responsiveness) ⭐ */
     .chart-card canvas {
-        /* ⭐ FIX: Ensure chart canvas respects 100% width, fixing horizontal scroll ⭐ */
         width: 100% !important; 
         height: 100% !important; 
         min-height: 220px; 
