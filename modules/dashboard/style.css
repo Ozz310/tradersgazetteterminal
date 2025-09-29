@@ -18,7 +18,9 @@
 .dashboard-page {
     position: relative;
     width: 100%;
-    min-height: 100vh;
+    /* FIX: Remove min-height: 100vh here. The scrolling is managed by main.css's module-container. 
+       Removing this ensures it doesn't force extra space and pushes footer-like elements to the bottom correctly. */
+    min-height: auto; 
     background-color: var(--black-tone-3);
     color: var(--white-text-color);
     font-family: 'Segoe UI', 'Roboto', sans-serif;
@@ -28,27 +30,33 @@
 .dashboard-cover-photo {
     width: 100%;
     /* Desktop Height: 380px for better view of banner content */
-    height: 380px; 
+    height: 380px;  
     
     background-size: cover;
     background-repeat: no-repeat;
     /* FIX 1: Optimized image display for new banner, prioritizing central content */
-    background-position: center center; 
+    background-position: center center;  
 }
 
 .dashboard-widgets-grid {
+    /* 🛠️ FIX: Use modern Flexbox to definitively center content within the available space. */
     display: flex;
-    justify-content: center;
-    /* Default desktop padding */
-    padding: 2rem; 
+    justify-content: center; /* Horizontally centers the widget-card */
+    align-items: flex-start; /* Aligns content to the top (default flow) */
+    /* Default desktop padding, retained from main.css's module-container padding */
+    padding: 0; 
     width: 100%;
+    /* FIX: Add top margin to position the widget right below the banner (Image 1 reference). */
+    margin-top: -150px; 
+    /* Use padding to create space around the centered clock widget */
+    padding: 2rem;
 }
 
 .widget-card {
     background-color: var(--light-grey-placeholder);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
-    padding: 2.5rem 2rem; 
+    padding: 2.5rem 2rem;  
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -56,7 +64,8 @@
     
     width: 100%;
     max-width: 400px;
-    margin: 0 auto; /* Ensures centering */
+    /* FIX: Removed margin: 0 auto; as the parent flex container (.dashboard-widgets-grid) handles the centering. */
+    margin: 0; 
 }
 
 .widget-main-info {
@@ -65,16 +74,19 @@
 
 /* Base styles for the analog clock */
 .live-clock-container {
+    /* This element is inside .widget-card, which centers its children (align-items: center).
+       live-clock-container already uses margin: 0 auto; which helps, but relying on the parent's
+       align-items: center is cleaner here. */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0 auto; 
+    margin: 0; /* Clear margin: 0 auto; if present, rely on parent */
 }
 
 .analog-clock {
     /* CRITICAL FIX: position: relative is essential for the hands (absolute) to align */
-    position: relative; 
+    position: relative;  
     width: 250px;
     height: 250px;
     border-radius: 50%;
@@ -106,7 +118,7 @@
     height: 8px;
     background-color: var(--white-text-color);
     /* CRITICAL FIX: Transform origin for 250px clock */
-    transform-origin: 0 125px; 
+    transform-origin: 0 125px;  
 }
 
 .tick.hour {
@@ -152,7 +164,7 @@
 .digital-display {
     text-align: center;
     /* Margin to separate from clock hands (overlap fix) */
-    margin-top: 3rem; 
+    margin-top: 3rem;  
     color: var(--white-text-color);
     letter-spacing: 2px;
     font-family: 'Segoe UI', 'Roboto', sans-serif;
@@ -174,10 +186,10 @@
 /* Styles for Time Zone Buttons and Session Indicator... (omitted) */
 .time-zone-selector {
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;  
     justify-content: center;
-    gap: 0.5rem; 
-    margin-top: 1.5rem; 
+    gap: 0.5rem;  
+    margin-top: 1.5rem;  
     max-width: 100%;
 }
 
@@ -213,23 +225,24 @@
 @media (max-width: 600px) {
     .dashboard-cover-photo {
         /* Mobile Height: 180px for clean cropping */
-        height: 180px; 
+        height: 180px;  
     }
 
-    /* FIX 2: Clock Centering Fix - Reduces padding on the outer grid container on mobile 
+    /* FIX 2: Clock Centering Fix - Reduces padding on the outer grid container on mobile  
        to ensure the internal widget card centers correctly on small screens. */
     .dashboard-widgets-grid {
-        padding: 1rem; 
+        padding: 1rem;  
+        margin-top: -90px; /* Reduced margin-top for smaller banner */
     }
     
     .widget-card {
-        padding: 1.5rem 1rem; 
+        padding: 1.5rem 1rem;  
     }
     
     .analog-clock {
         /* CRITICAL FIX: position: relative is essential for the hands (absolute) to align */
         position: relative;
-        width: 180px; 
+        width: 180px;  
         height: 180px;
     }
     
