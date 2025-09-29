@@ -284,27 +284,38 @@ textarea:focus {
     font-weight: 700;
 }
 
+/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes ⭐ */
 .card-detail {
     display: flex;
     justify-content: space-between;
-    padding: 5px 0;
-    font-size: 0.95rem; /* Slightly larger text */
-    /* NEW: Subtle separation line for detail rows */
+    /* Reduced vertical padding for a sleeker look */
+    padding: 3px 0; 
+    font-size: 0.95rem; 
+    /* Subtle separation line for detail rows */
     border-bottom: 1px dotted rgba(241, 241, 241, 0.1); 
 }
 /* Ensure the last card detail doesn't have the dotted line */
 .trade-card .card-detail:last-of-type {
     border-bottom: none;
+    /* Add a little more margin at the bottom of the card for visual separation from the next card */
+    margin-bottom: 5px; 
 }
 
 .card-label {
+    /* Define a fixed width for labels to keep the card values right-aligned */
+    flex: 0 0 45%; 
     color: #a8a8a8; /* Lighter grey for label */
     font-weight: 400;
 }
 
 .card-value {
+    /* Allow the value to take the rest of the space, ensuring right alignment */
+    flex: 1 1 auto;
+    text-align: right; 
     font-weight: 600;
     color: #f1f1f1;
+    /* Added to ensure the numbers don't wrap weirdly */
+    word-break: break-all; 
 }
 
 /* Modals, Animations, Utilities */
@@ -511,6 +522,9 @@ textarea:focus {
         height: 300px; /* Shorter height for mobile */
     }
     .chart-card canvas {
+        /* ⭐ FIX: Ensure chart canvas respects 100% width, fixing horizontal scroll ⭐ */
+        width: 100% !important; 
+        height: 100% !important; 
         min-height: 220px; 
         max-height: 220px;
     }
