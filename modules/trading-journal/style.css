@@ -3,7 +3,9 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+    /* Using Dominant Black/Dark Tones: #0d0d0d */
     background-color: #0d0d0d;
+    /* Using Crisp White/Light Grey text: #f1f1f1 */
     color: #f1f1f1;
     line-height: 1.6;
     font-size: 1rem;
@@ -15,6 +17,7 @@ h1, h2, h3, h4 {
 }
 
 a {
+    /* Using Radiant Gold Accents: #d4af37 */
     color: #d4af37;
     text-decoration: none;
 }
@@ -22,7 +25,6 @@ a {
 /* Journal-specific layout */
 .journal-cover-photo {
     height: 250px;
-    /* Corrected URL to ensure the cover photo loads */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20Journal.png');
     background-size: cover;
     background-position: center;
@@ -47,16 +49,16 @@ a {
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
-    padding: 15px;
     background: #1a1a1a;
     border-radius: 8px;
-    /* --- MOBILE CHANGE: Allow buttons to wrap --- */
+    padding: 15px;
     flex-wrap: wrap;
 }
 
+/* ⭐ LUXURY BUTTON STYLE: Gold background, Dark text, subtle lift/shadow ⭐ */
 .submit-button {
-    background-color: #d4af37;
-    color: #0d0d0d;
+    background-color: #d4af37; /* Solid Gold */
+    color: #0d0d0d; /* Dominant Black */
     border: none;
     padding: 12px 25px;
     font-size: 1rem;
@@ -64,19 +66,18 @@ a {
     border-radius: 6px;
     font-weight: bold;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    /* --- MOBILE CHANGE: Full width button on small screens --- */
-    flex-grow: 1; 
-    min-width: 150px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+    flex-grow: 1; 
+    min-width: 150px; 
 }
 
 .submit-button:hover {
-    background-color: #e0c265;
+    background-color: #e0c265; /* Slightly lighter gold on hover */
     transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Tabs */
+/* Tabs - Unified Aesthetic */
 .tab-switcher {
     display: flex;
     margin-top: 20px;
@@ -102,7 +103,8 @@ a {
 .tab.active {
     background-color: #0d0d0d;
     color: #d4af37;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* ⭐ DYNAMIC GOLD ACCENT: Subtle glow for active tab ⭐ */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
 .tab:hover:not(.active) {
@@ -118,6 +120,7 @@ a {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* ⭐ REFINED HEADING: Gold underline for visual impact ⭐ */
 .widget-title {
     font-size: 1.5rem;
     margin-top: 0;
@@ -152,6 +155,7 @@ label {
     color: #ccc;
 }
 
+/* ⭐ MINIMALIST INPUTS & GOLD FOCUS ACCENT ⭐ */
 input,
 select,
 textarea {
@@ -162,20 +166,23 @@ textarea {
     border-radius: 5px;
     font-size: 0.9rem;
     transition: border-color 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
     outline: none;
+    /* Radiant Gold border on focus */
     border-color: #d4af37;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
 }
 
 /* Tables */
-/* Table wrapper is now used for desktop view */
 .journal-table-wrapper {
-    /* For desktop/larger screens: full table is shown */
-    display: block; 
+    display: block; 
 }
 
 .journal-table-container {
@@ -189,11 +196,16 @@ textarea:focus {
     text-align: left;
 }
 
+/* ⭐ TABLE REFINEMENT: Subtle Zebra Striping & Hover ⭐ */
 #journalTable th,
 #journalTable td {
     padding: 12px 15px;
     border-bottom: 1px solid #333;
     white-space: nowrap;
+}
+
+#journalTable tbody tr:nth-child(even) {
+    background-color: #1f1f1f; /* Subtle darker shade for striping */
 }
 
 #journalTable thead th {
@@ -205,8 +217,11 @@ textarea:focus {
 }
 
 #journalTable tbody tr:hover {
-    background-color: #252525;
+    background-color: #282828; /* Slightly darker hover */
+    /* ⭐ GOLD BORDER ON HOVER ⭐ */
+    box-shadow: inset 2px 0 0 0 #d4af37; 
 }
+
 
 /* --- NEW: Trade Card View Styling (Mobile-first) --- */
 .trade-card-list {
@@ -216,12 +231,12 @@ textarea:focus {
 }
 
 .trade-card {
-    background-color: #252525; 
-    border-left: 5px solid; 
+    background-color: #252525; 
+    border-left: 5px solid; 
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, border-left-color 0.3s ease;
 }
 
 .trade-card:hover {
@@ -229,12 +244,17 @@ textarea:focus {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
+/* ⭐ P&L BADGES: Gold/Red/White Scheme for Clarity ⭐ */
 .trade-card.profit {
-    border-left-color: #1aff70; /* Bright Green for Profit */
+    border-left-color: #d4af37; /* Gold for Profit */
 }
 
 .trade-card.loss {
-    border-left-color: #ff4d4d; /* Bright Red for Loss */
+    border-left-color: #b33a3a; /* Deep Red for Loss (Subtle) */
+}
+
+.trade-card.breakeven {
+    border-left-color: #f1f1f1; /* Crisp White for Break-Even */
 }
 
 .card-header {
@@ -249,7 +269,7 @@ textarea:focus {
 .card-symbol {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #d4af37; 
+    color: #d4af37; 
 }
 
 .card-pnl {
@@ -273,7 +293,7 @@ textarea:focus {
     color: #f1f1f1;
 }
 
-/* Modals (Sync & Upload) */
+/* Modals, Animations, Utilities */
 .modal {
     display: flex;
     position: fixed;
@@ -360,18 +380,77 @@ textarea:focus {
     100% { transform: rotate(360deg); }
 }
 
-/* Analytics-specific fixes */
-.analytics-grid {
-    display: grid;
-    /* Default: two columns for desktop */
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-    gap: 20px;
+/* --- ANALYTICS VIEW LAYOUT & UI/UX --- */
+
+/* ⭐ ANALYTICS CONTROLS UI/UX (Gold Dropdown & Button Group) ⭐ */
+.analytics-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #333;
 }
+
+.time-frame-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Time Frame Selector Styling */
+#time-frame {
+    min-width: 150px;
+    background-color: #0d0d0d;
+    border: 1px solid #333;
+    padding: 8px 15px;
+    font-weight: 600;
+}
+#time-frame:focus {
+    border-color: #d4af37;
+}
+
+/* ⭐ LAYOUT FIX: New 2x2 Grid Structure ⭐ */
+.analytics-grid {
+    /* Use a vertical flex container to stack the chart rows */
+    display: flex; 
+    flex-direction: column;
+    gap: 30px; /* Space between the chart rows */
+}
+
+.chart-row {
+    /* Use a horizontal flex container for charts in the row */
+    display: flex;
+    gap: 30px; /* Space between charts in a row */
+}
+
 .chart-card {
-    height: 350px;
+    flex: 1 1 50%; /* Each chart takes half the row width */
+    min-width: 0; 
+    background-color: #1a1a1a; /* Match other cards */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    height: 380px; /* Consistent height for visual balance */
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease;
+}
+
+.chart-card:hover {
+    /* Subtle gold highlight on hover for chart cards */
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3), 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.chart-card h4 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #d4af37; /* Gold headings for charts */
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
 }
 .chart-card canvas {
-    min-height: 300px; /* Ensures a fixed height for the canvas */
+    min-height: 300px; 
     max-height: 300px;
 }
 
@@ -381,38 +460,54 @@ textarea:focus {
 
 @media (max-width: 768px) {
     .journal-content-container {
-        /* Reduce padding on very small screens */
-        padding: 0 10px; 
+        padding: 0 10px; 
+    }
+    
+    /* Analytics Controls stacking */
+    .analytics-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .export-button {
+        width: 100%;
+    }
+    .analytics-controls .submit-button {
+        width: 100%; /* Full width for the download button */
+    }
+
+    /* Analytics Grid Collapse: Single column */
+    .chart-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .chart-card {
+        height: 300px; /* Shorter height for mobile */
+    }
+    .chart-card canvas {
+        min-height: 220px; 
+        max-height: 220px;
     }
 
     /* 1. Form Collapse: Stack form groups */
     #trade-form .form-row,
     #sync-form .form-row {
-        /* Remove flex and force stacking */
-        display: block; 
+        display: block; 
         gap: 0;
         margin-bottom: 0;
     }
 
     .form-group {
-        /* Add spacing between stacked groups */
         margin-bottom: 15px;
     }
     
-    /* 2. Analytics Grid Collapse: Single column */
-    .analytics-grid {
-        /* Force single column layout */
-        grid-template-columns: 1fr;
-    }
-
     /* 3. Trade Log View Toggle (Card vs Table) */
     .journal-table-wrapper {
-        /* Hide traditional table on small screens */
         display: none;
     }
 
     .trade-card-list {
-        /* Ensure card list is displayed (it's hidden by default on desktop) */
         display: grid;
     }
 }
