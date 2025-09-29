@@ -67,8 +67,8 @@ a {
     font-weight: bold;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Deeper shadow */
-    flex-grow: 1; 
-    min-width: 150px; 
+    flex-grow: 1; 
+    min-width: 150px; 
 }
 
 .submit-button:hover {
@@ -182,7 +182,7 @@ textarea:focus {
 
 /* Tables */
 .journal-table-wrapper {
-    display: block; 
+    display: block; 
 }
 
 .journal-table-container {
@@ -219,7 +219,7 @@ textarea:focus {
 #journalTable tbody tr:hover {
     background-color: #282828; /* Slightly darker hover */
     /* ⭐ GOLD BORDER ON HOVER ⭐ */
-    box-shadow: inset 2px 0 0 0 #d4af37; 
+    box-shadow: inset 2px 0 0 0 #d4af37; 
 }
 
 
@@ -231,9 +231,9 @@ textarea:focus {
 }
 
 .trade-card {
-    background-color: #252525; 
+    background-color: #252525; 
     /* Keep the left border as the P&L badge */
-    border-left: 5px solid; 
+    border-left: 5px solid; 
     padding: 15px;
     border-radius: 8px;
     /* Deeper shadow for luxury look */
@@ -275,7 +275,7 @@ textarea:focus {
 .card-symbol {
     font-size: 1.3rem; /* Slightly larger symbol */
     font-weight: 700;
-    color: #d4af37; 
+    color: #d4af37; 
 }
 
 /* ⭐ PNL TEXT SIZE: Larger P&L value ⭐ */
@@ -435,13 +435,12 @@ textarea:focus {
     border-color: #d4af37;
 }
 
-/* ⭐ FIX: DESKTOP LAYOUT (2x2 Grid Enforcement) ⭐ */
+/* ⭐ DESKTOP LAYOUT (2x2 Grid Enforcement) ⭐ */
 .analytics-grid {
     /* Use a vertical flex container to stack the chart rows */
-    display: flex; 
+    display: flex; 
     flex-direction: column;
     gap: 30px; /* Space between the chart rows */
-    /* Ensure no flex-wrap here, as we want rows to stack */
 }
 
 .chart-row {
@@ -452,16 +451,16 @@ textarea:focus {
 }
 
 .chart-card {
-    flex: 1 1 50%; /* Each chart takes half the row width */
-    min-width: 0; 
+    /* Critical for 2x2: Each chart takes half the row width */
+    flex: 1 1 50%; 
+    min-width: 0; 
     background-color: #1a1a1a; /* Match other cards */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    height: 380px; /* Consistent height for visual balance */
+    height: 380px; /* Consistent height for visual balance (Desktop) */
     box-sizing: border-box;
     transition: box-shadow 0.3s ease;
-    /* Set position relative to make canvas absolute positioning easier if needed */
     position: relative; 
 }
 
@@ -480,7 +479,8 @@ textarea:focus {
 }
 /* This fix ensures the chart occupies the maximum available space in the card */
 .chart-card canvas {
-    min-height: 300px; 
+    /* Fixed pixel height is better for preventing vertical scroll on desktop */
+    min-height: 300px; 
     max-height: 300px;
     width: 100%;
 }
@@ -491,7 +491,7 @@ textarea:focus {
 
 @media (max-width: 768px) {
     .journal-content-container {
-        padding: 0 10px; 
+        padding: 0 10px; 
     }
     
     /* ⭐ ACTION BUTTON FIX: Force side-by-side on mobile and split 50/50 ⭐ */
@@ -511,6 +511,13 @@ textarea:focus {
         align-items: flex-start;
         gap: 15px;
     }
+    .time-frame-selector {
+        width: 100%;
+        justify-content: space-between;
+    }
+    #time-frame {
+        flex-grow: 1; /* Allow dropdown to expand */
+    }
     .export-button {
         width: 100%;
     }
@@ -520,26 +527,32 @@ textarea:focus {
 
     /* Analytics Grid Collapse: Single column */
     .chart-row {
+        /* This forces the charts in a 'row' to stack vertically on mobile */
         flex-direction: column;
         gap: 20px;
     }
     
-    /* ⭐ FIX: MOBILE VERTICAL SCROLL (Explicit fixed height) ⭐ */
+    /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
     .chart-card {
-        height: 300px; /* Shorter, FIXED height for mobile */
+        /* Shorter, FIXED height for mobile to prevent frame expansion */
+        height: 350px; 
+        padding: 15px; /* Slight reduction in padding */
+    }
+    .chart-card h4 {
+        margin-bottom: 10px;
     }
     .chart-card canvas {
-        /* Fixes horizontal scroll and stops vertical expansion */
+        /* Use a fixed pixel height to stop Chart.js from causing vertical content reflow */
         width: 100% !important; 
-        height: 80% !important; /* Set a percentage relative to the fixed card height */
-        min-height: 200px; 
-        max-height: 220px;
+        min-height: 250px; 
+        max-height: 280px;
+        height: 280px !important; 
     }
 
     /* 1. Form Collapse: Stack form groups */
     #trade-form .form-row,
     #sync-form .form-row {
-        display: block; 
+        display: block; 
         gap: 0;
         margin-bottom: 0;
     }
