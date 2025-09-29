@@ -61,6 +61,9 @@
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
+    /* FIX: Ensure news container establishes a stacking context */
+    position: relative; 
+    z-index: 1;
 }
 
 .news-aggregator .news-title {
@@ -71,6 +74,8 @@
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--gold-color);
+    /* Ensure the title is always on top (though unnecessary here, it's good practice for fixed headers) */
+    z-index: 10; 
 }
 
 /* ⭐ UPDATED STYLES FOR TAB SWITCHING (Desktop) ⭐ */
@@ -82,20 +87,22 @@
     background-color: var(--dark-bg); /* Darker background for the tabs container */
     border-radius: 6px;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-    /* Desktop: Use overflow-x: hidden to prevent unwanted scrolling on wide screens */
     overflow-x: hidden; 
+    /* FIX: Give tabs a higher Z-index than the scrollable content */
+    z-index: 5; 
+    /* FIX: Ensure the background of the tabs container is opaque to cover scrolling content */
+    background-color: var(--accent-color); 
+    padding: 10px 5px; /* Added more vertical padding for breathing room */
 }
 
 .news-aggregator .news-tab {
-    /* FIX: Removed flex-grow: 1 to prevent buttons from shrinking below their content size. */
     flex-grow: 0; 
-    flex-shrink: 0; /* Ensures the button keeps its size */
+    flex-shrink: 0; 
     padding: 10px 15px;
-    /* Added margin to separate the tabs slightly on desktop, complementing the mobile fix */
     margin: 0 5px; 
     border: none;
     background: transparent;
-    color: var(--text-color-light); /* Crisp White/Light Grey text */
+    color: var(--text-color-light);
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
@@ -111,7 +118,7 @@
 
 .news-aggregator .news-tab.active {
     color: var(--dark-bg);
-    background-color: var(--gold-color); /* Radiant Gold Accents */
+    background-color: var(--gold-color); 
     box-shadow: 0 2px 10px rgba(240, 215, 136, 0.5);
     font-weight: 700;
 }
@@ -122,6 +129,10 @@
     flex-grow: 1;
     overflow-y: auto;
     scrollbar-width: none;
+    /* FIX: Add padding to the top to ensure the first article isn't immediately touching the tabs */
+    padding-top: 5px;
+    /* FIX: Reset margin-bottom for the last article to prevent scrolling issues */
+    padding-bottom: 5px;
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
@@ -134,6 +145,11 @@
     border-radius: 8px;
     margin-bottom: 15px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* FIX: Remove margin-bottom from the last article in the list to prevent extra scroll space */
+.news-aggregator .news-list > .news-article:last-child {
+    margin-bottom: 0;
 }
 
 .news-aggregator .news-article:hover {
@@ -160,7 +176,7 @@
     /* ... ribbon styling ... */
 }
 
-/* NEW: Style for the source/ticker metadata line */
+/* Style for the source/ticker metadata line */
 .news-aggregator .news-meta {
     display: flex;
     justify-content: space-between;
@@ -178,7 +194,6 @@
 .news-aggregator .news-meta span:first-child {
     margin-right: 15px;
 }
-/* END NEW META STYLE */
 
 .news-aggregator .news-branding-footer {
     display: flex;
@@ -188,6 +203,9 @@
     padding-top: 15px;
     border-top: 1px solid var(--border-color);
     margin-top: auto;
+    /* Ensure footer is visible over any potential scroll overflow */
+    z-index: 5; 
+    background-color: var(--accent-color); /* Ensure opaque background */
 }
 
 .news-aggregator .news-branding-footer img {
@@ -237,33 +255,32 @@
 
     .news-aggregator .news-header-banner {
         height: 180px;
-        background-size: cover; /* Use cover on mobile as well */
+        background-size: cover; 
         background-position: center center;
     }
 
-    /* ⭐ MOBILE FIX & UI/UX ENHANCEMENT: Horizontal Scrollable Tabs with Snapping ⭐ */
+    /* MOBILE FIX & UI/UX ENHANCEMENT: Horizontal Scrollable Tabs with Snapping */
     .news-aggregator .news-tabs {
-        justify-content: flex-start; /* Align tabs to the left */
-        overflow-x: auto; /* Enable horizontal scrolling */
-        white-space: nowrap; /* Prevent tabs from wrapping */
-        scroll-snap-type: x mandatory; /* NEW: Enable scroll-snapping */
-        /* Hide scrollbar for a cleaner look */
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
-        padding-bottom: 8px; /* Extra space to accommodate any potential iOS scroll indicator */
+        justify-content: flex-start; 
+        overflow-x: auto; 
+        white-space: nowrap; 
+        scroll-snap-type: x mandatory; 
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+        padding-bottom: 8px; 
     }
 
     .news-aggregator .news-tabs::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+        display: none; 
     }
 
     .news-aggregator .news-tab {
-        flex-grow: 0; /* Important: Do not force tabs to grow */
-        flex-shrink: 0; /* Important: Do not allow tabs to shrink */
-        margin-right: 10px; /* Spacing between tabs */
-        min-width: 120px; /* Give a comfortable minimum touch target size */
+        flex-grow: 0; 
+        flex-shrink: 0; 
+        margin-right: 10px; 
+        min-width: 120px; 
         text-align: center;
-        scroll-snap-align: start; /* NEW: Snap to the start of the tab when scrolling */
-        margin: 0 5px; /* Consistent margin */
+        scroll-snap-align: start; 
+        margin: 0 5px; 
     }
 }
