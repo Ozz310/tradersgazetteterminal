@@ -34,7 +34,7 @@ function initNewsAggregator() {
         }
     }
 
-    // ⭐ UPDATED CORE CHANGE: Fetch function handles 5 different sheets
+    // ⭐ CORE CHANGE: Fetch function handles 5 different sheets
     async function fetchNews(feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
@@ -89,12 +89,9 @@ function initNewsAggregator() {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const newsData = await response.json();
             
-            // Define a flag to check if we are using the simple RSS structure (CNBC and the new feeds)
             const isSimpleRssFeed = ['cnbc', 'market-watch', 'coin-telegraph', 'news-bitcoin'].includes(feedSource);
             
-            // Filter out articles with no headline
             const articles = newsData.filter(article => {
-                // Determine headline key: 'Title' for simple RSS feeds, 'Headline' for MarketAux (General)
                 const headlineKey = isSimpleRssFeed ? 'Title' : 'Headline';
                 return article[headlineKey] && article[headlineKey].trim() !== '';
             });
@@ -106,17 +103,7 @@ function initNewsAggregator() {
         }
     }
 
-    // Function to convert feed source key to clean display name (e.g., 'coin-telegraph' -> 'Coin Telegraph')
-    function formatSourceDisplayName(feedKey) {
-        if (!feedKey) return 'N/A';
-        // Capitalize first letter of each word and replace hyphens with spaces
-        return feedKey
-            .split('-')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-    }
-
-    // ⭐ UPDATED CORE CHANGE: Display function handles all column names and now includes Source Indicator
+    // ⭐ UPDATED CORE CHANGE: Display function simplified (no Source/Tickers)
     function displayNews(articlesToDisplay, feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
@@ -127,23 +114,19 @@ function initNewsAggregator() {
             return;
         }
 
-        // Define column mapping based on the feed source
         const isSimpleRssFeed = ['cnbc', 'market-watch', 'coin-telegraph', 'news-bitcoin'].includes(feedSource);
 
+        // Map simplified for core data only
         const map = isSimpleRssFeed ? {
             headline: 'Title',
             summary: 'Summary',
             url: 'URL',
             time: 'Date Created',
-            source: null, // RSS feeds use the tab name as source
-            tickers: null 
         } : {
             headline: 'Headline',
             summary: 'Summary',
             url: 'URL',
             time: 'Published Time',
-            source: 'Source', // MarketAux (General) provides a source
-            tickers: 'Tickers'
         };
 
         articlesToDisplay.sort((a, b) => {
@@ -159,20 +142,6 @@ function initNewsAggregator() {
             let url = article[map.url] || '#';
             const publishedTime = article[map.time] || 'N/A';
             
-            // --- Source & Ticker Logic ---
-            let displaySource;
-            let displayTickers = 'N/A';
-            
-            if (isSimpleRssFeed) {
-                // Source is the active tab name
-                displaySource = formatSourceDisplayName(feedSource);
-            } else {
-                // General/MarketAux feed: Source is from the 'Source' column, Tickers from 'Tickers' column
-                displaySource = article[map.source] || formatSourceDisplayName(feedSource);
-                displayTickers = article[map.tickers] || 'N/A';
-            }
-            // --- End Source & Ticker Logic ---
-
             // Clean and validate URL
             if (url !== '') {
                 url = url.replace(/^"|"$/g, '').trim();
@@ -186,8 +155,7 @@ function initNewsAggregator() {
             const breakingRibbonHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More</a>` : '';
             
-            // New meta block includes Source and Tickers
-            const metaHtml = `<div class="news-meta"><span>Source: ${displaySource}</span><span>Tickers: ${displayTickers}</span></div>`;
+            // Removed: metaHtml (Source/Tickers)
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
@@ -200,8 +168,7 @@ function initNewsAggregator() {
                 <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
                 ${summaryHtml}
                 ${readMoreHtml}
-                ${metaHtml}
-            `;
+                `;
             newsList.appendChild(articleDiv);
         });
     }
