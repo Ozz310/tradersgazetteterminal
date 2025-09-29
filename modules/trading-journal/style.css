@@ -55,28 +55,28 @@ a {
     flex-wrap: wrap;
 }
 
-/* ⭐ UPDATED: LUXURY PRIMARY BUTTON STYLE (Matching Risk Hub) ⭐ */
+/* ⭐ FINAL ENFORCED: LUXURY PRIMARY BUTTON STYLE (Matching Risk Hub) ⭐ */
 .submit-button {
-    background-color: #d4af37; /* Solid Gold */
-    color: #0d0d0d; /* Dominant Black */
-    border: none;
+    background-color: #d4af37 !important; /* Force Solid Gold */
+    color: #0d0d0d !important; /* Force Dominant Black */
+    border: none !important;
     padding: 12px 25px;
     font-size: 1rem;
     cursor: pointer;
-    border-radius: 8px; /* Standardized to 8px */
+    border-radius: 8px !important; /* Enforce 8px radius */
     font-weight: bold;
     transition: all 0.3s ease;
-    /* Matching the prominent gold button shadow from the reference image */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
+    /* Enforce the prominent gold button shadow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
     flex-grow: 1; 
     min-width: 150px; 
 }
 
 .submit-button:hover {
-    background-color: #e0c265; /* Slightly lighter gold on hover */
+    background-color: #e0c265 !important; /* Lighter gold on hover */
     transform: translateY(-2px);
-    /* Enhanced shadow for a 'lifted' effect */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5); 
+    /* Enforce Enhanced shadow for a 'lifted' effect */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
 }
 
 /* Tabs - Unified Aesthetic */
@@ -88,36 +88,37 @@ a {
     padding: 5px;
 }
 
-/* ⭐ UPDATED: INACTIVE TAB STYLE (Matching Risk Hub Secondary) ⭐ */
+/* ⭐ FINAL ENFORCED: INACTIVE TAB STYLE (Matching Risk Hub Secondary) ⭐ */
 .tab {
     flex: 1;
     text-align: center;
     padding: 12px;
     cursor: pointer;
-    /* Changed from transparent to dark background for solid feel */
-    background: #1a1a1a; 
+    /* Explicit Dark Background */
+    background: #1a1a1a !important; 
     border: none;
-    color: #f1f1f1; /* Crisp white text for clarity/contrast (was #888) */
+    /* Enforce Crisp White text */
+    color: #f1f1f1 !important; 
     font-size: 1.1rem;
     font-weight: 600;
     transition: all 0.3s ease;
     border-radius: 6px;
-    /* Subtle shadow for the inactive state */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    /* Enforce Subtle shadow for the inactive state */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* ⭐ UPDATED: ACTIVE TAB STYLE (Matching Risk Hub Active/Primary) ⭐ */
+/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Matching Risk Hub Active/Primary) ⭐ */
 .tab.active {
-    background-color: #0d0d0d; /* Pure black background for active state */
-    color: #d4af37; /* Gold text */
-    /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow for presence */
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
+    background-color: #0d0d0d !important; /* Force Pure Black for contrast */
+    color: #d4af37 !important; /* Force Gold text */
+    /* Enforce DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8) !important;
 }
 
 .tab:hover:not(.active) {
-    /* Changed hover state to just highlight text gold, keeping dark background */
-    color: #d4af37; 
-    background-color: #1a1a1a;
+    /* Gold text on hover for better interaction feedback */
+    color: #d4af37 !important; 
+    background-color: #1a1a1a !important;
 }
 
 /* Data Cards and Widgets */
