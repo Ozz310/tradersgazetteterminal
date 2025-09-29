@@ -17,19 +17,18 @@
 /* Base styles for the dashboard */
 .dashboard-page {
     position: relative;
-    /* 🛠️ FIX: Ensure the page itself takes 100% of the content area width */
     width: 100%; 
     min-height: auto; 
     background-color: var(--black-tone-3);
     color: var(--white-text-color);
     font-family: 'Segoe UI', 'Roboto', sans-serif;
     overflow-x: hidden;
-    /* 🛠️ FIX: Apply the general module padding here, not in main.css */
-    padding: 40px; 
+    
+    /* 🛠️ CRITICAL FIX: Removed top padding to eliminate gap. Applied padding to sides/bottom. */
+    padding: 0 40px 40px 40px; 
 }
 
 .dashboard-cover-photo {
-    /* 🛠️ FIX: Ensure this stretches to the edge of its padding (which is the full content width) */
     width: 100%; 
     /* Desktop Height: 380px for better view of banner content */
     height: 380px;  
@@ -37,20 +36,23 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;  
-    /* 🛠️ NEW: Overlap the module padding to force the image to stretch wall-to-wall in the content area */
-    margin: -40px -40px 0 -40px; 
-    /* The 0 margin at the bottom allows the next element (clock grid) to position itself correctly */
+    
+    /* 🛠️ CRITICAL FIX: Negative margins to force banner wall-to-wall horizontally. No top/bottom margin. */
+    margin: 0 -40px; 
+    
+    /* 🛠️ UI/UX: Added margin-bottom for clean separation from the clock widget below */
+    margin-bottom: 40px; 
 }
 
 .dashboard-widgets-grid {
-    /* 🛠️ FIX: Uses flex to center the clock horizontally in the available width */
+    /* Uses flex to center the clock horizontally */
     display: flex;
     justify-content: center; 
     align-items: flex-start; 
     
-    /* 🛠️ FIX: Pull the clock widget up onto the banner to match the target design */
-    margin-top: -150px; 
-    /* Use 100% width, relative to the dashboard-page padding */
+    /* 🛠️ CRITICAL FIX: REMOVED negative margin-top. Clock now sits *below* the banner. */
+    margin-top: 0; 
+    
     width: 100%;
     padding: 0;
 }
@@ -66,7 +68,7 @@
     align-items: center;
     
     width: 100%;
-    /* 🛠️ FIX: Set a maximum clean width for the widget */
+    /* Set a maximum clean width for the widget */
     max-width: 400px; 
     margin: 0; 
 }
@@ -220,21 +222,23 @@
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
-    /* 🛠️ FIX: Mobile dashboard page padding adjusted for cleaner look (used 768px to match main.css) */
     .dashboard-page {
-        padding: 20px; 
+        /* FIX: Mobile page padding adjusted (removed top padding) */
+        padding: 0 20px 20px 20px; 
     }
     
     .dashboard-cover-photo {
         /* Mobile Height: 180px for clean cropping */
         height: 180px;  
-        /* 🛠️ FIX: Overlap mobile padding (20px) to force wall-to-wall stretch */
-        margin: -20px -20px 0 -20px; 
+        /* FIX: Overlap mobile padding (-20px) to force wall-to-wall stretch */
+        margin: 0 -20px; 
+        /* UI/UX: Added margin-bottom for clean separation on mobile */
+        margin-bottom: 20px;
     }
 
     .dashboard-widgets-grid {
-        /* Reduced margin-top for smaller banner */
-        margin-top: -90px; 
+        /* CRITICAL FIX: REMOVED negative margin-top */
+        margin-top: 0; 
         padding: 0;
     }
     
