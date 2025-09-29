@@ -1,24 +1,23 @@
-/* Core Styling & Colors */
+/* Core Styling & Colors (Uses Global Variables from main.css) */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    /* Using Dominant Black/Dark Tones: #0d0d0d */
-    background-color: #0d0d0d;
-    /* Using Crisp White/Light Grey text: #f1f1f1 */
-    color: #f1f1f1;
+    /* --- ENFORCED VARS --- */
+    background-color: var(--dark-color-for-text);
+    color: var(--text-color);
     line-height: 1.6;
     font-size: 1rem;
 }
 
 h1, h2, h3, h4 {
     font-weight: 300;
-    color: #f1f1f1;
+    color: var(--text-color);
 }
 
 a {
-    /* Using Radiant Gold Accents: #d4af37 */
-    color: #d4af37;
+    /* Uses Radiant Gold Accent variable */
+    color: var(--gold-color);
     text-decoration: none;
 }
 
@@ -30,7 +29,8 @@ a {
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
-    border-bottom: 2px solid #d4af37;
+    /* Uses Gold variable */
+    border-bottom: 2px solid var(--gold-color);
 }
 
 .journal-content-container {
@@ -55,17 +55,19 @@ a {
     flex-wrap: wrap;
 }
 
-/* ⭐ FINAL ENFORCED: LUXURY PRIMARY BUTTON STYLE (Increased Specificity) ⭐ */
+/* ⭐ FINAL ENFORCED: LUXURY PRIMARY BUTTON STYLE (Overrides hardcoded values with VARS) ⭐ */
 .journal-content-container .submit-button, 
 .submit-button { /* Keep original selector for wider use if needed */
-    background-color: #d4af37 !important; /* Force Solid Gold */
-    color: #0d0d0d !important; /* Force Dominant Black */
+    background-color: var(--gold-color) !important; /* Force Radiant Gold */
+    color: var(--dark-color-for-text) !important; /* Force Dominant Black */
     border: none !important;
     padding: 12px 25px;
     font-size: 1rem;
     cursor: pointer;
     border-radius: 8px !important; /* Enforce 8px radius */
-    font-weight: bold;
+    font-weight: 700 !important; /* **FIX: Changed 'bold' to 700 to enforce consistency** */
+    text-transform: uppercase; /* **FIX: Added to match global button style** */
+    letter-spacing: 0.5px; /* **FIX: Added to match global button style** */
     transition: all 0.3s ease;
     /* Enforce the prominent gold button shadow */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
@@ -75,7 +77,7 @@ a {
 
 .journal-content-container .submit-button:hover,
 .submit-button:hover {
-    background-color: #e0c265 !important; /* Lighter gold on hover */
+    background-color: var(--hover-gold-color) !important; /* Use Lighter gold variable */
     transform: translateY(-2px);
     /* Enforce Enhanced shadow for a 'lifted' effect */
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
@@ -90,39 +92,36 @@ a {
     padding: 5px;
 }
 
-/* ⭐ FINAL ENFORCED: INACTIVE TAB STYLE (Increased Specificity) ⭐ */
+/* ⭐ FINAL ENFORCED: INACTIVE TAB STYLE (Uses VARS) ⭐ */
 .journal-content-container .tab, 
 .tab {
     flex: 1;
     text-align: center;
     padding: 12px;
     cursor: pointer;
-    /* Explicit Dark Background */
     background: #1a1a1a !important; 
     border: none;
-    /* Enforce Crisp White text */
-    color: #f1f1f1 !important; 
+    color: var(--text-color) !important; 
     font-size: 1.1rem;
     font-weight: 600;
     transition: all 0.3s ease;
     border-radius: 6px;
-    /* Enforce Subtle shadow for the inactive state */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Increased Specificity) ⭐ */
+/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Uses VARS and gold shadow) ⭐ */
 .journal-content-container .tab.active,
 .tab.active {
-    background-color: #0d0d0d !important; /* Force Pure Black for contrast */
-    color: #d4af37 !important; /* Force Gold text */
-    /* Enforce DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
+    background-color: var(--dark-color-for-text) !important; /* Force Pure Black for contrast */
+    color: var(--gold-color) !important; /* Force Gold text */
+    font-weight: 700 !important; /* **FIX: Enforced 700 weight** */
+    /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8) !important;
 }
 
 .journal-content-container .tab:hover:not(.active),
 .tab:hover:not(.active) {
-    /* Gold text on hover for better interaction feedback */
-    color: #d4af37 !important; 
+    color: var(--gold-color) !important; 
     background-color: #1a1a1a !important;
 }
 
@@ -135,11 +134,11 @@ a {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* ⭐ REFINED HEADING: Gold underline for visual impact ⭐ */
+/* ⭐ REFINED HEADING: Gold underline for visual impact (Uses VAR) ⭐ */
 .widget-title {
     font-size: 1.5rem;
     margin-top: 0;
-    border-bottom: 2px solid #d4af37;
+    border-bottom: 2px solid var(--gold-color);
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
@@ -170,17 +169,18 @@ label {
     color: #ccc;
 }
 
-/* ⭐ MINIMALIST INPUTS & GOLD FOCUS ACCENT ⭐ */
+/* ⭐ MINIMALIST INPUTS & GOLD FOCUS ACCENT (Uses VARS and Hub standard sizes) ⭐ */
 input,
 select,
 textarea {
     background-color: #252525;
-    border: 1px solid #333;
-    color: #f1f1f1;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    transition: border-color 0.3s ease;
+    border: 1px solid #333 !important; /* FIX: Enforce darker border */
+    color: var(--text-color);
+    padding: 12px !important; /* FIX: Enforce 12px padding from Hub */
+    border-radius: 8px !important; /* FIX: Enforce 8px radius from Hub */
+    font-size: 1rem !important; /* FIX: Enforce 1rem font from Hub */
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -191,8 +191,9 @@ select:focus,
 textarea:focus {
     outline: none;
     /* Radiant Gold border on focus */
-    border-color: #d4af37;
-    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+    border-color: var(--gold-color) !important;
+    /* Enforce Hub-style focus shadow */
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4) !important; /* FIX: Enforce Hub shadow */
 }
 
 /* Tables */
@@ -211,7 +212,7 @@ textarea:focus {
     text-align: left;
 }
 
-/* ⭐ TABLE REFINEMENT: Subtle Zebra Striping & Hover ⭐ */
+/* ⭐ TABLE REFINEMENT: Subtle Zebra Striping & Hover (Uses VAR) ⭐ */
 #journalTable th,
 #journalTable td {
     padding: 12px 15px;
@@ -220,21 +221,21 @@ textarea:focus {
 }
 
 #journalTable tbody tr:nth-child(even) {
-    background-color: #1f1f1f; /* Subtle darker shade for striping */
+    background-color: #1f1f1f; 
 }
 
 #journalTable thead th {
-    background-color: #0d0d0d;
-    color: #d4af37;
+    background-color: var(--dark-color-for-text);
+    color: var(--gold-color);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
 }
 
 #journalTable tbody tr:hover {
-    background-color: #282828; /* Slightly darker hover */
-    /* ⭐ GOLD BORDER ON HOVER ⭐ */
-    box-shadow: inset 2px 0 0 0 #d4af37; 
+    background-color: #282828; 
+    /* ⭐ GOLD BORDER ON HOVER (Uses VAR) ⭐ */
+    box-shadow: inset 2px 0 0 0 var(--gold-color); 
 }
 
 
@@ -263,47 +264,46 @@ textarea:focus {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* ⭐ P&L BADGES: Gold/Red/White Scheme for Clarity ⭐ */
+/* ⭐ P&L BADGES: Gold/Red/White Scheme for Clarity (Uses VARS) ⭐ */
 .trade-card.profit {
-    border-left-color: #d4af37; /* Gold for Profit */
+    border-left-color: var(--gold-color); /* Gold for Profit */
 }
 
 .trade-card.loss {
-    border-left-color: #b33a3a; /* Deep Red for Loss (Subtle) */
+    border-left-color: #b33a3a; /* Deep Red for Loss (Subtle) - NOT a global variable */
 }
 
 .trade-card.breakeven {
-    border-left-color: #f1f1f1; /* Crisp White for Break-Even */
+    border-left-color: var(--text-color); /* Crisp White for Break-Even */
 }
 
-/* ⭐ CARD HEADER REFINEMENT: Accent line for separation ⭐ */
+/* ⭐ CARD HEADER REFINEMENT: Accent line for separation (Uses VAR) ⭐ */
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     /* NEW: Use a gold accent line */
-    border-bottom: 1px solid #d4af37; 
+    border-bottom: 1px solid var(--gold-color); 
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
 
 .card-symbol {
-    font-size: 1.3rem; /* Slightly larger symbol */
+    font-size: 1.3rem; 
     font-weight: 700;
-    color: #d4af37; 
+    color: var(--gold-color); 
 }
 
-/* ⭐ PNL TEXT SIZE: Larger P&L value ⭐ */
+/* ⭐ PNL TEXT SIZE: Larger P&L value (Uses VAR for color) ⭐ */
 .card-pnl {
     font-size: 1.5rem; 
     font-weight: 700;
 }
 
-/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes (Increased specificity for override) ⭐ */
+/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes (Uses VAR for color) ⭐ */
 .trade-card .card-detail {
     display: flex;
     justify-content: space-between;
-    /* Reduced vertical padding for a sleeker look */
     padding: 3px 0; 
     font-size: 0.95rem; 
     /* Subtle separation line for detail rows */
@@ -312,24 +312,20 @@ textarea:focus {
 /* Ensure the last card detail doesn't have the dotted line */
 .trade-card .card-detail:last-of-type {
     border-bottom: none;
-    /* Add a little more margin at the bottom of the card for visual separation from the next card */
     margin-bottom: 5px; 
 }
 
 .trade-card .card-label { /* Increased specificity */
-    /* Define a fixed width for labels to keep the card values right-aligned */
     flex: 0 0 45%; 
     color: #a8a8a8; /* Lighter grey for label */
     font-weight: 400;
 }
 
 .trade-card .card-value { /* Increased specificity */
-    /* Allow the value to take the rest of the space, ensuring right alignment */
     flex: 1 1 auto;
     text-align: right; 
     font-weight: 600;
-    color: #f1f1f1;
-    /* Added to ensure the numbers don't wrap weirdly */
+    color: var(--text-color); /* Uses VAR for color */
     word-break: break-all; 
 }
 
@@ -361,13 +357,13 @@ textarea:focus {
 
 .modal-content h2 {
     font-size: 1.8rem;
-    border-bottom: 2px solid #d4af37;
+    border-bottom: 2px solid var(--gold-color); /* Uses VAR for color */
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
 .close {
-    color: #f1f1f1;
+    color: var(--text-color); /* Uses VAR for color */
     position: absolute;
     top: 15px;
     right: 25px;
@@ -407,7 +403,7 @@ textarea:focus {
     transform: translate(-50%, -50%);
     border: 4px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    border-top: 4px solid #d4af37;
+    border-top: 4px solid var(--gold-color); /* Uses VAR for color */
     width: 40px;
     height: 40px;
     -webkit-animation: spin 2s linear infinite;
@@ -438,63 +434,59 @@ textarea:focus {
     gap: 10px;
 }
 
-/* Time Frame Selector Styling */
+/* Time Frame Selector Styling (Uses VAR) */
 #time-frame {
     min-width: 150px;
-    background-color: #0d0d0d;
+    background-color: var(--dark-color-for-text); /* Uses VAR for color */
     border: 1px solid #333;
     padding: 8px 15px;
     font-weight: 600;
 }
 #time-frame:focus {
-    border-color: #d4af37;
+    border-color: var(--gold-color); /* Uses VAR for color */
 }
 
 /* ⭐ DESKTOP LAYOUT (2x2 Grid Enforcement) ⭐ */
 .analytics-grid {
-    /* Use a vertical flex container to stack the chart rows */
     display: flex; 
     flex-direction: column;
-    gap: 30px; /* Space between the chart rows */
+    gap: 30px; 
 }
 
 .chart-row {
-    /* Use a horizontal flex container for charts in the row */
     display: flex;
-    gap: 30px; /* Space between charts in a row */
-    width: 100%; /* Ensure row takes full width */
+    gap: 30px; 
+    width: 100%; 
 }
 
 .chart-card {
-    /* Critical for 2x2: Each chart takes half the row width */
     flex: 1 1 50%; 
     min-width: 0; 
-    background-color: #1a1a1a; /* Match other cards */
+    background-color: #1a1a1a; 
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    height: 380px; /* Consistent height for visual balance (Desktop) */
+    height: 380px; 
     box-sizing: border-box;
     transition: box-shadow 0.3s ease;
     position: relative; 
 }
 
 .chart-card:hover {
-    /* Subtle gold highlight on hover for chart cards */
+    /* Subtle gold highlight on hover for chart cards (Uses VAR) */
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3), 0 4px 10px rgba(0,0,0,0.6);
 }
 
 .chart-card h4 {
     margin-top: 0;
     font-size: 1.2rem;
-    color: #d4af37; /* Gold headings for charts */
+    color: var(--gold-color); /* Gold headings for charts (Uses VAR) */
     border-bottom: 1px solid #333;
     padding-bottom: 5px;
     margin-bottom: 15px;
 }
-/* This fix ensures the chart occupies the maximum available space in the card */
+
 .chart-card canvas {
-    /* Fixed pixel height is better for preventing vertical scroll on desktop */
     min-height: 300px; 
     max-height: 300px;
     width: 100%;
@@ -511,11 +503,9 @@ textarea:focus {
     
     /* ⭐ ACTION BUTTON FIX: Force side-by-side on mobile and split 50/50 ⭐ */
     .action-buttons {
-        /* Remove the 'wrap' to keep them side-by-side */
         flex-wrap: nowrap;
     }
     .action-buttons .submit-button {
-        /* Ensure each button takes equal space and overrides min-width */
         flex: 1 1 50%;
         min-width: unset; 
     }
@@ -531,33 +521,30 @@ textarea:focus {
         justify-content: space-between;
     }
     #time-frame {
-        flex-grow: 1; /* Allow dropdown to expand */
+        flex-grow: 1; 
     }
     .export-button {
         width: 100%;
     }
     .analytics-controls .submit-button {
-        width: 100%; /* Full width for the download button */
+        width: 100%; 
     }
 
     /* Analytics Grid Collapse: Single column */
     .chart-row {
-        /* This forces the charts in a 'row' to stack vertically on mobile */
         flex-direction: column;
         gap: 20px;
     }
     
     /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
     .chart-card {
-        /* Shorter, FIXED height for mobile to prevent frame expansion */
         height: 350px; 
-        padding: 15px; /* Slight reduction in padding */
+        padding: 15px; 
     }
     .chart-card h4 {
         margin-bottom: 10px;
     }
     .chart-card canvas {
-        /* Use a fixed pixel height to stop Chart.js from causing vertical content reflow */
         width: 100% !important; 
         min-height: 250px; 
         max-height: 280px;
