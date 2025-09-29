@@ -12,7 +12,7 @@
     --border-color: #333;
     --font-primary: 'Roboto', sans-serif;
     --font-secondary: 'Merriweather', serif;
-    /* 🛠️ ADJUSTMENT: Reduced sidebar width for a cleaner, modern look (was 250px) */
+    /* 🛠️ ADJUSTMENT: Reduced sidebar width for a cleaner, modern look */
     --sidebar-width: 220px;
 }
 
@@ -23,7 +23,6 @@ body {
     color: var(--text-color);
     margin: 0;
     padding: 0;
-    /* FIX: Remove 'overflow: hidden' from body. It prevents scrolling if content exceeds 100vh. */
     overflow-x: hidden;
     height: 100vh;
 }
@@ -35,31 +34,21 @@ body {
     align-items: center;
     height: 100vh;
     width: 100%;
-    /* 🛠️ RETAINED FIX: Ensure Auth container has dark background */
     background-color: var(--bg-color);
 }
 
-/* Main Container for the Terminal (Desktop Layout uses CSS Grid) */
+/* Main Container for the Terminal */
 .terminal-container {
-    /* Set to 100vh and relative positioning to contain fixed/absolute elements */
     height: 100vh;
     width: 100%;
-    overflow: hidden; /* Prevent body scroll by containing overflow here */
-    display: none; /* Hide by default, shown by app.js on successful login */
+    /* 🛠️ FIX: Revert to standard Flexbox layout for desktop */
+    display: flex; 
+    overflow: hidden; 
 }
-
-.terminal-container:not(.hidden) {
-    display: grid;
-    /* Define Desktop Grid: Sidebar (new 220px) | Main Content (rest of the space) */
-    grid-template-columns: var(--sidebar-width) 1fr;
-    grid-template-rows: 1fr;
-}
-
 
 /* Sidebar Styling */
 .sidebar {
-    /* Use grid area for desktop */
-    grid-column: 1 / 2;
+    width: var(--sidebar-width);
     background-color: var(--sidebar-color);
     display: flex;
     flex-direction: column;
@@ -71,7 +60,8 @@ body {
 
 .sidebar-header {
     text-align: center;
-    margin-bottom: 20px;
+    /* 🛠️ FIX: Restore margin to sidebar header */
+    margin-bottom: 20px; 
 }
 
 .sidebar-logo {
@@ -103,19 +93,17 @@ body {
     font-weight: 500;
     position: relative;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    /* 🛠️ ADJUSTMENT: Reduced space between nav items for a tighter, cleaner look */
+    /* 🛠️ FIX: Restore and adjust vertical margin for nav items */
     margin-bottom: 15px; 
 }
 
 .nav-item:hover {
-    /* 🛠️ RETAINED FIX: Use a more solid background on hover for better contrast */
-    background-color: rgba(255, 255, 255, 0.08); /* Slightly darker grey for hover */
+    background-color: rgba(255, 255, 255, 0.08); 
     color: var(--gold-color);
     transform: translateX(5px);
 }
 
 .nav-item.active {
-    /* 🛠️ CORRECTED FIX: Use the new solid dark-gold color for correct contrast (Image 1) */
     background-color: var(--nav-active-bg);
     color: var(--gold-color);
     font-weight: 700;
@@ -172,20 +160,21 @@ body {
 
 /* Main Content Wrapper */
 .content-wrapper {
-    /* Use grid area for desktop */
-    grid-column: 2 / 3;
-    overflow-y: hidden; /* FIX: Container should not scroll */
+    /* 🛠️ FIX: Allow wrapper to take up remaining space */
+    flex-grow: 1; 
+    overflow-y: hidden;
     background-color: var(--content-bg-color);
     display: flex;
     flex-direction: column;
+    /* 🛠️ FIX: Ensure it always covers 100% of the remaining width */
+    width: calc(100% - var(--sidebar-width)); 
 }
 
 .module-container {
     flex-grow: 1;
-    /* FIX: Module container is the one that scrolls on desktop */
     overflow-y: auto; 
-    /* 🛠️ NEW: Add padding to main content for visual breathing room */
-    padding: 40px; 
+    /* 🛠️ FIX: Remove general padding here. Modules should manage their internal padding. */
+    padding: 0; 
     /* Hide scrollbar for a cleaner look */
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
@@ -212,7 +201,6 @@ body {
     bottom: 20px;
     right: 20px;
     z-index: 99;
-    /* FIX: Default state is based on app logic, but ensure it sits above content */
     display: none; 
 }
 
@@ -226,8 +214,7 @@ body {
     /* Mobile Layout Reset */
     .terminal-container {
         display: flex;
-        flex-direction: column; /* Stack content vertically */
-        grid-template-columns: 1fr; /* Reset grid to single column */
+        flex-direction: column; 
     }
     
     .sidebar {
@@ -236,17 +223,15 @@ body {
 
     /* Content Wrapper for Mobile */
     .content-wrapper {
-        width: 100%;
+        width: 100%; /* Full width */
         margin-left: 0;
-        /* Make sure content doesn't get hidden by bottom-nav */
         padding-bottom: 60px; 
     }
     
     .module-container {
         flex-grow: 1;
-        overflow-y: auto; /* Allow module content to scroll */
-        /* 🛠️ ADJUSTMENT: Smaller padding for mobile */
-        padding: 20px; 
+        overflow-y: auto; 
+        padding: 0; /* Modules manage their padding */
     }
 
     /* Bottom Navigation Bar */
@@ -270,7 +255,7 @@ body {
         display: flex;
         flex-wrap: nowrap;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
+        -webkit-overflow-scrolling: touch; 
         width: 100%;
     }
     
@@ -290,8 +275,8 @@ body {
         font-weight: 500;
         transition: color 0.2s ease;
         padding: 5px;
-        min-width: 80px; /* Ensure items have a minimum width */
-        flex-shrink: 0; /* Prevents items from shrinking */
+        min-width: 80px; 
+        flex-shrink: 0; 
         cursor: pointer;
     }
 
@@ -302,7 +287,6 @@ body {
 
     .bottom-nav-item.active {
         color: var(--gold-color);
-        /* FIX: Adjusted border-top to align with mobile nav size */
         border-top: 2px solid var(--gold-color);
         padding-top: 3px;
     }
