@@ -63,26 +63,30 @@ function initNewsAggregator() {
         
         const fetchUrl = `${GOOGLE_SHEET_BASE_URL}?sheet=${sheetName}`;
 
-        // Show skeleton loader
+        // ⭐ UPDATED: Show structured skeleton loader with shimmmer classes for UI/UX improvement ⭐
         newsList.innerHTML = `
             <div class="skeleton-wrapper">
                 <div class="skeleton-article">
+                    <div class="skeleton-line"></div>
                     <div class="skeleton-line short"></div>
                     <div class="skeleton-line medium"></div>
                     <div class="skeleton-line long"></div>
                 </div>
                 <div class="skeleton-article">
+                    <div class="skeleton-line"></div>
                     <div class="skeleton-line short"></div>
                     <div class="skeleton-line medium"></div>
                     <div class="skeleton-line long"></div>
                 </div>
                 <div class="skeleton-article">
+                    <div class="skeleton-line"></div>
                     <div class="skeleton-line short"></div>
                     <div class="skeleton-line medium"></div>
                     <div class="skeleton-line long"></div>
                 </div>
             </div>
         `;
+        // ⭐ END UPDATED SKELETON LOADER ⭐
 
         try {
             const response = await fetch(fetchUrl);
@@ -159,6 +163,7 @@ function initNewsAggregator() {
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
+            // Use summary.substring() for the visible summary text
             const displaySummary = summary ? summary.substring(0, 300) : '';
             const summaryHtml = displaySummary ? `<p>${displaySummary}${summary.length > 300 ? '...' : ''}</p>` : '<p>No summary available.</p>';
 
