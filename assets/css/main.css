@@ -7,13 +7,13 @@
     --gold-color: #F0D788;
     --dark-gold-color: #DDAA33;
     --accent-color: #4a4a4a;
-    /* 🛠️ NEW VAR: Distinct, solid, dark-gold background color for active navigation state (based on Image 1) */
     --nav-active-bg: #3e382b;
     --border-color: #333;
     --font-primary: 'Roboto', sans-serif;
     --font-secondary: 'Merriweather', serif;
-    /* 🛠️ ADJUSTMENT: Reduced sidebar width for a cleaner, modern look */
     --sidebar-width: 220px;
+    /* 🛠️ NEW VAR: Subtle gold glow for accents (UI/UX enhancement) */
+    --gold-shadow: 0 0 5px rgba(240, 215, 136, 0.6); 
 }
 
 /* Global Body Reset */
@@ -41,7 +41,7 @@ body {
 .terminal-container {
     height: 100vh;
     width: 100%;
-    /* 🛠️ FIX: Revert to standard Flexbox layout for desktop */
+    /* Revert to standard Flexbox layout for desktop */
     display: flex; 
     overflow: hidden; 
 }
@@ -52,7 +52,8 @@ body {
     background-color: var(--sidebar-color);
     display: flex;
     flex-direction: column;
-    padding: 20px 0;
+    /* 🛠️ UI/UX: Increased vertical padding for premium breathing room */
+    padding: 25px 0;
     border-right: 1px solid var(--border-color);
     flex-shrink: 0;
     transition: transform 0.3s ease-in-out;
@@ -60,22 +61,26 @@ body {
 
 .sidebar-header {
     text-align: center;
-    /* 🛠️ FIX: Restore margin to sidebar header */
-    margin-bottom: 20px; 
+    /* 🛠️ UI/UX: Increased bottom margin for better separation */
+    margin-bottom: 35px;
 }
 
 .sidebar-logo {
-    width: 60px;
-    height: 60px;
+    /* 🛠️ UI/UX: Increased size */
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
-    border: 2px solid var(--gold-color);
-    box-shadow: 0 0 10px rgba(240, 215, 136, 0.4);
+    /* 🛠️ UI/UX: Thicker border */
+    border: 3px solid var(--gold-color);
+    /* 🛠️ UI/UX: Applied subtle gold shadow/glow effect */
+    box-shadow: var(--gold-shadow);
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: all 0.4s ease;
 }
 
 .sidebar-logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Removed rotate(5deg) for cleaner look */
+    box-shadow: 0 0 15px var(--gold-color);
 }
 
 .sidebar-nav ul {
@@ -87,26 +92,30 @@ body {
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 15px 30px;
+    /* 🛠️ UI/UX: Adjusted padding for larger hit area */
+    padding: 18px 30px; 
     color: var(--text-color);
     text-decoration: none;
-    font-weight: 500;
+    /* 🛠️ UI/UX: Lighter font weight for 'clean' aesthetic */
+    font-weight: 400;
     position: relative;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    /* 🛠️ FIX: Restore and adjust vertical margin for nav items */
-    margin-bottom: 15px; 
+    transition: all 0.2s ease;
+    /* 🛠️ UI/UX: Tightened spacing between items for modern look */
+    margin-bottom: 5px; 
 }
 
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.08); 
+    /* 🛠️ UI/UX: Lighter hover background */
+    background-color: rgba(255, 255, 255, 0.05); 
     color: var(--gold-color);
-    transform: translateX(5px);
+    transform: none; /* Removed translateX(5px) for smoother transitions */
 }
 
 .nav-item.active {
     background-color: var(--nav-active-bg);
     color: var(--gold-color);
-    font-weight: 700;
+    /* 🛠️ UI/UX: Slightly heavier font weight for active state */
+    font-weight: 500;
     border-left: none;
 }
 
@@ -120,11 +129,14 @@ body {
     height: 100%;
     background-color: var(--gold-color);
     border-radius: 2px;
+    /* 🛠️ UI/UX: Added gold shadow to active indicator */
+    box-shadow: 1px 0 5px var(--gold-color);
 }
 
 .nav-icon {
-    font-size: 1.2rem;
-    width: 30px;
+    /* 🛠️ UI/UX: Increased icon size for better readability/impact */
+    font-size: 1.3rem;
+    width: 35px;
     text-align: center;
     color: var(--text-color);
     transition: color 0.2s ease;
@@ -136,11 +148,14 @@ body {
 
 .nav-label {
     margin-left: 15px;
+    /* 🛠️ UI/UX: Explicitly set font size */
+    font-size: 0.95rem; 
 }
 
 .sidebar-footer {
     margin-top: auto;
-    padding: 20px 0;
+    /* 🛠️ UI/UX: Reduced top padding for cleaner bottom boundary */
+    padding: 15px 0;
     border-top: 1px solid var(--border-color);
 }
 
@@ -160,28 +175,26 @@ body {
 
 /* Main Content Wrapper */
 .content-wrapper {
-    /* 🛠️ FIX: Allow wrapper to take up remaining space */
     flex-grow: 1; 
     overflow-y: hidden;
     background-color: var(--content-bg-color);
     display: flex;
     flex-direction: column;
-    /* 🛠️ FIX: Ensure it always covers 100% of the remaining width */
     width: calc(100% - var(--sidebar-width)); 
 }
 
 .module-container {
     flex-grow: 1;
     overflow-y: auto; 
-    /* 🛠️ FIX: Remove general padding here. Modules should manage their internal padding. */
+    /* Modules manage their internal padding */
     padding: 0; 
-    /* Hide scrollbar for a cleaner look */
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    /* Hide scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .module-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none; 
 }
 
 
