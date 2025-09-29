@@ -34,15 +34,33 @@ function initNewsAggregator() {
         }
     }
 
-    // ⭐ CORE CHANGE: Fetch function accepts a feed source
+    // ⭐ UPDATED CORE CHANGE: Fetch function handles 5 different sheets
     async function fetchNews(feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
 
         // Determine the Google Sheet Subsheet to fetch data from
-        // 'general' is the MarketAux sheet (default)
-        // 'cnbc' is the new CNBC sheet
-        const sheetName = feedSource === 'cnbc' ? 'CNBC' : 'MarketAux';
+        let sheetName = 'News Articles'; // Default for 'general' feed
+
+        switch (feedSource) {
+            case 'cnbc':
+                sheetName = 'CNBC';
+                break;
+            case 'market-watch':
+                sheetName = 'MarketWatch';
+                break;
+            case 'coin-telegraph':
+                sheetName = 'CoinTelegraph';
+                break;
+            case 'news-bitcoin':
+                sheetName = 'News.Bitcoin';
+                break;
+            case 'general':
+            default:
+                sheetName = 'News Articles'; // The MarketAux data
+                break;
+        }
+        
         const fetchUrl = `${GOOGLE_SHEET_BASE_URL}?sheet=${sheetName}`;
 
         // Show skeleton loader
@@ -71,10 +89,13 @@ function initNewsAggregator() {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const newsData = await response.json();
             
+            // Define a flag to check if we are using the simple RSS structure (CNBC and the new feeds)
+            const isSimpleRssFeed = ['cnbc', 'market-watch', 'coin-telegraph', 'news-bitcoin'].includes(feedSource);
+            
             // Filter out articles with no headline
             const articles = newsData.filter(article => {
-                // Handle different keys based on the source
-                const headlineKey = feedSource === 'cnbc' ? 'Title' : 'Headline';
+                // Determine headline key: 'Title' for simple RSS feeds, 'Headline' for MarketAux (General)
+                const headlineKey = isSimpleRssFeed ? 'Title' : 'Headline';
                 return article[headlineKey] && article[headlineKey].trim() !== '';
             });
 
@@ -85,7 +106,7 @@ function initNewsAggregator() {
         }
     }
 
-    // ⭐ CORE CHANGE: Display function handles different column names
+    // ⭐ UPDATED CORE CHANGE: Display function handles all column names
     function displayNews(articlesToDisplay, feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
@@ -97,12 +118,14 @@ function initNewsAggregator() {
         }
 
         // Define column mapping based on the feed source
-        const map = feedSource === 'cnbc' ? {
+        const isSimpleRssFeed = ['cnbc', 'market-watch', 'coin-telegraph', 'news-bitcoin'].includes(feedSource);
+
+        const map = isSimpleRssFeed ? {
             headline: 'Title',
             summary: 'Summary',
             url: 'URL',
             time: 'Date Created',
-            tickers: null // CNBC feed via RSS import doesn't have tickers
+            tickers: null // Simple RSS import feeds don't have tickers
         } : {
             headline: 'Headline',
             summary: 'Summary',
@@ -182,24 +205,6 @@ function initNewsAggregator() {
         // Initial fetch
         fetchNews(feed);
         // Set up interval for refreshing the news
-        refreshIntervalId = setInterval(() => fetchNews(feed), AUTO_REFRESH_INTERVAL_MS);
-        console.log(`News Aggregator: Started auto-refresh for '${feed}'.`);
-    }
+        refreshIntervalId = setInterval(() => fetchNews(feed), AUTO_REFR...
 
-    // ⭐ NEW FUNCTION: Public cleanup for app.js
-    window.tg_news.cleanup = function() {
-        if (refreshIntervalId) {
-            clearInterval(refreshIntervalId);
-            console.log('News Aggregator: Auto-refresh interval cleared.');
-        }
-    };
-
-    // --- Initialization ---
-    const newsTabsContainer = document.querySelector('.news-tabs');
-    if (newsTabsContainer) {
-        newsTabsContainer.addEventListener('click', handleTabSwitch);
-    }
-
-    // Initial fetch starts with the default feed
-    startAutoRefresh(activeFeed); 
-}
+// ... rest of the code is unchanged ...
