@@ -205,6 +205,24 @@ function initNewsAggregator() {
         // Initial fetch
         fetchNews(feed);
         // Set up interval for refreshing the news
-        refreshIntervalId = setInterval(() => fetchNews(feed), AUTO_REFR...
+        refreshIntervalId = setInterval(() => fetchNews(feed), AUTO_REFRESH_INTERVAL_MS);
+        console.log(`News Aggregator: Started auto-refresh for '${feed}'.`);
+    }
 
-// ... rest of the code is unchanged ...
+    // ⭐ NEW FUNCTION: Public cleanup for app.js
+    window.tg_news.cleanup = function() {
+        if (refreshIntervalId) {
+            clearInterval(refreshIntervalId);
+            console.log('News Aggregator: Auto-refresh interval cleared.');
+        }
+    };
+
+    // --- Initialization ---
+    const newsTabsContainer = document.querySelector('.news-tabs');
+    if (newsTabsContainer) {
+        newsTabsContainer.addEventListener('click', handleTabSwitch);
+    }
+
+    // Initial fetch starts with the default feed
+    startAutoRefresh(activeFeed);  
+}
