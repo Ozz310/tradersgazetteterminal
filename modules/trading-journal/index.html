@@ -112,23 +112,28 @@
                     <button id="export-analytics-csv" class="submit-button">Download CSV</button>
                 </div>
             </div>
-            <div class="analytics-grid">
-                <div class="chart-card">
-                    <h4>Time-Based P&L</h4>
-                    <canvas id="timePnlChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <h4>Asset-Based P&L</h4>
-                    <canvas id="assetPnlChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <h4>Win vs Loss Count</h4>
-                    <canvas id="winLossChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <h4>P&L Distribution</h4>
-                    <canvas id="pnlDistributionChart"></canvas>
-                </div>
+            
+                        <div class="analytics-grid">
+                <div class="chart-row">
+                    <div class="chart-card">
+                        <h4>Time-Based P&L</h4>
+                        <canvas id="timePnlChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Asset-Based P&L</h4>
+                        <canvas id="assetPnlChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-card">
+                        <h4>Win vs Loss Count</h4>
+                        <canvas id="winLossChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>P&L Distribution</h4>
+                        <canvas id="pnlDistributionChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="journal-data-card" id="table-view">
