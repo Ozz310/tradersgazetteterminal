@@ -59,15 +59,16 @@ a {
 .journal-content-container .submit-button, 
 .submit-button { /* Keep original selector for wider use if needed */
     background-color: var(--gold-color) !important; /* Force Radiant Gold */
+    background-image: none !important; /* CRITICAL FIX: Removes old CSS gradients/browser defaults */
     color: var(--dark-color-for-text) !important; /* Force Dominant Black */
     border: none !important;
     padding: 12px 25px;
     font-size: 1rem;
     cursor: pointer;
     border-radius: 8px !important; /* Enforce 8px radius */
-    font-weight: 700 !important; /* **FIX: Changed 'bold' to 700 to enforce consistency** */
-    text-transform: uppercase; /* **FIX: Added to match global button style** */
-    letter-spacing: 0.5px; /* **FIX: Added to match global button style** */
+    font-weight: 700 !important; /* Enforce 700 weight */
+    text-transform: uppercase; /* Enforce uppercase */
+    letter-spacing: 0.5px; /* Enforce letter spacing */
     transition: all 0.3s ease;
     /* Enforce the prominent gold button shadow */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
@@ -114,7 +115,7 @@ a {
 .tab.active {
     background-color: var(--dark-color-for-text) !important; /* Force Pure Black for contrast */
     color: var(--gold-color) !important; /* Force Gold text */
-    font-weight: 700 !important; /* **FIX: Enforced 700 weight** */
+    font-weight: 700 !important; /* Enforced 700 weight */
     /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8) !important;
 }
@@ -174,11 +175,11 @@ input,
 select,
 textarea {
     background-color: #252525;
-    border: 1px solid #333 !important; /* FIX: Enforce darker border */
+    border: 1px solid #333 !important; /* Enforce darker border */
     color: var(--text-color);
-    padding: 12px !important; /* FIX: Enforce 12px padding from Hub */
-    border-radius: 8px !important; /* FIX: Enforce 8px radius from Hub */
-    font-size: 1rem !important; /* FIX: Enforce 1rem font from Hub */
+    padding: 12px !important; /* Enforce 12px padding from Hub */
+    border-radius: 8px !important; /* Enforce 8px radius from Hub */
+    font-size: 1rem !important; /* Enforce 1rem font from Hub */
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     -webkit-appearance: none;
@@ -193,7 +194,7 @@ textarea:focus {
     /* Radiant Gold border on focus */
     border-color: var(--gold-color) !important;
     /* Enforce Hub-style focus shadow */
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4) !important; /* FIX: Enforce Hub shadow */
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4) !important; /* Enforce Hub shadow */
 }
 
 /* Tables */
