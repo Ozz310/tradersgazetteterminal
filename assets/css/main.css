@@ -18,7 +18,7 @@
 }
 
 /* 🛠️ CRITICAL FIX: Ensure ZERO gap from the top border */
-/* 🔑 MAX FORCE FIX: Use 100% height and margin:0 on the top-most elements */
+/* 🔑 MAX FORCE FIX 1: Use position: absolute on the body for full viewport coverage */
 html, body {
     margin: 0 !important;
     padding: 0 !important;
@@ -31,11 +31,15 @@ body {
     font-family: var(--font-primary);
     background-color: var(--bg-color);
     color: var(--text-color);
-    margin: 0;
+    margin: 0 !important; /* Re-added !important here */
     padding: 0;
     overflow-x: hidden;
     height: 100vh;
-    display: flex; /* Added flex to body */
+    width: 100vw; /* Ensure full width */
+    position: absolute; /* 💥 THE HAMMER: Forces it to the absolute top-left corner */
+    top: 0;
+    left: 0;
+    display: flex; 
     flex-direction: column;
 }
 
@@ -51,12 +55,12 @@ body {
 
 /* Main Container for the Terminal */
 .terminal-container {
-    /* 🛠️ MAX FORCE FIX: Ensure the terminal itself takes up all available space and sits at the top */
     height: 100%; /* Changed from 100vh to 100% to inherit from body */
     width: 100%;
-    margin-top: 0 !important; /* Added !important just in case */
+    margin-top: 0 !important; 
     display: flex; 
     overflow: hidden; 
+    flex: 1; /* Let it grow to fill the body height */
 }
 
 /* Sidebar Styling - Top 1% UI/UX Refinements */
@@ -69,6 +73,8 @@ body {
     padding: 20px 0; 
     border-right: 1px solid var(--border-color);
     flex-shrink: 0;
+    /* 💥 FLEX FIX: Allow sidebar to grow/shrink but keep content flow */
+    height: 100%; /* Important for internal flex layout */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -94,6 +100,19 @@ body {
 .sidebar-logo:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px var(--gold-color);
+}
+
+/* 🔑 Sidebar Navigation - The Fix for Overflow */
+.sidebar-nav {
+    /* 💥 FLEX FIX: This is the critical wrapper around <ul> */
+    flex-grow: 1; /* Allow the navigation list area to take up all space */
+    overflow-y: auto; /* Allow vertical scrolling if navigation items overflow */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .sidebar-nav ul {
@@ -171,7 +190,8 @@ body {
 }
 
 .sidebar-footer {
-    margin-top: auto;
+    /* 💥 FLEX FIX: Ensure it is pushed to the bottom of the visible area */
+    margin-top: auto; 
     /* 🛠️ UI/UX: Reduced top padding for cleaner bottom boundary */
     padding: 15px 0;
     border-top: 1px solid var(--border-color);
