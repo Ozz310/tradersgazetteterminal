@@ -18,11 +18,11 @@
 }
 
 /* 🛠️ CRITICAL FIX: Ensure ZERO gap from the top border */
-/* 🔑 HIGH SPECIFICITY FIX: Added !important to guarantee browser/external style override */
+/* 🔑 MAX FORCE FIX: Use 100% height and margin:0 on the top-most elements */
 html, body {
     margin: 0 !important;
     padding: 0 !important;
-    height: 100%; /* Important for full height containers */
+    height: 100% !important; /* Force full height */
     overflow: hidden; /* Prevent body scroll if content overflows */
 }
 
@@ -35,6 +35,8 @@ body {
     padding: 0;
     overflow-x: hidden;
     height: 100vh;
+    display: flex; /* Added flex to body */
+    flex-direction: column;
 }
 
 /* Auth Container */
@@ -49,9 +51,10 @@ body {
 
 /* Main Container for the Terminal */
 .terminal-container {
-    height: 100vh;
+    /* 🛠️ MAX FORCE FIX: Ensure the terminal itself takes up all available space and sits at the top */
+    height: 100%; /* Changed from 100vh to 100% to inherit from body */
     width: 100%;
-    /* FIX: Revert to standard Flexbox layout for desktop */
+    margin-top: 0 !important; /* Added !important just in case */
     display: flex; 
     overflow: hidden; 
 }
@@ -62,8 +65,8 @@ body {
     background-color: var(--sidebar-color);
     display: flex;
     flex-direction: column;
-    /* 🛠️ UI/UX: Increased vertical padding for premium breathing room */
-    padding: 25px 0;
+    /* 🛠️ UI/UX: Reduced vertical padding slightly for a taller feel */
+    padding: 20px 0; 
     border-right: 1px solid var(--border-color);
     flex-shrink: 0;
     transition: transform 0.3s ease-in-out;
@@ -71,8 +74,8 @@ body {
 
 .sidebar-header {
     text-align: center;
-    /* 🛠️ UI/UX: Increased bottom margin for better separation */
-    margin-bottom: 35px;
+    /* 🛠️ UI/UX: Reduced bottom margin for tighter fit */
+    margin-bottom: 25px;
 }
 
 .sidebar-logo {
@@ -103,8 +106,8 @@ body {
     /* 🛠️ REFINEMENT: Ensure icon and label are perfectly centered */
     display: flex;
     align-items: center;
-    /* 🛠️ UI/UX: Adjusted padding for larger hit area and better vertical flow */
-    padding: 18px 30px; 
+    /* 🛠️ UI/UX: Slightly reduced horizontal padding for a sleeker profile */
+    padding: 15px 25px; 
     color: var(--text-color);
     text-decoration: none;
     /* 🛠️ UI/UX: Lighter font weight for 'clean' aesthetic */
@@ -148,8 +151,8 @@ body {
 
 .nav-icon {
     /* 🛠️ UI/UX: Increased icon size for better readability/impact */
-    font-size: 1.5rem; /* Increased size from 1.3rem to 1.5rem */
-    width: 35px;
+    font-size: 1.6rem; /* Increased size for more presence */
+    width: 30px;
     text-align: center;
     color: var(--text-color);
     transition: color 0.2s ease;
@@ -162,9 +165,9 @@ body {
 }
 
 .nav-label {
-    margin-left: 15px;
+    margin-left: 10px; /* Reduced margin to pull label closer to icon */
     /* 🛠️ UI/UX: Explicitly set font size */
-    font-size: 0.95rem; 
+    font-size: 0.9rem; /* Slightly reduced font size for cleaner typography */
 }
 
 .sidebar-footer {
@@ -241,6 +244,65 @@ body {
 /* Mobile nav is only shown on mobile. Hide on desktop. */
 .bottom-nav {
     display: none;
+}
+
+/* --- Global Reusable Components (Top 1% UI/UX) --- */
+
+/* Recessed Gold-Accent Card Style */
+.tg-card {
+    /* 🛠️ CORE BRANDING: Dark background, slightly lighter than the page background */
+    background-color: var(--sidebar-color); /* Use #222 */
+    border: 1px solid var(--border-color); /* Subtle separation */
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Premium depth */
+    transition: all 0.3s ease;
+}
+
+/* Hover effect: Subtle lift and gold edge accent */
+.tg-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 
+                inset 0 0 5px rgba(240, 215, 136, 0.1); /* Gold inner glow */
+}
+
+/* Premium Primary Button (For forms, actions, etc.) */
+.tg-button-primary {
+    background-color: var(--gold-color);
+    color: var(--bg-color); /* Dark text on gold */
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    /* 🛠️ UI/UX: Subtle initial gold shadow */
+    box-shadow: 0 2px 5px rgba(240, 215, 136, 0.4); 
+}
+
+.tg-button-primary:hover {
+    background-color: var(--dark-gold-color);
+    box-shadow: 0 4px 15px rgba(240, 215, 136, 0.6); 
+    transform: translateY(-1px);
+}
+
+/* Secondary Button (Minimalist) */
+.tg-button-secondary {
+    background-color: transparent;
+    color: var(--gold-color);
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tg-button-secondary:hover {
+    border-color: var(--gold-color);
+    background-color: rgba(240, 215, 136, 0.1);
 }
 
 /* --- Mobile Specific Styles (Max-width 768px) --- */
