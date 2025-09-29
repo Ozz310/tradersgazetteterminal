@@ -1,4 +1,4 @@
-// /assets/js/app.js - FULL UPDATED FILE (Fixing navigation functionality)
+// /assets/js/app.js - FULL UPDATED FILE (Adding News Aggregator Cleanup)
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hideLoader();
     };
     
-    // ✅ NEW FUNCTION: Centralized module cleanup logic to stop timers/listeners
+    // ✅ UPDATED FUNCTION: Centralized module cleanup logic to stop timers/listeners
     const cleanupModule = (moduleName) => {
         try {
             switch (moduleName) {
@@ -155,6 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Calls the cleanup function in dashboard.js to clear intervals/listeners
                     if (window.tg_dashboard && typeof window.tg_dashboard.cleanup === 'function') {
                         window.tg_dashboard.cleanup();
+                        console.log(`Cleanup executed for: ${moduleName}`);
+                    }
+                    break;
+                case 'news-aggregator': // ⭐ NEW CLEANUP CASE
+                    // Calls the cleanup function in script.js to clear the auto-refresh interval
+                    if (window.tg_news && typeof window.tg_news.cleanup === 'function') {
+                        window.tg_news.cleanup();
                         console.log(`Cleanup executed for: ${moduleName}`);
                     }
                     break;
@@ -335,8 +342,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set the hash to trigger the router for cleanup and redirect to #auth
         window.location.hash = '#auth'; 
         // Force a page refresh here if truly needed for a clean state, 
-        // but removing the previous window.location.reload() inside the handleLogout() 
-        // in the event listeners should fix the double refresh issue.
         // I will keep the reload here for full certainty of a clean logout state.
         window.location.reload(); 
     }
