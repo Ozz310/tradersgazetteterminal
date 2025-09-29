@@ -55,7 +55,7 @@ a {
     flex-wrap: wrap;
 }
 
-/* ⭐ LUXURY BUTTON STYLE: Gold background, Dark text, subtle lift/shadow ⭐ */
+/* ⭐ UPDATED: LUXURY PRIMARY BUTTON STYLE (Matching Risk Hub) ⭐ */
 .submit-button {
     background-color: #d4af37; /* Solid Gold */
     color: #0d0d0d; /* Dominant Black */
@@ -63,10 +63,11 @@ a {
     padding: 12px 25px;
     font-size: 1rem;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px; /* Standardized to 8px */
     font-weight: bold;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+    /* Matching the prominent gold button shadow from the reference image */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
     flex-grow: 1; 
     min-width: 150px; 
 }
@@ -74,7 +75,8 @@ a {
 .submit-button:hover {
     background-color: #e0c265; /* Slightly lighter gold on hover */
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    /* Enhanced shadow for a 'lifted' effect */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5); 
 }
 
 /* Tabs - Unified Aesthetic */
@@ -86,29 +88,36 @@ a {
     padding: 5px;
 }
 
+/* ⭐ UPDATED: INACTIVE TAB STYLE (Matching Risk Hub Secondary) ⭐ */
 .tab {
     flex: 1;
     text-align: center;
     padding: 12px;
     cursor: pointer;
-    background: transparent;
+    /* Changed from transparent to dark background for solid feel */
+    background: #1a1a1a; 
     border: none;
-    color: #888;
+    color: #f1f1f1; /* Crisp white text for clarity/contrast (was #888) */
     font-size: 1.1rem;
     font-weight: 600;
     transition: all 0.3s ease;
     border-radius: 6px;
+    /* Subtle shadow for the inactive state */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+/* ⭐ UPDATED: ACTIVE TAB STYLE (Matching Risk Hub Active/Primary) ⭐ */
 .tab.active {
-    background-color: #0d0d0d;
-    color: #d4af37;
-    /* ⭐ DYNAMIC GOLD ACCENT: Subtle glow for active tab ⭐ */
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    background-color: #0d0d0d; /* Pure black background for active state */
+    color: #d4af37; /* Gold text */
+    /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow for presence */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
 }
 
 .tab:hover:not(.active) {
-    color: #f1f1f1;
+    /* Changed hover state to just highlight text gold, keeping dark background */
+    color: #d4af37; 
+    background-color: #1a1a1a;
 }
 
 /* Data Cards and Widgets */
