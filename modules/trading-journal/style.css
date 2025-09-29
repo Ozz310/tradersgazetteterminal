@@ -219,11 +219,11 @@ textarea:focus {
 #journalTable tbody tr:hover {
     background-color: #282828; /* Slightly darker hover */
     /* ⭐ GOLD BORDER ON HOVER ⭐ */
-    box-shadow: inset 2px 0 0 0 #d4af37; 
+    box-shadow: inset 2px 0 0 0 #d4af37; 
 }
 
 
-/* --- NEW: Trade Card View Styling (Mobile-first) --- */
+/* --- UPDATED: Trade Card View Styling (Mobile-first) --- */
 .trade-card-list {
     display: grid;
     gap: 15px;
@@ -232,16 +232,20 @@ textarea:focus {
 
 .trade-card {
     background-color: #252525; 
+    /* Keep the left border as the P&L badge */
     border-left: 5px solid; 
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    /* Deeper shadow for luxury look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
     transition: transform 0.2s ease, border-left-color 0.3s ease;
+    /* ⭐ NEW: Subtle border on the right for extra definition ⭐ */
+    border-right: 1px solid #333; 
 }
 
 .trade-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* ⭐ P&L BADGES: Gold/Red/White Scheme for Clarity ⭐ */
@@ -257,23 +261,26 @@ textarea:focus {
     border-left-color: #f1f1f1; /* Crisp White for Break-Even */
 }
 
+/* ⭐ CARD HEADER REFINEMENT: Accent line for separation ⭐ */
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #333;
+    /* NEW: Use a gold accent line */
+    border-bottom: 1px solid #d4af37; 
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
 
 .card-symbol {
-    font-size: 1.2rem;
+    font-size: 1.3rem; /* Slightly larger symbol */
     font-weight: 700;
     color: #d4af37; 
 }
 
+/* ⭐ PNL TEXT SIZE: Larger P&L value ⭐ */
 .card-pnl {
-    font-size: 1.4rem;
+    font-size: 1.5rem; 
     font-weight: 700;
 }
 
@@ -281,11 +288,18 @@ textarea:focus {
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
-    font-size: 0.9rem;
+    font-size: 0.95rem; /* Slightly larger text */
+    /* NEW: Subtle separation line for detail rows */
+    border-bottom: 1px dotted rgba(241, 241, 241, 0.1); 
+}
+/* Ensure the last card detail doesn't have the dotted line */
+.trade-card .card-detail:last-of-type {
+    border-bottom: none;
 }
 
 .card-label {
-    color: #888;
+    color: #a8a8a8; /* Lighter grey for label */
+    font-weight: 400;
 }
 
 .card-value {
@@ -413,7 +427,7 @@ textarea:focus {
 /* ⭐ LAYOUT FIX: New 2x2 Grid Structure ⭐ */
 .analytics-grid {
     /* Use a vertical flex container to stack the chart rows */
-    display: flex; 
+    display: flex; 
     flex-direction: column;
     gap: 30px; /* Space between the chart rows */
 }
@@ -426,7 +440,7 @@ textarea:focus {
 
 .chart-card {
     flex: 1 1 50%; /* Each chart takes half the row width */
-    min-width: 0; 
+    min-width: 0; 
     background-color: #1a1a1a; /* Match other cards */
     padding: 20px;
     border-radius: 8px;
@@ -450,7 +464,7 @@ textarea:focus {
     margin-bottom: 15px;
 }
 .chart-card canvas {
-    min-height: 300px; 
+    min-height: 300px; 
     max-height: 300px;
 }
 
@@ -461,6 +475,17 @@ textarea:focus {
 @media (max-width: 768px) {
     .journal-content-container {
         padding: 0 10px; 
+    }
+    
+    /* ⭐ ACTION BUTTON FIX: Force side-by-side on mobile and split 50/50 ⭐ */
+    .action-buttons {
+        /* Remove the 'wrap' to keep them side-by-side */
+        flex-wrap: nowrap;
+    }
+    .action-buttons .submit-button {
+        /* Ensure each button takes equal space and overrides min-width */
+        flex: 1 1 50%;
+        min-width: unset; 
     }
     
     /* Analytics Controls stacking */
@@ -486,7 +511,7 @@ textarea:focus {
         height: 300px; /* Shorter height for mobile */
     }
     .chart-card canvas {
-        min-height: 220px; 
+        min-height: 220px; 
         max-height: 220px;
     }
 
