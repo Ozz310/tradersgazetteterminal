@@ -106,7 +106,17 @@ function initNewsAggregator() {
         }
     }
 
-    // ⭐ UPDATED CORE CHANGE: Display function handles all column names
+    // Function to convert feed source key to clean display name (e.g., 'coin-telegraph' -> 'Coin Telegraph')
+    function formatSourceDisplayName(feedKey) {
+        if (!feedKey) return 'N/A';
+        // Capitalize first letter of each word and replace hyphens with spaces
+        return feedKey
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+
+    // ⭐ UPDATED CORE CHANGE: Display function handles all column names and now includes Source Indicator
     function displayNews(articlesToDisplay, feedSource) {
         const newsList = document.getElementById('news-list');
         if (!newsList) return;
@@ -125,12 +135,14 @@ function initNewsAggregator() {
             summary: 'Summary',
             url: 'URL',
             time: 'Date Created',
-            tickers: null // Simple RSS import feeds don't have tickers
+            source: null, // RSS feeds use the tab name as source
+            tickers: null 
         } : {
             headline: 'Headline',
             summary: 'Summary',
             url: 'URL',
             time: 'Published Time',
+            source: 'Source', // MarketAux (General) provides a source
             tickers: 'Tickers'
         };
 
@@ -146,7 +158,20 @@ function initNewsAggregator() {
             const summary = article[map.summary] || '';
             let url = article[map.url] || '#';
             const publishedTime = article[map.time] || 'N/A';
-            const tickers = map.tickers ? (article[map.tickers] || 'N/A') : 'N/A';
+            
+            // --- Source & Ticker Logic ---
+            let displaySource;
+            let displayTickers = 'N/A';
+            
+            if (isSimpleRssFeed) {
+                // Source is the active tab name
+                displaySource = formatSourceDisplayName(feedSource);
+            } else {
+                // General/MarketAux feed: Source is from the 'Source' column, Tickers from 'Tickers' column
+                displaySource = article[map.source] || formatSourceDisplayName(feedSource);
+                displayTickers = article[map.tickers] || 'N/A';
+            }
+            // --- End Source & Ticker Logic ---
 
             // Clean and validate URL
             if (url !== '') {
@@ -160,7 +185,9 @@ function initNewsAggregator() {
             const isBreaking = index === 0;
             const breakingRibbonHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More</a>` : '';
-            const tickersHtml = `<div class="news-meta"><span>Tickers: ${tickers}</span></div>`;
+            
+            // New meta block includes Source and Tickers
+            const metaHtml = `<div class="news-meta"><span>Source: ${displaySource}</span><span>Tickers: ${displayTickers}</span></div>`;
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
@@ -173,7 +200,7 @@ function initNewsAggregator() {
                 <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
                 ${summaryHtml}
                 ${readMoreHtml}
-                ${tickersHtml}
+                ${metaHtml}
             `;
             newsList.appendChild(articleDiv);
         });
