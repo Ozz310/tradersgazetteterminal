@@ -15,7 +15,6 @@
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* NEW: Use 'cover' to ensure the image fills the full placeholder area */
     background-size: cover; 
     background-position: center center;
     background-repeat: no-repeat;
@@ -74,17 +73,14 @@
     padding-bottom: 10px;
     border-bottom: 2px solid var(--gold-color);
     z-index: 10; 
-    /* FIX: Ensure the title doesn't shrink */
     flex-shrink: 0;
 }
 
-/* ⭐ FINAL LAYOUT FIX: Desktop Tabs ⭐ */
+/* Tab Styles */
 .news-aggregator .news-tabs {
     display: flex;
     justify-content: center;
-    /* FIX: Force tabs not to shrink vertically */
     flex-shrink: 0; 
-    /* Padding provides separation */
     padding: 10px 5px; 
     background-color: var(--accent-color); 
     border-radius: 6px;
@@ -117,39 +113,38 @@
 .news-aggregator .news-tab.active {
     color: var(--dark-bg);
     background-color: var(--gold-color); 
-    box-shadow: 0 2px 10px rgba(240, 215, 136, 0.5);
     font-weight: 700;
+    /* ⭐ DYNAMIC GOLD ACCENT: Add subtle glow to active tab ⭐ */
+    box-shadow: 0 0 15px rgba(240, 215, 136, 0.7);
 }
-/* ⭐ END FINAL TAB STYLES ⭐ */
 
 
 .news-aggregator .news-list {
     flex-grow: 1;
     overflow-y: auto;
     scrollbar-width: none;
-    /* FIX: Reduced padding as the tabs now take their full height */
     padding-top: 5px; 
     padding-bottom: 5px;
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
-    /* FIX: Explicitly hide the scrollbar track that was partially visible */
     width: 0;
     display: none;
 }
-
 .news-aggregator .news-list {
-    /* Explicitly hide for IE/Edge/Firefox */
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
 .news-aggregator .news-article {
     background-color: var(--border-color);
-    padding: 15px;
+    /* ⭐ REFINED TYPOGRAPHY: Increased vertical whitespace ⭐ */
+    padding: 20px 15px; 
     border-radius: 8px;
-    margin-bottom: 15px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 20px; /* Increased separation */
+    /* ⭐ DYNAMIC GOLD ACCENT: Smooth transition for hover effects ⭐ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    border: 1px solid transparent; /* Initial transparent border */
 }
 
 .news-aggregator .news-list > .news-article:last-child {
@@ -157,23 +152,76 @@
 }
 
 .news-aggregator .news-article:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+    transform: translateY(-4px); /* Slightly deeper lift on hover */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    /* ⭐ DYNAMIC GOLD ACCENT: Gold Border Highlight on hover ⭐ */
+    border: 1px solid var(--gold-color);
 }
 
+/* ⭐ REFINED TYPOGRAPHY: Headline style (Journalistic Look) ⭐ */
 .news-aggregator .news-article h2 {
-    margin: 0 0 5px 0;
-    font-size: 1.2rem;
+    /* Use the imported luxury serif font for high-impact headlines */
+    font-family: 'DM Serif Display', serif;
+    margin: 0 0 8px 0; /* More space below headline */
+    font-size: 1.3rem; /* Slightly larger */
 }
 
 .news-aggregator .news-article a {
     color: var(--gold-color);
     text-decoration: none;
+    position: relative;
+}
+
+/* ⭐ DYNAMIC GOLD ACCENT: Micro-Interaction underline effect ⭐ */
+.news-aggregator .news-article h2 a:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 2px;
+    right: 0;
+    background: var(--gold-color);
+    transition: width 0.3s ease;
+}
+.news-aggregator .news-article h2 a:hover:after {
+    width: 100%;
+    left: 0;
+    background: var(--gold-color);
+}
+/* ⭐ END Micro-Interaction ⭐ */
+
+
+/* ⭐ REFINED TYPOGRAPHY: Dateline style (Muted Hierarchy) ⭐ */
+.news-aggregator .article-dateline {
+    font-size: 0.85rem;
+    /* Use a slightly desaturated/lighter grey than standard text */
+    color: var(--text-color); 
+    opacity: 0.7; 
+    font-weight: 300; /* Lighter weight */
+    display: block;
+    margin-bottom: 15px;
 }
 
 .news-aggregator .news-article p {
-    font-size: 0.9rem;
+    font-size: 0.95rem; /* Slightly larger body text for readability */
     color: var(--text-color);
+    /* Increased line height for better readability (generous whitespace) */
+    line-height: 1.6;
+    margin: 0; /* Remove default paragraph margins */
+}
+
+.news-aggregator .read-more-button {
+    display: inline-block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 10px;
+    color: var(--gold-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.news-aggregator .read-more-button:hover {
+    color: var(--text-color-light);
 }
 
 .news-aggregator .breaking-ribbon {
@@ -189,7 +237,6 @@
     padding-top: 15px;
     border-top: 1px solid var(--border-color);
     margin-top: auto;
-    /* FIX: Force footer not to shrink vertically */
     flex-shrink: 0;
     z-index: 5; 
     background-color: var(--accent-color); 
@@ -213,6 +260,63 @@
     font-weight: 500;
     text-shadow: 0 0 5px rgba(240, 215, 136, 0.4);
 }
+
+/* ⭐ SKELETON LOADER ENHANCEMENT: Styles and Animation ⭐ */
+/* Keyframe for the sweeping gold light effect */
+@keyframes shimmer {
+    0% { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
+}
+
+.news-aggregator .skeleton-wrapper {
+    /* Set the background of the wrapper to match article cards for seamless transition */
+    background-color: var(--accent-color); 
+    padding: 0;
+}
+
+.news-aggregator .skeleton-article {
+    background-color: var(--border-color);
+    padding: 20px 15px; /* Match article padding */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Match article margin */
+    /* Base background for the skeleton area */
+}
+
+.news-aggregator .skeleton-line {
+    /* Base styles for all skeleton lines */
+    height: 14px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    /* Gradient background for the shimmer effect */
+    background: linear-gradient(to right, 
+        var(--border-color) 0%, 
+        rgba(240, 215, 136, 0.1) 20%, /* Subtle gold shimmer point */
+        var(--border-color) 40%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.news-aggregator .skeleton-line.short {
+    width: 40%; /* Mimic the dateline/short info */
+    height: 10px;
+    margin-top: 10px;
+}
+
+.news-aggregator .skeleton-line.medium {
+    width: 80%; /* Mimic the summary line */
+}
+
+.news-aggregator .skeleton-line.long {
+    width: 100%; /* Mimic the summary line */
+}
+
+.news-aggregator .skeleton-article .skeleton-line:first-child {
+    width: 70%; /* Mimic the main headline */
+    height: 18px; 
+    margin-bottom: 15px;
+}
+/* ⭐ END SKELETON STYLES ⭐ */
+
 
 /* Mobile responsiveness: stack elements vertically */
 @media (max-width: 768px) {
@@ -270,5 +374,13 @@
         text-align: center;
         scroll-snap-align: start; 
         margin: 0 5px; 
+    }
+
+    .news-aggregator .news-article h2 {
+        font-size: 1.15rem; /* Slightly smaller headlines on mobile */
+    }
+
+    .news-aggregator .news-article p {
+        font-size: 0.9rem; /* Back to original smaller size on mobile */
     }
 }
