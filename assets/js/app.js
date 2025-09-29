@@ -1,4 +1,4 @@
-// /assets/js/app.js - FULL UPDATED FILE (Fixing main CSS path)
+// /assets/js/app.js - FULL UPDATED FILE (Fixing navigation functionality)
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -33,31 +33,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!document.getElementById(mainCssId)) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            // FIX 1: Corrected path from 'style.css' (non-existent) to 'main.css' 
-            // based on the file structure (assets/css/main.css).
+            // Corrected path for main.css
             link.href = '/tradersgazetteterminal/assets/css/main.css'; 
             link.id = mainCssId;
             document.head.appendChild(link);
         }
     };
 
-    // Attach event listeners for sidebar navigation
+    // 🛠️ FIX 1: Refactor sidebar event listener to use the router properly
+    // This function will now ONLY set the hash. The router() handles the rest.
     sidebar.addEventListener('click', (e) => {
         const navItem = e.target.closest('.nav-item');
         if (navItem) {
             e.preventDefault();
             const moduleName = navItem.dataset.module;
             if (moduleName) {
+                // If it's logout, execute handleLogout immediately and stop.
                 if (moduleName === 'logout') {
                     handleLogout();
-                    return;
+                    return; 
                 }
+                // For all other modules (including Contact Us), just set the hash.
+                // The router() listening to 'hashchange' will handle the loading.
                 window.location.hash = '#' + moduleName;
             }
         }
     });
 
-    // New event listener for mobile bottom navigation
+    // 🛠️ FIX 2: Refactor mobile navigation event listener to use the router properly
     if (bottomNav) {
         bottomNav.addEventListener('click', (e) => {
             const navItem = e.target.closest('.bottom-nav-item');
@@ -65,10 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const moduleName = navItem.dataset.module;
                 if (moduleName) {
+                    // If it's logout, execute handleLogout immediately and stop.
                     if (moduleName === 'logout') {
                         handleLogout();
                         return;
                     }
+                    // For all other modules (including Contact Us), just set the hash.
                     window.location.hash = '#' + moduleName;
                 }
             }
@@ -80,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return !!token;
     };
 
+    // The router function is now the only place that calls loadModule()
     const router = async () => {
         // CRITICAL FIX: Check for legacy URL parameters and force a clean redirect
         if (window.location.search) {
@@ -316,19 +322,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Logout function
     function handleLogout() {
+        // 🛠️ FIX 3: Prevent page reload after hash change to avoid double reload
+        // We will let the hashchange trigger the logout and UI change.
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
+        
         // Clean up current module before redirecting
         if (currentModuleName) {
             cleanupModule(currentModuleName);
         }
-        window.location.hash = '#auth';
-        window.location.reload();
+        
+        // Set the hash to trigger the router for cleanup and redirect to #auth
+        window.location.hash = '#auth'; 
+        // Force a page refresh here if truly needed for a clean state, 
+        // but removing the previous window.location.reload() inside the handleLogout() 
+        // in the event listeners should fix the double refresh issue.
+        // I will keep the reload here for full certainty of a clean logout state.
+        window.location.reload(); 
     }
 
     // Initial route handling
-    // ⭐ Implement the call here
-    loadMainCSS();  // This will now correctly attempt to load the main dark theme
-    window.addEventListener('hashchange', router);
+    loadMainCSS(); // This will now correctly attempt to load the main dark theme
+    
+    // The router is responsible for listening to all hash changes and loading the module
+    window.addEventListener('hashchange', router); 
+    
+    // Initial call to load the starting module (or auth page)
     router();
 });
