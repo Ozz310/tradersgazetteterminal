@@ -284,8 +284,8 @@ textarea:focus {
     font-weight: 700;
 }
 
-/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes (Top 1% Layout) ⭐ */
-.card-detail {
+/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes (Increased specificity for override) ⭐ */
+.trade-card .card-detail {
     display: flex;
     justify-content: space-between;
     /* Reduced vertical padding for a sleeker look */
@@ -301,14 +301,14 @@ textarea:focus {
     margin-bottom: 5px; 
 }
 
-.card-label {
+.trade-card .card-label { /* Increased specificity */
     /* Define a fixed width for labels to keep the card values right-aligned */
     flex: 0 0 45%; 
     color: #a8a8a8; /* Lighter grey for label */
     font-weight: 400;
 }
 
-.card-value {
+.trade-card .card-value { /* Increased specificity */
     /* Allow the value to take the rest of the space, ensuring right alignment */
     flex: 1 1 auto;
     text-align: right; 
@@ -435,18 +435,20 @@ textarea:focus {
     border-color: #d4af37;
 }
 
-/* ⭐ LAYOUT FIX: New 2x2 Grid Structure ⭐ */
+/* ⭐ FIX: DESKTOP LAYOUT (2x2 Grid Enforcement) ⭐ */
 .analytics-grid {
     /* Use a vertical flex container to stack the chart rows */
     display: flex; 
     flex-direction: column;
     gap: 30px; /* Space between the chart rows */
+    /* Ensure no flex-wrap here, as we want rows to stack */
 }
 
 .chart-row {
     /* Use a horizontal flex container for charts in the row */
     display: flex;
     gap: 30px; /* Space between charts in a row */
+    width: 100%; /* Ensure row takes full width */
 }
 
 .chart-card {
@@ -459,6 +461,8 @@ textarea:focus {
     height: 380px; /* Consistent height for visual balance */
     box-sizing: border-box;
     transition: box-shadow 0.3s ease;
+    /* Set position relative to make canvas absolute positioning easier if needed */
+    position: relative; 
 }
 
 .chart-card:hover {
@@ -474,9 +478,11 @@ textarea:focus {
     padding-bottom: 5px;
     margin-bottom: 15px;
 }
+/* This fix ensures the chart occupies the maximum available space in the card */
 .chart-card canvas {
     min-height: 300px; 
     max-height: 300px;
+    width: 100%;
 }
 
 /* ======================================================= */
@@ -518,14 +524,15 @@ textarea:focus {
         gap: 20px;
     }
     
+    /* ⭐ FIX: MOBILE VERTICAL SCROLL (Explicit fixed height) ⭐ */
     .chart-card {
-        height: 300px; /* Shorter height for mobile */
+        height: 300px; /* Shorter, FIXED height for mobile */
     }
-    /* ⭐ FIX: Ensure chart canvas respects 100% width, fixing horizontal scroll (Top 1% Responsiveness) ⭐ */
     .chart-card canvas {
+        /* Fixes horizontal scroll and stops vertical expansion */
         width: 100% !important; 
-        height: 100% !important; 
-        min-height: 220px; 
+        height: 80% !important; /* Set a percentage relative to the fixed card height */
+        min-height: 200px; 
         max-height: 220px;
     }
 
