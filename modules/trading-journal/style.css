@@ -91,47 +91,67 @@ button.submit-button, /* Targets button element with class submit-button (Highes
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
 }
 
-/* Tabs - Unified Aesthetic */
+/* Tabs - Unified Aesthetic (Now a Toggle Button Group) */
 .tab-switcher {
-    display: flex;
+    /* 💥 FIX: Uses flex to correctly align the toggle buttons side-by-side */
+    display: flex; 
     margin-top: 20px;
     background: #1a1a1a;
     border-radius: 8px;
-    padding: 5px;
+    padding: 0; /* Removed padding to let button padding control spacing */
+    /* NEW: Add a subtle inner shadow to define the container */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4); 
+    overflow: hidden; /* Ensures buttons don't bleed out of the container */
 }
 
-/* ⭐ FINAL ENFORCED: INACTIVE TAB STYLE (Uses VARS) ⭐ */
+/* ⭐ CRITICAL FIX: REPLACING LOCAL '.tab' STYLE WITH GLOBAL 'tgg-menu-button' AESTHETIC ⭐ */
 .journal-content-container .tab, 
 .tab {
+    /* 🔑 ENFORCEMENT: Use global menu button style for consistent UI/UX across Hubs */
     flex: 1;
     text-align: center;
-    padding: 12px;
     cursor: pointer;
-    background: #1a1a1a !important; 
-    border: none;
-    color: var(--text-color) !important; 
-    font-size: 1.1rem;
-    font-weight: 600;
     transition: all 0.3s ease;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 0; /* Remove internal border-radius as the container has it */
+    margin: 0; /* Remove any internal margin */
+    
+    /* Inherit global button styling */
+    background: var(--accent-color);
+    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
+    color: var(--text-color);
+    border: 1px solid transparent; /* Keep border logic simple here */
+    padding: 12px;
+    font-size: 0.95rem; /* Match global size */
+    font-weight: 600;
+    box-shadow: none !important; /* Disable individual button shadow */
 }
 
-/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Uses VARS and gold shadow) ⭐ */
+/* Add a subtle divider between buttons */
+.tab:not(:last-child) {
+    border-right: 1px solid #333;
+}
+
+/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Uses VARS to match .tgg-menu-button.active) ⭐ */
 .journal-content-container .tab.active,
 .tab.active {
-    background-color: var(--dark-color-for-text) !important; /* Force Pure Black for contrast */
-    color: var(--gold-color) !important; /* Force Gold text */
-    font-weight: 700 !important; /* Enforced 700 weight */
+    /* 🔑 ENFORCEMENT: Match the Gold Active look */
+    background: var(--gold-color);
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    color: var(--dark-color-for-text) !important; /* Black text on gold */
+    font-weight: 700 !important; 
     /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5) !important; 
+    /* Remove border on active for cleaner look */
+    border: 1px solid transparent; 
 }
 
 .journal-content-container .tab:hover:not(.active),
 .tab:hover:not(.active) {
-    color: var(--gold-color) !important; 
-    background-color: #1a1a1a !important;
+    /* Match global tgg-menu-button:hover */
+    color: var(--hover-gold-color) !important; 
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
 }
+
 
 /* Data Cards and Widgets */
 .journal-data-card,
