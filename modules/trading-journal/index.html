@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
     <style>
+        /* CRITICAL CSS: Isolating the true solid-gold submit buttons (for forms only) */
         .submit-button {
             /* Enforce no background image/gradient */
             background-image: none !important; 
@@ -26,8 +27,8 @@
     <div class="journal-cover-photo"></div>
     <div class="journal-content-container">
         <div class="action-buttons">
-            <button id="add-entry-button" class="submit-button">Add New Entry</button>
-            <button id="upload-csv-button" class="submit-button">Upload CSV</button>
+            <button id="add-entry-button" class="journal-action-button">Add New Entry</button>
+            <button id="upload-csv-button" class="journal-action-button">Upload CSV</button>
         </div>
         <div class="journal-entry-form-card hidden" id="entry-form-card">
             <h2 class="widget-title">Add a New Trade</h2>
@@ -123,7 +124,7 @@
                     </select>
                 </div>
                 <div class="export-button">
-                    <button id="export-analytics-csv" class="submit-button">Download CSV</button>
+                    <button id="export-analytics-csv" class="journal-action-button">Download CSV</button>
                 </div>
             </div>
             
@@ -153,7 +154,7 @@
         <div class="journal-data-card" id="table-view">
             <h3 class="widget-title">Trade Journal Log</h3>
             <div class="export-button">
-                <button id="export-table-csv" class="submit-button">Download CSV</button>
+                <button id="export-table-csv" class="journal-action-button">Download CSV</button>
             </div>
             <div id="trade-card-view" class="trade-card-list">
                 </div>
