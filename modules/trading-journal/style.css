@@ -55,25 +55,32 @@ a {
     flex-wrap: wrap;
 }
 
-/* ⭐ FINAL ENFORCED: LUXURY PRIMARY BUTTON STYLE (Overrides hardcoded values with VARS) ⭐ */
-.journal-content-container .submit-button, 
-.submit-button { /* Keep original selector for wider use if needed */
-    background-color: var(--gold-color) !important; /* Force Radiant Gold */
-    background-image: none !important; /* CRITICAL FIX: Removes old CSS gradients/browser defaults */
-    color: var(--dark-color-for-text) !important; /* Force Dominant Black */
+/* ⭐ FINAL ENFORCED: HIGH-SPECIFICITY LUXURY PRIMARY BUTTON STYLE (Forces SOLID Gold) ⭐ */
+button.submit-button, /* Targets button element with class submit-button (Highest specificity) */
+.journal-content-container button.submit-button, 
+.journal-content-container .submit-button,
+.submit-button { 
+    /* Critical property to ensure no gradients take precedence */
+    background-image: none !important; 
+    
+    /* Enforce solid gold color */
+    background-color: var(--gold-color) !important; 
+    
+    /* Enforce other styles */
+    color: var(--dark-color-for-text) !important; 
     border: none !important;
-    padding: 12px 25px;
-    font-size: 1rem;
+    padding: 12px 25px !important; /* Added !important for safety */
+    font-size: 1rem !important; /* Added !important for safety */
     cursor: pointer;
-    border-radius: 8px !important; /* Enforce 8px radius */
-    font-weight: 700 !important; /* Enforce 700 weight */
-    text-transform: uppercase; /* Enforce uppercase */
-    letter-spacing: 0.5px; /* Enforce letter spacing */
+    border-radius: 8px !important; 
+    font-weight: 700 !important; 
+    text-transform: uppercase !important; /* Added !important for safety */
+    letter-spacing: 0.5px !important; /* Added !important for safety */
     transition: all 0.3s ease;
-    /* Enforce the prominent gold button shadow */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
     flex-grow: 1; 
     min-width: 150px; 
+    outline: none !important; /* Ensure no residual outlines from default framework styles */
 }
 
 .journal-content-container .submit-button:hover,
