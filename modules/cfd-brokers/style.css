@@ -50,7 +50,8 @@
 }
 
 .cfd-brokers .broker-text-section h2 {
-    color: var(--gold-color);
+    /* ⭐ UPDATED: Use consistent gold color variable for H2 titles ⭐ */
+    color: var(--gold-color) !important; 
     font-size: 2rem;
     margin-top: 0;
 }
@@ -61,22 +62,40 @@
     font-size: 0.95rem;
 }
 
+/* 🔑 TGG PRIMARY CTA ENFORCEMENT 🔑 */
 .cfd-brokers .join-now-button {
     display: inline-block;
-    padding: 12px 25px;
-    background: var(--gold-color);
-    color: #1a1a1a;
+    padding: 12px 30px; /* Slightly wider padding for a solid look */
     text-decoration: none;
     font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: uppercase;
     border-radius: 8px;
-    margin-top: 15px;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    
+    /* ENFORCEMENT: Solid Gold Gradient background */
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
+    border: none !important;
+    
+    /* Premium Shadow Match (Lifted) */
+    box-shadow: 
+        0 4px 10px rgba(0, 0, 0, 0.4) !important, 
+        inset 0 0 15px rgba(255, 255, 255, 0.1) !important;
 }
 
 .cfd-brokers .join-now-button:hover {
-    background: var(--dark-gold-color);
+    /* Subtle hover effect for luxury feel */
+    background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
     transform: translateY(-2px);
+    box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.6) !important, 
+        0 0 10px rgba(240, 215, 136, 0.6) !important; /* Gold glowing effect */
 }
+/* 🔑 END TGG PRIMARY CTA ENFORCEMENT 🔑 */
 
 @media (max-width: 768px) {
     .cfd-brokers .broker-card {
