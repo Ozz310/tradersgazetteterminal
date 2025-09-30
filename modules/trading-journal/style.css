@@ -92,31 +92,34 @@ button.submit-button,
 }
 
 /* 🆕 CRITICAL FIX: STYLE FOR ACTION BUTTONS (ADD, UPLOAD, DOWNLOAD) 
-   These should use the dark/gold gradient aesthetic, not the solid gold CTA style. */
+   Enforce dark gradient look to override flat gold from .submit-button. */
 .journal-action-button {
-    /* 🔑 BASE INHERITANCE: Match the tgg-menu-button look */
-    background: var(--accent-color);
-    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
-    color: var(--text-color);
-    border: 1px solid #555;
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: 600;
+    /* 🔑 BASE ENFORCEMENT: Match the tgg-menu-button look */
+    background: var(--accent-color) !important;
+    background: linear-gradient(145deg, var(--accent-color), #3c3c3c) !important;
+    color: var(--text-color) !important;
+    border: 1px solid #555 !important;
+    padding: 12px 20px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 8px !important;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
+    /* Enforce the recessed look */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3) !important;
     flex-grow: 1;
     min-width: 150px;
-    text-transform: uppercase;
+    text-transform: uppercase !important;
+    /* Ensure no residual submit-button properties cling */
+    background-image: none !important;
 }
 
 .journal-action-button:hover {
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
-    color: var(--hover-gold-color);
-    border-color: var(--gold-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important; /* Subtle darker hover */
+    color: var(--hover-gold-color) !important;
+    border-color: var(--gold-color) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
     transform: translateY(-2px); /* Subtle lift on hover */
 }
 
