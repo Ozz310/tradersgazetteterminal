@@ -298,8 +298,9 @@ body {
 }
 
 /* --- Global Button Aliases (ENFORCEMENT BLOCK) --- */
-/* Automatically map old primary action buttons to the new aesthetic */
-.submit-button {
+/* Automatically map all primary action buttons (submit, tg-primary) to the new aesthetic */
+.submit-button,
+.tg-button-primary { /* ADDED .tg-button-primary to this alias block for robustness */
     /* Critical: Inherit ALL styling from the premium primary button */
     background-color: var(--gold-color) !important;
     color: var(--dark-color-for-text) !important; /* CORRECTED: Must be dark text */
@@ -318,7 +319,8 @@ body {
         0 0 8px rgba(212, 175, 55, 0.5) !important;
 }
 
-.submit-button:hover {
+.submit-button:hover,
+.tg-button-primary:hover { /* ADDED .tg-button-primary to this alias block for robustness */
     background-color: var(--hover-gold-color) !important;
     color: var(--dark-color-for-text) !important; /* CRITICAL ADDITION: Lock text color to black on hover */
     /* EXTREME HOVER: */
