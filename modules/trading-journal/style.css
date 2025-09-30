@@ -55,46 +55,62 @@ a {
     flex-wrap: wrap;
 }
 
-/* 🔑 GOLDEN RULE: Submit/Primary Buttons (SOLID GOLD, High-Impact CTA) */
-/* This style now applies to Add New Entry, Upload CSV, and Download CSV */
-button.submit-button, 
-.submit-button { 
-    /* *** CRITICAL FIX: ENSURE SOLID GOLD GRADIENT LOOK *** */
-    background-image: none !important; 
-    background-color: var(--gold-color) !important; 
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; /* Table View Active Gradient */
+/* ========================================================================= */
+/* 🔑 CRITICAL AESTHETIC FIX: TGG PRIMARY CALL-TO-ACTION (CTA) STYLING */
+/* This is the SOLID GOLD look, used for Forms, Action Buttons, and Active Tabs */
+/* ========================================================================= */
+
+.tgg-primary-cta, 
+.tab.active {
+    /* 1. ENFORCED SOLID GOLD GRADIENT (Matches the Active Table View Tab) */
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
     
-    /* Enforce Dark Text */
-    color: var(--dark-color-for-text) !important; 
+    /* 2. ENFORCED DARK TEXT ON GOLD */
+    color: var(--dark-color-for-text) !important;
+    
+    /* 3. ENFORCED LAYOUT & SHADOW */
+    padding: 12px 25px !important;
+    font-size: 1rem !important;
+    cursor: pointer;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease;
     border: none !important;
     
-    /* Layout & Aesthetic */
-    padding: 12px 25px !important; 
-    font-size: 1rem !important; 
-    cursor: pointer;
-    border-radius: 8px !important; 
-    font-weight: 700 !important; 
-    text-transform: uppercase !important; 
-    letter-spacing: 0.5px !important; 
-    transition: all 0.3s ease;
-    
-    /* Enforce shadow similar to Table View Active */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
-    flex-grow: 1; 
-    min-width: 150px; 
-    outline: none !important; 
+    /* Strong shadow for a 'premium' raised look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    outline: none !important;
 }
 
-.submit-button:hover {
-    /* Subtle hover effect for Solid Gold buttons */
-    background-color: var(--hover-gold-color) !important; 
+/* The existing .submit-button should also use the same look, 
+   though it's better to explicitly use tgg-primary-cta in the HTML */
+button.submit-button,
+.submit-button {
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
+    color: var(--dark-color-for-text) !important;
+    border: none !important;
+    padding: 12px 25px !important;
+    font-size: 1rem !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    flex-grow: 1; 
+    min-width: 150px;
+}
+
+/* Hover state for all solid gold buttons */
+.tgg-primary-cta:hover, 
+.submit-button:hover,
+.tab.active:hover {
     background: linear-gradient(145deg, #FFEFB0, #EEDD99) !important; /* Slightly lighter gold hover */
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important;
 }
-
-/* ❌ Removed the incorrect .journal-action-button block ❌ */
-
 
 /* Tabs - Unified Aesthetic (Now a Toggle Button Group) */
 .tab-switcher {
@@ -140,19 +156,7 @@ button.submit-button,
     border-right: 1px solid #333;
 }
 
-/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Solid Gold Look) ⭐ */
-.journal-content-container .tab.active,
-.tab.active {
-    /* 🔑 ENFORCEMENT: Match the Solid Gold CTA look */
-    background: var(--gold-color);
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
-    color: var(--dark-color-for-text) !important; /* Black text on gold */
-    font-weight: 700 !important; 
-    /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5) !important; 
-    /* Remove border on active for cleaner look */
-    border: 1px solid transparent; 
-}
+/* The .tab.active style is now defined at the top with .tgg-primary-cta for consistency */
 
 .journal-content-container .tab:hover:not(.active),
 .tab:hover:not(.active) {
@@ -544,7 +548,7 @@ textarea:focus {
     }
     
     /* Apply the new solid gold style to the action buttons in the header for mobile */
-    .action-buttons .submit-button {
+    .action-buttons .tgg-primary-cta {
         flex: 1 1 50%;
         min-width: unset; 
     }
@@ -565,7 +569,7 @@ textarea:focus {
     .export-button {
         width: 100%;
     }
-    .analytics-controls .submit-button {
+    .analytics-controls .tgg-primary-cta {
         width: 100%; 
     }
 
