@@ -9,17 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
     <style>
-        /* CRITICAL CSS: Isolating the true solid-gold submit buttons (for forms only) */
-        .submit-button {
-            /* Enforce no background image/gradient */
-            background-image: none !important; 
-            /* Enforce solid gold color from the global variable */
-            background-color: var(--gold-color) !important;
-            /* Ensure the text is dark for high contrast */
-            color: var(--dark-color-for-text) !important;
-            /* Ensure the border is removed if a default framework is adding one */
-            border: none !important;
-        }
+        /* CRITICAL CSS: The inline submit-button style is now removed/overridden by the external stylesheet 
+           to allow the gradient to function, but we keep this section for context/future global styles. */
     </style>
     
 </head>
@@ -27,8 +18,8 @@
     <div class="journal-cover-photo"></div>
     <div class="journal-content-container">
         <div class="action-buttons">
-            <button id="add-entry-button" class="submit-button">Add New Entry</button>
-            <button id="upload-csv-button" class="submit-button">Upload CSV</button>
+            <button id="add-entry-button" class="tgg-primary-cta">Add New Entry</button>
+            <button id="upload-csv-button" class="tgg-primary-cta">Upload CSV</button>
         </div>
         <div class="journal-entry-form-card hidden" id="entry-form-card">
             <h2 class="widget-title">Add a New Trade</h2>
@@ -105,7 +96,7 @@
                     <label for="notes">Notes:</label>
                     <textarea id="notes"></textarea>
                 </div>
-                <button type="submit" class="submit-button">Add Entry</button>
+                <button type="submit" class="tgg-primary-cta">Add Entry</button>
             </form>
         </div>
         <div class="tab-switcher">
@@ -124,7 +115,7 @@
                     </select>
                 </div>
                 <div class="export-button">
-                    <button id="export-analytics-csv" class="submit-button">Download CSV</button>
+                    <button id="export-analytics-csv" class="tgg-primary-cta">Download CSV</button>
                 </div>
             </div>
             
@@ -154,7 +145,7 @@
         <div class="journal-data-card" id="table-view">
             <h3 class="widget-title">Trade Journal Log</h3>
             <div class="export-button">
-                <button id="export-table-csv" class="submit-button">Download CSV</button>
+                <button id="export-table-csv" class="tgg-primary-cta">Download CSV</button>
             </div>
             <div id="trade-card-view" class="trade-card-list">
                 </div>
@@ -190,7 +181,7 @@
                         <label for="csv-file">Select CSV File:</label>
                         <input type="file" id="csv-file" accept=".csv" required>
                     </div>
-                    <button type="submit" class="submit-button">Upload and Sync</button>
+                    <button type="submit" class="tgg-primary-cta">Upload and Sync</button>
                 </form>
             </div>
         </div>
