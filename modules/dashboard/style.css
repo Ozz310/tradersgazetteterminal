@@ -176,7 +176,7 @@
 #digital-time {
     font-size: 3rem;
     font-weight: 300;
-    color: var(--gold-accent);
+    color: var(--gold-color) !important; /* Use core gold variable */
     display: block;
     /* 🛠️ UI/UX: Added gold text glow for radiant, premium look */
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.4); 
@@ -188,7 +188,7 @@
     opacity: 0.8;
 }
 
-/* Styles for Time Zone Buttons and Session Indicator... (omitted) */
+/* Styles for Time Zone Buttons and Session Indicator */
 .time-zone-selector {
     display: flex;
     flex-wrap: wrap;  
@@ -199,9 +199,10 @@
 }
 
 .tz-button {
+    /* INACTIVE STATE: Transparent background, Gold border, Gold text */
     background-color: transparent;
-    border: 1px solid var(--gold-accent);
-    color: var(--gold-accent);
+    border: 1px solid var(--gold-color) !important; /* Use core variable */
+    color: var(--gold-color) !important; /* Use core variable */
     font-size: 0.7rem;
     font-weight: bold;
     padding: 0.4rem 0.8rem;
@@ -209,13 +210,33 @@
     cursor: pointer;
     transition: all 0.2s ease;
     text-transform: uppercase;
+    box-shadow: none; /* Ensure no residual shadow */
 }
 
-.tz-button:hover,
-.tz-button.active {
-    background-color: var(--gold-accent);
-    color: var(--black-tone-3);
+.tz-button:hover {
+    /* HOVER STATE: Dark background, Gold text - Subtle change before becoming active */
+    background-color: #383838; /* Darker accent on hover */
+    color: var(--gold-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
+
+/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
+.tz-button.active {
+    /* ACTIVE STATE: Enforced Solid Gold Gradient and Dark Text */
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    
+    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
+    border: none !important; /* Remove individual tab border */
+    
+    /* Premium Shadow Match */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+    
+    font-weight: 700 !important;
+    transform: translateY(-1px);
+}
+/* 🔑 END TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 
 .session-indicator {
     text-align: center;
