@@ -95,52 +95,58 @@
     display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
-/* 🔑 TRADER'S GAZETTE BUTTON ENFORCEMENT: Secondary/Toggle Standard 🔑 */
+/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT (Using the unified .tab aesthetic) 🔑 */
+
 .news-aggregator .news-tab {
     flex-grow: 0; 
     flex-shrink: 0; 
     
-    /* BASE STATE: Dark/Subtle, matching RMH menu-button base */
-    background-color: var(--sidebar-color) !important;
-    background: none !important;
+    /* BASE STATE: Dark/Subtle, matching the Inactive/Dark Tab Look */
+    /* ENFORCEMENT: Use Dark Gradient from the Trade Journal inactive tab */
+    background-color: var(--accent-color) !important;
+    background: linear-gradient(145deg, var(--accent-color), #3c3c3c) !important;
     color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important; 
     
     /* Standardized Padding/Shape */
     padding: 10px 20px !important;
     border-radius: 8px !important; 
     margin: 0 5px; /* Added margin for separation */
+    border: 1px solid #444 !important; /* Subtle border to define shape */
     
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-    text-shadow: none; /* Removed original text shadow for clean look */
+    text-shadow: none;
+    text-transform: uppercase; /* Match Trade Journal Tab look */
 }
 
 .news-aggregator .news-tab:hover {
+    /* ENFORCEMENT: Use the Inactive Tab Hover style */
     color: var(--gold-color) !important;
     border-color: var(--gold-color) !important;
-    background-color: var(--accent-color) !important; /* Use accent color for uniform hover */
-    transform: none; /* Keep the clean aesthetic, no lift on small toggles */
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important; /* Darker hover */
+    transform: none; 
 }
 
 .news-aggregator .news-tab.active {
-    /* ACTIVE STATE: Enforced Radiant Gold Standard with Black Text */
-    background-color: var(--gold-color) !important;
+    /* ACTIVE STATE: Enforced Solid Gold CTA/Active Tab Standard */
+    /* ENFORCEMENT: Use the exact Solid Gold Gradient and Shadow from the Trade Journal */
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    
     color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
-    border: 1px solid var(--hover-gold-color) !important;
+    border: none !important; /* Remove individual tab border, let the shadow define */
     
     /* Premium Shadow Match */
-    box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.6) !important, 
-        inset 0 0 15px rgba(255, 255, 255, 0.2) !important, 
-        0 0 8px rgba(212, 175, 55, 0.5) !important;
-        
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    
     font-weight: 700 !important;
+    /* Optional: Add a subtle lift on the active tab for emphasis */
+    transform: translateY(-1px);
 }
-/* 🔑 END BUTTON ENFORCEMENT 🔑 */
+/* 🔑 END TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 
 
 .news-aggregator .news-list {
