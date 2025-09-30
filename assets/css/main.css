@@ -252,13 +252,25 @@ body {
 
 /* Premium Primary Button (For forms, actions, etc.) - ENHANCED DEPTH */
 .tg-button-primary {
+    /* Critical: Button Reset applied to this class, not the generic tag */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    display: inline-block; /* Safest default for primary button */
+
     background-color: var(--gold-color);
     color: var(--dark-color-for-text); /* CORRECTED: Must be dark text */
     border: 1px solid var(--hover-gold-color); 
     padding: 14px 30px; 
     border-radius: 10px; 
     font-weight: 700; 
-    cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1px; 
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
@@ -281,13 +293,25 @@ body {
 
 /* Secondary Button (Minimalist) */
 .tg-button-secondary {
+    /* Critical: Button Reset applied to this class, not the generic tag */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    display: inline-block;
+
     background-color: transparent;
     color: var(--gold-color);
     border: 1px solid var(--border-color);
     padding: 12px 25px; 
     border-radius: 10px;
     font-weight: 500;
-    cursor: pointer;
     transition: all 0.3s ease;
 }
 
@@ -299,6 +323,22 @@ body {
 
 /* 🆕 TOP 1% MENU/TOGGLE BUTTONS (From Risk Management Hub) */
 .tgg-menu-button {
+    /* Critical: Button Reset applied to this class, not the generic tag */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    
+    /* 💥 FIX: Explicitly set display and width to ensure proper stacking layout 
+    * This resolves the layout break in Risk Management Hub. */
+    display: block; 
+    width: 100%; 
+
     background: var(--accent-color);
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
     color: var(--text-color);
@@ -306,13 +346,10 @@ body {
     padding: 12px 20px; /* Adjusted padding slightly for general use */
     font-size: 0.95rem; /* Adjusted font size for general use */
     font-weight: 600;
-    cursor: pointer;
     border-radius: 8px;
-    text-align: center; /* Center text by default */
+    text-align: center; 
     transition: all 0.3s ease;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
-    /* Ensure it behaves like a button */
-    display: inline-block;
 }
 
 .tgg-menu-button:hover {
@@ -382,26 +419,10 @@ body {
     background-color: var(--dark-color-for-text); /* Dark knob on gold background */
 }
 
-/* 🔑 Ensure all buttons start with base styling */
-button {
-    /* Reset default browser button appearance */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-}
-
 /* --- Global Button Aliases (ENFORCEMENT BLOCK) --- */
 /* Automatically map all primary action buttons (submit, tg-primary) to the new aesthetic */
 .submit-button,
-.tg-button-primary { /* ADDED .tg-button-primary to this alias block for robustness */
+.tg-button-primary { 
     /* Critical: Inherit ALL styling from the premium primary button */
     background-color: var(--gold-color) !important;
     color: var(--dark-color-for-text) !important; /* CORRECTED: Must be dark text */
@@ -421,7 +442,7 @@ button {
 }
 
 .submit-button:hover,
-.tg-button-primary:hover { /* ADDED .tg-button-primary to this alias block for robustness */
+.tg-button-primary:hover { 
     background-color: var(--hover-gold-color) !important;
     color: var(--dark-color-for-text) !important; /* CRITICAL ADDITION: Lock text color to black on hover */
     /* EXTREME HOVER: */
