@@ -55,8 +55,8 @@ a {
     flex-wrap: wrap;
 }
 
-/* ⭐ FINAL ENFORCED: HIGH-SPECIFICITY LUXURY PRIMARY BUTTON STYLE (Forces SOLID Gold) ⭐ */
-button.submit-button, /* Targets button element with class submit-button (Highest specificity) */
+/* 🔑 GOLDEN RULE: Submit/Primary Buttons (SOLID GOLD, High-Impact CTA) */
+button.submit-button, 
 .journal-content-container button.submit-button, 
 .journal-content-container .submit-button,
 .submit-button { 
@@ -91,6 +91,36 @@ button.submit-button, /* Targets button element with class submit-button (Highes
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
 }
 
+/* 🆕 CRITICAL FIX: STYLE FOR ACTION BUTTONS (ADD, UPLOAD, DOWNLOAD) 
+   These should use the dark/gold gradient aesthetic, not the solid gold CTA style. */
+.journal-action-button {
+    /* 🔑 BASE INHERITANCE: Match the tgg-menu-button look */
+    background: var(--accent-color);
+    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
+    color: var(--text-color);
+    border: 1px solid #555;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    min-width: 150px;
+    text-transform: uppercase;
+}
+
+.journal-action-button:hover {
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
+    color: var(--hover-gold-color);
+    border-color: var(--gold-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px); /* Subtle lift on hover */
+}
+
+
 /* Tabs - Unified Aesthetic (Now a Toggle Button Group) */
 .tab-switcher {
     /* 💥 FIX: Uses flex to correctly align the toggle buttons side-by-side */
@@ -98,10 +128,10 @@ button.submit-button, /* Targets button element with class submit-button (Highes
     margin-top: 20px;
     background: #1a1a1a;
     border-radius: 8px;
-    padding: 0; /* Removed padding to let button padding control spacing */
+    padding: 0; 
     /* NEW: Add a subtle inner shadow to define the container */
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4); 
-    overflow: hidden; /* Ensures buttons don't bleed out of the container */
+    overflow: hidden; 
 }
 
 /* ⭐ CRITICAL FIX: REPLACING LOCAL '.tab' STYLE WITH GLOBAL 'tgg-menu-button' AESTHETIC ⭐ */
@@ -112,18 +142,18 @@ button.submit-button, /* Targets button element with class submit-button (Highes
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-radius: 0; /* Remove internal border-radius as the container has it */
-    margin: 0; /* Remove any internal margin */
+    border-radius: 0; 
+    margin: 0; 
     
     /* Inherit global button styling */
     background: var(--accent-color);
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
     color: var(--text-color);
-    border: 1px solid transparent; /* Keep border logic simple here */
+    border: 1px solid transparent; 
     padding: 12px;
-    font-size: 0.95rem; /* Match global size */
+    font-size: 0.95rem; 
     font-weight: 600;
-    box-shadow: none !important; /* Disable individual button shadow */
+    box-shadow: none !important; 
 }
 
 /* Add a subtle divider between buttons */
@@ -533,7 +563,9 @@ textarea:focus {
     .action-buttons {
         flex-wrap: nowrap;
     }
-    .action-buttons .submit-button {
+    
+    /* Apply the new dark/gold style to the action buttons in the header for mobile */
+    .action-buttons .journal-action-button {
         flex: 1 1 50%;
         min-width: unset; 
     }
