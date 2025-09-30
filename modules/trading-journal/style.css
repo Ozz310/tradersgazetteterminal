@@ -56,17 +56,19 @@ a {
 }
 
 /* 🔑 GOLDEN RULE: Submit/Primary Buttons (SOLID GOLD, High-Impact CTA) */
+/* This style now applies to Add New Entry, Upload CSV, and Download CSV */
 button.submit-button, 
 .submit-button { 
-    /* Critical property to ensure no gradients take precedence */
+    /* *** CRITICAL FIX: ENSURE SOLID GOLD GRADIENT LOOK *** */
     background-image: none !important; 
-    
-    /* Enforce solid gold color */
     background-color: var(--gold-color) !important; 
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; /* Table View Active Gradient */
     
-    /* Enforce other styles */
+    /* Enforce Dark Text */
     color: var(--dark-color-for-text) !important; 
     border: none !important;
+    
+    /* Layout & Aesthetic */
     padding: 12px 25px !important; 
     font-size: 1rem !important; 
     cursor: pointer;
@@ -75,6 +77,8 @@ button.submit-button,
     text-transform: uppercase !important; 
     letter-spacing: 0.5px !important; 
     transition: all 0.3s ease;
+    
+    /* Enforce shadow similar to Table View Active */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
     flex-grow: 1; 
     min-width: 150px; 
@@ -82,48 +86,14 @@ button.submit-button,
 }
 
 .submit-button:hover {
+    /* Subtle hover effect for Solid Gold buttons */
     background-color: var(--hover-gold-color) !important; 
+    background: linear-gradient(145deg, #FFEFB0, #EEDD99) !important; /* Slightly lighter gold hover */
     transform: translateY(-2px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
 }
 
-/* 🆕 ACTION BUTTONS (ADD, UPLOAD, DOWNLOAD) - Dark Gradient Aesthetic */
-/* We enforce the GOLD text color here for the default state. */
-.journal-action-button {
-    /* 🔑 BASE INHERITANCE: Dark Gradient Background */
-    background: var(--accent-color);
-    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
-    
-    /* *** CRITICAL FIX: ENFORCE RADIANT GOLD TEXT ON DEFAULT STATE *** */
-    color: var(--gold-color) !important; 
-    
-    border: 1px solid #555;
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-    text-align: center;
-    transition: all 0.3s ease;
-    /* Enforce the recessed look for action buttons */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
-    flex-grow: 1;
-    min-width: 150px;
-    text-transform: uppercase;
-    background-image: none; /* Clean up just in case */
-}
-
-/* --- HOVER STATE ENFORCEMENT --- */
-.journal-action-button:hover {
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
-    
-    /* Keep the gold text color but let the gold border/shadow give the hover effect */
-    color: var(--hover-gold-color) !important; 
-    
-    border-color: var(--gold-color) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
-    transform: translateY(-2px); 
-}
+/* ❌ Removed the incorrect .journal-action-button block ❌ */
 
 
 /* Tabs - Unified Aesthetic (Now a Toggle Button Group) */
@@ -140,6 +110,7 @@ button.submit-button,
 }
 
 /* ⭐ CRITICAL FIX: REPLACING LOCAL '.tab' STYLE WITH GLOBAL 'tgg-menu-button' AESTHETIC ⭐ */
+/* This is the Dark/Inactive Toggle Button Look */
 .journal-content-container .tab, 
 .tab {
     /* 🔑 ENFORCEMENT: Use global menu button style for consistent UI/UX across Hubs */
@@ -150,11 +121,11 @@ button.submit-button,
     border-radius: 0; 
     margin: 0; 
     
-    /* Inherit global button styling */
+    /* Inherit global button styling (Dark Gradient) */
     background: var(--accent-color);
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
     
-    /* Default Tab Text is White/Light Grey to contrast with Gold Active */
+    /* Default Tab Text is Crisp White/Light Grey */
     color: var(--text-color); 
     
     border: 1px solid transparent; 
@@ -169,12 +140,12 @@ button.submit-button,
     border-right: 1px solid #333;
 }
 
-/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Uses VARS to match .tgg-menu-button.active) ⭐ */
+/* ⭐ FINAL ENFORCED: ACTIVE TAB STYLE (Solid Gold Look) ⭐ */
 .journal-content-container .tab.active,
 .tab.active {
-    /* 🔑 ENFORCEMENT: Match the Gold Active look */
+    /* 🔑 ENFORCEMENT: Match the Solid Gold CTA look */
     background: var(--gold-color);
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
     color: var(--dark-color-for-text) !important; /* Black text on gold */
     font-weight: 700 !important; 
     /* DYNAMIC GOLD ACCENT: Gold glow AND deep shadow */
@@ -572,8 +543,8 @@ textarea:focus {
         flex-wrap: nowrap;
     }
     
-    /* Apply the new dark/gold style to the action buttons in the header for mobile */
-    .action-buttons .journal-action-button {
+    /* Apply the new solid gold style to the action buttons in the header for mobile */
+    .action-buttons .submit-button {
         flex: 1 1 50%;
         min-width: unset; 
     }
