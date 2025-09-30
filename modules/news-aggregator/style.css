@@ -67,7 +67,8 @@
 .news-aggregator .news-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--gold-color);
+    /* ⭐ UPDATED: Use consistent gold color variable ⭐ */
+    color: var(--gold-color) !important; 
     text-align: center;
     margin-bottom: 20px;
     padding-bottom: 10px;
@@ -197,7 +198,8 @@
 }
 
 .news-aggregator .news-article a {
-    color: var(--gold-color);
+    /* ⭐ UPDATED: Use consistent gold color variable for article headlines ⭐ */
+    color: var(--gold-color) !important; 
     text-decoration: none;
     position: relative;
 }
