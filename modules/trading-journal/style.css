@@ -55,7 +55,8 @@ a {
     flex-wrap: wrap;
 }
 
-/* 🔑 GOLDEN RULE: Submit/Primary Buttons (SOLID GOLD, High-Impact CTA) */
+/* 🔑 GOLDEN RULE: Submit/Primary Buttons (SOLID GOLD, High-Impact CTA) 
+   -- These styles remain highly specific for modal/form submission buttons only -- */
 button.submit-button, 
 .journal-content-container button.submit-button, 
 .journal-content-container .submit-button,
@@ -69,58 +70,63 @@ button.submit-button,
     /* Enforce other styles */
     color: var(--dark-color-for-text) !important; 
     border: none !important;
-    padding: 12px 25px !important; /* Added !important for safety */
-    font-size: 1rem !important; /* Added !important for safety */
+    padding: 12px 25px !important; 
+    font-size: 1rem !important; 
     cursor: pointer;
     border-radius: 8px !important; 
     font-weight: 700 !important; 
-    text-transform: uppercase !important; /* Added !important for safety */
-    letter-spacing: 0.5px !important; /* Added !important for safety */
+    text-transform: uppercase !important; 
+    letter-spacing: 0.5px !important; 
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; 
     flex-grow: 1; 
     min-width: 150px; 
-    outline: none !important; /* Ensure no residual outlines from default framework styles */
+    outline: none !important; 
 }
 
 .journal-content-container .submit-button:hover,
 .submit-button:hover {
-    background-color: var(--hover-gold-color) !important; /* Use Lighter gold variable */
+    background-color: var(--hover-gold-color) !important; 
     transform: translateY(-2px);
-    /* Enforce Enhanced shadow for a 'lifted' effect */
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important; 
 }
 
 /* 🆕 CRITICAL FIX: STYLE FOR ACTION BUTTONS (ADD, UPLOAD, DOWNLOAD) 
-   Enforce dark gradient look to override flat gold from .submit-button. */
-.journal-action-button {
-    /* 🔑 BASE ENFORCEMENT: Match the tgg-menu-button look */
+   --- HIGH SPECIFICITY ENFORCEMENT --- */
+.journal-action-button,
+.action-buttons button, /* Targets all buttons in the header container */
+.journal-content-container .download-csv { /* Targets the download CSV button directly */
+    /* 🔑 BASE ENFORCEMENT: Match the tgg-menu-button look (Dark Gradient) */
     background: var(--accent-color) !important;
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c) !important;
     color: var(--text-color) !important;
     border: 1px solid #555 !important;
+    
+    /* Layout & Aesthetic Overrides */
     padding: 12px 20px !important;
     font-size: 1rem !important;
     font-weight: 600 !important;
-    cursor: pointer;
     border-radius: 8px !important;
-    text-align: center;
-    transition: all 0.3s ease;
+    text-transform: uppercase !important;
+    
     /* Enforce the recessed look */
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
     flex-grow: 1;
     min-width: 150px;
-    text-transform: uppercase !important;
-    /* Ensure no residual submit-button properties cling */
-    background-image: none !important;
+    background-image: none !important; /* Crucial to kill any old flat-gold gradient */
 }
 
-.journal-action-button:hover {
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important; /* Subtle darker hover */
+/* --- HOVER STATE ENFORCEMENT --- */
+.journal-action-button:hover,
+.action-buttons button:hover,
+.journal-content-container .download-csv:hover {
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important;
     color: var(--hover-gold-color) !important;
     border-color: var(--gold-color) !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
-    transform: translateY(-2px); /* Subtle lift on hover */
+    transform: translateY(-2px); 
 }
 
 
