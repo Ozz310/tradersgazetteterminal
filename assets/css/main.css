@@ -253,29 +253,30 @@ body {
 /* Premium Primary Button (For forms, actions, etc.) - ENHANCED DEPTH */
 .tg-button-primary {
     background-color: var(--gold-color);
-    color: var(--dark-color-for-text);
-    border: 1px solid var(--hover-gold-color); /* Added thin gold border for definition */
-    padding: 14px 30px; /* Slightly larger target area */
-    border-radius: 10px; /* Slightly rounder, softer edge */
-    font-weight: 700; /* Bolder text for impact */
+    color: var(--dark-color-for-text); /* CORRECTED: Must be dark text */
+    border: 1px solid var(--hover-gold-color); 
+    padding: 14px 30px; 
+    border-radius: 10px; 
+    font-weight: 700; 
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 1px; /* More sophisticated spacing */
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother animation */
-    /* ENHANCED SHADOW: Deeper recessed look, gold glow */
+    letter-spacing: 1px; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    /* ENHANCED SHADOW: */
     box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.6), /* Deeper dark shadow */
-        inset 0 0 15px rgba(255, 255, 255, 0.2), /* Subtle inner highlight (emboss) */
-        0 0 8px rgba(212, 175, 55, 0.5); /* Soft gold halo */
+        0 4px 6px rgba(0, 0, 0, 0.6), 
+        inset 0 0 15px rgba(255, 255, 255, 0.2), 
+        0 0 8px rgba(212, 175, 55, 0.5); 
 }
 
 .tg-button-primary:hover {
     background-color: var(--hover-gold-color);
-    /* EXTREME HOVER: Stronger lift and pronounced glow/shadow */
+    color: var(--dark-color-for-text); /* ADDED: Lock text color to black on hover */
+    /* EXTREME HOVER: */
     box-shadow: 
         0 10px 20px rgba(0, 0, 0, 0.8), 
-        0 0 25px var(--gold-color); /* Bright gold glow on hover */
-    transform: translateY(-4px) scale(1.02); /* More noticeable lift and slight expansion */
+        0 0 25px var(--gold-color); 
+    transform: translateY(-4px) scale(1.02); 
 }
 
 /* Secondary Button (Minimalist) */
@@ -283,7 +284,7 @@ body {
     background-color: transparent;
     color: var(--gold-color);
     border: 1px solid var(--border-color);
-    padding: 12px 25px; /* Consistent padding */
+    padding: 12px 25px; 
     border-radius: 10px;
     font-weight: 500;
     cursor: pointer;
@@ -292,7 +293,7 @@ body {
 
 .tg-button-secondary:hover {
     border-color: var(--gold-color);
-    background-color: rgba(212, 175, 55, 0.15); /* Slightly more opaque hover */
+    background-color: rgba(212, 175, 55, 0.15); 
     color: var(--hover-gold-color);
 }
 
@@ -301,7 +302,7 @@ body {
 .submit-button {
     /* Critical: Inherit ALL styling from the premium primary button */
     background-color: var(--gold-color) !important;
-    color: var(--dark-color-for-text) !important;
+    color: var(--dark-color-for-text) !important; /* CORRECTED: Must be dark text */
     border: 1px solid var(--hover-gold-color) !important;
     padding: 14px 30px !important;
     border-radius: 10px !important;
@@ -319,6 +320,7 @@ body {
 
 .submit-button:hover {
     background-color: var(--hover-gold-color) !important;
+    color: var(--dark-color-for-text) !important; /* CRITICAL ADDITION: Lock text color to black on hover */
     /* EXTREME HOVER: */
     box-shadow: 
         0 10px 20px rgba(0, 0, 0, 0.8) !important, 
