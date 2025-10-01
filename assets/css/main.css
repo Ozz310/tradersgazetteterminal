@@ -193,12 +193,13 @@ body {
     width: calc(100% - var(--sidebar-width)); 
 }
 
-/* CRITICAL FIX: This padding is essential for internal component spacing on ALL modules */
+/* 💥 CRITICAL GLOBAL FIX: REMOVED horizontal padding from this wrapper. 
+   Internal modules (like Dashboard) now handle their own padding. */
 .module-container {
     flex-grow: 1;
     overflow-y: auto;
-    /* 🚀 CRITICAL RE-INTRODUCTION: Restore padding for all internal module components */
-    padding: 20px; 
+    /* 🚀 CRITICAL RE-INTRODUCTION: Restore only VERTICAL padding for internal module components */
+    padding: 20px 0; 
     box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.2);
     -ms-overflow-style: none;
     scrollbar-width: none;
