@@ -4,15 +4,13 @@
     --sidebar-color: #222;
     --content-bg-color: #2a2a2a;
     
-    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 */
+    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 (ORIGINAL VALUES RESTORED) */
     --text-color: #f1f1f1; /* Crisp White/Light Grey text (Primary Text) */
     --secondary-text-color: #c8c8c8; /* 🚀 NEW: Lighter grey for data labels / descriptions */
-    
-    /* 💥 CRITICAL FIX: Standardize Gold to match the button gradient's brightest shade (#F0D788) */
-    --gold-color: #F0D788; /* Radiant Gold Accent (Interactive/Borders) - Now aligns with button gradient */
-    --header-gold-color: #C0A04C; /* Deeper, richer gold for H1/H2 titles - Kept for hierarchy */
+    --gold-color: #D4AF37; /* Radiant Gold Accent (Interactive/Borders) - ORIGINAL */
+    --header-gold-color: #C0A04C; /* 🚀 NEW: Deeper, richer gold for H1/H2 titles */
     --dark-color-for-text: #0D0D0D; /* Dominant Black/Dark Tones (for text on gold) */
-    --hover-gold-color: #e0c265; /* Lighter gold for hover/active states - Slightly adjusted to match new gold */
+    --hover-gold-color: #e0c265; /* Lighter gold for hover/active states */
     
     --accent-color: #4a4a4a;
     --nav-active-bg: #3e382b;
@@ -20,9 +18,7 @@
     --font-primary: 'Roboto', sans-serif;
     --font-secondary: 'Merriweather', serif;
     --sidebar-width: 220px;
-    
-    /* 💥 CRITICAL FIX: Update Gold shadow to use the new RGB (240, 215, 136) */
-    --gold-shadow: 0 0 5px rgba(240, 215, 136, 0.6); 
+    --gold-shadow: 0 0 5px rgba(212, 175, 55, 0.6); /* Gold shadow using the correct color */
 }
 
 /* 🛠️ CRITICAL FIX: Ensure ZERO gap and full height coverage */
@@ -85,8 +81,8 @@ body {
     text-align: center;
     margin-bottom: 25px;
     padding-bottom: 20px;
-    /* 🔑 NEW: Subtle Gold Divider for Clean Separation (uses new gold RGB) */
-    border-bottom: 1px solid rgba(240, 215, 136, 0.2);
+    /* 🔑 NEW: Subtle Gold Divider for Clean Separation (uses original gold RGB) */
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 }
 
@@ -151,8 +147,7 @@ body {
     color: var(--gold-color);
     font-weight: 500;
     border-left: none;
-    /* Uses the updated gold shadow variable */
-    text-shadow: 0 0 3px rgba(240, 215, 136, 0.5); 
+    text-shadow: 0 0 3px rgba(212, 175, 55, 0.5); /* Uses correct gold color */
 }
 
 /* Active state indicator */
@@ -177,8 +172,7 @@ body {
 
 .nav-item.active .nav-icon {
     color: var(--gold-color);
-    /* Uses the updated gold shadow variable */
-    filter: drop-shadow(0 0 3px rgba(240, 215, 136, 0.5)); 
+    filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.5)); /* Uses correct gold color */
 }
 
 .nav-label {
@@ -257,8 +251,7 @@ body {
 .tg-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
-                /* Uses the updated gold RGB (240, 215, 136) */
-                inset 0 0 5px rgba(240, 215, 136, 0.1); 
+                inset 0 0 5px rgba(212, 175, 55, 0.1); /* Uses correct gold color */
 }
 
 /* Global Heading Styles (Applies to all H1/H2 in the app) */
@@ -297,8 +290,7 @@ h1, h2 {
     box-shadow: 
         0 4px 6px rgba(0, 0, 0, 0.6), 
         inset 0 0 15px rgba(255, 255, 255, 0.2), 
-        /* Uses the updated gold RGB (240, 215, 136) */
-        0 0 8px rgba(240, 215, 136, 0.5); 
+        0 0 8px rgba(212, 175, 55, 0.5); 
 }
 
 .tg-button-primary:hover {
@@ -337,8 +329,7 @@ h1, h2 {
 
 .tg-button-secondary:hover {
     border-color: var(--gold-color);
-    /* Uses the updated gold RGB (240, 215, 136) */
-    background-color: rgba(240, 215, 136, 0.15); 
+    background-color: rgba(212, 175, 55, 0.15); 
     color: var(--hover-gold-color);
 }
 
@@ -383,7 +374,7 @@ h1, h2 {
 .tgg-menu-button.active {
     /* 💥 REVERTED: Back to the Solid Gold CTA look for active buttons */
     background-image: none !important;
-    /* This hardcoded gradient defines the look */
+    /* ORIGINAL: Hardcoded Gold Gradient */
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
     
     color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
@@ -439,8 +430,7 @@ h1, h2 {
 /* Checked State (GOLD ACTIVE) */
 .tgg-switch-input:checked + .tgg-switch-slider {
     background: var(--gold-color);
-    /* Uses the updated gold RGB (240, 215, 136) */
-    box-shadow: 0 0 10px rgba(240, 215, 136, 0.6); 
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); /* Gold glow */
 }
 
 .tgg-switch-input:checked + .tgg-switch-slider::before {
@@ -480,8 +470,7 @@ h1, h2 {
     box-shadow: 
         0 4px 6px rgba(0, 0, 0, 0.6) !important,
         inset 0 0 15px rgba(255, 255, 255, 0.2) !important,
-        /* Uses the updated gold RGB (240, 215, 136) */
-        0 0 8px rgba(240, 215, 136, 0.5) !important;
+        0 0 8px rgba(212, 175, 55, 0.5) !important;
 }
 
 .submit-button:hover,
