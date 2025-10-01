@@ -46,20 +46,19 @@
 .news-aggregator .news-content-flex {
     display: flex;
     gap: 20px;
-    /* CRITICAL: align-items: stretch ensures both columns match the height of the tallest one. */
+    /* CRITICAL: align-items: stretch ensures both columns match the height of the tallest one (the fixed 660px YT player). */
     align-items: stretch; 
     flex-wrap: nowrap;
     min-height: 0; 
     box-sizing: border-box;
     padding: 0; 
     width: 100%;
-    /* Increase the max height of the entire section to accommodate the 10% request (600px -> 660px) */
-    max-height: 660px; 
+    /* REMOVED MAX-HEIGHT: Let the YT player's fixed height define the row height. */
     height: auto; 
     flex-grow: 0;
 }
 
-/* 🔑 YT PLAYER FIX: Force height to match the new 660px max height for stability */
+/* 🔑 YT PLAYER FIX: Force height to 660px to be the stable height reference */
 .news-aggregator .youtube-live-container {
     flex: 1 1 50%;
     min-width: 300px;
@@ -83,7 +82,7 @@
     height: 100%;
 }
 
-/* 🔑 NEWS AGGREGATOR FIX: Stretches to match the 660px tall YT player */
+/* 🔑 NEWS AGGREGATOR FIX: Stretches to match the 660px tall YT player AND becomes the flex parent for the scrollable list */
 .news-aggregator .news-aggregator-container {
     flex: 1 1 50%;
     min-width: 300px;
@@ -95,6 +94,8 @@
     flex-direction: column;
     /* CRITICAL: Height must be 100% to fill the space provided by align-items: stretch */
     height: 100%; 
+    /* NEW: Explicitly define the minimum height to ensure it doesn't collapse below the video height */
+    min-height: 660px;
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
@@ -109,7 +110,9 @@
 .news-aggregator .news-tabs {
     display: flex;
     justify-content: flex-start;
+    /* CRITICAL: Ensure tabs don't shrink or grow */
     flex-shrink: 0; 
+    flex-grow: 0;
     padding: 0 0 10px 0; 
     background-color: transparent; 
     border-radius: 0;
@@ -177,6 +180,8 @@
     /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container, 
        and forces scrolling within that space which is now height-constrained to 660px. */
     flex-grow: 1; 
+    /* CRITICAL: Prevent the list from defining the height and force it to be scrollable */
+    min-height: 0; 
     overflow-y: auto;
     scrollbar-width: none;
     padding-top: 5px; 
@@ -289,8 +294,10 @@
     gap: 10px;
     padding: 15px 0 20px 0; 
     border-top: 1px solid var(--border-color);
-    margin-top: auto;
+    /* NEW: Ensure footer does not grow or shrink */
     flex-shrink: 0; 
+    flex-grow: 0;
+    margin-top: auto;
     z-index: 5; 
     background-color: var(--accent-color); 
 }
@@ -431,6 +438,7 @@
     .news-aggregator .news-list {
         padding-right: 10px; 
         padding-left: 10px;
+        /* Set a fixed scrollable height for mobile now that its container is auto-sized */
         max-height: 500px; 
         flex-grow: 0;
     }
