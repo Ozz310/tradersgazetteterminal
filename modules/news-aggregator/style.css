@@ -48,12 +48,13 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    /* Changed fixed height to a responsive min-height for content flow */
+    /* 🔑 CRITICAL FIX 1: Ensure this main content flex container has a minimum height */
     min-height: 700px; 
     box-sizing: border-box;
-    /* 🚀 RE-FIX: Removed internal content-flex padding as it's now on news-content-area */
     padding: 0; 
     width: 100%;
+    /* CRITICAL FIX 2: Set height to 100% to fill the space in news-content-area */
+    height: 100%; 
     flex-grow: 1;
 }
 
@@ -61,7 +62,8 @@
     flex: 1 1 50%;
     min-width: 300px;
     position: relative;
-    height: 100%;
+    /* This must be 100% so it fills the space defined by news-content-flex */
+    height: 100%; 
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     overflow: hidden;
@@ -72,6 +74,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    /* These must be 100% to fill the container, which is now correctly sized */
     width: 100%;
     height: 100%;
 }
@@ -80,13 +83,13 @@
     flex: 1 1 50%;
     min-width: 300px;
     background-color: var(--accent-color);
-    /* 🚀 REFINEMENT: Remove container padding as it's handled by news-content-area */
     padding: 0;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    /* CRITICAL FIX 3: Set height to 100% to fill the space defined by news-content-flex */
+    height: 100%; 
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
@@ -95,12 +98,10 @@
 .news-aggregator .news-title {
     font-size: 1.5rem;
     font-weight: 700;
-    /* 🚀 REFINEMENT 2.1: Use new Header Gold for visual hierarchy */
     color: var(--header-gold-color) !important; 
     text-align: center;
-    /* 🚀 REFINEMENT 1.1: Increase vertical whitespace below the header */
     margin-bottom: 25px; 
-    padding: 20px 0 10px 0; /* Add top padding to re-space the content */
+    padding: 20px 0 10px 0;
     border-bottom: 2px solid var(--header-gold-color);
     z-index: 10; 
     flex-shrink: 0;
@@ -111,7 +112,7 @@
     display: flex;
     justify-content: flex-start;
     flex-shrink: 0; 
-    padding: 0 0 10px 0; /* Adjust padding */
+    padding: 0 0 10px 0; 
     background-color: transparent; 
     border-radius: 0;
     box-shadow: none;
@@ -120,9 +121,7 @@
     z-index: 5; 
     -ms-overflow-style: none;
     scrollbar-width: none;
-    /* 🚀 REFINEMENT 1.1: More spacing below the tabs */
     margin-bottom: 15px;
-    /* ⭐ PADDING: Add horizontal padding to align with the cards inside the scroll area */
     padding: 0 20px 10px 20px;
 }
 .news-aggregator .news-tabs::-webkit-scrollbar {
@@ -182,10 +181,8 @@
     scrollbar-width: none;
     padding-top: 5px; 
     padding-bottom: 5px;
-    /* ⭐ PADDING: Removed inner padding as it was causing double padding with news-content-area */
     padding-right: 0px; 
     padding-left: 0px;
-    /* ⭐ PADDING: Match card padding to list-container padding */
     padding: 0 20px 5px 20px;
 }
 
@@ -200,9 +197,9 @@
 
 .news-aggregator .news-article {
     background-color: var(--border-color);
-    padding: 20px 25px; /* Increased horizontal padding slightly */
+    padding: 20px 25px; 
     border-radius: 8px;
-    margin-bottom: 25px; /* Increased separation */
+    margin-bottom: 25px; 
     transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
     border: 1px solid transparent;
 }
@@ -219,9 +216,9 @@
 
 /* ⭐ REFINED TYPOGRAPHY: Headline style (Journalistic Look) ⭐ */
 .news-aggregator .news-article h2 {
-    font-family: 'DM Serif Display', serif; /* Assuming this font is imported */
+    font-family: 'DM Serif Display', serif; 
     margin: 0 0 8px 0;
-    font-size: 1.4rem; /* Slightly larger */
+    font-size: 1.4rem; 
 }
 
 .news-aggregator .news-article a {
@@ -253,7 +250,6 @@
 /* ⭐ REFINED TYPOGRAPHY: Dateline style (Muted Hierarchy) ⭐ */
 .news-aggregator .article-dateline {
     font-size: 0.85rem;
-    /* 🚀 REFINEMENT 2.2: Use new Secondary Text Color for lower hierarchy */
     color: var(--secondary-text-color) !important; 
     opacity: 1; 
     font-weight: 400; 
@@ -262,9 +258,9 @@
 }
 
 .news-aggregator .news-article p {
-    font-size: 1rem; /* Slightly larger body text for readability */
+    font-size: 1rem; 
     color: var(--text-color);
-    line-height: 1.7; /* Increased line height for generous whitespace */
+    line-height: 1.7; 
     margin: 0;
 }
 
@@ -272,7 +268,7 @@
     display: inline-block;
     font-size: 0.95rem;
     font-weight: 600;
-    margin-top: 15px; /* Increased spacing */
+    margin-top: 15px; 
     color: var(--gold-color);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -291,7 +287,6 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    /* ⭐ PADDING: Adjust padding to be vertical only */
     padding: 15px 0 20px 0; 
     border-top: 1px solid var(--border-color);
     margin-top: auto;
@@ -326,15 +321,15 @@
 }
 
 .news-aggregator .skeleton-wrapper {
-    background-color: var(--content-bg-color); /* Match main background */
+    background-color: var(--content-bg-color); 
     padding: 0;
 }
 
 .news-aggregator .skeleton-article {
     background-color: var(--border-color);
-    padding: 20px 25px; /* Match article padding */
+    padding: 20px 25px; 
     border-radius: 8px;
-    margin-bottom: 25px; /* Match article margin */
+    margin-bottom: 25px; 
 }
 
 .news-aggregator .skeleton-line {
@@ -374,7 +369,7 @@
 /* Mobile responsiveness: stack elements vertically */
 @media (max-width: 768px) {
     .news-aggregator .news-content-area {
-        padding: 0 10px 10px 10px; /* Reduced side padding for mobile */
+        padding: 0 10px 10px 10px; 
     }
 
     .news-aggregator .news-content-flex {
@@ -382,6 +377,9 @@
         height: auto;
         flex-wrap: wrap;
         padding: 0; 
+        /* 🔑 CRITICAL MOBILE FIX: Remove fixed height on mobile */
+        min-height: auto;
+        height: auto;
     }
 
     .news-aggregator .youtube-live-container,
@@ -392,11 +390,21 @@
         height: auto;
     }
 
+    /* 🔑 CRITICAL MOBILE FIX: Aspect ratio trick for responsive video on mobile */
     .news-aggregator .youtube-live-container {
-        padding-top: 56.25%;
+        padding-top: 56.25%; /* 16:9 aspect ratio */
         position: relative;
         height: 0;
     }
+    .news-aggregator .youtube-live-container iframe {
+        /* On mobile, the iframe must fill the aspect ratio placeholder */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
 
     .news-aggregator .news-aggregator-container {
         margin-top: 20px;
@@ -410,8 +418,8 @@
 
     /* MOBILE: Scrollable Tabs */
     .news-aggregator .news-tabs {
-        margin-bottom: 10px; /* Reduced margin for mobile */
-        padding: 0 10px 10px 10px; /* Mobile horizontal padding */
+        margin-bottom: 10px; 
+        padding: 0 10px 10px 10px; 
     }
 
     .news-aggregator .news-tab {
@@ -419,12 +427,12 @@
     }
 
     .news-aggregator .news-list {
-        padding-right: 10px; /* Reduced side padding for mobile */
+        padding-right: 10px; 
         padding-left: 10px;
     }
 
     .news-aggregator .news-article {
-        padding: 15px 20px; /* Reduced article padding for mobile */
+        padding: 15px 20px; 
         margin-bottom: 15px; 
     }
 
@@ -437,6 +445,6 @@
     }
     
     .news-aggregator .news-branding-footer {
-        padding: 15px 10px 20px 10px; /* Mobile footer padding */
+        padding: 15px 10px 20px 10px; 
     }
 }
