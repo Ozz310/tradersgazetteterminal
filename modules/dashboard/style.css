@@ -27,6 +27,8 @@
     font-family: 'Segoe UI', 'Roboto', sans-serif;
     overflow-x: hidden;
     
+    /* 💥 CRITICAL FIX (Top Alignment): Pull the entire page up to cancel out the main app container's top padding. */
+    margin-top: -40px; /* Assuming the main content wrapper has 40px top padding to be cancelled out. */
     /* 🛠️ CRITICAL FIX: Removed top padding to eliminate gap. Applied padding to sides/bottom. */
     padding: 0 40px 40px 40px; 
 }
@@ -40,7 +42,8 @@
     background-repeat: no-repeat;
     background-position: center center;  
     
-    /* 🛠️ CRITICAL FIX: Negative margins to force banner wall-to-wall horizontally. No top/bottom margin. */
+    /* 🛠️ CRITICAL FIX: Negative margins to force banner wall-to-wall horizontally. */
+    /* NOTE: The 0 for margin-top is now correctly inherited from the .dashboard-page's forced top alignment. */
     margin: 0 -40px; 
     
     /* 🛠️ UI/UX: Added margin-bottom for clean separation from the clock widget below */
@@ -60,6 +63,7 @@
     padding: 0;
 }
 
+/* ... (Rest of the code remains the same as no other element is affected by this specific layout change) ... */
 .widget-card {
     /* 🔑 FIX: Set the clock card background to the darker tone to sit nicely on the page background */
     background-color: var(--black-tone-3); 
@@ -179,7 +183,7 @@
     color: var(--gold-color) !important; /* Use core gold variable */
     display: block;
     /* 🛠️ UI/UX: Added gold text glow for radiant, premium look */
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.4); 
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);  
 }
 
 #digital-date {
@@ -225,7 +229,7 @@
 .tz-button.active {
     /* ACTIVE STATE: Enforced Solid Gold Gradient and Dark Text */
     background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;  
     
     color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
     border: none !important; /* Remove individual tab border */
@@ -252,6 +256,9 @@
     .dashboard-page {
         /* FIX: Mobile page padding adjusted (removed top padding) */
         padding: 0 20px 20px 20px; 
+        
+        /* 💥 CRITICAL FIX (Top Alignment Mobile): Reset top margin to cancel out mobile top padding (often 20px) */
+        margin-top: -20px; 
     }
     
     .dashboard-cover-photo {
