@@ -10,6 +10,18 @@
     min-height: 100%; 
 }
 
+/* 🚀 CRITICAL NEW CSS: Re-applies content padding and contains the rest of the module */
+.news-aggregator .news-content-area {
+    width: 100%;
+    /* Apply the 20px side padding lost from the banner fix */
+    padding: 0 20px 20px 20px; 
+    box-sizing: border-box;
+    flex-grow: 1; /* Allows it to take up available vertical space */
+    display: flex;
+    flex-direction: column;
+}
+
+
 .news-aggregator .news-header-banner {
     width: 100%;
     height: 300px; 
@@ -39,9 +51,10 @@
     /* Changed fixed height to a responsive min-height for content flow */
     min-height: 700px; 
     box-sizing: border-box;
-    /* 🚀 NEW: Re-add padding to the content area that was lost due to the banner fix */
-    padding: 0 20px 20px 20px; 
+    /* 🚀 RE-FIX: Removed internal content-flex padding as it's now on news-content-area */
+    padding: 0; 
     width: 100%;
+    flex-grow: 1;
 }
 
 .news-aggregator .youtube-live-container {
@@ -67,7 +80,7 @@
     flex: 1 1 50%;
     min-width: 300px;
     background-color: var(--accent-color);
-    /* 🚀 REFINEMENT: Remove container padding as it's added globally to news-content-flex */
+    /* 🚀 REFINEMENT: Remove container padding as it's handled by news-content-area */
     padding: 0;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -99,7 +112,7 @@
     justify-content: flex-start;
     flex-shrink: 0; 
     padding: 0 0 10px 0; /* Adjust padding */
-    background-color: transparent; /* Changed from accent-color as border box looks cleaner */
+    background-color: transparent; 
     border-radius: 0;
     box-shadow: none;
     overflow-x: auto;
@@ -109,17 +122,19 @@
     scrollbar-width: none;
     /* 🚀 REFINEMENT 1.1: More spacing below the tabs */
     margin-bottom: 15px;
+    /* ⭐ PADDING: Add horizontal padding to align with the cards inside the scroll area */
+    padding: 0 20px 10px 20px;
 }
 .news-aggregator .news-tabs::-webkit-scrollbar {
     display: none;
 }
 
-/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT (Applying the new global active style) 🔑 */
+/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT (Applying the desired button aesthetic) 🔑 */
 .news-aggregator .news-tab {
     flex-grow: 0; 
     flex-shrink: 0; 
     
-    /* BASE STATE: Use TGG Menu Button look for inactive */
+    /* INACTIVE STATE: Dark Recessed */
     background: var(--accent-color) !important;
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c) !important;
     color: var(--text-color) !important;
@@ -145,19 +160,18 @@
     transform: none; 
 }
 
-/* 🚀 REFINEMENT 3.1: New sophisticated active style */
+/* 💥 REVERTED ACTIVE STATE: Solid Gold CTA */
 .news-aggregator .news-tab.active {
-    background: var(--accent-color) !important;
-    background: linear-gradient(145deg, #2a2a2a, #1a1a1a) !important; 
-    color: var(--gold-color) !important;
-    border: 2px solid var(--gold-color) !important; 
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
     
-    box-shadow: 
-        inset 0 0 8px rgba(0, 0, 0, 0.8) !important,
-        0 0 10px rgba(212, 175, 55, 0.7) !important;
-        
+    color: var(--dark-color-for-text) !important; 
+    border: none !important; 
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    
     font-weight: 700 !important;
-    transform: none !important; /* Keep it locked in place */
+    transform: none !important; 
 }
 /* 🔑 END TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 
@@ -168,9 +182,11 @@
     scrollbar-width: none;
     padding-top: 5px; 
     padding-bottom: 5px;
-    /* 🚀 REFINEMENT: Add inner padding to match the card padding, improving content spacing */
-    padding-right: 20px; 
-    padding-left: 20px;
+    /* ⭐ PADDING: Removed inner padding as it was causing double padding with news-content-area */
+    padding-right: 0px; 
+    padding-left: 0px;
+    /* ⭐ PADDING: Match card padding to list-container padding */
+    padding: 0 20px 5px 20px;
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
@@ -239,7 +255,7 @@
     font-size: 0.85rem;
     /* 🚀 REFINEMENT 2.2: Use new Secondary Text Color for lower hierarchy */
     color: var(--secondary-text-color) !important; 
-    opacity: 1; /* Remove explicit opacity, let the color handle it */
+    opacity: 1; 
     font-weight: 400; 
     display: block;
     margin-bottom: 15px;
@@ -275,8 +291,8 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    /* 🚀 REFINEMENT: Add padding to match the lost content-flex padding */
-    padding: 15px 20px 20px 20px; 
+    /* ⭐ PADDING: Adjust padding to be vertical only */
+    padding: 15px 0 20px 0; 
     border-top: 1px solid var(--border-color);
     margin-top: auto;
     flex-shrink: 0;
@@ -357,11 +373,15 @@
 
 /* Mobile responsiveness: stack elements vertically */
 @media (max-width: 768px) {
+    .news-aggregator .news-content-area {
+        padding: 0 10px 10px 10px; /* Reduced side padding for mobile */
+    }
+
     .news-aggregator .news-content-flex {
         flex-direction: column;
         height: auto;
         flex-wrap: wrap;
-        padding: 0 10px 10px 10px; /* Reduced side padding for mobile */
+        padding: 0; 
     }
 
     .news-aggregator .youtube-live-container,
@@ -391,10 +411,11 @@
     /* MOBILE: Scrollable Tabs */
     .news-aggregator .news-tabs {
         margin-bottom: 10px; /* Reduced margin for mobile */
+        padding: 0 10px 10px 10px; /* Mobile horizontal padding */
     }
 
     .news-aggregator .news-tab {
-        min-width: 100px; /* Reduced min-width for more tabs to show */
+        min-width: 100px;
     }
 
     .news-aggregator .news-list {
