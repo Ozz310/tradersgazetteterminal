@@ -6,8 +6,8 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    /* 🔑 CRITICAL DESKTOP FIX: Set height to 100% to ensure it fills the vertical space */
-    height: 100%; 
+    /* 🔑 FIX: Remove height: 100% here. Let the container height be dictated by its content. */
+    height: auto; 
 }
 
 /* 🚀 CRITICAL NEW CSS: Re-applies content padding and contains the rest of the module */
@@ -16,11 +16,11 @@
     /* Apply the 20px side padding lost from the banner fix */
     padding: 0 20px 20px 20px; 
     box-sizing: border-box;
-    flex-grow: 1; /* Allows it to take up available vertical space */
+    flex-grow: 1; 
     display: flex;
     flex-direction: column;
-    /* 🔑 CRITICAL DESKTOP FIX: Also ensure this wrapper takes 100% of the height */
-    height: 100%; 
+    /* 🔑 FIX: Remove height: 100% here. Let the container height be dictated by its content. */
+    height: auto; 
 }
 
 
@@ -34,7 +34,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     
-    /* 🚀 NEW: Full-width banner fix to override module-container padding */
+    /* 🔑 BANNER FIX: Re-enable full-width stretch using negative margins */
     margin-top: -20px; 
     margin-left: -20px;
     margin-right: -20px;
@@ -50,13 +50,13 @@
     gap: 20px;
     align-items: stretch; /* This is key to stretching the children */
     flex-wrap: nowrap;
-    /* CRITICAL FIX: Ensure this main content flex container has a minimum height */
+    /* CRITICAL FIX: The min-height keeps the video and news list at an acceptable size. */
     min-height: 700px; 
     box-sizing: border-box;
     padding: 0; 
     width: 100%;
-    /* CRITICAL FIX: Set height to 100% to fill the space in news-content-area */
-    height: 100%; 
+    /* 🔑 FIX: Remove height: 100%. Min-height is sufficient to define the block size. */
+    height: auto; 
     flex-grow: 1;
 }
 
@@ -64,8 +64,7 @@
     flex: 1 1 50%;
     min-width: 300px;
     position: relative;
-    /* 🔑 FINAL DESKTOP FIX: Remove explicit height: 100% here. 
-       We rely on align-items: stretch on .news-content-flex to set the height. */
+    /* This must be auto to rely on parent stretch (via align-items: stretch) */
     height: auto; 
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -77,7 +76,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    /* These must be 100% to fill the container */
+    /* These must be 100% to fill the container, which is now correctly sized by flex stretching */
     width: 100%;
     height: 100%;
 }
@@ -91,8 +90,7 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
-    /* 🔑 FINAL DESKTOP FIX: Remove explicit height: 100% here. 
-       We rely on align-items: stretch on .news-content-flex to set the height. */
+    /* This must be auto to rely on parent stretch */
     height: auto; 
     box-sizing: border-box;
     position: relative; 
