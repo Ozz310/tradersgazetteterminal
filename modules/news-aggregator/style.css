@@ -1,4 +1,3 @@
-
 /* All styles are scoped to the .news-aggregator container */
 .news-aggregator {
     box-sizing: border-box;
@@ -7,7 +6,7 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    /* Let height be auto to fit content */
+    /* FINAL FIX: Height is auto to fit content */
     height: auto; 
 }
 
@@ -16,12 +15,13 @@
     width: 100%;
     padding: 0 20px 20px 20px; 
     box-sizing: border-box;
-    /* This needs to grow to take the full available height below the banner */
-    flex-grow: 1; 
+    /* FINAL FIX: We no longer need this to grow since we're setting heights based on viewport */
+    flex-grow: 0; 
     display: flex;
     flex-direction: column;
-    /* Ensure height is 100% to pass height down to .news-content-flex */
-    height: 100%; 
+    /* FINAL FIX: Auto height is key to stop page stretching */
+    height: auto; 
+    /* Set a minimum height for when content hasn't loaded */
     min-height: 500px; 
 }
 
@@ -50,29 +50,34 @@
 .news-aggregator .news-content-flex {
     display: flex;
     gap: 20px;
-    align-items: stretch; /* This is key to stretching the children */
+    align-items: flex-start; /* CRITICAL: Change to align-items: flex-start so children don't stretch */
     flex-wrap: nowrap;
     min-height: 0; 
     box-sizing: border-box;
     padding: 0; 
     width: 100%;
-    /* Crucial: Set height to 100% to fully inherit height from .news-content-area */
-    height: 100%; 
-    flex-grow: 1;
+    /* FINAL FIX: Remove height: 100% and flex-grow: 1 to stop vertical stretching */
+    height: auto; 
+    flex-grow: 0;
 }
 
+/* 🔑 YT PLAYER FIX: Set the video container height explicitly using an aspect ratio trick */
 .news-aggregator .youtube-live-container {
     flex: 1 1 50%;
     min-width: 300px;
     position: relative;
-    /* FINAL FIX: Height is 100% because the parent is now guaranteed to have a height */
-    height: 100%; 
+    /* Aspect ratio for 16:9 video: The height will be 0, and padding-top sets the vertical size */
+    height: 0; 
+    padding-top: 28.125vw; /* A responsive height based on viewport width (adjust 28.125vw as needed) */
+    max-height: 500px; /* Cap the max height of the video player for large screens */
+
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     overflow: hidden;
     background-color: var(--accent-color);
 }
 
+/* 🔑 YT PLAYER FIX: Make the iframe fill the aspect ratio container */
 .news-aggregator .youtube-live-container iframe {
     position: absolute;
     top: 0;
@@ -90,8 +95,8 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
-    /* FINAL FIX: Height is 100% because the parent is now guaranteed to have a height */
-    height: 100%; 
+    /* We'll define the max height here to match the YT player */
+    height: auto; 
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
@@ -171,9 +176,12 @@
 
 
 .news-aggregator .news-list {
-    /* 🔑 CRITICAL SCROLL FIX: flex-grow: 1 ensures it takes all remaining space.
-       overflow-y: auto makes the content scrollable within that space. */
-    flex-grow: 1;
+    /* 🔑 CRITICAL SCROLL FIX: Calculate Max Height to prevent stretching */
+    /* This calculation accounts for the tabs (approx. 60px), the footer (approx. 50px), 
+       and padding/margins. We cap the news list height to match the max height of the YT player. */
+    max-height: 400px; /* Set a specific max height in px to contain the content */
+    
+    flex-grow: 0; /* No longer need to grow, we are fixing the max size */
     overflow-y: auto;
     scrollbar-width: none;
     padding-top: 5px; 
@@ -392,6 +400,7 @@
         padding-top: 56.25%; /* 16:9 aspect ratio */
         position: relative;
         height: 0;
+        max-height: none; /* Remove desktop max height constraint */
     }
     .news-aggregator .youtube-live-container iframe {
         /* On mobile, the iframe must fill the aspect ratio placeholder */
@@ -426,6 +435,7 @@
     .news-aggregator .news-list {
         padding-right: 10px; 
         padding-left: 10px;
+        max-height: 500px; /* Set a fixed scrollable height for mobile */
     }
 
     .news-aggregator .news-article {
