@@ -6,7 +6,7 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    /* FINAL FIX: Height is auto to fit content */
+    /* Let height be auto to fit content */
     height: auto; 
 }
 
@@ -15,11 +15,12 @@
     width: 100%;
     padding: 0 20px 20px 20px; 
     box-sizing: border-box;
-    flex-grow: 1; /* Allows it to take up available vertical space */
+    /* This needs to grow to take the full available height below the banner */
+    flex-grow: 1; 
     display: flex;
     flex-direction: column;
-    height: auto; 
-    /* FINAL FIX: Set a reasonable min-height for empty state, but remove the high min-height */
+    /* Ensure height is 100% to pass height down to .news-content-flex */
+    height: 100%; 
     min-height: 500px; 
 }
 
@@ -34,7 +35,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     
-    /* BANNER FIX: Re-enable full-width stretch using negative margins */
+    /* BANNER FIX: Full-width stretch using negative margins */
     margin-top: -20px; 
     margin-left: -20px;
     margin-right: -20px;
@@ -50,12 +51,11 @@
     gap: 20px;
     align-items: stretch; /* This is key to stretching the children */
     flex-wrap: nowrap;
-    /* 🔑 FINAL FIX: Remove min-height completely and rely on flex to define size */
     min-height: 0; 
     box-sizing: border-box;
     padding: 0; 
     width: 100%;
-    /* Crucial: Set height to 100% to fill the vertical space of the entire module viewport */
+    /* Crucial: Set height to 100% to fully inherit height from .news-content-area */
     height: 100%; 
     flex-grow: 1;
 }
@@ -64,8 +64,8 @@
     flex: 1 1 50%;
     min-width: 300px;
     position: relative;
-    /* Height is inherited from align-items: stretch on .news-content-flex (100%) */
-    height: auto; 
+    /* FINAL FIX: Height is 100% because the parent is now guaranteed to have a height */
+    height: 100%; 
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     overflow: hidden;
@@ -89,27 +89,16 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
-    /* Crucial: Set height to 100% to fill the vertical space of its parent (.news-content-flex) */
+    /* FINAL FIX: Height is 100% because the parent is now guaranteed to have a height */
     height: 100%; 
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
 }
 
-/* 🔑 FINAL FIX: Remove the "News Room" title text */
+/* 🔑 FIX: Remove the "News Room" title text */
 .news-aggregator .news-title {
     display: none;
-    /* Existing styles kept just in case you ever re-enable it:
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--header-gold-color) !important; 
-    text-align: center;
-    margin-bottom: 25px; 
-    padding: 20px 0 10px 0;
-    border-bottom: 2px solid var(--header-gold-color);
-    z-index: 10; 
-    flex-shrink: 0;
-    */
 }
 
 /* Tab Styles */
@@ -181,8 +170,8 @@
 
 
 .news-aggregator .news-list {
-    /* 🔑 CRITICAL SCROLL FIX: Set flex-grow to 1 to take remaining vertical space 
-       and make the content scrollable within that space. */
+    /* 🔑 CRITICAL SCROLL FIX: flex-grow: 1 ensures it takes all remaining space.
+       overflow-y: auto makes the content scrollable within that space. */
     flex-grow: 1;
     overflow-y: auto;
     scrollbar-width: none;
@@ -377,7 +366,6 @@
 @media (max-width: 768px) {
     .news-aggregator .news-content-area {
         padding: 0 10px 10px 10px; 
-        /* Reset height for mobile */
         height: auto; 
     }
 
@@ -386,7 +374,6 @@
         height: auto;
         flex-wrap: wrap;
         padding: 0; 
-        /* Remove fixed height on mobile */
         min-height: auto;
         height: auto;
     }
