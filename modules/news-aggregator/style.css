@@ -99,10 +99,8 @@
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
-    /* NEW CRITICAL FIX: Ensure the container respects its own 660px height 
-       and prevents content (tabs/list) from pushing it beyond that, though 
-       min-height: 660px and the flex context should handle this. */
-    overflow: hidden; /* Added to enforce boundary */
+    /* CRITICAL FIX FOR SCROLLING: Hides content that exceeds the 660px boundary */
+    overflow: hidden; 
 }
 
 /* 🔑 FIX: Remove the "News Room" title text */
@@ -181,18 +179,20 @@
 
 
 .news-aggregator .news-list {
-    /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container, 
-       and forces scrolling within that space which is now height-constrained to 660px. */
+    /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container. */
     flex-grow: 1; 
     /* CRITICAL: Prevent the list from defining the height and force it to be scrollable */
     min-height: 0; 
     overflow-y: auto;
     scrollbar-width: none;
-    padding-top: 5px; 
-    padding-bottom: 5px;
-    padding-right: 0px; 
-    padding-left: 0px;
-    padding: 0 20px 5px 20px;
+    
+    /* CRITICAL FIX: Removed vertical padding (top/bottom) from the flex-growing element 
+       to ensure its height calculation strictly fits the remaining space. */
+    padding-top: 0; 
+    padding-bottom: 0;
+    padding-right: 20px; 
+    padding-left: 20px;
+    padding: 0 20px; /* Overrides the previous padding lines with the fix */
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
@@ -208,9 +208,15 @@
     background-color: var(--border-color);
     padding: 20px 25px; 
     border-radius: 8px;
+    /* FIX: Use only bottom margin to create consistent spacing between articles, now that list padding is removed. */
     margin-bottom: 25px; 
     transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
     border: 1px solid transparent;
+}
+
+/* NEW FIX: Add top margin to the first article since list padding is gone */
+.news-aggregator .news-list > .news-article:first-child {
+    margin-top: 20px;
 }
 
 .news-aggregator .news-list > .news-article:last-child {
@@ -445,6 +451,14 @@
         /* Set a fixed scrollable height for mobile now that its container is auto-sized */
         max-height: 500px; 
         flex-grow: 0;
+        /* NEW MOBILE FIX: Removed vertical padding here too for stricter scroll boundary */
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    
+    /* NEW MOBILE FIX: Add top margin to the first article since list padding is gone */
+    .news-aggregator .news-list > .news-article:first-child {
+        margin-top: 15px;
     }
 
     .news-aggregator .news-article {
