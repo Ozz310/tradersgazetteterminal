@@ -28,13 +28,14 @@
     overflow-x: hidden;
     
     /* 💥 CRITICAL FIX (Top Alignment): Pull the entire page up to cancel out the main app container's top padding. */
-    margin-top: -40px; /* Assuming the main content wrapper has 40px top padding to be cancelled out. */
+    margin-top: -40px; 
     /* 🛠️ CRITICAL FIX: Removed top padding to eliminate gap. Applied padding to sides/bottom. */
     padding: 0 40px 40px 40px; 
 }
 
 .dashboard-cover-photo {
-    width: 100%; 
+    /* 💥 CRITICAL FIX (Horizontal Stretch): Explicitly calculate width to cover 100% of content PLUS 80px of padding */
+    width: calc(100% + 80px); /* 100% + 40px left padding + 40px right padding */
     /* Desktop Height: 380px for better view of banner content */
     height: 380px;  
     
@@ -42,8 +43,7 @@
     background-repeat: no-repeat;
     background-position: center center;  
     
-    /* 🛠️ CRITICAL FIX: Negative margins to force banner wall-to-wall horizontally. */
-    /* NOTE: The 0 for margin-top is now correctly inherited from the .dashboard-page's forced top alignment. */
+    /* 🛠️ CRITICAL FIX: Negative margins to shift the banner left by 40px and right by 40px */
     margin: 0 -40px; 
     
     /* 🛠️ UI/UX: Added margin-bottom for clean separation from the clock widget below */
@@ -63,7 +63,7 @@
     padding: 0;
 }
 
-/* ... (Rest of the code remains the same as no other element is affected by this specific layout change) ... */
+/* ... (Rest of the code is unchanged) ... */
 .widget-card {
     /* 🔑 FIX: Set the clock card background to the darker tone to sit nicely on the page background */
     background-color: var(--black-tone-3); 
@@ -262,6 +262,8 @@
     }
     
     .dashboard-cover-photo {
+        /* 💥 CRITICAL FIX (Horizontal Stretch Mobile): Explicitly calculate width to cover 100% of content PLUS 40px of padding */
+        width: calc(100% + 40px); /* 100% + 20px left padding + 20px right padding */
         /* Mobile Height: 180px for clean cropping */
         height: 180px;  
         /* FIX: Overlap mobile padding (-20px) to force wall-to-wall stretch */
