@@ -10,8 +10,11 @@
 
 .cfd-brokers .brokers-cover-photo {
     width: 100%;
-    height: 250px;
-    background-image: url('https://via.placeholder.com/1920x250.png?text=CFD+Brokers+Banner');
+    /* ⭐ UPDATE 1: Set height to 280px as requested for the new banner size ⭐ */
+    height: 280px; 
+    /* 💥 UPDATE 2: Apply the new banner image URL 💥 */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/brokers.png');
+    /* Ensure the image covers the area and is horizontally centered for the best fit */
     background-size: cover;
     background-position: center;
     border-radius: 8px;
