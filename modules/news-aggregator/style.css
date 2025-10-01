@@ -186,13 +186,15 @@
     overflow-y: auto;
     scrollbar-width: none;
     
-    /* CRITICAL FIX: Removed vertical padding (top/bottom) from the flex-growing element 
-       to ensure its height calculation strictly fits the remaining space. */
-    padding-top: 0; 
-    padding-bottom: 0;
+    /* Reverted PADDING to preserve original spacing integrity */
+    padding-top: 5px; 
+    padding-bottom: 5px;
     padding-right: 20px; 
     padding-left: 20px;
-    padding: 0 20px; /* Overrides the previous padding lines with the fix */
+    
+    /* AGGRESSIVE FIX: Force the list to respect the space available (minus tabs/footer) */
+    height: 100%; /* NEW: Explicit height property for robust constraint */
+    box-sizing: border-box; /* NEW: Added to ensure padding is included in the 100% height calculation */
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
@@ -208,19 +210,15 @@
     background-color: var(--border-color);
     padding: 20px 25px; 
     border-radius: 8px;
-    /* FIX: Use only bottom margin to create consistent spacing between articles, now that list padding is removed. */
     margin-bottom: 25px; 
     transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
     border: 1px solid transparent;
-}
-
-/* NEW FIX: Add top margin to the first article since list padding is gone */
-.news-aggregator .news-list > .news-article:first-child {
-    margin-top: 20px;
+    box-sizing: border-box; /* NEW: Added for consistent margin/padding calculation */
 }
 
 .news-aggregator .news-list > .news-article:last-child {
-    margin-bottom: 0;
+    /* NEW: Ensure bottom padding/margin is visible *inside* the scroll area */
+    margin-bottom: 20px; 
 }
 
 .news-aggregator .news-article:hover {
@@ -451,14 +449,13 @@
         /* Set a fixed scrollable height for mobile now that its container is auto-sized */
         max-height: 500px; 
         flex-grow: 0;
-        /* NEW MOBILE FIX: Removed vertical padding here too for stricter scroll boundary */
-        padding-top: 0;
-        padding-bottom: 0;
+        /* NEW MOBILE FIX: Enforce box-sizing and height for consistency */
+        height: auto; 
+        box-sizing: border-box;
     }
     
-    /* NEW MOBILE FIX: Add top margin to the first article since list padding is gone */
-    .news-aggregator .news-list > .news-article:first-child {
-        margin-top: 15px;
+    .news-aggregator .news-list > .news-article:last-child {
+        margin-bottom: 15px; /* NEW: Adjust bottom margin for mobile consistency */
     }
 
     .news-aggregator .news-article {
