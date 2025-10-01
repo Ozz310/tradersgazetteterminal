@@ -1,11 +1,16 @@
 /* All styles are scoped to the .cfd-brokers container */
 .cfd-brokers {
-    padding: 20px;
+    /* 💥 FIX 1: Remove padding from the root container. This allows the banner
+       (the first child element) to expand and be flush against the edges
+       of the now padding-less .module-container. */
+    padding: 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: calc(100vh - 40px);
+    /* This min-height calculation needs adjustment because of the padding removal.
+       Let's remove it for dynamic content growth. */
+    min-height: auto; /* Changed from calc(100vh - 40px) */
 }
 
 .cfd-brokers .brokers-cover-photo {
@@ -17,14 +22,22 @@
     /* Ensure the image covers the area and is horizontally centered for the best fit */
     background-size: cover;
     background-position: center;
-    border-radius: 8px;
+    
+    /* 💥 FIX 2: Zero out the top and side border radius so the banner touches the edges,
+       but keep the bottom radius for the aesthetic break between banner and content. */
+    border-radius: 0 0 8px 8px; 
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
+    /* Remove bottom margin, the content padding will create separation */
+    margin-bottom: 0;
 }
 
 .cfd-brokers .brokers-content-container {
     width: 100%;
     max-width: 900px;
+    /* 💥 FIX 3: Introduce padding here. This re-applies the necessary 20px
+       padding/spacing to all content *BELOW* the banner, fixing the broken UX. */
+    padding: 20px;
+    box-sizing: border-box; /* Ensure padding is included in the width */
 }
 
 .cfd-brokers .broker-card {
