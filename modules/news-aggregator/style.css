@@ -437,11 +437,13 @@
         max-height: none; 
     }
     
-    /* 🛠️ FIX: Reset min-height for mobile to avoid desktop constraint */
+    /* 🛠️ FIX 1: Reset min-height for mobile to avoid desktop constraint */
     .news-aggregator .news-aggregator-container {
         min-height: auto; /* Reset to auto to ensure the height is content-driven */
         margin-top: 20px;
         height: auto;
+        /* CRITICAL: Ensure container is allowed to scroll its content if necessary */
+        overflow: visible; 
     }
 
 
@@ -479,11 +481,14 @@
     .news-aggregator .news-list {
         padding-right: 10px; 
         padding-left: 10px;
-        /* 🛠️ FIX: Removed redundant height: auto */
-        max-height: 500px; 
-        flex-grow: 0;
-        /* Removed height: auto to ensure max-height is respected for scrolling */
-        height: 100%; /* Setting height to 100% inside the auto-height container to define the scrollable area based on max-height */
+        
+        /* 🛠️ FIX 2: Reverting to the robust Flexbox growth logic for mobile */
+        flex-grow: 1; /* This is the key to filling the remaining space */
+        min-height: 0; /* Ensures flex-grow: 1 works correctly */
+        flex-basis: auto; /* Ensures flex-grow: 1 works correctly */
+        overflow-y: auto;
+        max-height: none; /* Removing this constraint lets it flow with the page */
+        height: auto; /* Allow height to be determined by content and flex-grow */
         box-sizing: border-box;
     }
     
