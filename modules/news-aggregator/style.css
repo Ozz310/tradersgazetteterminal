@@ -6,6 +6,7 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
+    /* FINAL FIX: Height is auto to fit content */
     height: auto; 
 }
 
@@ -14,10 +15,11 @@
     width: 100%;
     padding: 0 20px 20px 20px; 
     box-sizing: border-box;
-    flex-grow: 1; /* Allow it to take up available vertical space */
+    flex-grow: 0; 
     display: flex;
     flex-direction: column;
-    height: 100%; /* Pass down the full available height */
+    /* FINAL FIX: Auto height is key to stop page stretching */
+    height: auto; 
     min-height: 500px; 
 }
 
@@ -46,26 +48,27 @@
 .news-aggregator .news-content-flex {
     display: flex;
     gap: 20px;
-    /* CRITICAL: align-items: stretch ensures the two children (YT and News) have the same height */
-    align-items: stretch; 
+    /* CRITICAL: Set align-items to flex-start so children don't stretch */
+    align-items: flex-start; 
     flex-wrap: nowrap;
     min-height: 0; 
     box-sizing: border-box;
     padding: 0; 
     width: 100%;
-    /* Must be 100% for the children to stretch against something of a defined size */
-    height: 100%; 
-    flex-grow: 1;
+    /* CLAMP: The max height of the entire section (excluding the banner) */
+    max-height: 600px; 
+    height: auto; 
+    flex-grow: 0;
 }
 
-/* 🔑 YT PLAYER - Height is defined by the responsive padding-top, making it the reference height */
+/* 🔑 YT PLAYER FIX: Force height to 100% of the capped parent height */
 .news-aggregator .youtube-live-container {
     flex: 1 1 50%;
     min-width: 300px;
     position: relative;
-    height: 0; 
-    padding-top: 28.125vw; /* 16:9 Aspect ratio based on 50% width */
-    max-height: 500px; /* Cap the max height of the video player for large screens */
+    /* CLAMP: Force 100% of the new max-height: 600px parent */
+    height: 100%; 
+    max-height: 600px; /* Ensure it doesn't exceed the parent clamp */
 
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -73,6 +76,7 @@
     background-color: var(--accent-color);
 }
 
+/* 🔑 YT PLAYER FIX: Make the iframe fill the container */
 .news-aggregator .youtube-live-container iframe {
     position: absolute;
     top: 0;
@@ -81,7 +85,7 @@
     height: 100%;
 }
 
-/* 🔑 NEWS AGGREGATOR - Stretches to match the YT player height */
+/* 🔑 NEWS AGGREGATOR FIX: Force height to 100% of the capped parent height */
 .news-aggregator .news-aggregator-container {
     flex: 1 1 50%;
     min-width: 300px;
@@ -91,8 +95,9 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
-    /* CRITICAL: Height must be 100% to fill the space provided by align-items: stretch */
+    /* CLAMP: Force 100% of the new max-height: 600px parent */
     height: 100%; 
+    max-height: 600px; /* Ensure it doesn't exceed the parent clamp */
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
@@ -107,7 +112,7 @@
 .news-aggregator .news-tabs {
     display: flex;
     justify-content: flex-start;
-    flex-shrink: 0; /* Prevents shrinking */
+    flex-shrink: 0; 
     padding: 0 0 10px 0; 
     background-color: transparent; 
     border-radius: 0;
@@ -173,11 +178,11 @@
 
 .news-aggregator .news-list {
     /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container, 
-       forcing the content to scroll only inside this area. */
+       and forces scrolling within that space which is now height-constrained. */
     flex-grow: 1; 
     overflow-y: auto;
     scrollbar-width: none;
-    /* Removed max-height: 400px! Flex-grow handles the size now. */
+    /* Ensure the padding does not conflict with scroll area calculation */
     padding-top: 5px; 
     padding-bottom: 5px;
     padding-right: 0px; 
@@ -289,7 +294,7 @@
     padding: 15px 0 20px 0; 
     border-top: 1px solid var(--border-color);
     margin-top: auto;
-    flex-shrink: 0; /* Prevents shrinking */
+    flex-shrink: 0; 
     z-index: 5; 
     background-color: var(--accent-color); 
 }
@@ -379,6 +384,7 @@
         padding: 0; 
         min-height: auto;
         height: auto;
+        max-height: none; /* Remove desktop max height constraint */
     }
 
     .news-aggregator .youtube-live-container,
@@ -387,6 +393,7 @@
         min-width: unset;
         width: 100%;
         height: auto;
+        max-height: none; /* Remove desktop max height constraint */
     }
 
     /* CRITICAL MOBILE FIX: Aspect ratio trick for responsive video on mobile */
@@ -394,7 +401,6 @@
         padding-top: 56.25%; /* 16:9 aspect ratio */
         position: relative;
         height: 0;
-        max-height: none; /* Remove desktop max height constraint */
     }
     .news-aggregator .youtube-live-container iframe {
         position: absolute;
@@ -407,7 +413,6 @@
 
     .news-aggregator .news-aggregator-container {
         margin-top: 20px;
-        /* Re-enable flex column for the news container on mobile */
         height: auto;
     }
 
