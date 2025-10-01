@@ -1,3 +1,7 @@
+/* /modules/trading-ebooks/style.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&family=Cormorant+Garamond:wght@600&display=swap');
+
 /* All styles are scoped to the .trading-ebooks container */
 .trading-ebooks {
     box-sizing: border-box;
@@ -6,22 +10,24 @@
     align-items: center;
     min-height: calc(100vh - 40px);
     padding: 0;
-
-    /* 💥 CRITICAL FIX (Top Alignment): Pull the entire module up 
-       to cancel out the .module-container's top padding (20px). */
+    
+    /* 💥 CRITICAL FIX (Top Gap): Use negative top margin to cancel the .module-container's 20px top padding. */
     margin-top: -20px;
 }
 
 .trading-ebooks .ebooks-banner {
     width: 100%;
-    height: 350px;
+    /* 💥 CRITICAL FIX (Height Restoration): Set banner back to its intended height */
+    height: 350px; 
     position: relative;
     background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Trading%20E%20books.png?raw=true');
     background-size: cover;
     background-position: center 60%;
     overflow: hidden;
-    /* 💥 FIX: Ensure the banner is flush with the top of the module-container */
+    /* Ensure no residual margin-top */
     margin-top: 0; 
+    /* Add bottom margin for separation from the cards */
+    margin-bottom: 40px; 
 }
 
 .trading-ebooks .ebooks-content-container {
@@ -31,8 +37,8 @@
     gap: 30px;
     justify-content: flex-start;
     
-    /* 💥 CRITICAL FIX: Add back the vertical padding that was removed by margin-top on the parent. 
-       Use 20px top padding (to compensate) and 20px side padding (for content spacing). */
+    /* 💥 CRITICAL FIX (Content Spacing): Re-introduce TOP padding (20px) to push content below the banner, 
+       and keep horizontal padding (20px) for general content spacing. */
     padding: 20px 20px; 
     width: 100%; /* Take full width */
     box-sizing: border-box;
@@ -60,8 +66,9 @@
 }
 
 .trading-ebooks .book-cover-wrapper {
+    /* 💥 FIX: Removed flex-grow to prevent image stretching, set max-height for stability */
+    max-height: 250px; 
     width: 100%;
-    flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -185,18 +192,25 @@
 }
 
 .trading-ebooks .buy-button {
-    /* 🔑 TGG CORE BUTTON ENFORCEMENT 🔑 */
-    background-color: var(--gold-color) !important;
-    color: var(--dark-color-for-text) !important; 
-    border: 1px solid var(--hover-gold-color) !important;
-    padding: 14px 30px !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6) !important, inset 0 0 15px rgba(255, 255, 255, 0.2) !important, 0 0 8px rgba(212, 175, 55, 0.5) !important;
+    /* 🔑 TGG CORE BUTTON ENFORCEMENT 🔑 - Ensure this button looks premium */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
 
-    text-decoration: none;
+    background-color: var(--gold-color) !important;
+    color: var(--dark-color-for-text) !important; 
+    border: 1px solid var(--hover-gold-color) !important;
+    padding: 14px 30px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6) !important, inset 0 0 15px rgba(255, 255, 255, 0.2) !important, 0 0 8px rgba(212, 175, 55, 0.5) !important;
+
     text-align: center;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
     align-self: center;
@@ -206,6 +220,7 @@
 .trading-ebooks .buy-button:hover {
     /* Inherit Premium Button Hover Styles */
     background-color: var(--hover-gold-color) !important;
+    color: var(--dark-color-for-text) !important;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8) !important, 0 0 25px var(--gold-color) !important;
     transform: translateY(-4px) scale(1.02) !important;
 }
@@ -221,13 +236,13 @@
     .trading-ebooks .ebooks-banner {
         height: 200px; /* Reduced height for mobile view */
         background-position: center center; /* Centralize the image for better viewing */
+        margin-bottom: 20px; /* Reduced bottom margin for mobile */
     }
 
     .trading-ebooks .ebooks-content-container {
         flex-direction: column;
         align-items: center;
-        /* 💥 CRITICAL FIX: Add back the vertical padding that was removed by margin-top on the parent. 
-           Mobile module-container padding is 0, so we just add the content padding (20px top/bottom, 10px sides). */
+        /* CRITICAL FIX: Add back the vertical padding to push content below the banner. */
         padding: 20px 10px;
         gap: 20px;
     }
@@ -241,7 +256,7 @@
         padding: 15px;
         gap: 15px;
     }
-
+    
     .trading-ebooks .book-cover-wrapper {
         width: 100px; /* Fixed width for the cover image */
         flex-shrink: 0;
