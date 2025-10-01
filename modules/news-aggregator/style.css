@@ -6,7 +6,6 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    /* FINAL FIX: Height is auto to fit content */
     height: auto; 
 }
 
@@ -15,13 +14,10 @@
     width: 100%;
     padding: 0 20px 20px 20px; 
     box-sizing: border-box;
-    /* FINAL FIX: We no longer need this to grow since we're setting heights based on viewport */
-    flex-grow: 0; 
+    flex-grow: 1; /* Allow it to take up available vertical space */
     display: flex;
     flex-direction: column;
-    /* FINAL FIX: Auto height is key to stop page stretching */
-    height: auto; 
-    /* Set a minimum height for when content hasn't loaded */
+    height: 100%; /* Pass down the full available height */
     min-height: 500px; 
 }
 
@@ -50,25 +46,25 @@
 .news-aggregator .news-content-flex {
     display: flex;
     gap: 20px;
-    align-items: flex-start; /* CRITICAL: Change to align-items: flex-start so children don't stretch */
+    /* CRITICAL: align-items: stretch ensures the two children (YT and News) have the same height */
+    align-items: stretch; 
     flex-wrap: nowrap;
     min-height: 0; 
     box-sizing: border-box;
     padding: 0; 
     width: 100%;
-    /* FINAL FIX: Remove height: 100% and flex-grow: 1 to stop vertical stretching */
-    height: auto; 
-    flex-grow: 0;
+    /* Must be 100% for the children to stretch against something of a defined size */
+    height: 100%; 
+    flex-grow: 1;
 }
 
-/* 🔑 YT PLAYER FIX: Set the video container height explicitly using an aspect ratio trick */
+/* 🔑 YT PLAYER - Height is defined by the responsive padding-top, making it the reference height */
 .news-aggregator .youtube-live-container {
     flex: 1 1 50%;
     min-width: 300px;
     position: relative;
-    /* Aspect ratio for 16:9 video: The height will be 0, and padding-top sets the vertical size */
     height: 0; 
-    padding-top: 28.125vw; /* A responsive height based on viewport width (adjust 28.125vw as needed) */
+    padding-top: 28.125vw; /* 16:9 Aspect ratio based on 50% width */
     max-height: 500px; /* Cap the max height of the video player for large screens */
 
     border-radius: 8px;
@@ -77,7 +73,6 @@
     background-color: var(--accent-color);
 }
 
-/* 🔑 YT PLAYER FIX: Make the iframe fill the aspect ratio container */
 .news-aggregator .youtube-live-container iframe {
     position: absolute;
     top: 0;
@@ -86,6 +81,7 @@
     height: 100%;
 }
 
+/* 🔑 NEWS AGGREGATOR - Stretches to match the YT player height */
 .news-aggregator .news-aggregator-container {
     flex: 1 1 50%;
     min-width: 300px;
@@ -95,8 +91,8 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
-    /* We'll define the max height here to match the YT player */
-    height: auto; 
+    /* CRITICAL: Height must be 100% to fill the space provided by align-items: stretch */
+    height: 100%; 
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
@@ -111,7 +107,7 @@
 .news-aggregator .news-tabs {
     display: flex;
     justify-content: flex-start;
-    flex-shrink: 0; 
+    flex-shrink: 0; /* Prevents shrinking */
     padding: 0 0 10px 0; 
     background-color: transparent; 
     border-radius: 0;
@@ -176,14 +172,12 @@
 
 
 .news-aggregator .news-list {
-    /* 🔑 CRITICAL SCROLL FIX: Calculate Max Height to prevent stretching */
-    /* This calculation accounts for the tabs (approx. 60px), the footer (approx. 50px), 
-       and padding/margins. We cap the news list height to match the max height of the YT player. */
-    max-height: 400px; /* Set a specific max height in px to contain the content */
-    
-    flex-grow: 0; /* No longer need to grow, we are fixing the max size */
+    /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container, 
+       forcing the content to scroll only inside this area. */
+    flex-grow: 1; 
     overflow-y: auto;
     scrollbar-width: none;
+    /* Removed max-height: 400px! Flex-grow handles the size now. */
     padding-top: 5px; 
     padding-bottom: 5px;
     padding-right: 0px; 
@@ -295,7 +289,7 @@
     padding: 15px 0 20px 0; 
     border-top: 1px solid var(--border-color);
     margin-top: auto;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Prevents shrinking */
     z-index: 5; 
     background-color: var(--accent-color); 
 }
@@ -403,7 +397,6 @@
         max-height: none; /* Remove desktop max height constraint */
     }
     .news-aggregator .youtube-live-container iframe {
-        /* On mobile, the iframe must fill the aspect ratio placeholder */
         position: absolute;
         top: 0;
         left: 0;
@@ -414,6 +407,8 @@
 
     .news-aggregator .news-aggregator-container {
         margin-top: 20px;
+        /* Re-enable flex column for the news container on mobile */
+        height: auto;
     }
 
     .news-aggregator .news-header-banner {
@@ -435,7 +430,9 @@
     .news-aggregator .news-list {
         padding-right: 10px; 
         padding-left: 10px;
-        max-height: 500px; /* Set a fixed scrollable height for mobile */
+        /* Set a fixed scrollable height for mobile now that its container is auto-sized */
+        max-height: 500px; 
+        flex-grow: 0;
     }
 
     .news-aggregator .news-article {
