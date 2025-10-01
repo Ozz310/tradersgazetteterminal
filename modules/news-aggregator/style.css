@@ -6,7 +6,8 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    min-height: calc(100vh - 40px);
+    /* Revert back to 100% height as main.css handles the viewport height */
+    min-height: 100%; 
 }
 
 .news-aggregator .news-header-banner {
@@ -18,6 +19,16 @@
     background-size: cover; 
     background-position: center center;
     background-repeat: no-repeat;
+    
+    /* 🚀 NEW: Full-width banner fix to override module-container padding */
+    margin-top: -20px; 
+    margin-left: -20px;
+    margin-right: -20px;
+    width: calc(100% + 40px);
+    
+    /* Adjust border radius to be square on top */
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .news-aggregator .news-content-flex {
@@ -25,8 +36,11 @@
     gap: 20px;
     align-items: stretch;
     flex-wrap: nowrap;
-    height: 700px; /* Fixed height for desktop view */
+    /* Changed fixed height to a responsive min-height for content flow */
+    min-height: 700px; 
     box-sizing: border-box;
+    /* 🚀 NEW: Re-add padding to the content area that was lost due to the banner fix */
+    padding: 0 20px 20px 20px; 
     width: 100%;
 }
 
@@ -53,7 +67,8 @@
     flex: 1 1 50%;
     min-width: 300px;
     background-color: var(--accent-color);
-    padding: 20px;
+    /* 🚀 REFINEMENT: Remove container padding as it's added globally to news-content-flex */
+    padding: 0;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
@@ -67,12 +82,13 @@
 .news-aggregator .news-title {
     font-size: 1.5rem;
     font-weight: 700;
-    /* ⭐ UPDATED: Use consistent gold color variable ⭐ */
-    color: var(--gold-color) !important; 
+    /* 🚀 REFINEMENT 2.1: Use new Header Gold for visual hierarchy */
+    color: var(--header-gold-color) !important; 
     text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--gold-color);
+    /* 🚀 REFINEMENT 1.1: Increase vertical whitespace below the header */
+    margin-bottom: 25px; 
+    padding: 20px 0 10px 0; /* Add top padding to re-space the content */
+    border-bottom: 2px solid var(--header-gold-color);
     z-index: 10; 
     flex-shrink: 0;
 }
@@ -80,39 +96,38 @@
 /* Tab Styles */
 .news-aggregator .news-tabs {
     display: flex;
-    justify-content: flex-start; /* Changed to flex-start for scrollable tabs */
+    justify-content: flex-start;
     flex-shrink: 0; 
-    padding: 10px 0px; /* Adjusted padding to account for button margins */
-    background-color: var(--accent-color); 
-    border-radius: 6px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-    overflow-x: auto; /* Allow scrolling for many tabs */
-    white-space: nowrap; /* Prevent wrapping */
+    padding: 0 0 10px 0; /* Adjust padding */
+    background-color: transparent; /* Changed from accent-color as border box looks cleaner */
+    border-radius: 0;
+    box-shadow: none;
+    overflow-x: auto;
+    white-space: nowrap;
     z-index: 5; 
-    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    /* 🚀 REFINEMENT 1.1: More spacing below the tabs */
+    margin-bottom: 15px;
 }
 .news-aggregator .news-tabs::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome/Safari */
+    display: none;
 }
 
-/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT (Using the unified .tab aesthetic) 🔑 */
-
+/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT (Applying the new global active style) 🔑 */
 .news-aggregator .news-tab {
     flex-grow: 0; 
     flex-shrink: 0; 
     
-    /* BASE STATE: Dark/Subtle, matching the Inactive/Dark Tab Look */
-    /* ENFORCEMENT: Use Dark Gradient from the Trade Journal inactive tab */
-    background-color: var(--accent-color) !important;
+    /* BASE STATE: Use TGG Menu Button look for inactive */
+    background: var(--accent-color) !important;
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c) !important;
     color: var(--text-color) !important;
     
-    /* Standardized Padding/Shape */
     padding: 10px 20px !important;
     border-radius: 8px !important; 
-    margin: 0 5px; /* Added margin for separation */
-    border: 1px solid #444 !important; /* Subtle border to define shape */
+    margin: 0 5px; 
+    border: 1px solid #444 !important;
     
     font-size: 1rem;
     font-weight: 500;
@@ -120,32 +135,29 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
     text-shadow: none;
-    text-transform: uppercase; /* Match Trade Journal Tab look */
+    text-transform: uppercase;
 }
 
 .news-aggregator .news-tab:hover {
-    /* ENFORCEMENT: Use the Inactive Tab Hover style */
     color: var(--gold-color) !important;
     border-color: var(--gold-color) !important;
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important; /* Darker hover */
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important;
     transform: none; 
 }
 
+/* 🚀 REFINEMENT 3.1: New sophisticated active style */
 .news-aggregator .news-tab.active {
-    /* ACTIVE STATE: Enforced Solid Gold CTA/Active Tab Standard */
-    /* ENFORCEMENT: Use the exact Solid Gold Gradient and Shadow from the Trade Journal */
-    background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    background: var(--accent-color) !important;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a) !important; 
+    color: var(--gold-color) !important;
+    border: 2px solid var(--gold-color) !important; 
     
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
-    border: none !important; /* Remove individual tab border, let the shadow define */
-    
-    /* Premium Shadow Match */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-    
+    box-shadow: 
+        inset 0 0 8px rgba(0, 0, 0, 0.8) !important,
+        0 0 10px rgba(212, 175, 55, 0.7) !important;
+        
     font-weight: 700 !important;
-    /* Optional: Add a subtle lift on the active tab for emphasis */
-    transform: translateY(-1px);
+    transform: none !important; /* Keep it locked in place */
 }
 /* 🔑 END TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 
@@ -156,6 +168,9 @@
     scrollbar-width: none;
     padding-top: 5px; 
     padding-bottom: 5px;
+    /* 🚀 REFINEMENT: Add inner padding to match the card padding, improving content spacing */
+    padding-right: 20px; 
+    padding-left: 20px;
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
@@ -169,13 +184,11 @@
 
 .news-aggregator .news-article {
     background-color: var(--border-color);
-    /* ⭐ REFINED TYPOGRAPHY: Increased vertical whitespace ⭐ */
-    padding: 20px 15px; 
+    padding: 20px 25px; /* Increased horizontal padding slightly */
     border-radius: 8px;
-    margin-bottom: 20px; /* Increased separation */
-    /* ⭐ DYNAMIC GOLD ACCENT: Smooth transition for hover effects ⭐ */
+    margin-bottom: 25px; /* Increased separation */
     transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-    border: 1px solid transparent; /* Initial transparent border */
+    border: 1px solid transparent;
 }
 
 .news-aggregator .news-list > .news-article:last-child {
@@ -183,22 +196,19 @@
 }
 
 .news-aggregator .news-article:hover {
-    transform: translateY(-4px); /* Slightly deeper lift on hover */
+    transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    /* ⭐ DYNAMIC GOLD ACCENT: Gold Border Highlight on hover ⭐ */
     border: 1px solid var(--gold-color);
 }
 
 /* ⭐ REFINED TYPOGRAPHY: Headline style (Journalistic Look) ⭐ */
 .news-aggregator .news-article h2 {
-    /* Use the imported luxury serif font for high-impact headlines */
-    font-family: 'DM Serif Display', serif;
-    margin: 0 0 8px 0; /* More space below headline */
-    font-size: 1.3rem; /* Slightly larger */
+    font-family: 'DM Serif Display', serif; /* Assuming this font is imported */
+    margin: 0 0 8px 0;
+    font-size: 1.4rem; /* Slightly larger */
 }
 
 .news-aggregator .news-article a {
-    /* ⭐ UPDATED: Use consistent gold color variable for article headlines ⭐ */
     color: var(--gold-color) !important; 
     text-decoration: none;
     position: relative;
@@ -227,33 +237,32 @@
 /* ⭐ REFINED TYPOGRAPHY: Dateline style (Muted Hierarchy) ⭐ */
 .news-aggregator .article-dateline {
     font-size: 0.85rem;
-    /* Use a slightly desaturated/lighter grey than standard text */
-    color: var(--text-color); 
-    opacity: 0.7; 
-    font-weight: 300; /* Lighter weight */
+    /* 🚀 REFINEMENT 2.2: Use new Secondary Text Color for lower hierarchy */
+    color: var(--secondary-text-color) !important; 
+    opacity: 1; /* Remove explicit opacity, let the color handle it */
+    font-weight: 400; 
     display: block;
     margin-bottom: 15px;
 }
 
 .news-aggregator .news-article p {
-    font-size: 0.95rem; /* Slightly larger body text for readability */
+    font-size: 1rem; /* Slightly larger body text for readability */
     color: var(--text-color);
-    /* Increased line height for better readability (generous whitespace) */
-    line-height: 1.6;
-    margin: 0; /* Remove default paragraph margins */
+    line-height: 1.7; /* Increased line height for generous whitespace */
+    margin: 0;
 }
 
 .news-aggregator .read-more-button {
     display: inline-block;
     font-size: 0.95rem;
     font-weight: 600;
-    margin-top: 10px;
+    margin-top: 15px; /* Increased spacing */
     color: var(--gold-color);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 .news-aggregator .read-more-button:hover {
-    color: var(--text-color); /* Hover to light grey text */
+    color: var(--text-color);
 }
 
 .news-aggregator .breaking-ribbon {
@@ -266,7 +275,8 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding-top: 15px;
+    /* 🚀 REFINEMENT: Add padding to match the lost content-flex padding */
+    padding: 15px 20px 20px 20px; 
     border-top: 1px solid var(--border-color);
     margin-top: auto;
     flex-shrink: 0;
@@ -294,56 +304,51 @@
 }
 
 /* ⭐ SKELETON LOADER ENHANCEMENT: Styles and Animation ⭐ */
-/* Keyframe for the sweeping gold light effect */
 @keyframes shimmer {
     0% { background-position: -468px 0; }
     100% { background-position: 468px 0; }
 }
 
 .news-aggregator .skeleton-wrapper {
-    /* Set the background of the wrapper to match article cards for seamless transition */
-    background-color: var(--accent-color); 
+    background-color: var(--content-bg-color); /* Match main background */
     padding: 0;
 }
 
 .news-aggregator .skeleton-article {
     background-color: var(--border-color);
-    padding: 20px 15px; /* Match article padding */
+    padding: 20px 25px; /* Match article padding */
     border-radius: 8px;
-    margin-bottom: 20px; /* Match article margin */
-    /* Base background for the skeleton area */
+    margin-bottom: 25px; /* Match article margin */
 }
 
 .news-aggregator .skeleton-line {
-    /* Base styles for all skeleton lines */
     height: 14px;
     margin-bottom: 10px;
     border-radius: 4px;
-    /* Gradient background for the shimmer effect */
     background: linear-gradient(to right, 
         var(--border-color) 0%, 
-        rgba(240, 215, 136, 0.1) 20%, /* Subtle gold shimmer point */
+        rgba(240, 215, 136, 0.1) 20%, 
         var(--border-color) 40%);
     background-size: 1000px 100%;
     animation: shimmer 1.5s infinite linear;
 }
 
 .news-aggregator .skeleton-line.short {
-    width: 40%; /* Mimic the dateline/short info */
+    width: 40%;
     height: 10px;
     margin-top: 10px;
 }
 
 .news-aggregator .skeleton-line.medium {
-    width: 80%; /* Mimic the summary line */
+    width: 80%;
 }
 
 .news-aggregator .skeleton-line.long {
-    width: 100%; /* Mimic the summary line */
+    width: 100%;
 }
 
 .news-aggregator .skeleton-article .skeleton-line:first-child {
-    width: 70%; /* Mimic the main headline */
+    width: 70%;
     height: 18px; 
     margin-bottom: 15px;
 }
@@ -356,6 +361,7 @@
         flex-direction: column;
         height: auto;
         flex-wrap: wrap;
+        padding: 0 10px 10px 10px; /* Reduced side padding for mobile */
     }
 
     .news-aggregator .youtube-live-container,
@@ -384,35 +390,32 @@
 
     /* MOBILE: Scrollable Tabs */
     .news-aggregator .news-tabs {
-        justify-content: flex-start; 
-        overflow-x: auto; 
-        white-space: nowrap; 
-        scroll-snap-type: x mandatory; 
-        scrollbar-width: none; 
-        -ms-overflow-style: none; 
-        padding-bottom: 8px; 
-        background-color: var(--accent-color); 
-    }
-
-    .news-aggregator .news-tabs::-webkit-scrollbar {
-        display: none; 
+        margin-bottom: 10px; /* Reduced margin for mobile */
     }
 
     .news-aggregator .news-tab {
-        flex-grow: 0; 
-        flex-shrink: 0; 
-        margin-right: 10px; 
-        min-width: 120px; 
-        text-align: center;
-        scroll-snap-align: start; 
-        /* Margin is now defined globally for news-tab above */
+        min-width: 100px; /* Reduced min-width for more tabs to show */
+    }
+
+    .news-aggregator .news-list {
+        padding-right: 10px; /* Reduced side padding for mobile */
+        padding-left: 10px;
+    }
+
+    .news-aggregator .news-article {
+        padding: 15px 20px; /* Reduced article padding for mobile */
+        margin-bottom: 15px; 
     }
 
     .news-aggregator .news-article h2 {
-        font-size: 1.15rem; /* Slightly smaller headlines on mobile */
+        font-size: 1.15rem;
     }
 
     .news-aggregator .news-article p {
-        font-size: 0.9rem; /* Back to original smaller size on mobile */
+        font-size: 0.9rem;
+    }
+    
+    .news-aggregator .news-branding-footer {
+        padding: 15px 10px 20px 10px; /* Mobile footer padding */
     }
 }
