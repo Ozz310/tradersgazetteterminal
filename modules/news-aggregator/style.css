@@ -56,7 +56,7 @@
     height: auto; 
     flex-grow: 0;
     
-    /* 💥 CRITICAL FIX: Enforce the maximum height on the two-column container */
+    /* 💥 CRITICAL FIX (Height Containment): Enforce the maximum height on the two-column container */
     max-height: 660px; 
 }
 
@@ -161,14 +161,14 @@
 }
 
 .news-aggregator .news-tab:hover {
-    /* Uses the core radiant gold variable */
-    color: var(--gold-color) !important;
-    border-color: var(--gold-color) !important;
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for the accent color */
+    color: #F0D788 !important; 
+    border-color: #F0D788 !important; /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
     background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important;
     transform: none; 
 }
 
-/* 💥 REVERTED ACTIVE STATE: Solid Gold CTA */
+/* 💥 ACTIVE STATE (Source of Truth for Gold Color): Solid Gold CTA */
 .news-aggregator .news-tab.active {
     background-image: none !important;
     /* This gradient defines the gold color spectrum for the buttons */
@@ -235,9 +235,9 @@
 
 .news-aggregator .news-article:hover {
     transform: translateY(-4px);
-    /* Gold border on hover (uses the core radiant gold variable) */
+    /* 💥 FIX (Gold Consistency): Gold border on hover (Uses the defined light gold hex) */
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    border: 1px solid var(--gold-color);
+    border: 1px solid #F0D788; 
 }
 
 /* ⭐ REFINED TYPOGRAPHY: Headline style (Journalistic Look) ⭐ */
@@ -248,8 +248,8 @@
 }
 
 .news-aggregator .news-article a {
-    /* Uses the core radiant gold variable */
-    color: var(--gold-color) !important; 
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for the accent color */
+    color: #F0D788 !important; 
     text-decoration: none;
     position: relative;
 }
@@ -263,15 +263,15 @@
     display: block;
     margin-top: 2px;
     right: 0;
-    /* Uses the core radiant gold variable */
-    background: var(--gold-color);
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    background: #F0D788; 
     transition: width 0.3s ease;
 }
 .news-aggregator .news-article h2 a:hover:after {
     width: 100%;
     left: 0;
-    /* Uses the core radiant gold variable */
-    background: var(--gold-color);
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    background: #F0D788; 
 }
 /* ⭐ END Micro-Interaction ⭐ */
 
@@ -279,8 +279,8 @@
 /* ⭐ IMPLEMENTED: REFINED TYPOGRAPHY: Dateline style (Now using consistent gold color) ⭐ */
 .news-aggregator .article-dateline {
     font-size: 0.85rem;
-    /* Uses the core radiant gold variable for consistency */
-    color: var(--gold-color) !important; 
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for consistency */
+    color: #F0D788 !important; 
     opacity: 1; 
     font-weight: 400; 
     display: block;
@@ -299,13 +299,16 @@
     font-size: 0.95rem;
     font-weight: 600;
     margin-top: 15px; 
-    /* Uses the core radiant gold variable */
-    color: var(--gold-color);
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    color: #F0D788;
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease; /* Updated transition to catch text-shadow */
 }
 .news-aggregator .read-more-button:hover {
-    color: var(--text-color);
+    /* 💥 FIX (Hover Consistency): Apply a subtle gold text glow instead of changing color */
+    color: #F0D788; /* Ensure color remains gold */
+    /* Uses the gold shade defined by the button gradient's RGB value, with increased opacity */
+    text-shadow: 0 0 8px rgba(240, 215, 136, 0.8);
 }
 
 /* ⭐ IMPLEMENTED: 'Breaking' Tag Refinement (Capsule/Gold Look) ⭐ */
@@ -313,8 +316,8 @@
     display: inline-block;
     /* Uses the gold shade defined by the button gradient's RGB value, with low opacity */
     background-color: rgba(240, 215, 136, 0.1); 
-    /* Uses the core radiant gold variable */
-    color: var(--gold-color);
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for color */
+    color: #F0D788; 
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -343,23 +346,23 @@
 .news-aggregator .news-branding-footer img {
     max-width: 100px;
     height: auto;
-    /* Uses the gold shade defined by the button gradient's RGB value */
+    /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
     filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4));
     transition: filter 0.3s ease;
 }
 
 .news-aggregator .news-branding-footer img:hover {
-    /* Uses the gold shade defined by the button gradient's RGB value */
+    /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
     filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.7));
 }
 
 .news-aggregator .news-branding-footer p {
     margin: 0;
-    /* Uses the core radiant gold variable */
-    color: var(--gold-color);
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for color */
+    color: #F0D788; 
     font-size: 0.8rem;
     font-weight: 500;
-    /* Uses the gold shade defined by the button gradient's RGB value */
+    /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
     text-shadow: 0 0 5px rgba(240, 215, 136, 0.4);
 }
 
@@ -387,7 +390,7 @@
     border-radius: 4px;
     background: linear-gradient(to right, 
         var(--border-color) 0%, 
-        /* Uses the gold shade defined by the button gradient's RGB value */
+        /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
         rgba(240, 215, 136, 0.1) 20%, 
         var(--border-color) 40%);
     background-size: 1000px 100%;
