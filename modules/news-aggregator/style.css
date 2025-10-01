@@ -156,6 +156,7 @@
 }
 
 .news-aggregator .news-tab:hover {
+    /* Uses the core radiant gold variable */
     color: var(--gold-color) !important;
     border-color: var(--gold-color) !important;
     background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important;
@@ -165,7 +166,7 @@
 /* 💥 REVERTED ACTIVE STATE: Solid Gold CTA */
 .news-aggregator .news-tab.active {
     background-image: none !important;
-    /* This gradient uses the bright gold for the button fill */
+    /* This gradient defines the gold color spectrum for the buttons */
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
     
     color: var(--dark-color-for-text) !important; 
@@ -218,7 +219,8 @@
     border: 1px solid transparent;
     box-sizing: border-box; 
     /* ⭐ IMPLEMENTED: Enhanced Card Separation/Depth */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4); 
+    /* Gold-tinted inner shadow (using the gold shade defined by the button gradient's RGB value) */
+    box-shadow: inset 0 0 10px rgba(240, 215, 136, 0.1); 
 }
 
 .news-aggregator .news-list > .news-article:last-child {
@@ -228,7 +230,7 @@
 
 .news-aggregator .news-article:hover {
     transform: translateY(-4px);
-    /* We want a gold border and a lift effect on hover */
+    /* Gold border on hover (uses the core radiant gold variable) */
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     border: 1px solid var(--gold-color);
 }
@@ -241,7 +243,7 @@
 }
 
 .news-aggregator .news-article a {
-    /* This uses the primary radiant gold color */
+    /* Uses the core radiant gold variable */
     color: var(--gold-color) !important; 
     text-decoration: none;
     position: relative;
@@ -256,12 +258,14 @@
     display: block;
     margin-top: 2px;
     right: 0;
+    /* Uses the core radiant gold variable */
     background: var(--gold-color);
     transition: width 0.3s ease;
 }
 .news-aggregator .news-article h2 a:hover:after {
     width: 100%;
     left: 0;
+    /* Uses the core radiant gold variable */
     background: var(--gold-color);
 }
 /* ⭐ END Micro-Interaction ⭐ */
@@ -270,7 +274,7 @@
 /* ⭐ IMPLEMENTED: REFINED TYPOGRAPHY: Dateline style (Now using consistent gold color) ⭐ */
 .news-aggregator .article-dateline {
     font-size: 0.85rem;
-    /* 💥 FIX: Using the core --gold-color variable for consistency with buttons/headlines */
+    /* Uses the core radiant gold variable for consistency */
     color: var(--gold-color) !important; 
     opacity: 1; 
     font-weight: 400; 
@@ -290,7 +294,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     margin-top: 15px; 
-    /* This uses the primary radiant gold color */
+    /* Uses the core radiant gold variable */
     color: var(--gold-color);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -302,14 +306,17 @@
 /* ⭐ IMPLEMENTED: 'Breaking' Tag Refinement (Capsule/Gold Look) ⭐ */
 .news-aggregator .breaking-ribbon {
     display: inline-block;
-    background-color: rgba(240, 215, 136, 0.1); /* Very subtle gold background */
+    /* Uses the gold shade defined by the button gradient's RGB value, with low opacity */
+    background-color: rgba(240, 215, 136, 0.1); 
+    /* Uses the core radiant gold variable */
     color: var(--gold-color);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     padding: 4px 10px;
     border-radius: 9999px; /* Capsule shape */
-    border: 1px solid rgba(240, 215, 136, 0.3); /* Subtle gold border */
+    /* Uses the gold shade defined by the button gradient's RGB value, with low opacity */
+    border: 1px solid rgba(240, 215, 136, 0.3); 
     margin-bottom: 10px;
 }
 
@@ -331,22 +338,23 @@
 .news-aggregator .news-branding-footer img {
     max-width: 100px;
     height: auto;
-    /* This uses the gold shade in the drop-shadow */
+    /* Uses the gold shade defined by the button gradient's RGB value */
     filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4));
     transition: filter 0.3s ease;
 }
 
 .news-aggregator .news-branding-footer img:hover {
+    /* Uses the gold shade defined by the button gradient's RGB value */
     filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.7));
 }
 
 .news-aggregator .news-branding-footer p {
     margin: 0;
-    /* This uses the primary radiant gold color */
+    /* Uses the core radiant gold variable */
     color: var(--gold-color);
     font-size: 0.8rem;
     font-weight: 500;
-    /* This uses the gold shade in the text-shadow */
+    /* Uses the gold shade defined by the button gradient's RGB value */
     text-shadow: 0 0 5px rgba(240, 215, 136, 0.4);
 }
 
@@ -374,7 +382,7 @@
     border-radius: 4px;
     background: linear-gradient(to right, 
         var(--border-color) 0%, 
-        /* This uses the gold shade in the skeleton shimmer effect */
+        /* Uses the gold shade defined by the button gradient's RGB value */
         rgba(240, 215, 136, 0.1) 20%, 
         var(--border-color) 40%);
     background-size: 1000px 100%;
