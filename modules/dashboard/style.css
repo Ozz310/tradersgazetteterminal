@@ -43,11 +43,11 @@
     background-repeat: no-repeat;
     background-position: center center;  
     
-    /* 🛠️ CRITICAL FIX: Negative margins to shift the banner left by 40px and right by 40px */
-    margin: 0 -40px; 
-    
-    /* 🛠️ UI/UX: Added margin-bottom for clean separation from the clock widget below */
-    margin-bottom: 40px; 
+    /* 💥 CRITICAL FIX: Explicitly target all margins for maximum overlap */
+    margin-top: 0;
+    margin-right: -40px; /* Cancels out right padding */
+    margin-bottom: 40px; /* Retains separation from widgets */
+    margin-left: -40px; /* Cancels out left padding (Sidebar border fix) */
 }
 
 .dashboard-widgets-grid {
@@ -63,7 +63,6 @@
     padding: 0;
 }
 
-/* ... (Rest of the code is unchanged) ... */
 .widget-card {
     /* 🔑 FIX: Set the clock card background to the darker tone to sit nicely on the page background */
     background-color: var(--black-tone-3); 
@@ -266,10 +265,11 @@
         width: calc(100% + 40px); /* 100% + 20px left padding + 20px right padding */
         /* Mobile Height: 180px for clean cropping */
         height: 180px;  
-        /* FIX: Overlap mobile padding (-20px) to force wall-to-wall stretch */
-        margin: 0 -20px; 
-        /* UI/UX: Added margin-bottom for clean separation on mobile */
+        /* 💥 CRITICAL FIX: Explicitly set margins for mobile */
+        margin-top: 0;
+        margin-right: -20px; 
         margin-bottom: 20px;
+        margin-left: -20px; /* Cancels out left padding (Sidebar border fix mobile) */
     }
 
     .dashboard-widgets-grid {
