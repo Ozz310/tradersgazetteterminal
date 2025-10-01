@@ -29,14 +29,14 @@
     
     /* 💥 CRITICAL FIX (Top Alignment): Pull the entire page up to cancel out the main app container's top padding. */
     margin-top: -40px; 
-    /* 💥 CRITICAL FIX (Padding Alignment): Remove horizontal padding here. The padding for the internal components will be 
-       re-introduced on the elements below the banner. Keeping only bottom padding. */
+    /* 💥 FINAL FIX: Set to ZERO horizontal padding, as .module-container now handles top/bottom. 
+       This allows the banner to hit 100% of the parent width. */
     padding: 0 0 40px 0; 
 }
 
 .dashboard-cover-photo {
-    /* 💥 FINAL CRITICAL FIX (Horizontal Stretch): Calculate width to cover 100% of content PLUS 40px of module-container padding */
-    width: calc(100% + 40px); /* 100% + 20px left module-container padding + 20px right module-container padding */
+    /* 💥 FINAL FIX (Horizontal Stretch): Width is 100%, now that .module-container has no horizontal padding! */
+    width: 100%; 
     /* Desktop Height: 380px for better view of banner content */
     height: 380px;  
     
@@ -44,15 +44,12 @@
     background-repeat: no-repeat;
     background-position: center center;  
     
-    /* 💥 CRITICAL FIX: Use negative margins to pull the banner over the parent's (module-container) 20px padding */
-    margin-top: 0;
-    margin-right: -20px; 
-    margin-bottom: 40px; 
-    margin-left: -20px; /* This is the key line to force overlap with the sidebar border/module padding */
+    /* 💥 FINAL FIX: Margins are now clean, only the bottom separation remains. */
+    margin: 0 0 40px 0; 
 }
 
 .dashboard-widgets-grid {
-    /* 💥 CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets */
+    /* 💥 CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets (20px) */
     padding: 0 20px;
     
     /* Uses flex to center the clock horizontally */
@@ -60,7 +57,6 @@
     justify-content: center; 
     align-items: flex-start; 
     
-    /* 🛠️ CRITICAL FIX: REMOVED negative margin-top. Clock now sits *below* the banner. */
     margin-top: 0; 
     
     width: 100%;
@@ -264,21 +260,16 @@
     }
     
     .dashboard-cover-photo {
-        /* 💥 CRITICAL FIX (Horizontal Stretch Mobile): Mobile module-container padding is 0, so overlap 0 */
-        /* But main.css sets module-container padding to 0, which is good. Let's assume the previous 
-           20px overlap was necessary to overcome some mobile layout issue. Reverting to 20px overlap to be safe. */
-        width: calc(100% + 40px); /* 100% + 20px left padding + 20px right padding */
+        /* 💥 FINAL FIX (Horizontal Stretch Mobile): Width is 100% since module-container padding is 0 */
+        width: 100%; 
         /* Mobile Height: 180px for clean cropping */
         height: 180px;  
-        /* 💥 CRITICAL FIX: Explicitly set margins for mobile */
-        margin-top: 0;
-        margin-right: -20px; 
-        margin-bottom: 20px;
-        margin-left: -20px; /* Cancels out left padding (Sidebar border fix mobile) */
+        /* 💥 FINAL FIX: Clean margins, only bottom separation remains. */
+        margin: 0 0 20px 0;
     }
 
     .dashboard-widgets-grid {
-        /* CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets on mobile */
+        /* CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets on mobile (20px) */
         padding: 0 20px;
         
         /* CRITICAL FIX: REMOVED negative margin-top */
