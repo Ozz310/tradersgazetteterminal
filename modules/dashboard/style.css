@@ -34,8 +34,8 @@
 }
 
 .dashboard-cover-photo {
-    /* 💥 CRITICAL FIX (Horizontal Stretch): Explicitly calculate width to cover 100% of content PLUS 80px of padding */
-    width: calc(100% + 80px); /* 100% + 40px left padding + 40px right padding */
+    /* 💥 CRITICAL FIX (Horizontal Stretch): Reverting to simple 100% width and relying entirely on negative margins for the full stretch */
+    width: 100%; 
     /* Desktop Height: 380px for better view of banner content */
     height: 380px;  
     
@@ -43,11 +43,14 @@
     background-repeat: no-repeat;
     background-position: center center;  
     
-    /* 💥 CRITICAL FIX: Explicitly target all margins for maximum overlap */
+    /* 💥 CRITICAL FIX: Explicit negative margins for full top/side overlap */
     margin-top: 0;
     margin-right: -40px; /* Cancels out right padding */
-    margin-bottom: 40px; /* Retains separation from widgets */
+    /* 💥 CRITICAL FIX: This is the key line to force overlap with the sidebar border */
     margin-left: -40px; /* Cancels out left padding (Sidebar border fix) */
+    
+    /* 🛠️ UI/UX: Added margin-bottom for clean separation from the clock widget below */
+    margin-bottom: 40px; /* Retains separation from widgets */
 }
 
 .dashboard-widgets-grid {
@@ -261,8 +264,8 @@
     }
     
     .dashboard-cover-photo {
-        /* 💥 CRITICAL FIX (Horizontal Stretch Mobile): Explicitly calculate width to cover 100% of content PLUS 40px of padding */
-        width: calc(100% + 40px); /* 100% + 20px left padding + 20px right padding */
+        /* 💥 CRITICAL FIX (Horizontal Stretch Mobile): Reverting to simple 100% width and relying entirely on negative margins for the full stretch */
+        width: 100%; 
         /* Mobile Height: 180px for clean cropping */
         height: 180px;  
         /* 💥 CRITICAL FIX: Explicitly set margins for mobile */
