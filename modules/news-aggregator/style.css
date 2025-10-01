@@ -181,8 +181,10 @@
 .news-aggregator .news-list {
     /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container. */
     flex-grow: 1; 
-    /* CRITICAL: Prevent the list from defining the height and force it to be scrollable */
+    /* CRITICAL: The combination of min-height: 0 and flex-basis: 0 is the most reliable way 
+       to ensure flex-grow: 1 correctly calculates the remaining space in a column layout. */
     min-height: 0; 
+    flex-basis: 0; /* FINAL CRITICAL ADDITION */
     overflow-y: auto;
     scrollbar-width: none;
     
@@ -192,9 +194,9 @@
     padding-right: 20px; 
     padding-left: 20px;
     
-    /* AGGRESSIVE FIX: Force the list to respect the space available (minus tabs/footer) */
-    height: 100%; /* NEW: Explicit height property for robust constraint */
-    box-sizing: border-box; /* NEW: Added to ensure padding is included in the 100% height calculation */
+    /* Reverted height: 100% to auto to allow flex-basis: 0 and flex-grow: 1 to control height */
+    height: auto; 
+    box-sizing: border-box; 
 }
 
 .news-aggregator .news-list::-webkit-scrollbar {
