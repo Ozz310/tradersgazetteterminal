@@ -99,6 +99,10 @@
     box-sizing: border-box;
     position: relative; 
     z-index: 1;
+    /* NEW CRITICAL FIX: Ensure the container respects its own 660px height 
+       and prevents content (tabs/list) from pushing it beyond that, though 
+       min-height: 660px and the flex context should handle this. */
+    overflow: hidden; /* Added to enforce boundary */
 }
 
 /* 🔑 FIX: Remove the "News Room" title text */
