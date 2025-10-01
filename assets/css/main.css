@@ -4,10 +4,10 @@
     --sidebar-color: #222;
     --content-bg-color: #2a2a2a;
     
-    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 (ORIGINAL VALUES RESTORED) */
+    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 */
     --text-color: #f1f1f1; /* Crisp White/Light Grey text (Primary Text) */
     --secondary-text-color: #c8c8c8; /* 🚀 NEW: Lighter grey for data labels / descriptions */
-    --gold-color: #D4AF37; /* Radiant Gold Accent (Interactive/Borders) - ORIGINAL */
+    --gold-color: #D4AF37; /* Radiant Gold Accent (Interactive/Borders) */
     --header-gold-color: #C0A04C; /* 🚀 NEW: Deeper, richer gold for H1/H2 titles */
     --dark-color-for-text: #0D0D0D; /* Dominant Black/Dark Tones (for text on gold) */
     --hover-gold-color: #e0c265; /* Lighter gold for hover/active states */
@@ -81,7 +81,7 @@ body {
     text-align: center;
     margin-bottom: 25px;
     padding-bottom: 20px;
-    /* 🔑 NEW: Subtle Gold Divider for Clean Separation (uses original gold RGB) */
+    /* 🔑 NEW: Subtle Gold Divider for Clean Separation (uses new gold var) */
     border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 }
@@ -159,6 +159,7 @@ body {
     width: 4px;
     height: 100%;
     background-color: var(--gold-color);
+    border-radius: 2px;
     box-shadow: 1px 0 5px var(--gold-color);
 }
 
@@ -374,8 +375,7 @@ h1, h2 {
 .tgg-menu-button.active {
     /* 💥 REVERTED: Back to the Solid Gold CTA look for active buttons */
     background-image: none !important;
-    /* ORIGINAL: Hardcoded Gold Gradient */
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; /* Solid Gold Gradient */
     
     color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
     border: none !important; /* Remove border */
