@@ -4,7 +4,8 @@ const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
-        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?autoplay=1&rel=0', // Added &rel=0
+        // ⚡️ FIX 3: Added modest no-loop/rel=0 parameters for a better UX
+        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?autoplay=1&rel=0&modestbranding=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
     }
@@ -14,13 +15,21 @@ const bookData = {
 /**
  * Initializes the Ebooks module: attaches event listeners to gallery cards
  * to open the modal and handles modal opening/closing logic.
+ * ⚡️ This function is now designed to be called explicitly by the main app/router
+ * AFTER the trading-ebooks HTML has been inserted into the DOM.
  */
 function initEbooks() {
+    // Re-query the elements to ensure we are targeting the ones currently in the DOM
     const modal = document.getElementById('ebook-modal');
-    // Use the container to query the elements to ensure they are within this module
     const closeBtn = document.querySelector('.trading-ebooks .close-button');
     const galleryCards = document.querySelectorAll('.trading-ebooks .gallery-card');
 
+    if (!modal || galleryCards.length === 0) {
+        console.warn('Ebooks module elements not found. Initialization skipped/delayed.');
+        // Exit if elements are not present (e.g., if called too early by router)
+        return; 
+    }
+    
     /**
      * Fills and opens the modal with specific book data.
      * @param {string} bookId - The ID of the book to display.
@@ -34,26 +43,21 @@ function initEbooks() {
 
         const modalBody = document.getElementById('modal-body');
         
-        // Use a clearer structure with image and info for better UI/UX
         modalBody.innerHTML = `
             <h2 class="book-title-modal">${book.title}</h2>
-            <div class="modal-content-wrapper">
-                <div class="book-video-container">
-                    <iframe 
-                        src="${book.videoUrl}" 
-                        title="${book.title} Trailer"
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <div class="book-details-text">
-                    <p>${book.summary}</p>
-                </div>
-                <a href="${book.gumroadUrl}" target="_blank" class="buy-button tg-button-primary">
-                    Purchase on Gumroad
-                </a>
+            <div class="book-video-container">
+                <iframe 
+                    src="${book.videoUrl}" 
+                    title="${book.title} Trailer"
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
             </div>
+            <p>${book.summary}</p>
+            <a href="${book.gumroadUrl}" target="_blank" class="buy-button">
+                Purchase on Gumroad
+            </a>
         `;
         modal.classList.add('open');
     }
@@ -63,9 +67,8 @@ function initEbooks() {
      */
     function closeModal() {
         const iframe = modal.querySelector('iframe');
-        // ⚡️ FIX 1: Stop video playback by clearing the iframe source
+        // Stop video playback by clearing the iframe source
         if (iframe) {
-            // Clears the src, effectively stopping the video and preventing background audio
             iframe.src = ''; 
         }
         modal.classList.remove('open');
@@ -73,7 +76,9 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
+            // Prevent potential link/element issues in the card
+            e.preventDefault(); 
             const bookId = card.getAttribute('data-book-id');
             openModal(bookId);
         });
@@ -98,14 +103,11 @@ function initEbooks() {
         }
     });
 
-    console.log('Ebooks module initialized. Click handlers attached.');
+    console.log('Ebooks module initialized successfully with click handlers.');
 }
 
-// 💥 IMPORTANT: Ensure JS runs after the DOM is ready
-// If the module is loaded dynamically, this listener might need to be moved 
-// or replaced with a call from the main application router after injection.
-document.addEventListener('DOMContentLoaded', initEbooks);
-
-// Fallback for dynamic content loading, assuming initEbooks is called 
-// by the main router once the module content is injected.
-// If the issue persists, the call must be triggered by the router.
+// 💥 CRITICAL FIX: To handle dynamic SPA loading, export the function.
+// The main application logic MUST call initEbooks() after this module's HTML 
+// is injected into the DOM to ensure the click handlers are attached.
+// For testing locally without a router, uncomment the DOMContentLoaded call:
+// document.addEventListener('DOMContentLoaded', initEbooks);
