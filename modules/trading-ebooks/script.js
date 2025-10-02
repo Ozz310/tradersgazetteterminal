@@ -1,3 +1,4 @@
+
 const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
