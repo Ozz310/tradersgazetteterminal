@@ -16,27 +16,21 @@ const bookData = {
  * to open the modal and handles modal opening/closing logic.
  */
 function initEbooks() {
-    // Re-query the elements to ensure we are targeting the ones currently in the DOM
     const modal = document.getElementById('ebook-modal');
     const closeBtn = document.querySelector('.trading-ebooks .close-button');
     const galleryCards = document.querySelectorAll('.trading-ebooks .gallery-card');
 
     if (!modal || galleryCards.length === 0) {
-        // console.warn('Ebooks module elements not found. Initialization skipped/delayed.');
-        // If elements are still not found, we rely on the router/setTimeout fallback.
+        // If elements are not found when called, exit gracefully.
         return false; 
     }
     
     /**
      * Fills and opens the modal with specific book data.
-     * @param {string} bookId - The ID of the book to display.
      */
     function openModal(bookId) {
         const book = bookData[bookId];
-        if (!book) {
-            console.error(`Book data not found for ID: ${bookId}`);
-            return;
-        }
+        if (!book) return;
 
         const modalBody = document.getElementById('modal-body');
         
@@ -73,9 +67,11 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        // Remove existing listener to prevent duplicates in case of repeated calls
-        card.removeEventListener('click', card.clickHandler); 
-        
+        // Use a flag to avoid attaching listeners multiple times
+        if (card.hasAttribute('data-listeners-attached')) {
+            return;
+        }
+
         // Define click handler
         card.clickHandler = (e) => {
             e.preventDefault(); 
@@ -83,8 +79,9 @@ function initEbooks() {
             openModal(bookId);
         };
         
-        // Add new listener
+        // Add new listener and set flag
         card.addEventListener('click', card.clickHandler);
+        card.setAttribute('data-listeners-attached', 'true');
     });
 
     // Attach listeners for closing the modal
@@ -108,19 +105,23 @@ function initEbooks() {
     return true;
 }
 
-// 💥 CRITICAL FIX (Issue 3): Ensure initialization runs even if the router is slow/doesn't call it.
-// 1. Initial attempt on DOM load
-document.addEventListener('DOMContentLoaded', initEbooks);
-
-// 2. Fallback check for SPA/async loading (tries for up to 3 seconds)
-let initAttempts = 0;
-const maxAttempts = 10; // Check every 300ms for 3 seconds
-const initInterval = setInterval(() => {
-    if (initEbooks() || initAttempts >= maxAttempts) {
-        clearInterval(initInterval);
+// 💥 DEFINITIVE FIX (Issue 3): Use a Mutation Observer for guaranteed execution in an SPA environment.
+const observer = new MutationObserver((mutations, obs) => {
+    // Look for the main e-books module container (class 'trading-ebooks')
+    const ebookModule = document.querySelector('.trading-ebooks');
+    
+    // Check if the element exists and is inside a module container (common SPA pattern)
+    if (ebookModule && ebookModule.parentElement.classList.contains('module-container')) {
+        // Run the initialization function
+        initEbooks();
+        // Stop observing once the script has successfully run
+        obs.disconnect(); 
+        console.log('Mutation Observer stopped: Ebooks module is live and functional.');
     }
-    initAttempts++;
-}, 300); 
+});
 
-// For app router integration, the router should still call initEbooks() 
-// after the module is inserted.
+// Start observing the body for child list changes (when the router injects the module content)
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
