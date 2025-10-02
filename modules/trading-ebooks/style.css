@@ -5,6 +5,7 @@
 }
 
 .trading-ebooks {
+    /* 💥 FIX: Removed the collapsing negative margin. The global gap is now handled by .module-no-top-padding and the banner's negative margin. */
     margin-top: 0; 
     padding-top: 0;
     
@@ -20,29 +21,34 @@
     width: 100%;
     height: 250px; /* Default height for mobile/small screens */
     
-    /* 🔑 GAP FIX: Negative margin to pull banner into the gap */
+    /* 🔑 THE FIX: Negative margin to pull banner into the gap */
     margin-top: -20px; 
     margin-left: -20px;
     margin-right: -20px;
-    /* 🔑 GAP FIX: Increase width to span the full width of the parent container */
+    /* 🔑 THE FIX: Increase width to span the full width of the parent container */
     width: calc(100% + 40px);
     
     padding: 0; 
+    
+    /* Ensure no margin/padding on banner itself */
     margin-bottom: 0; 
     
+    /* 💡 CRITICAL FIX: Changed from /blob/ to /raw/ to ensure the image is loaded by the browser. */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
+    
     background-size: cover;
     /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) */
     background-position: center 65%; 
     background-repeat: no-repeat;
     
+    /* Adjust border radius to be square on top */
     border-radius: 0;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.7);
 }
 
-/* 🔑 FIX 1: Increase Banner Height for Desktop View (min-width: 769px) */
+/* 🔑 FIX: Increase Banner Height for Desktop View (min-width: 769px) */
 @media (min-width: 769px) {
     .trading-ebooks .ebooks-cover-photo {
         height: 300px; /* Increased height for better banner visibility */
@@ -227,7 +233,7 @@
     background: var(--solid-gold-gradient); /* Enforcing Gradient */
     color: var(--dark-color-for-text); /* Dark text on gold button */
     border: none;
-    /* 🔑 FIX 2: Explicitly remove underline for consistency */
+    /* 🔑 FIX: Explicitly remove underline for consistency */
     text-decoration: none; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 8px rgba(221, 170, 51, 0.5); /* Gradient shadow */
 }
