@@ -4,7 +4,6 @@ const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
-        // ⚡️ FIX 3: Added modest no-loop/rel=0 parameters for a better UX
         videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?autoplay=1&rel=0&modestbranding=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
@@ -15,8 +14,6 @@ const bookData = {
 /**
  * Initializes the Ebooks module: attaches event listeners to gallery cards
  * to open the modal and handles modal opening/closing logic.
- * ⚡️ This function is now designed to be called explicitly by the main app/router
- * AFTER the trading-ebooks HTML has been inserted into the DOM.
  */
 function initEbooks() {
     // Re-query the elements to ensure we are targeting the ones currently in the DOM
@@ -25,9 +22,9 @@ function initEbooks() {
     const galleryCards = document.querySelectorAll('.trading-ebooks .gallery-card');
 
     if (!modal || galleryCards.length === 0) {
-        console.warn('Ebooks module elements not found. Initialization skipped/delayed.');
-        // Exit if elements are not present (e.g., if called too early by router)
-        return; 
+        // console.warn('Ebooks module elements not found. Initialization skipped/delayed.');
+        // If elements are still not found, we rely on the router/setTimeout fallback.
+        return false; 
     }
     
     /**
@@ -76,38 +73,54 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        card.addEventListener('click', (e) => {
-            // Prevent potential link/element issues in the card
+        // Remove existing listener to prevent duplicates in case of repeated calls
+        card.removeEventListener('click', card.clickHandler); 
+        
+        // Define click handler
+        card.clickHandler = (e) => {
             e.preventDefault(); 
             const bookId = card.getAttribute('data-book-id');
             openModal(bookId);
-        });
+        };
+        
+        // Add new listener
+        card.addEventListener('click', card.clickHandler);
     });
 
-    // Attach click listeners for closing the modal
+    // Attach listeners for closing the modal
     if (closeBtn) {
         closeBtn.addEventListener('click', closeModal);
     }
     
-    // Close modal when clicking outside the modal content
     window.addEventListener('click', (event) => {
         if (event.target === modal) {
             closeModal();
         }
     });
     
-    // Close modal on ESC key press
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && modal.classList.contains('open')) {
             closeModal();
         }
     });
 
-    console.log('Ebooks module initialized successfully with click handlers.');
+    console.log('Ebooks module initialized successfully.');
+    return true;
 }
 
-// 💥 CRITICAL FIX: To handle dynamic SPA loading, export the function.
-// The main application logic MUST call initEbooks() after this module's HTML 
-// is injected into the DOM to ensure the click handlers are attached.
-// For testing locally without a router, uncomment the DOMContentLoaded call:
-// document.addEventListener('DOMContentLoaded', initEbooks);
+// 💥 CRITICAL FIX (Issue 3): Ensure initialization runs even if the router is slow/doesn't call it.
+// 1. Initial attempt on DOM load
+document.addEventListener('DOMContentLoaded', initEbooks);
+
+// 2. Fallback check for SPA/async loading (tries for up to 3 seconds)
+let initAttempts = 0;
+const maxAttempts = 10; // Check every 300ms for 3 seconds
+const initInterval = setInterval(() => {
+    if (initEbooks() || initAttempts >= maxAttempts) {
+        clearInterval(initInterval);
+    }
+    initAttempts++;
+}, 300); 
+
+// For app router integration, the router should still call initEbooks() 
+// after the module is inserted.
