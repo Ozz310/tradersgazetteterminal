@@ -5,7 +5,7 @@
 }
 
 .trading-ebooks {
-    /* 💥 ROLLBACK: Removed -1px margin and aggressive !important tags to fix global layout collapse */
+    /* 💥 FIX: Removed the collapsing negative margin. The global gap is now handled by .module-no-top-padding. */
     margin-top: 0; 
     padding-top: 0;
     
