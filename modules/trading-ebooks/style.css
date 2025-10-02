@@ -5,7 +5,10 @@
 }
 
 .trading-ebooks {
-    /* **CLEANUP:** Removed redundant margin/padding here, relying on main.css fix */
+    /* 💥 RE-INTRODUCED AGGRESSIVE FIX: Force zero margin and padding at the top */
+    margin-top: 0 !important; 
+    padding-top: 0 !important;
+    
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
