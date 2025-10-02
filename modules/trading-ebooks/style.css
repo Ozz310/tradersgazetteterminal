@@ -5,7 +5,7 @@
 }
 
 .trading-ebooks {
-    /* 💥 RE-INTRODUCED AGGRESSIVE FIX: Force zero margin and padding at the top */
+    /* 💥 AGGRESSIVE FIX #1: Force zero margin and padding at the module root */
     margin-top: 0 !important; 
     padding-top: 0 !important;
     
@@ -20,7 +20,10 @@
 .trading-ebooks .ebooks-cover-photo {
     width: 100%;
     height: 250px;
-    margin: 0; 
+    
+    /* 💥 AGGRESSIVE FIX #2: Force zero margin and padding on the banner itself */
+    margin: 0 !important; 
+    padding: 0 !important; 
     
     background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Trading%20E%20books.png?raw=true'); 
     
