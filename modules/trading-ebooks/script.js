@@ -4,7 +4,8 @@ const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
-        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?autoplay=1&rel=0&modestbranding=1', 
+        // FIX: Removed '&autoplay=1' to allow the video to play consistently in the modal
+        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?rel=0&modestbranding=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
     }
@@ -99,7 +100,7 @@ function initEbooks() {
     return true;
 }
 
-// 💥 FINAL DEFINITIVE FIX: Use three-pronged initialization to reliably execute the script 
+// 💥 FINAL DEFINITIVE FIX: Use three-pronged initialization to reliably execute the script 
 // regardless of complex router loading order.
 
 // 1. Call on DOMContentLoaded (Standard practice)
