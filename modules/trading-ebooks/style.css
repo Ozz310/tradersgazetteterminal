@@ -5,7 +5,7 @@
 }
 
 .trading-ebooks {
-    /* 💥 FIX: Removed the collapsing negative margin. The global gap is now handled by .module-no-top-padding. */
+    /* 💥 FIX: Removed the collapsing negative margin. The global gap is now handled by .module-no-top-padding and the banner's negative margin. */
     margin-top: 0; 
     padding-top: 0;
     
@@ -16,14 +16,24 @@
     min-height: 100%;
 }
 
-/* ⚡️ FIX 2: Header Banner Positioning and Sizing */
+/* ⚡️ CRITICAL BANNER POSITIONING FIX: Use negative margins to pull the banner up 
+   - This explicitly counteracts the 20px padding from the parent .module-container 
+   - This is the technique seen in the news-room page. */
 .trading-ebooks .ebooks-cover-photo {
     width: 100%;
     height: 250px;
     
-    /* Ensure no margin/padding on banner itself */
-    margin: 0; 
+    /* 🔑 THE FIX: Negative margin to pull banner into the gap */
+    margin-top: -20px; 
+    margin-left: -20px;
+    margin-right: -20px;
+    /* 🔑 THE FIX: Increase width to span the full width of the parent container */
+    width: calc(100% + 40px);
+    
     padding: 0; 
+    
+    /* Ensure no margin/padding on banner itself */
+    margin-bottom: 0; 
     
     /* 💡 CRITICAL FIX: Changed from /blob/ to /raw/ to ensure the image is loaded by the browser. */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
@@ -33,7 +43,10 @@
     background-position: center 65%; 
     background-repeat: no-repeat;
     
+    /* Adjust border radius to be square on top */
     border-radius: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.7);
 }
 
@@ -100,11 +113,12 @@
     min-height: 40px; 
 }
 
-/* Modal Styling */
+/* Modal Styling - CRITICAL POP-UP FIXES APPLIED */
 .trading-ebooks .ebook-modal {
     display: none;
     position: fixed;
-    z-index: 1000; 
+    /* 🔑 FIX: Max Z-index to ensure it sits above all other elements */
+    z-index: 99999; 
     left: 0;
     top: 0;
     width: 100%;
@@ -116,7 +130,8 @@
 }
 
 .trading-ebooks .ebook-modal.open {
-    display: flex; 
+    /* 🔑 CRITICAL FIX: FORCE DISPLAY to override any conflicting CSS rules */
+    display: flex !important; 
     align-items: center;
     justify-content: center;
 }
