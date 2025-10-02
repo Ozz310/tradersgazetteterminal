@@ -5,7 +5,10 @@
 }
 
 .trading-ebooks {
-    /* ⚡️ FIX 1: Removed margin-top: -20px; The top gap is now fixed by the class on index.html */
+    /* ⚡️ FIX 1: Aggressive reset to kill any container padding/margin from the top */
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -22,8 +25,8 @@
     background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Trading%20E%20books.png?raw=true'); 
     
     background-size: cover;
-    /* ⚡️ FIX 2: Move the focus vertically down (e.g., 35% from the top) for designed focus */
-    background-position: center 35%; 
+    /* ⚡️ FIX 2: Move the focus vertically DOWN (e.g., 65% from the top) for designed focus */
+    background-position: center 65%; 
     background-repeat: no-repeat;
     
     border-radius: 0;
@@ -37,7 +40,7 @@
     flex-wrap: wrap;
     gap: 30px; 
     justify-content: center;
-    padding: 30px 20px; /* Added internal padding top/bottom/sides for content spacing */
+    padding: 30px 20px; /* Internal padding for content spacing */
 }
 
 /* ⚡️ UI/UX Enhancement: Modern Minimalist Card (Finalized) */
@@ -59,8 +62,8 @@
 
 .trading-ebooks .gallery-card:hover {
     transform: translateY(-8px) scale(1.02); 
-    /* Enhanced Gold Glow using the requested gradient/color */
-    box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 25px 5px rgba(221, 170, 51, 0.5); /* Use DDAA33 color */
+    /* Enhanced Gold Glow */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 25px 5px rgba(221, 170, 51, 0.5); 
     border-color: #DDAA33; 
 }
 
@@ -70,12 +73,13 @@
     height: auto;
     border-radius: 4px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.7); 
+    /* ⚡️ UI/UX: Subtle gold-tinted shadow for premium look */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 10px rgba(221, 170, 51, 0.3);
 }
 
 /* ⚡️ UI/UX: Apply Gold Gradient to Header */
 .trading-ebooks .book-info h3 {
-    background: var(--solid-gold-gradient); /* Use the defined gradient */
+    background: var(--solid-gold-gradient); 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 1.6rem;
@@ -92,7 +96,7 @@
     min-height: 40px; 
 }
 
-/* Modal Styling (Cleaned up and finalized) */
+/* Modal Styling */
 .trading-ebooks .ebook-modal {
     display: none;
     position: fixed;
@@ -190,7 +194,6 @@
 
 /* Purchase Button (Finalized) */
 .trading-ebooks .buy-button {
-    /* Overriding default tg-button-primary with the requested gradient for the modal only */
     display: block;
     width: 100%;
     max-width: 350px; 
