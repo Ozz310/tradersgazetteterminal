@@ -5,10 +5,7 @@
 }
 
 .trading-ebooks {
-    /* ⚡️ FIX 1: Aggressive reset to kill any container padding/margin from the top */
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    
+    /* **CLEANUP:** Removed redundant margin/padding here, relying on main.css fix */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -25,7 +22,7 @@
     background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Trading%20E%20books.png?raw=true'); 
     
     background-size: cover;
-    /* ⚡️ FIX 2: Move the focus vertically DOWN (e.g., 65% from the top) for designed focus */
+    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) */
     background-position: center 65%; 
     background-repeat: no-repeat;
     
