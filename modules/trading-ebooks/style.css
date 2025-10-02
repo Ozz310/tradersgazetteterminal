@@ -5,9 +5,9 @@
 }
 
 .trading-ebooks {
-    /* 💥 AGGRESSIVE FIX #1: Force zero margin and padding at the module root */
-    margin-top: 0 !important; 
-    padding-top: 0 !important;
+    /* 💥 ROLLBACK: Removed -1px margin and aggressive !important tags to fix global layout collapse */
+    margin-top: 0; 
+    padding-top: 0;
     
     box-sizing: border-box;
     display: flex;
@@ -21,11 +21,12 @@
     width: 100%;
     height: 250px;
     
-    /* 💥 AGGRESSIVE FIX #2: Force zero margin and padding on the banner itself */
-    margin: 0 !important; 
-    padding: 0 !important; 
+    /* Ensure no margin/padding on banner itself */
+    margin: 0; 
+    padding: 0; 
     
-    background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Trading%20E%20books.png?raw=true'); 
+    /* 💡 CRITICAL FIX: Changed from /blob/ to /raw/ to ensure the image is loaded by the browser. */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
     
     background-size: cover;
     /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) */
