@@ -1,10 +1,10 @@
 /* style.css - Trading E-Books Module */
 
-/* 💥 CRITICAL LAYOUT FIX (Banner must touch top/sides) */
+/* 💥 CRITICAL FIX: Ensure element starts at the very top of the scrollable content area */
 .trading-ebooks {
-    /* This negative margin is CRITICAL to pull the content up and cover the 20px padding from .module-container */
+    /* This negative margin is CRITICAL to pull the content up and cover the 20px padding from the parent container. */
     margin-top: -20px !important; 
-    padding: 0 !important; /* Remove padding here, it's handled by .module-container */
+    padding: 0 !important; /* Must remove internal padding that creates whitespace */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -12,18 +12,21 @@
     min-height: calc(100vh - 40px);
 }
 
+/* 🚀 BANNER FIX: Full width, correct height, centralized image */
 .trading-ebooks .ebooks-banner {
+    /* Renaming from 'ebooks-cover-photo' to 'ebooks-banner' is crucial for proper styling */
     width: 100%;
     height: 350px; 
     position: relative;
+    /* Background image is applied via inline style in HTML, so we set properties here */
     background-size: cover;
-    background-position: center; 
+    background-position: center 60%; /* Center the image and slightly bias to the top */
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.6); 
     margin-bottom: 40px; 
 }
 
-/* 🚀 Banner Title Styling (Gold Accent) */
+/* Banner Title Styling (Empty here, but kept for future use if title is added back) */
 .trading-ebooks .banner-text-content {
     position: absolute;
     top: 50%;
@@ -37,10 +40,6 @@
 .trading-ebooks .banner-text-content h1 {
     color: var(--header-gold-color);
     font-size: 3.5rem; 
-    font-family: var(--font-secondary); 
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    margin: 0;
     text-shadow: 0 0 12px rgba(255, 215, 0, 0.7), 0 0 4px rgba(0, 0, 0, 0.8);
 }
 
@@ -53,13 +52,14 @@
     flex-wrap: wrap;
     gap: 30px;
     justify-content: flex-start; /* FIX: Align cards to the left */
-    padding: 0 20px; /* Re-introduce horizontal padding for content */
+    padding: 0 20px; 
 }
 
+/* Gallery Card Premium Styling and Constraint FIX */
 .trading-ebooks .gallery-card {
     background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
     padding: 15px;
-    /* 🔑 FIX: Enforce the specific width for the card to prevent oversized display */
+    /* 🔑 CRITICAL FIX: Enforce specific width to prevent oversized card */
     width: 250px; 
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -84,11 +84,13 @@
     align-items: center;
     justify-content: center; 
     padding-bottom: 15px;
+    /* 🔑 CRITICAL FIX: Constrain height for the image wrapper */
     max-height: 200px; 
     height: auto;
 }
 
 .trading-ebooks .book-cover {
+    /* 🔑 CRITICAL FIX: Image must respect wrapper constraints */
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
@@ -108,7 +110,7 @@
     margin-top: 10px;
 }
 
-/* Modal Styling - Premium Refinements */
+/* Modal Styling - Premium & Functional Refinements */
 .trading-ebooks .ebook-modal {
     display: none;
     position: fixed;
@@ -124,7 +126,7 @@
 }
 
 .trading-ebooks .ebook-modal.open {
-    display: flex; 
+    display: flex; /* FIX: Use flex for perfect centering */
     align-items: center;
     justify-content: center;
 }
@@ -139,7 +141,6 @@
     border-radius: 12px;
     position: relative;
     box-shadow: 0 8px 30px rgba(0,0,0,0.9); 
-    
     transform: scale(0.95);
     opacity: 0;
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
@@ -218,11 +219,6 @@
         height: 180px; 
         margin-bottom: 20px;
     }
-    
-    .trading-ebooks .banner-text-content h1 {
-        font-size: 2rem;
-        letter-spacing: 2px;
-    }
 
     /* Content and Card adjustments */
     .trading-ebooks .ebooks-content-container {
@@ -252,13 +248,5 @@
     .trading-ebooks .modal-content {
         margin: 10px auto;
         padding: 20px;
-    }
-
-    .trading-ebooks .modal-body h2 {
-        font-size: 1.5rem;
-    }
-
-    .trading-ebooks .modal-body p {
-        font-size: 0.9rem;
     }
 }
