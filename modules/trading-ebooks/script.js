@@ -21,7 +21,7 @@ function initEbooks() {
     const galleryCards = document.querySelectorAll('.trading-ebooks .gallery-card');
 
     if (!modal || galleryCards.length === 0) {
-        // If elements are not found when called, exit gracefully.
+        // If elements are not found when called, exit without error.
         return false; 
     }
     
@@ -58,7 +58,6 @@ function initEbooks() {
      */
     function closeModal() {
         const iframe = modal.querySelector('iframe');
-        // Stop video playback by clearing the iframe source
         if (iframe) {
             iframe.src = ''; 
         }
@@ -67,21 +66,16 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        // Use a flag to avoid attaching listeners multiple times
-        if (card.hasAttribute('data-listeners-attached')) {
-            return;
-        }
-
-        // Define click handler
+        // Prevent duplicate listeners from previous initialization attempts
+        card.removeEventListener('click', card.clickHandler); 
+        
         card.clickHandler = (e) => {
             e.preventDefault(); 
             const bookId = card.getAttribute('data-book-id');
             openModal(bookId);
         };
         
-        // Add new listener and set flag
         card.addEventListener('click', card.clickHandler);
-        card.setAttribute('data-listeners-attached', 'true');
     });
 
     // Attach listeners for closing the modal
@@ -101,26 +95,23 @@ function initEbooks() {
         }
     });
 
-    console.log('Ebooks module initialized successfully.');
+    console.log('Ebooks module initialized successfully via Mutation Observer.');
     return true;
 }
 
-// 💥 DEFINITIVE FIX (Issue 3): Use a Mutation Observer for guaranteed execution in an SPA environment.
+// 💥 DEFINITIVE FIX (Issue 3): Use a Mutation Observer to ensure execution immediately after injection.
 const observer = new MutationObserver((mutations, obs) => {
-    // Look for the main e-books module container (class 'trading-ebooks')
     const ebookModule = document.querySelector('.trading-ebooks');
-    
-    // Check if the element exists and is inside a module container (common SPA pattern)
+    // Check if the trading-ebooks element is now in the DOM
     if (ebookModule && ebookModule.parentElement.classList.contains('module-container')) {
-        // Run the initialization function
         initEbooks();
-        // Stop observing once the script has successfully run
+        // Stop observing once initialized
         obs.disconnect(); 
-        console.log('Mutation Observer stopped: Ebooks module is live and functional.');
+        console.log('Mutation Observer stopped: Ebooks module is live.');
     }
 });
 
-// Start observing the body for child list changes (when the router injects the module content)
+// Start observing the body for child list changes (i.e., when the router injects the module)
 observer.observe(document.body, {
     childList: true,
     subtree: true
