@@ -1,5 +1,3 @@
-// script.js
-
 const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
@@ -32,10 +30,8 @@ function initEbooks() {
     }
 
     function closeModal() {
-        // Stop the video when closing the modal
         const iframe = modal.querySelector('iframe');
         if (iframe) {
-            // Setting the source to an empty string stops playback
             iframe.src = '';
         }
         modal.classList.remove('open');
