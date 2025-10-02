@@ -205,14 +205,9 @@ body {
     scrollbar-width: none;
 }
 
-/* 🚀 DEFINITIVE FIX (Issue 1): Target the module-container when it contains the e-books module 
-   to remove the top 20px padding and flush it to the border. */
-.module-container:has(.trading-ebooks) {
-    padding-top: 0 !important;
-}
+/* 🚀 REMOVED: The unreliable :has() fix is removed. The local module CSS will now handle the padding. */
 
 /* 🚀 PROACTIVE FIX: Class to remove the top padding for full-bleed content (e.g., banner pages) */
-/* This class is now redundant for e-books but kept for other modules */
 .module-container .module-no-top-padding {
     padding-top: 0 !important;
 }
