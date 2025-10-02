@@ -194,7 +194,7 @@ body {
 }
 
 /* 💥 CRITICAL GLOBAL FIX: REMOVED horizontal padding from this wrapper. 
-   Internal modules (like Dashboard) now handle their own padding. */
+    Internal modules (like Dashboard) now handle their own padding. */
 .module-container {
     flex-grow: 1;
     overflow-y: auto;
@@ -203,6 +203,12 @@ body {
     box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.2);
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* 🚀 PROACTIVE FIX: Class to remove the top padding for full-bleed content (e.g., banner pages) */
+/* Use a high specificity selector to override the padding: 20px 0; from .module-container */
+.module-container .module-no-top-padding {
+    padding-top: 0 !important;
 }
 
 .module-container::-webkit-scrollbar {
