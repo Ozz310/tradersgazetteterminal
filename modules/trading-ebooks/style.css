@@ -28,6 +28,29 @@
     margin-bottom: 40px; 
  } 
 
+/* --- Banner Text Styling (New) --- */
+.trading-ebooks .banner-text-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+}
+
+.trading-ebooks .banner-text-content h1 {
+    color: var(--header-gold-color);
+    font-size: 4rem; /* Large, bold title */
+    font-family: 'Playfair Display', serif; /* Use a sophisticated font */
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin: 0;
+    /* Deep gold shadow for premium depth */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 5px rgba(0, 0, 0, 0.8);
+}
+/* --------------------------------- */
+
  .trading-ebooks .ebooks-content-container { 
      max-width: 1200px; 
      display: flex; 
@@ -38,7 +61,7 @@
      padding: 20px; /* Use consistent padding */ 
      width: 100%; /* Take full width */ 
      box-sizing: border-box; 
-    /* 🔑 TGG Theme alignment enforcement */
+    /* 🔑 TGG Theme alignment enforcement: Center the max-width container */
     margin: 0 auto;
  } 
 
@@ -242,7 +265,13 @@
          /* 🚀 UI/UX REFINEMENT: Reduced bottom margin for mobile view. */
          margin-bottom: 20px; 
      } 
-
+     
+     /* Mobile Banner Title Adjustment */
+     .trading-ebooks .banner-text-content h1 {
+         font-size: 2rem;
+         letter-spacing: 3px;
+     }
+     
      .trading-ebooks .ebooks-content-container { 
          flex-direction: column; 
          align-items: center; 
