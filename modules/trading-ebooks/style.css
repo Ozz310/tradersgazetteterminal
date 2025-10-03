@@ -48,7 +48,7 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.7);
 }
 
-/* 🔑 FIX 1: Increase Banner Height for Desktop View (min-width: 769px) */
+/* 🔑 FIX: Increase Banner Height for Desktop View (min-width: 769px) - Isolated to prevent card issues */
 @media (min-width: 769px) {
     .trading-ebooks .ebooks-cover-photo {
         height: 300px; /* Increased height for better banner visibility */
@@ -233,7 +233,7 @@
     background: var(--solid-gold-gradient); /* Enforcing Gradient */
     color: var(--dark-color-for-text); /* Dark text on gold button */
     border: none;
-    /* 🔑 FIX 2: Explicitly remove underline for consistency */
+    /* 🔑 FIX: Explicitly remove underline for consistency */
     text-decoration: none; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 8px rgba(221, 170, 51, 0.5); /* Gradient shadow */
 }
