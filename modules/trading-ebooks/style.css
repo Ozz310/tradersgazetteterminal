@@ -123,7 +123,7 @@
     min-height: 40px; 
 }
 
-/* Modal Styling */
+/* Modal Styling - Desktop/General */
 .trading-ebooks .ebook-modal {
     display: none;
     position: fixed;
@@ -253,4 +253,42 @@
 @keyframes modalSlideDown {
     from { transform: translateY(-50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness */
+@media (max-width: 768px) {
+    /* Adjust modal for better fit on small screens */
+    .trading-ebooks .modal-content {
+        width: 95%; /* Use almost full width */
+        margin: 20px auto; /* Reduce vertical margin */
+        padding: 20px 15px; /* Reduce horizontal padding */
+        border: 1px solid #DDAA33; /* Slightly thinner border */
+        /* Enable scrolling within the modal body if content overflows */
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+
+    .trading-ebooks .modal-body {
+        gap: 20px; /* Tighter spacing */
+        padding-top: 10px;
+    }
+
+    .trading-ebooks .modal-body h2 {
+        font-size: 1.8rem; /* Smaller title */
+    }
+
+    /* Full width buttons on mobile, no max-width constraint */
+    .trading-ebooks .buy-button {
+        width: 100%; 
+        max-width: none; /* Crucial: overrides the desktop max-width */
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+    
+    /* Ensure video container maintains aspect ratio on small screens */
+    .trading-ebooks .book-video-container {
+        /* max-width remains 600px, but it will be constrained by its parent (95% of screen) */
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
