@@ -43,7 +43,7 @@ function initEbooks() {
                     data-video-src="${book.videoUrl}" // Store the real URL here
                     title="${book.title} Trailer"
                     frameborder="0" 
-                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" 
+                    allow="accelerometer; **autoplay**; encrypted-media; gyroscope; picture-in-picture" // 🔑 CRITICAL FIX: Add 'autoplay' permission
                     allowfullscreen>
                 </iframe>
             </div>
@@ -55,11 +55,11 @@ function initEbooks() {
         
         modal.classList.add('open');
         
-        // 2. CRITICAL FIX: After modal opens, find the iframe and set its source to force reload.
+        // 2. Set the source with a slight delay for reliable rendering
         const iframe = document.getElementById('youtube-iframe');
         if (iframe) {
             const videoSrc = iframe.getAttribute('data-video-src');
-            // Use setTimeout to ensure the modal is visibly rendered (important for some browsers to load iframes correctly)
+            // Use setTimeout to ensure the modal is visibly rendered before loading iframe content
             setTimeout(() => {
                 iframe.src = videoSrc;
             }, 50); 
@@ -70,7 +70,7 @@ function initEbooks() {
      * Closes the modal and stops the video playback.
      */
     function closeModal() {
-        // Find the iframe by its new ID
+        // Find the iframe by its ID
         const iframe = document.getElementById('youtube-iframe'); 
         if (iframe) {
             // Stop the video by setting src back to blank
@@ -81,7 +81,7 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        // ... (rest of the listeners are unchanged and sound)
+        // Remove and re-add listeners to prevent duplicates
         card.removeEventListener('click', card.clickHandler); 
         
         card.clickHandler = (e) => {
@@ -93,7 +93,7 @@ function initEbooks() {
         card.addEventListener('click', card.clickHandler);
     });
 
-    // Attach listeners for closing the modal (unchanged)
+    // Attach listeners for closing the modal
     if (closeBtn) {
         closeBtn.addEventListener('click', closeModal);
     }
@@ -114,7 +114,7 @@ function initEbooks() {
     return true;
 }
 
-// 💥 FINAL DEFINITIVE FIX: Use robust initialization (unchanged)
+// 💥 FINAL DEFINITIVE FIX: Use robust initialization
 document.addEventListener('DOMContentLoaded', initEbooks);
 initEbooks();
 setTimeout(initEbooks, 200);
