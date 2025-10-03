@@ -2,48 +2,48 @@
 
 /* Define the requested gradient for reuse */
 :root {
-    --solid-gold-gradient: linear-gradient(145deg, #F0D788, #DDAA33);
+    --solid-gold-gradient: linear-gradient(145deg, #F0D788, #DDAA33);
 }
 
 .trading-ebooks {
-    /* 🔑 FIX: Set standard padding for the module content itself (20px is common padding on the site) */
-    margin: 0;
-    padding: 20px; 
-    
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100%;
+    /* Reset margins and use standard module padding */
+    margin: 0;
+    padding: 20px; 
+    
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
 }
 
 /* ⚡️ CRITICAL BANNER POSITIONING FIX: Re-implement negative margins to pull the banner up and fill the width */
 .trading-ebooks .ebooks-cover-photo {
-    width: 100%; 
-    height: 250px; /* Default height for mobile/small screens */
-    
-    /* 🔑 THE FIX: Negative margin to pull banner up, and stretch it to fill the gap/width */
-    margin-top: -20px; 
-    margin-left: -20px;
-    margin-right: -20px;
-    /* Calculate width to fill the full container width plus the 20px padding on each side */
-    width: calc(100% + 40px);
-    
-    padding: 0; 
-    margin-bottom: 30px; /* Space below the banner */
-    
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
-    background-size: cover;
-    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) for stability */
-    background-position: center 65%; 
-    background-repeat: no-repeat;
-    
-    /* Ensure smooth edges on the bottom */
-    border-radius: 0;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
-    position: relative; 
+    width: 100%; 
+    height: 250px; /* Default height for mobile/small screens */
+    
+    /* 🔑 THE FIX: Negative margin to pull banner up, and stretch it to fill the width */
+    margin-top: -20px; 
+    margin-left: -20px;
+    margin-right: -20px;
+    /* Calculate width to fill the full container width plus the 20px padding on each side */
+    width: calc(100% + 40px);
+    
+    padding: 0; 
+    margin-bottom: 30px; /* Space below the banner */
+    
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
+    background-size: cover;
+    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) for stability */
+    background-position: center 65%; 
+    background-repeat: no-repeat;
+    
+    /* Ensure smooth edges on the bottom */
+    border-radius: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    position: relative; 
 }
 
 /* 🔑 FIX: Increase Banner Height for Desktop View (min-width: 769px) */
@@ -55,193 +55,202 @@
 
 
 .trading-ebooks .ebooks-content-container {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px; 
-    justify-content: center;
-    padding: 0; 
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; 
+    justify-content: center;
+    padding: 0; 
+    /* 🔑 FIX: Enforce stacking context for shadows/modals to render correctly */
+    position: relative; 
+    z-index: 10; 
 }
 
 /* ⚡️ UI/UX Enhancement: Modern Minimalist Card (Finalized) */
 .trading-ebooks .gallery-card {
-    background-color: rgba(34, 34, 34, 0.6); 
-    border: 1px solid rgba(255, 215, 0, 0.1); 
-    padding: 25px;
-    border-radius: 12px; 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    width: 280px; 
-    overflow: hidden; 
+    background-color: rgba(34, 34, 34, 0.6); 
+    border: 1px solid rgba(255, 215, 0, 0.1); 
+    padding: 25px;
+    border-radius: 12px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    width: 280px; 
+    overflow: hidden; 
 }
 
 .trading-ebooks .gallery-card:hover {
-    transform: translateY(-8px) scale(1.02); 
-    box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 25px 5px rgba(221, 170, 51, 0.5); 
-    border-color: #DDAA33; 
+    transform: translateY(-8px) scale(1.02); 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 25px 5px rgba(221, 170, 51, 0.5); 
+    border-color: #DDAA33; 
 }
 
 .trading-ebooks .book-cover {
-    width: 100%;
-    max-width: 180px; 
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 10px rgba(221, 170, 51, 0.3);
+    /* 🔑 CRITICAL FIX: Ensure image respects width constraints as a block element */
+    display: block; 
+    /* 🔑 FIX: Ensure height is fluid and the width is constrained */
+    width: 100%;
+    max-width: 180px; 
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 10px rgba(221, 170, 51, 0.3);
+    /* 🔑 FIX: Add margin auto to center the image if max-width is hit */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .trading-ebooks .book-info h3 {
-    background: var(--solid-gold-gradient); 
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 1.6rem;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
+    background: var(--solid-gold-gradient); 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.6rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
 }
 
 .trading-ebooks .book-info p {
-    color: var(--text-color-light, #cccccc);
-    font-size: 0.95rem;
-    margin-top: 10px;
-    min-height: 40px; 
+    color: var(--text-color-light, #cccccc);
+    font-size: 0.95rem;
+    margin-top: 10px;
+    min-height: 40px; 
 }
 
 /* Modal Styling */
 .trading-ebooks .ebook-modal {
-    display: none;
-    position: fixed;
-    z-index: 99999; 
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto; 
-    background-color: rgba(0,0,0,0.95); 
-    backdrop-filter: blur(5px);
-    animation: fadeIn 0.3s ease-out;
+    display: none;
+    position: fixed;
+    z-index: 99999; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; 
+    background-color: rgba(0,0,0,0.95); 
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
 }
 
 .trading-ebooks .ebook-modal.open {
-    display: flex !important; 
-    align-items: center;
-    justify-content: center;
+    display: flex !important; 
+    align-items: center;
+    justify-content: center;
 }
 
 .trading-ebooks .modal-content {
-    background-color: var(--content-bg-color-darker, #1a1a1a); 
-    margin: 40px auto; 
-    padding: 30px;
-    border: 2px solid #DDAA33; 
-    width: 90%;
-    max-width: 900px;
-    border-radius: 12px;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-    animation: modalSlideDown 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: var(--content-bg-color-darker, #1a1a1a); 
+    margin: 40px auto; 
+    padding: 30px;
+    border: 2px solid #DDAA33; 
+    width: 90%;
+    max-width: 900px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+    animation: modalSlideDown 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .trading-ebooks .close-button {
-    color: #F0D788; 
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 36px;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s;
+    color: #F0D788; 
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 36px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: color 0.2s;
 }
 
 .trading-ebooks .close-button:hover {
-    color: #fff;
+    color: #fff;
 }
 
 .trading-ebooks .modal-body {
-    display: flex; 
-    flex-direction: column;
-    gap: 30px;
-    padding-top: 20px;
-    align-items: center; 
+    display: flex; 
+    flex-direction: column;
+    gap: 30px;
+    padding-top: 20px;
+    align-items: center; 
 }
 
 .trading-ebooks .modal-body h2 {
-    background: var(--solid-gold-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    font-weight: 800;
+    background: var(--solid-gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: 800;
 }
 
 /* Video Container for 16:9 aspect ratio */
 .trading-ebooks .book-video-container {
-    position: relative;
-    width: 100%; 
-    max-width: 600px;
-    padding-bottom: 56.25%; 
-    height: 0;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    position: relative;
+    width: 100%; 
+    max-width: 600px;
+    padding-bottom: 56.25%; 
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
 .trading-ebooks .book-video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 .trading-ebooks .modal-body p {
-    color: var(--text-color);
-    line-height: 1.6;
-    text-align: center; 
-    max-width: 700px;
+    color: var(--text-color);
+    line-height: 1.6;
+    text-align: center; 
+    max-width: 700px;
 }
 
 /* Purchase Button (Finalized) */
 .trading-ebooks .buy-button {
-    display: block;
-    width: 100%;
-    max-width: 350px; 
-    margin: 20px auto 0;
-    text-align: center;
-    padding: 14px 25px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border-radius: 6px;
-    letter-spacing: 0.5px;
-    transition: all 0.3s;
-    background: var(--solid-gold-gradient);
-    color: var(--dark-color-for-text);
-    border: none;
-    text-decoration: none; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 8px rgba(221, 170, 51, 0.5);
+    display: block;
+    width: 100%;
+    max-width: 350px; 
+    margin: 20px auto 0;
+    text-align: center;
+    padding: 14px 25px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    background: var(--solid-gold-gradient);
+    color: var(--dark-color-for-text);
+    border: none;
+    text-decoration: none; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 8px rgba(221, 170, 51, 0.5);
 }
 .trading-ebooks .buy-button:hover {
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    transform: scale(1.03);
 }
 
 /* Animations */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes modalSlideDown {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
