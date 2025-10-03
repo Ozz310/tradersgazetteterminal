@@ -5,6 +5,7 @@ const bookData = {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
         // Using standard embed URL without autoplay for modal reliability
+        // The autoplay is now only allowed via the iframe's 'allow' attribute for security compliance
         videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?rel=0&modestbranding=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
@@ -12,9 +13,9 @@ const bookData = {
 };
 
 /**
- * Initializes the Ebooks module: attaches event listeners to gallery cards
- * to open the modal and handles modal opening/closing logic.
- */
+ * Initializes the Ebooks module: attaches event listeners to gallery cards
+ * to open the modal and handles modal opening/closing logic.
+ */
 function initEbooks() {
     const modal = document.getElementById('ebook-modal');
     const closeBtn = document.querySelector('.trading-ebooks .close-button');
@@ -25,45 +26,62 @@ function initEbooks() {
     }
     
     /**
-     * Fills and opens the modal with specific book data.
+     * Fills and opens the modal with specific book data using pure DOM manipulation.
      */
     function openModal(bookId) {
         const book = bookData[bookId];
         if (!book) return;
 
-        const modalBody = document.getElementById('modal-body');
-        
-        // 1. Generate the structure with a temporary blank source
-        modalBody.innerHTML = `
-            <h2 class="book-title-modal">${book.title}</h2>
-            <div class="book-video-container">
-                <iframe 
-                    id="youtube-iframe"
-                    src="" 
-                    data-video-src="${book.videoUrl}" // Store the real URL here
-                    title="${book.title} Trailer"
-                    frameborder="0" 
-                    allow="accelerometer; **autoplay**; encrypted-media; gyroscope; picture-in-picture" // 🔑 CRITICAL FIX: Add 'autoplay' permission
-                    allowfullscreen>
-                </iframe>
-            </div>
-            <p>${book.summary}</p>
-            <a href="${book.gumroadUrl}" target="_blank" class="buy-button">
-                Purchase on Gumroad
-            </a>
-        `;
-        
+        const modalContent = document.getElementById('modal-body');
+        // Clear previous content
+        modalContent.innerHTML = ''; 
+
+        // 1. Create and Append Title
+        const titleEl = document.createElement('h2');
+        titleEl.className = 'book-title-modal';
+        titleEl.textContent = book.title;
+        modalContent.appendChild(titleEl);
+
+        // 2. Create Video Container
+        const videoContainer = document.createElement('div');
+        videoContainer.className = 'book-video-container';
+        
+        // 3. Create Iframe Element Programmatically (CRITICAL FIX)
+        const iframe = document.createElement('iframe');
+        iframe.id = 'youtube-iframe';
+        // Set the SRC attribute later for reliability (same pattern, more reliable DOM creation)
+        iframe.setAttribute('data-video-src', book.videoUrl); 
+        iframe.title = `${book.title} Trailer`;
+        iframe.frameBorder = '0';
+        // Ensure all necessary permissions are granted
+        iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'; 
+        iframe.allowFullscreen = true;
+        
+        videoContainer.appendChild(iframe);
+        modalContent.appendChild(videoContainer);
+
+        // 4. Create and Append Summary
+        const summaryEl = document.createElement('p');
+        summaryEl.textContent = book.summary;
+        modalContent.appendChild(summaryEl);
+
+        // 5. Create and Append Purchase Button
+        const buyBtn = document.createElement('a');
+        buyBtn.href = book.gumroadUrl;
+        buyBtn.target = '_blank';
+        buyBtn.className = 'buy-button';
+        buyBtn.textContent = 'Purchase on Gumroad';
+        modalContent.appendChild(buyBtn);
+        
         modal.classList.add('open');
         
-        // 2. Set the source with a slight delay for reliable rendering
-        const iframe = document.getElementById('youtube-iframe');
-        if (iframe) {
+        // 6. CRITICAL FIX: After modal opens, set the source to force reload.
+        // Use a short delay to ensure the modal is visibly rendered (best practice)
+        setTimeout(() => {
             const videoSrc = iframe.getAttribute('data-video-src');
-            // Use setTimeout to ensure the modal is visibly rendered before loading iframe content
-            setTimeout(() => {
-                iframe.src = videoSrc;
-            }, 50); 
-        }
+            // Setting the src on a programmatically created element is highly reliable
+            iframe.src = videoSrc;
+        }, 50); 
     }
 
     /**
@@ -79,9 +97,8 @@ function initEbooks() {
         modal.classList.remove('open');
     }
 
-    // Attach click listeners to all gallery cards
+    // Attach click listeners (unchanged)
     galleryCards.forEach(card => {
-        // Remove and re-add listeners to prevent duplicates
         card.removeEventListener('click', card.clickHandler); 
         
         card.clickHandler = (e) => {
@@ -93,7 +110,7 @@ function initEbooks() {
         card.addEventListener('click', card.clickHandler);
     });
 
-    // Attach listeners for closing the modal
+    // Attach listeners for closing the modal (unchanged)
     if (closeBtn) {
         closeBtn.addEventListener('click', closeModal);
     }
@@ -114,7 +131,7 @@ function initEbooks() {
     return true;
 }
 
-// 💥 FINAL DEFINITIVE FIX: Use robust initialization
+// Ensure robust initialization
 document.addEventListener('DOMContentLoaded', initEbooks);
 initEbooks();
 setTimeout(initEbooks, 200);
