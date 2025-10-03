@@ -1,13 +1,14 @@
-/* All styles are scoped to the .trading-ebooks container */
+/* /modules/trading-ebooks/style.css */
+
 /* Define the requested gradient for reuse */
 :root {
     --solid-gold-gradient: linear-gradient(145deg, #F0D788, #DDAA33);
 }
 
 .trading-ebooks {
-    /* 💥 FIX: Removed the collapsing negative margin. The global gap is now handled by .module-no-top-padding and the banner's negative margin. */
-    margin-top: 0; 
-    padding-top: 0;
+    /* Reset margins and padding to ensure module container starts clean */
+    margin: 0;
+    padding: 20px; /* Use standard module padding */
     
     box-sizing: border-box;
     display: flex;
@@ -16,44 +17,46 @@
     min-height: 100%;
 }
 
-/* ⚡️ CRITICAL BANNER POSITIONING FIX: Use negative margins to pull the banner up */
+/* ⚡️ CRITICAL BANNER FIX: Stable Sizing and Positioning */
 .trading-ebooks .ebooks-cover-photo {
-    width: 100%;
-    height: 250px; /* Default height for mobile/small screens */
+    width: 100%; 
+    height: 300px; /* Consistent height */
     
-    /* 🔑 THE FIX: Negative margin to pull banner into the gap */
-    margin-top: -20px; 
-    margin-left: -20px;
-    margin-right: -20px;
-    /* 🔑 THE FIX: Increase width to span the full width of the parent container */
-    width: calc(100% + 40px);
-    
+    /* 🔑 THE FIX: Remove all margin hacks for stability */
+    margin: 0; 
     padding: 0; 
     
-    /* Ensure no margin/padding on banner itself */
-    margin-bottom: 0; 
-    
-    /* 💡 CRITICAL FIX: Changed from /blob/ to /raw/ to ensure the image is loaded by the browser. */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
-    
     background-size: cover;
-    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) */
-    background-position: center 65%; 
+    background-position: center center; 
     background-repeat: no-repeat;
     
-    /* Adjust border radius to be square on top */
-    border-radius: 0;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-radius: 8px; /* Standard rounded corners */
     box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    margin-bottom: 30px; /* Space below the banner */
+    position: relative; /* Needed for text overlay positioning */
 }
 
-/* 🔑 FIX: Increase Banner Height for Desktop View (min-width: 769px) - Isolated to prevent card issues */
-@media (min-width: 769px) {
-    .trading-ebooks .ebooks-cover-photo {
-        height: 300px; /* Increased height for better banner visibility */
-    }
+/* New CSS for the banner title overlay (matching the premium aesthetic) */
+.trading-ebooks .ebooks-cover-photo .banner-text-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
 }
+
+.trading-ebooks .ebooks-cover-photo .banner-text-content h1 {
+    color: #F0D788;
+    font-size: 3rem; /* Large title */
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
 
 .trading-ebooks .ebooks-content-container {
     width: 100%;
@@ -62,7 +65,7 @@
     flex-wrap: wrap;
     gap: 30px; 
     justify-content: center;
-    padding: 30px 20px; /* Internal padding for content spacing */
+    padding: 0; 
 }
 
 /* ⚡️ UI/UX Enhancement: Modern Minimalist Card (Finalized) */
@@ -84,7 +87,6 @@
 
 .trading-ebooks .gallery-card:hover {
     transform: translateY(-8px) scale(1.02); 
-    /* Enhanced Gold Glow */
     box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 25px 5px rgba(221, 170, 51, 0.5); 
     border-color: #DDAA33; 
 }
@@ -95,11 +97,9 @@
     height: auto;
     border-radius: 4px;
     margin-bottom: 20px;
-    /* ⚡️ UI/UX: Subtle gold-tinted shadow for premium look */
     box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 10px rgba(221, 170, 51, 0.3);
 }
 
-/* ⚡️ UI/UX: Apply Gold Gradient to Header */
 .trading-ebooks .book-info h3 {
     background: var(--solid-gold-gradient); 
     -webkit-background-clip: text;
@@ -118,11 +118,10 @@
     min-height: 40px; 
 }
 
-/* Modal Styling - CRITICAL POP-UP FIXES APPLIED */
+/* Modal Styling */
 .trading-ebooks .ebook-modal {
     display: none;
     position: fixed;
-    /* 🔑 FIX: Max Z-index to ensure it sits above all other elements */
     z-index: 99999; 
     left: 0;
     top: 0;
@@ -135,7 +134,6 @@
 }
 
 .trading-ebooks .ebook-modal.open {
-    /* 🔑 CRITICAL FIX: FORCE DISPLAY to override any conflicting CSS rules */
     display: flex !important; 
     align-items: center;
     justify-content: center;
@@ -230,12 +228,11 @@
     border-radius: 6px;
     letter-spacing: 0.5px;
     transition: all 0.3s;
-    background: var(--solid-gold-gradient); /* Enforcing Gradient */
-    color: var(--dark-color-for-text); /* Dark text on gold button */
+    background: var(--solid-gold-gradient);
+    color: var(--dark-color-for-text);
     border: none;
-    /* 🔑 FIX: Explicitly remove underline for consistency */
-    text-decoration: none; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 8px rgba(221, 170, 51, 0.5); /* Gradient shadow */
+    text-decoration: none; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 8px rgba(221, 170, 51, 0.5);
 }
 .trading-ebooks .buy-button:hover {
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
