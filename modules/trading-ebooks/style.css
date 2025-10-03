@@ -8,7 +8,9 @@
 .trading-ebooks {
     /* Reset margins and use standard module padding */
     margin: 0;
-    padding: 20px; 
+    /* 🔑 FIX: Set top padding to 0 to flush the banner to the top of the container. 
+       Use padding for the sides and bottom. */
+    padding: 0 20px 20px 20px; 
     
     box-sizing: border-box;
     display: flex;
@@ -22,8 +24,10 @@
     width: 100%; 
     height: 250px; /* Default height for mobile/small screens */
     
-    /* 🔑 THE FIX: Negative margin to pull banner up, and stretch it to fill the width */
-    margin-top: -20px; 
+    /* 🔑 THE FIX: Negative margin is only needed for the sides now. 
+       Margin-top can be removed or set to 0 since .trading-ebooks top padding is 0. 
+       However, we keep the side negative margins to pull it out to the full width. */
+    margin-top: 0; 
     margin-left: -20px;
     margin-right: -20px;
     /* Calculate width to fill the full container width plus the 20px padding on each side */
@@ -38,7 +42,7 @@
     background-position: center 65%; 
     background-repeat: no-repeat;
     
-    /* Ensure smooth edges on the bottom */
+    /* Ensure smooth edges on the bottom and sharp edge at the top */
     border-radius: 0;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
@@ -60,8 +64,9 @@
     display: flex;
     flex-wrap: wrap;
     gap: 30px; 
+    /* 🔑 FIX: Content container needs top padding now since .trading-ebooks top padding was removed */
+    padding-top: 20px; 
     justify-content: center;
-    padding: 0; 
     /* 🔑 FIX: Enforce stacking context for shadows/modals to render correctly */
     position: relative; 
     z-index: 10; 
