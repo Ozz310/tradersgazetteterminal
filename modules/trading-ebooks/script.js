@@ -4,7 +4,7 @@ const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
-        // 🔑 FIX: Removed '&autoplay=1' to ensure video playback works reliably in the modal.
+        // Using standard embed URL without autoplay for modal reliability
         videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?rel=0&modestbranding=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
@@ -21,7 +21,6 @@ function initEbooks() {
     const galleryCards = document.querySelectorAll('.trading-ebooks .gallery-card');
 
     if (!modal || galleryCards.length === 0) {
-        // If elements are not found when called, exit without error.
         return false; 
     }
     
@@ -34,14 +33,17 @@ function initEbooks() {
 
         const modalBody = document.getElementById('modal-body');
         
+        // 1. Generate the structure with a temporary blank source
         modalBody.innerHTML = `
             <h2 class="book-title-modal">${book.title}</h2>
             <div class="book-video-container">
                 <iframe 
-                    src="${book.videoUrl}" 
+                    id="youtube-iframe"
+                    src="" 
+                    data-video-src="${book.videoUrl}" // Store the real URL here
                     title="${book.title} Trailer"
                     frameborder="0" 
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen>
                 </iframe>
             </div>
@@ -50,16 +52,28 @@ function initEbooks() {
                 Purchase on Gumroad
             </a>
         `;
+        
         modal.classList.add('open');
+        
+        // 2. CRITICAL FIX: After modal opens, find the iframe and set its source to force reload.
+        const iframe = document.getElementById('youtube-iframe');
+        if (iframe) {
+            const videoSrc = iframe.getAttribute('data-video-src');
+            // Use setTimeout to ensure the modal is visibly rendered (important for some browsers to load iframes correctly)
+            setTimeout(() => {
+                iframe.src = videoSrc;
+            }, 50); 
+        }
     }
 
     /**
      * Closes the modal and stops the video playback.
      */
     function closeModal() {
-        const iframe = modal.querySelector('iframe');
+        // Find the iframe by its new ID
+        const iframe = document.getElementById('youtube-iframe'); 
         if (iframe) {
-            // Stop the video by clearing the source
+            // Stop the video by setting src back to blank
             iframe.src = ''; 
         }
         modal.classList.remove('open');
@@ -67,7 +81,7 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        // Remove and re-add listeners to prevent duplicates
+        // ... (rest of the listeners are unchanged and sound)
         card.removeEventListener('click', card.clickHandler); 
         
         card.clickHandler = (e) => {
@@ -79,7 +93,7 @@ function initEbooks() {
         card.addEventListener('click', card.clickHandler);
     });
 
-    // Attach listeners for closing the modal
+    // Attach listeners for closing the modal (unchanged)
     if (closeBtn) {
         closeBtn.addEventListener('click', closeModal);
     }
@@ -100,7 +114,7 @@ function initEbooks() {
     return true;
 }
 
-// 💥 FINAL DEFINITIVE FIX: Use robust initialization
+// 💥 FINAL DEFINITIVE FIX: Use robust initialization (unchanged)
 document.addEventListener('DOMContentLoaded', initEbooks);
 initEbooks();
 setTimeout(initEbooks, 200);
