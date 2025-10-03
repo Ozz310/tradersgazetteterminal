@@ -1,16 +1,18 @@
-
 /* All styles are scoped to the .analysis-hub container */
 .analysis-hub {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Removed min-height here as the main wrapper should dictate the height, 
-       but keeping it for now based on the original code */
-    min-height: calc(100vh - 40px); 
+    min-height: calc(100vh - 40px);
+    
+    /* FIX: Apply negative margin here to pull the ENTIRE module 
+       up and flush the banner to the top edge of the main content area, 
+       counteracting any external padding/gap. */
+    margin-top: -50px; /* Adjust this value if needed based on the main layout's padding/gap */
 }
 
-/* 1. Banner Flush Fix */
+/* 1. Banner Flush Fix (Now handled by the container's negative margin) */
 .analysis-hub .analysis-hub-cover-photo {
     width: 100%;
     /* FINAL FIX: Increased height to better frame the image */
@@ -20,26 +22,24 @@
     background-position: center;
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* Removed margin-bottom to aid in flushing */
+    /* Removed margin-bottom to aid in flushing (restored later with content padding) */
 }
 
-/* 1. Banner Flush Fix - Apply negative margin to content container */
+/* 1. Banner Flush Reversal & Content Gap Restoration */
 .analysis-hub .analysis-hub-content-container {
     width: 100%;
     max-width: none;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* FIX: Apply negative margin to pull content up behind the cover photo. 
-       A safe value like 50px-70px usually compensates for top container padding/shadows 
-       to visually flush the banner */
-    margin-top: -60px; /* Adjusted to visually push content up */
-    padding: 0 20px; /* Add horizontal padding back for content */
-    z-index: 10; /* Ensure content sits above elements if needed */
+    
+    /* REVERSE FIX: Removed margin-top: -60px; to restore gap between banner and chart */
+    margin-top: 0; /* Ensures content starts below the banner */
+    padding: 20px; /* RESTORE: Add sufficient padding/margin back to create the desired gap
+                      between the banner and the first widget, and add horizontal spacing. */
 }
 
-/* Helper class for the required gradient text */
-/* 2. Gold Gradient Font Fix */
+/* Helper class for the required gradient text (kept for reference, but applied directly below) */
 .solid-gold-gradient-text {
     /* The requested solid gold gradient */
     background: linear-gradient(145deg, #F0D788, #DDAA33); 
@@ -58,16 +58,13 @@
 }
 
 .analysis-hub .widget-title {
-    /* Apply the new gradient class */
-    /* REMOVED: color: var(--gold-color); */
     font-size: 1.5rem;
     margin-bottom: 15px;
     /* Maintain the gold border-bottom for design consistency */
     border-bottom: 2px solid var(--gold-color);
     padding-bottom: 10px;
-}
-/* Apply the gradient to the widget-title */
-.analysis-hub .widget-title {
+    
+    /* 2. Gold Gradient Font Fix (Already applied, kept here for correctness) */
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
