@@ -257,17 +257,24 @@
 
 /* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness and removes scroll */
 @media (max-width: 768px) {
-    /* FIX: Eliminate horizontal scroll caused by modal wrapper (Top 1% UX) */
+    /* **GLOBAL SAFETY MEASURE (Top 1% UX)** */
+    /* Prevents any horizontal scrolling caused by elements outside the modal as well */
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* FIX: Eliminate horizontal scroll caused by modal wrapper */
     .trading-ebooks .ebook-modal {
         padding: 0; 
-        overflow-x: hidden; /* Crucial: Hides potential tiny overflow */
+        overflow-x: hidden; /* Redundant but safe: Hides potential tiny overflow */
     }
     
     /* Adjust modal for better fit on small screens */
     .trading-ebooks .modal-content {
-        width: 95%; 
+        width: 98%; /* Use slightly less width for a buffer */
         padding: 4vw 3vw 4vw 3vw; /* Use vw for relative padding */
-        margin: 20px auto; 
+        margin: 15px auto; /* Slightly less vertical margin */
         border: 1px solid #DDAA33; 
         max-height: 95vh;
         overflow-y: auto;
@@ -296,7 +303,8 @@
 
     /* Video Container - ensure it uses available width */
     .trading-ebooks .book-video-container {
-        max-width: 95%; /* Constrain width within the 95% modal content width */
+        /* Setting max-width to 100% ensures it respects the parent's padding/constraints */
+        max-width: 100%; 
         margin-left: auto;
         margin-right: auto;
     }
