@@ -255,40 +255,57 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
-/* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness */
+/* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness and removes scroll */
 @media (max-width: 768px) {
+    /* FIX: Eliminate horizontal scroll caused by modal wrapper (Top 1% UX) */
+    .trading-ebooks .ebook-modal {
+        padding: 0; 
+        overflow-x: hidden; /* Crucial: Hides potential tiny overflow */
+    }
+    
     /* Adjust modal for better fit on small screens */
     .trading-ebooks .modal-content {
-        width: 95%; /* Use almost full width */
-        margin: 20px auto; /* Reduce vertical margin */
-        padding: 20px 15px; /* Reduce horizontal padding */
-        border: 1px solid #DDAA33; /* Slightly thinner border */
-        /* Enable scrolling within the modal body if content overflows */
+        width: 95%; 
+        padding: 4vw 3vw 4vw 3vw; /* Use vw for relative padding */
+        margin: 20px auto; 
+        border: 1px solid #DDAA33; 
         max-height: 95vh;
         overflow-y: auto;
     }
-
+    
+    /* Ensure the close button doesn't affect horizontal scroll */
+    .trading-ebooks .close-button {
+        top: 10px;
+        right: 15px; 
+        font-size: 32px;
+    }
+    
     .trading-ebooks .modal-body {
-        gap: 20px; /* Tighter spacing */
+        gap: 15px; 
         padding-top: 10px;
     }
 
     .trading-ebooks .modal-body h2 {
-        font-size: 1.8rem; /* Smaller title */
-    }
-
-    /* Full width buttons on mobile, no max-width constraint */
-    .trading-ebooks .buy-button {
-        width: 100%; 
-        max-width: none; /* Crucial: overrides the desktop max-width */
-        font-size: 1rem;
-        padding: 12px 20px;
+        font-size: 1.6rem; 
+        line-height: 1.2;
     }
     
-    /* Ensure video container maintains aspect ratio on small screens */
+    .trading-ebooks .modal-body p {
+        font-size: 0.9rem; 
+    }
+
+    /* Video Container - ensure it uses available width */
     .trading-ebooks .book-video-container {
-        /* max-width remains 600px, but it will be constrained by its parent (95% of screen) */
+        max-width: 95%; /* Constrain width within the 95% modal content width */
         margin-left: auto;
         margin-right: auto;
+    }
+
+    /* Full width buttons on mobile */
+    .trading-ebooks .buy-button {
+        width: 100%; 
+        max-width: none; /* overrides the desktop max-width */
+        font-size: 1rem;
+        padding: 12px 20px;
     }
 }
