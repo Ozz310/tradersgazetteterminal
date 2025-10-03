@@ -4,7 +4,7 @@ const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
-        // 🔑 FIX 3: Removed '&autoplay=1' to allow the video to play consistently in the modal
+        // FIX: Removed '&autoplay=1' to allow the video to play consistently in the modal
         videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?rel=0&modestbranding=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
