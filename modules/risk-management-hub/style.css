@@ -9,48 +9,67 @@
     font-family: 'Poppins', sans-serif; /* A more modern font */
 }
 
+/* --- FIX 1: Flush Cover Photo to Top --- */
 .risk-management-hub .risk-management-cover-photo {
     width: 100%;
-    height: 250px;
+    height: 300px; /* Increased height for a more impactful banner */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Trading%20Calculator.png');
     background-size: cover;
     background-position: center;
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
+    margin-bottom: 0; /* Ensures it's flush */
 }
 
-.risk-management-hub .main-widget-container {
-    background-color: var(--content-bg-color);
+/* New container for the content below the banner to manage width and padding */
+.risk-management-hub .module-content-container {
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(240, 215, 136, 0.1);
     width: 100%;
     max-width: 1200px;
     box-sizing: border-box;
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 20px;
     position: relative;
     overflow: hidden;
+    margin-top: -20px; /* Pulls content up slightly to overlap the banner's shadow */
 }
 
-.risk-management-hub .header-title {
-    font-size: 2.5rem;
+/* Hide or modify the old main-widget-container class */
+.risk-management-hub .main-widget-container {
+    display: none; /* No longer used */
+}
+
+/* --- FIX 2: Solid Gold Gradient for Headers --- */
+.risk-management-hub .page-title,
+.risk-management-hub .result-title {
+    /* Apply the requested Solid Gold Gradient */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    
+    /* General Header Styling */
+    font-size: 2.5rem; /* For .page-title */
     font-weight: 700;
-    color: var(--gold-color);
     text-align: center;
-    margin-bottom: 0;
-    font-family: 'Playfair Display', serif; /* Or another elegant serif for headings */
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
     letter-spacing: 2px;
 }
+/* Adjust result-title size back down to its original value */
+.risk-management-hub .result-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
 
 .risk-management-hub .main-content-flex {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 20px; /* Increased gap for better spacing */
     flex-wrap: wrap;
     align-items: stretch;
 }
@@ -58,8 +77,8 @@
 .risk-management-hub .controls-panel {
     background-color: var(--accent-color);
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 12px; /* Increased border radius for a smoother look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 10px rgba(240, 215, 136, 0.1); /* Enhanced shadow */
     border: 1px solid var(--border-color);
     flex: 0 0 250px;
     display: flex;
@@ -82,7 +101,7 @@
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 10px; /* Increased border radius */
     text-align: left;
     transition: all 0.3s ease;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 2px 5px rgba(0,0,0,0.3);
@@ -106,8 +125,8 @@
 .risk-management-hub .calculator-panel {
     background-color: var(--accent-color);
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(240, 215, 136, 0.1);
+    border-radius: 12px; /* Increased border radius for a smoother look */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(240, 215, 136, 0.1); /* Adjusted shadow */
     border: 1px solid var(--border-color);
     flex: 1;
     min-width: 300px;
@@ -116,8 +135,8 @@
 .risk-management-hub .results-panel {
     background-color: var(--accent-color);
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 12px; /* Increased border radius for a smoother look */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(240, 215, 136, 0.1); /* Adjusted shadow */
     border: 1px solid var(--border-color);
     flex: 2;
     min-width: 300px;
@@ -140,18 +159,19 @@
     color: #b0b0b0;
     margin-bottom: 10px;
     padding: 10px;
-    background-color: var(--border-color);
+    background-color: #333333; /* Slightly darker background for contrast */
     border-radius: 8px;
+    border-left: 4px solid var(--gold-color); /* Highlight info box */
 }
 
 .risk-management-hub .info-icon {
     font-style: italic;
-    color: var(--gold-color);
+    color: #F0D788; /* Lighter gold for icon */
     font-size: 1.1em;
 }
 
 .risk-management-hub .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased space between groups */
 }
 
 .risk-management-hub label {
@@ -167,7 +187,7 @@
     padding: 12px;
     border: 1px solid #555;
     border-radius: 8px;
-    background-color: var(--border-color);
+    background-color: #383838; /* Slightly darker input fields */
     color: var(--text-color);
     font-size: 1rem;
     box-sizing: border-box;
@@ -176,18 +196,17 @@
 
 .risk-management-hub input[type="number"]:focus, .risk-management-hub select:focus, .risk-management-hub input[type="range"]:focus {
     outline: none;
-    border-color: var(--gold-color);
-    box-shadow: 0 0 0 3px rgba(240, 215, 136, 0.4);
+    border-color: #DDAA33; /* Deeper gold focus */
+    box-shadow: 0 0 0 3px rgba(221, 170, 51, 0.4);
 }
 
 .risk-management-hub #calculateMarginBtn, .risk-management-hub #calculateRRBtn {
-    background: var(--gold-color);
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     color: #1a1a1a;
     border: none;
     padding: 16px 20px;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.05rem; /* Slightly larger font */
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -197,18 +216,18 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-top: 15px;
+    margin-top: 20px; /* Increased space above button */
+    width: 100%; /* Make button full width of panel */
 }
 .risk-management-hub #calculateMarginBtn:hover, .risk-management-hub #calculateRRBtn:hover {
-    background: #DDAA33;
     background: linear-gradient(145deg, #DDAA33, #F0D788);
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(240, 215, 136, 0.7); /* Enhanced hover shadow */
 }
 
 .risk-management-hub .message-box {
     display: none;
-    background-color: var(--border-color);
+    background-color: #333333;
     color: #fff;
     padding: 15px;
     border-radius: 8px;
@@ -263,13 +282,7 @@
     min-height: 200px;
 }
 
-.risk-management-hub .result-title {
-    color: var(--gold-color);
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-    font-family: 'Playfair Display', serif;
-}
+/* .risk-management-hub .result-title is now defined above with .page-title for the gold gradient */
 
 .risk-management-hub .empty-state {
     position: absolute;
@@ -301,7 +314,7 @@
 }
 
 .risk-management-hub .result-card {
-    background-color: var(--border-color);
+    background-color: #383838; /* Consistent background for cards */
     padding: 15px;
     border-radius: 8px;
     text-align: center;
@@ -322,15 +335,21 @@
     color: #b0b0b0;
 }
 
+/* Apply gold gradient to critical result numbers as well */
 .risk-management-hub .result-card span {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-color);
+    font-size: 1.4rem; /* Larger result text */
+    font-weight: 800;
+    /* Apply the requested Solid Gold Gradient for result values */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
     display: block;
 }
 
 .risk-management-hub .result-card.success-border span {
-    color: var(--gold-color);
+    /* The gradient is already applied above */
 }
 
 .risk-management-hub .result-card p.timestamp {
@@ -363,7 +382,7 @@
 }
 
 .risk-management-hub .branding {
-    margin-top: 10px;
+    margin-top: 20px; /* Adjusted spacing */
     padding-top: 10px;
     text-align: center;
     color: #b0b0b0;
@@ -384,7 +403,7 @@
 .risk-management-hub .branding img {
     max-width: 150px;
     height: auto;
-    content: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.15.jpeg?raw=true');
+    content: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/calculator/WhatsApp%20Image%202025-06-18%20at%2011.37.15%20(1).jpeg');
     filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4));
     transition: filter 0.3s ease;
 }
@@ -394,34 +413,33 @@
 }
 
 @media (max-width: 900px) {
-    .risk-management-hub .main-widget-container {
-        padding: 10px;
-        gap: 10px;
+    /* Adjust media query for the new structure */
+    .risk-management-hub .module-content-container {
+        padding: 15px;
+        gap: 15px;
     }
-    .risk-management-hub .header-title {
+    .risk-management-hub .page-title {
         font-size: 2rem;
     }
     .risk-management-hub .main-content-flex {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
     }
     .risk-management-hub .controls-panel, .risk-management-hub .calculator-panel, .risk-management-hub .results-panel {
         padding: 15px;
         min-width: unset;
         gap: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7); /* Simplified shadow for mobile */
     }
     .risk-management-hub .controls-panel {
         flex: 1;
-    }
-    .risk-management-hub .results-grid {
-        grid-template-columns: 1fr;
     }
     .risk-management-hub .calculator-menu {
         flex-direction: row;
         gap: 10px;
     }
-    .risk-management-hub .branding {
-        margin-top: 10px;
+    .risk-management-hub .risk-management-cover-photo {
+        height: 180px; /* Shorter banner on mobile */
     }
 }
 
@@ -435,7 +453,7 @@
     -webkit-appearance: none;
     width: 100%;
     height: 10px;
-    background: var(--border-color);
+    background: #383838;
     border-radius: 5px;
     outline: none;
     margin-top: 10px;
@@ -486,12 +504,12 @@
 }
 
 .risk-management-hub input[type="range"]::-ms-track {
-    background: var(--border-color);
+    background: #383838;
     color: transparent;
     border-radius: 5px;
 }
 
 .risk-management-hub input[type="range"]::-moz-range-track {
-    background: var(--border-color);
+    background: #383838;
     border-radius: 5px;
 }
