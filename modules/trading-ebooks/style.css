@@ -6,11 +6,10 @@
 }
 
 .trading-ebooks {
-    /* Reset margins and use standard module padding */
+    /* 🔑 FIX: Remove ALL padding from the main module container. 
+       We will apply padding to the content container below the banner. */
     margin: 0;
-    /* 🔑 FIX: Set top padding to 0 to flush the banner to the top of the container. 
-       Use padding for the sides and bottom. */
-    padding: 0 20px 20px 20px; 
+    padding: 0; 
     
     box-sizing: border-box;
     display: flex;
@@ -19,30 +18,27 @@
     min-height: 100%;
 }
 
-/* ⚡️ CRITICAL BANNER POSITIONING FIX: Re-implement negative margins to pull the banner up and fill the width */
+/* ⚡️ CRITICAL BANNER POSITIONING FIX: Full-bleed flush to top and sides */
 .trading-ebooks .ebooks-cover-photo {
     width: 100%; 
     height: 250px; /* Default height for mobile/small screens */
     
-    /* 🔑 THE FIX: Negative margin is only needed for the sides now. 
-       Margin-top can be removed or set to 0 since .trading-ebooks top padding is 0. 
-       However, we keep the side negative margins to pull it out to the full width. */
+    /* 🔑 BANNER FIX: Since .trading-ebooks now has 0 padding, the banner flushes to the top.
+       We only need to worry about content container padding. */
     margin-top: 0; 
-    margin-left: -20px;
-    margin-right: -20px;
-    /* Calculate width to fill the full container width plus the 20px padding on each side */
-    width: calc(100% + 40px);
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%; /* Now takes full width of the zero-padded parent */
     
     padding: 0; 
     margin-bottom: 30px; /* Space below the banner */
     
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
     background-size: cover;
-    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) for stability */
     background-position: center 65%; 
     background-repeat: no-repeat;
     
-    /* Ensure smooth edges on the bottom and sharp edge at the top */
+    /* Ensure sharp edge at the top and rounded on the bottom (or none if full bleed) */
     border-radius: 0;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
@@ -58,16 +54,20 @@
 }
 
 
+/* 🔑 NEW CONTENT WRAPPER: Re-applies the necessary padding to the content below the banner */
 .trading-ebooks .ebooks-content-container {
     width: 100%;
     max-width: 1200px;
+    
+    /* 🔑 FIX: Apply padding here, *not* to the main .trading-ebooks container */
+    padding: 20px; 
+    box-sizing: border-box; /* Important for padding consistency */
+    
     display: flex;
     flex-wrap: wrap;
     gap: 30px; 
-    /* 🔑 FIX: Content container needs top padding now since .trading-ebooks top padding was removed */
-    padding-top: 20px; 
     justify-content: center;
-    /* 🔑 FIX: Enforce stacking context for shadows/modals to render correctly */
+    
     position: relative; 
     z-index: 10; 
 }
@@ -96,16 +96,13 @@
 }
 
 .trading-ebooks .book-cover {
-    /* 🔑 CRITICAL FIX: Ensure image respects width constraints as a block element */
     display: block; 
-    /* 🔑 FIX: Ensure height is fluid and the width is constrained */
     width: 100%;
     max-width: 180px; 
     height: auto;
     border-radius: 4px;
     margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 10px rgba(221, 170, 51, 0.3);
-    /* 🔑 FIX: Add margin auto to center the image if max-width is hit */
     margin-left: auto;
     margin-right: auto;
 }
@@ -262,24 +259,24 @@
 
 /* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness and removes scroll */
 @media (max-width: 768px) {
-    /* **GLOBAL SAFETY MEASURE (Top 1% UX)** */
-    /* Prevents any horizontal scrolling caused by elements outside the modal as well */
-    body, html {
+    /* **REMOVED: Global body/html overflow fix (to prevent sidebar logo issue) ** */
+    /* body, html {
         overflow-x: hidden;
         width: 100%;
     }
+    */
     
     /* FIX: Eliminate horizontal scroll caused by modal wrapper */
     .trading-ebooks .ebook-modal {
         padding: 0; 
-        overflow-x: hidden; /* Redundant but safe: Hides potential tiny overflow */
+        overflow-x: hidden; 
     }
     
     /* Adjust modal for better fit on small screens */
     .trading-ebooks .modal-content {
-        width: 98%; /* Use slightly less width for a buffer */
-        padding: 4vw 3vw 4vw 3vw; /* Use vw for relative padding */
-        margin: 15px auto; /* Slightly less vertical margin */
+        width: 98%; 
+        padding: 4vw 3vw 4vw 3vw; 
+        margin: 15px auto; 
         border: 1px solid #DDAA33; 
         max-height: 95vh;
         overflow-y: auto;
@@ -308,7 +305,6 @@
 
     /* Video Container - ensure it uses available width */
     .trading-ebooks .book-video-container {
-        /* Setting max-width to 100% ensures it respects the parent's padding/constraints */
         max-width: 100%; 
         margin-left: auto;
         margin-right: auto;
@@ -316,9 +312,9 @@
 
     /* 🔑 FINAL SCROLL FIX: Enforce box-sizing on the button to ensure padding/border is included in the 100% width, preventing overflow. */
     .trading-ebooks .buy-button {
-        box-sizing: border-box; /* Ensures padding doesn't push the 100% width past the edge */
+        box-sizing: border-box; 
         width: 100%; 
-        max-width: none; /* overrides the desktop max-width */
+        max-width: none; 
         font-size: 1rem;
         padding: 12px 20px;
     }
