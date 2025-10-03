@@ -4,12 +4,11 @@ const bookData = {
     'comeback-trader': {
         title: 'The Comeback Trader',
         summary: 'Lost ground in the markets? This guide is your blueprint to turn setbacks into setups. Master emotional resilience, refine your strategy, and rebuild your capital with proven insights. Your comeback starts here. This book offers actionable strategies, psychological tools, and a clear path to regaining control of your trading journey.',
-        // FIX: Removed '&autoplay=1' to allow the video to play consistently in the modal
-        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?rel=0&modestbranding=1', 
+        // Using standard embed URL for IFRAME injection
+        videoUrl: 'https://www.youtube.com/embed/nOelEsu0toI?rel=0&modestbranding=1&autoplay=1', 
         gumroadUrl: 'https://tradersgazette.gumroad.com/l/TheComebackTrader',
         coverUrl: 'https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_hczk8shczk8shczk.png?raw=true'
     }
-    // Add more books here later
 };
 
 /**
@@ -60,6 +59,7 @@ function initEbooks() {
     function closeModal() {
         const iframe = modal.querySelector('iframe');
         if (iframe) {
+            // Stop the video by clearing the source
             iframe.src = ''; 
         }
         modal.classList.remove('open');
@@ -67,7 +67,7 @@ function initEbooks() {
 
     // Attach click listeners to all gallery cards
     galleryCards.forEach(card => {
-        // Prevent duplicate listeners from previous initialization attempts
+        // Remove and re-add listeners to prevent duplicates
         card.removeEventListener('click', card.clickHandler); 
         
         card.clickHandler = (e) => {
@@ -100,16 +100,10 @@ function initEbooks() {
     return true;
 }
 
-// 💥 FINAL DEFINITIVE FIX: Use three-pronged initialization to reliably execute the script 
-// regardless of complex router loading order.
-
-// 1. Call on DOMContentLoaded (Standard practice)
+// 💥 FINAL DEFINITIVE FIX: Use robust initialization
 document.addEventListener('DOMContentLoaded', initEbooks);
-
-// 2. Call immediately (Catches cases where the script is loaded and executed late, but the module is present)
 initEbooks();
-
-// 3. Call after a slight delay (Catches cases where the router injects the module AFTER DOMContentLoaded)
 setTimeout(initEbooks, 200);
 
 console.log('Ebooks module script running with multiple initialization attempts.');
+window.initEbooks = initEbooks; // Expose to the main app/router
