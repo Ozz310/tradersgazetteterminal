@@ -6,10 +6,9 @@
 }
 
 .trading-ebooks {
-    /* 🔑 FIX: Remove ALL padding from the main module container. 
-       We will apply padding to the content container below the banner. */
+    /* 🔑 FIX: Restore standard module padding (20px) on the container. */
     margin: 0;
-    padding: 0; 
+    padding: 20px; 
     
     box-sizing: border-box;
     display: flex;
@@ -18,17 +17,16 @@
     min-height: 100%;
 }
 
-/* ⚡️ CRITICAL BANNER POSITIONING FIX: Full-bleed flush to top and sides */
+/* ⚡️ CRITICAL BANNER POSITIONING FIX: Use negative margins to pull the banner up and out */
 .trading-ebooks .ebooks-cover-photo {
-    width: 100%; 
     height: 250px; /* Default height for mobile/small screens */
     
-    /* 🔑 BANNER FIX: Since .trading-ebooks now has 0 padding, the banner flushes to the top.
-       We only need to worry about content container padding. */
-    margin-top: 0; 
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%; /* Now takes full width of the zero-padded parent */
+    /* 🔑 THE FIX: Negative margin to pull banner up and out, covering the 20px padding of the parent (.trading-ebooks) */
+    margin-top: -20px; 
+    margin-left: -20px;
+    margin-right: -20px;
+    /* Calculate width to fill the full container width plus the 20px padding on each side */
+    width: calc(100% + 40px);
     
     padding: 0; 
     margin-bottom: 30px; /* Space below the banner */
@@ -38,7 +36,7 @@
     background-position: center 65%; 
     background-repeat: no-repeat;
     
-    /* Ensure sharp edge at the top and rounded on the bottom (or none if full bleed) */
+    /* Ensure sharp edge at the top (flush) and rounded on the bottom */
     border-radius: 0;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
@@ -54,20 +52,15 @@
 }
 
 
-/* 🔑 NEW CONTENT WRAPPER: Re-applies the necessary padding to the content below the banner */
 .trading-ebooks .ebooks-content-container {
     width: 100%;
     max-width: 1200px;
-    
-    /* 🔑 FIX: Apply padding here, *not* to the main .trading-ebooks container */
-    padding: 20px; 
-    box-sizing: border-box; /* Important for padding consistency */
-    
     display: flex;
     flex-wrap: wrap;
     gap: 30px; 
     justify-content: center;
-    
+    /* 🔑 IMPORTANT: No additional padding here, the padding is on the parent (.trading-ebooks) */
+    padding: 0; 
     position: relative; 
     z-index: 10; 
 }
@@ -260,11 +253,6 @@
 /* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness and removes scroll */
 @media (max-width: 768px) {
     /* **REMOVED: Global body/html overflow fix (to prevent sidebar logo issue) ** */
-    /* body, html {
-        overflow-x: hidden;
-        width: 100%;
-    }
-    */
     
     /* FIX: Eliminate horizontal scroll caused by modal wrapper */
     .trading-ebooks .ebook-modal {
