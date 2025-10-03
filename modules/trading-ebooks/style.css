@@ -6,9 +6,9 @@
 }
 
 .trading-ebooks {
-    /* Reset margins and use standard module padding */
+    /* 🔑 FIX: Set standard padding for the module content itself (20px is common padding on the site) */
     margin: 0;
-    padding: 20px; 
+    padding: 20px; 
     
     box-sizing: border-box;
     display: flex;
@@ -17,26 +17,42 @@
     min-height: 100%;
 }
 
-/* ⚡️ CRITICAL BANNER FIX: Removed negative margins and title styles */
+/* ⚡️ CRITICAL BANNER POSITIONING FIX: Re-implement negative margins to pull the banner up and fill the width */
 .trading-ebooks .ebooks-cover-photo {
-    width: 100%; 
-    height: 300px; 
+    width: 100%; 
+    height: 250px; /* Default height for mobile/small screens */
     
-    /* 🔑 THE FIX: Remove all margin hacks for stability */
-    margin: 0 0 30px 0; /* Standard top/right/left margin (0) and 30px bottom margin for spacing */
+    /* 🔑 THE FIX: Negative margin to pull banner up, and stretch it to fill the gap/width */
+    margin-top: -20px; 
+    margin-left: -20px;
+    margin-right: -20px;
+    /* Calculate width to fill the full container width plus the 20px padding on each side */
+    width: calc(100% + 40px);
+    
     padding: 0; 
+    margin-bottom: 30px; /* Space below the banner */
     
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
     background-size: cover;
-    background-position: center center; 
+    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) for stability */
+    background-position: center 65%; 
     background-repeat: no-repeat;
     
-    border-radius: 8px; 
+    /* Ensure smooth edges on the bottom */
+    border-radius: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.7);
-    position: relative; 
+    position: relative; 
 }
 
-/* 🔑 FIX: Removed the .banner-text-content and its h1 styles to eliminate the unwanted text. */
+/* 🔑 FIX: Increase Banner Height for Desktop View (min-width: 769px) */
+@media (min-width: 769px) {
+    .trading-ebooks .ebooks-cover-photo {
+        height: 300px; /* Increased height for better banner visibility */
+    }
+}
+
 
 .trading-ebooks .ebooks-content-container {
     width: 100%;
@@ -45,7 +61,7 @@
     flex-wrap: wrap;
     gap: 30px; 
     justify-content: center;
-    padding: 0; 
+    padding: 0; 
 }
 
 /* ⚡️ UI/UX Enhancement: Modern Minimalist Card (Finalized) */
