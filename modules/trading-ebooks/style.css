@@ -6,7 +6,7 @@
 }
 
 .trading-ebooks {
-    /* 🔑 FIX: Restore standard module padding (20px) on the container. */
+    /* Reset margins and use standard module padding */
     margin: 0;
     padding: 20px; 
     
@@ -17,11 +17,12 @@
     min-height: 100%;
 }
 
-/* ⚡️ CRITICAL BANNER POSITIONING FIX: Use negative margins to pull the banner up and out */
+/* ⚡️ CRITICAL BANNER POSITIONING FIX: Re-implement negative margins to pull the banner up and fill the width */
 .trading-ebooks .ebooks-cover-photo {
+    width: 100%; 
     height: 250px; /* Default height for mobile/small screens */
     
-    /* 🔑 THE FIX: Negative margin to pull banner up and out, covering the 20px padding of the parent (.trading-ebooks) */
+    /* 🔑 THE FIX: Negative margin to pull banner up, and stretch it to fill the width */
     margin-top: -20px; 
     margin-left: -20px;
     margin-right: -20px;
@@ -33,10 +34,11 @@
     
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20E%20books.png'); 
     background-size: cover;
+    /* ⚡️ FINAL FOCUS: Image position is centered and focused low (65%) for stability */
     background-position: center 65%; 
     background-repeat: no-repeat;
     
-    /* Ensure sharp edge at the top (flush) and rounded on the bottom */
+    /* Ensure smooth edges on the bottom */
     border-radius: 0;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
@@ -59,8 +61,8 @@
     flex-wrap: wrap;
     gap: 30px; 
     justify-content: center;
-    /* 🔑 IMPORTANT: No additional padding here, the padding is on the parent (.trading-ebooks) */
     padding: 0; 
+    /* 🔑 FIX: Enforce stacking context for shadows/modals to render correctly */
     position: relative; 
     z-index: 10; 
 }
@@ -89,13 +91,16 @@
 }
 
 .trading-ebooks .book-cover {
+    /* 🔑 CRITICAL FIX: Ensure image respects width constraints as a block element */
     display: block; 
+    /* 🔑 FIX: Ensure height is fluid and the width is constrained */
     width: 100%;
     max-width: 180px; 
     height: auto;
     border-radius: 4px;
     margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 10px rgba(221, 170, 51, 0.3);
+    /* 🔑 FIX: Add margin auto to center the image if max-width is hit */
     margin-left: auto;
     margin-right: auto;
 }
@@ -252,19 +257,24 @@
 
 /* 🔑 CRITICAL MOBILE FIXES (Max-width 768px) - Improves responsiveness and removes scroll */
 @media (max-width: 768px) {
-    /* **REMOVED: Global body/html overflow fix (to prevent sidebar logo issue) ** */
+    /* **GLOBAL SAFETY MEASURE (Top 1% UX)** */
+    /* Prevents any horizontal scrolling caused by elements outside the modal as well */
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
+    }
     
     /* FIX: Eliminate horizontal scroll caused by modal wrapper */
     .trading-ebooks .ebook-modal {
         padding: 0; 
-        overflow-x: hidden; 
+        overflow-x: hidden; /* Redundant but safe: Hides potential tiny overflow */
     }
     
     /* Adjust modal for better fit on small screens */
     .trading-ebooks .modal-content {
-        width: 98%; 
-        padding: 4vw 3vw 4vw 3vw; 
-        margin: 15px auto; 
+        width: 98%; /* Use slightly less width for a buffer */
+        padding: 4vw 3vw 4vw 3vw; /* Use vw for relative padding */
+        margin: 15px auto; /* Slightly less vertical margin */
         border: 1px solid #DDAA33; 
         max-height: 95vh;
         overflow-y: auto;
@@ -293,6 +303,7 @@
 
     /* Video Container - ensure it uses available width */
     .trading-ebooks .book-video-container {
+        /* Setting max-width to 100% ensures it respects the parent's padding/constraints */
         max-width: 100%; 
         margin-left: auto;
         margin-right: auto;
@@ -300,9 +311,9 @@
 
     /* 🔑 FINAL SCROLL FIX: Enforce box-sizing on the button to ensure padding/border is included in the 100% width, preventing overflow. */
     .trading-ebooks .buy-button {
-        box-sizing: border-box; 
+        box-sizing: border-box; /* Ensures padding doesn't push the 100% width past the edge */
         width: 100%; 
-        max-width: none; 
+        max-width: none; /* overrides the desktop max-width */
         font-size: 1rem;
         padding: 12px 20px;
     }
