@@ -309,8 +309,9 @@
         margin-right: auto;
     }
 
-    /* Full width buttons on mobile */
+    /* 🔑 FINAL SCROLL FIX: Enforce box-sizing on the button to ensure padding/border is included in the 100% width, preventing overflow. */
     .trading-ebooks .buy-button {
+        box-sizing: border-box; /* Ensures padding doesn't push the 100% width past the edge */
         width: 100%; 
         max-width: none; /* overrides the desktop max-width */
         font-size: 1rem;
