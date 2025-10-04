@@ -785,7 +785,7 @@ window.initTradingJournal = async function() {
         // Count trades in each bin
         pnlValues.forEach(pnl => {
             for (let i = 0; i < pnlBins.length; i++) {
-                // FIXED THE SYNTAX ERROR: Ensure the conditional expression is one single line for safety
+                // FIXED THE SYNTAX ERROR: The comma was missing here
                 if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 
                     ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
                     pnlBins[i].count++;
@@ -810,7 +810,7 @@ window.initTradingJournal = async function() {
                             index = context.dataIndex;
                             const pnlRangeStart = pnlBins[index].lower;
                             return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
-                        },
+                        }, // COMMA ADDED HERE TO FIX LINE 928 ERROR
   
                         borderColor: '#fff',
                         borderWidth: 1
