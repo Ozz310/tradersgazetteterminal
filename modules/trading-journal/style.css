@@ -600,12 +600,13 @@ textarea {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    height: 380px; 
+    /* INCREASED HEIGHT: From 380px to 400px to give more room for the chart */
+    height: 400px; 
     box-sizing: border-box;
     transition: box-shadow 0.3s ease;
     position: relative; 
-    /* FIX 1: Crucial for containing the overflowing chart canvas */
-    overflow: hidden; 
+    /* CRITICAL FIX: Ensure the canvas cannot overflow the card boundaries */
+    overflow: hidden; 
 }
 
 .chart-card:hover {
@@ -623,11 +624,13 @@ textarea {
 }
 
 .chart-card canvas {
-    /* FIX 2: Override Chart.js inline styles to enforce parent's dimensions */
+    /* CRITICAL FIX: Set a fixed height that accounts for the card padding (20px top/20px bottom) 
+       and the h4 element (~35px) inside the new 400px card. 400 - 40 - 35 = 325px. */
     display: block;
     width: 100% !important;
-    height: 100% !important;
-    /* Removed conflicting min-height/max-height for responsive control */
+    height: 325px !important; 
+    max-height: 100% !important; /* Ensure it respects the container */
+    box-sizing: border-box;
 }
 
 /* ======================================================= */
@@ -690,17 +693,17 @@ textarea {
     
     /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
     .chart-card {
-        height: 350px; 
+        /* INCREASED HEIGHT: From 350px to 380px for more chart room */
+        height: 380px; 
         padding: 15px; 
-        /* overflow: hidden; is now inherited globally */
     }
     .chart-card h4 {
         margin-bottom: 10px;
     }
     .chart-card canvas {
-        /* Ensured consistency on mobile override */
+        /* CRITICAL FIX: Adjust height for new 380px card height. 380 - 30 (pad) - 30 (h4) = 320px */
         width: 100% !important; 
-        height: 280px !important; 
+        height: 320px !important; 
     }
 
     /* 1. Form Collapse: Stack form groups */
