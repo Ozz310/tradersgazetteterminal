@@ -600,8 +600,8 @@ textarea {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* INCREASED HEIGHT: From 380px to 400px to give more room for the chart */
-    height: 400px; 
+    /* REVERTED: Back to original height */
+    height: 380px; 
     box-sizing: border-box;
     transition: box-shadow 0.3s ease;
     position: relative; 
@@ -624,11 +624,10 @@ textarea {
 }
 
 .chart-card canvas {
-    /* CRITICAL FIX: Set a fixed height that accounts for the card padding (20px top/20px bottom) 
-       and the h4 element (~35px) inside the new 400px card. 400 - 40 - 35 = 325px. */
+    /* RECALCULATED/CORRECTED HEIGHT for 380px card: 380px (Card) - 40px (Padding) - 35px (H4) = 305px */
     display: block;
     width: 100% !important;
-    height: 325px !important; 
+    height: 305px !important; 
     max-height: 100% !important; /* Ensure it respects the container */
     box-sizing: border-box;
 }
@@ -693,17 +692,17 @@ textarea {
     
     /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
     .chart-card {
-        /* INCREASED HEIGHT: From 350px to 380px for more chart room */
-        height: 380px; 
+        /* REVERTED: Back to original height */
+        height: 350px; 
         padding: 15px; 
     }
     .chart-card h4 {
         margin-bottom: 10px;
     }
     .chart-card canvas {
-        /* CRITICAL FIX: Adjust height for new 380px card height. 380 - 30 (pad) - 30 (h4) = 320px */
+        /* RECALCULATED/CORRECTED HEIGHT for 350px card height: 350px - 30px (pad) - 30px (h4) = 290px */
         width: 100% !important; 
-        height: 320px !important; 
+        height: 290px !important; 
     }
 
     /* 1. Form Collapse: Stack form groups */
