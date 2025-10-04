@@ -806,12 +806,11 @@ window.initTradingJournal = async function() {
                         label: 'P&L Distribution',
                         data: pnlCounts,
                         backgroundColor: (context) => {
-                            const 
-                            index = context.dataIndex;
+                            // FIX: Removed unnecessary line break which caused the SyntaxError
+                            const index = context.dataIndex; 
                             const pnlRangeStart = pnlBins[index].lower;
                             return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
-                        }, // COMMA ADDED HERE TO FIX LINE 928 ERROR
-  
+                        }, 
                         borderColor: '#fff',
                         borderWidth: 1
                     }]
