@@ -1,23 +1,16 @@
 /* ALL CSS IS NOW SCOPED TO THE .risk-management-hub CONTAINER */
 
-/* --- START: FLUSH BANNER TO TOP RESET --- */
-/* These styles ensure the banner touches the very top edge of the viewport/container. */
 .risk-management-hub {
-    /* Reset margin/padding on the container itself */
     padding: 0;
-    margin: 0; 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Adjusted min-height to account for the removal of top/bottom margin */
+    /* Updated to full height since we're using negative margin on the child */
     min-height: 100vh; 
     font-family: 'Poppins', sans-serif;
+    margin: 0; /* Ensure the outer container has no margin */
 }
-
-/* You may need to ensure the document body also has no margin/padding in your app's global styles */
-/* body { margin: 0; padding: 0; } */
-/* --- END: FLUSH BANNER TO TOP RESET --- */
 
 .risk-management-hub .risk-management-cover-photo {
     width: 100%;
@@ -25,12 +18,18 @@
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Trading%20Calculator.png');
     background-size: cover;
     background-position: center;
-    /* Remove top/bottom radius to make it flush */
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* Removed margin-bottom here to prevent vertical gap if needed later, but keeping for now */
-    margin-bottom: 20px;
+    
+    /* === FLUSH TO TOP FIX === */
+    /* Use negative margin to pull the element up past the outer app wrapper's padding/margin */
+    margin-top: -40px; 
+    /* Remove any unnecessary margin that might create a gap with the content below */
+    margin-bottom: 0; 
+    /* The main-widget-container will handle the gap below the banner via its margin-top */
+    /* ======================== */
 }
+
 
 .risk-management-hub .main-widget-container {
     background-color: var(--content-bg-color);
@@ -44,11 +43,18 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* This margin-top creates the gap below the banner, which is desired for separation */
+    /* This margin-top provides the required visual gap between the banner and the content */
     margin-top: 20px; 
     position: relative;
     overflow: hidden;
 }
+
+/* ... (rest of the CSS remains the same) ... */
+
+/*
+The rest of the CSS is unchanged from the previous, correctly formatted version.
+Only the .risk-management-hub and .risk-management-cover-photo styles were modified.
+*/
 
 .risk-management-hub .header-title {
     font-size: 2.5rem;
@@ -60,9 +66,6 @@
     letter-spacing: 2px;
 }
 
-/* ... (rest of the CSS remains the same as previously formatted) ... */
-
-/* Remaining CSS is unchanged for brevity. */
 .risk-management-hub .main-content-flex {
     display: flex;
     flex-direction: row;
