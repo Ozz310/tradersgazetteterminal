@@ -1,14 +1,23 @@
 /* ALL CSS IS NOW SCOPED TO THE .risk-management-hub CONTAINER */
 
+/* --- START: FLUSH BANNER TO TOP RESET --- */
+/* These styles ensure the banner touches the very top edge of the viewport/container. */
 .risk-management-hub {
+    /* Reset margin/padding on the container itself */
     padding: 0;
+    margin: 0; 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: calc(100vh - 40px);
-    font-family: 'Poppins', sans-serif; /* A more modern font */
+    /* Adjusted min-height to account for the removal of top/bottom margin */
+    min-height: 100vh; 
+    font-family: 'Poppins', sans-serif;
 }
+
+/* You may need to ensure the document body also has no margin/padding in your app's global styles */
+/* body { margin: 0; padding: 0; } */
+/* --- END: FLUSH BANNER TO TOP RESET --- */
 
 .risk-management-hub .risk-management-cover-photo {
     width: 100%;
@@ -16,8 +25,10 @@
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Trading%20Calculator.png');
     background-size: cover;
     background-position: center;
+    /* Remove top/bottom radius to make it flush */
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    /* Removed margin-bottom here to prevent vertical gap if needed later, but keeping for now */
     margin-bottom: 20px;
 }
 
@@ -33,7 +44,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 20px;
+    /* This margin-top creates the gap below the banner, which is desired for separation */
+    margin-top: 20px; 
     position: relative;
     overflow: hidden;
 }
@@ -44,10 +56,13 @@
     color: var(--gold-color);
     text-align: center;
     margin-bottom: 0;
-    font-family: 'Playfair Display', serif; /* Or another elegant serif for headings */
+    font-family: 'Playfair Display', serif;
     letter-spacing: 2px;
 }
 
+/* ... (rest of the CSS remains the same as previously formatted) ... */
+
+/* Remaining CSS is unchanged for brevity. */
 .risk-management-hub .main-content-flex {
     display: flex;
     flex-direction: row;
