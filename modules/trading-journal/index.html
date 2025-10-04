@@ -1,7 +1,21 @@
+<style>
+    /* Inferred critical variables based on the module's style.css and theme pattern */
+    :root {
+        --dark-color-for-text: #1a1a1a; 
+        --text-color: #f1f1f1;
+        --gold-color: #DDAA33; 
+        --hover-gold-color: #FFEFB0; 
+        --accent-color: #444444; 
+    }
+    /* Apply base background color since the injected content no longer has a 'body' tag */
+    .journal-content-container {
+        background-color: var(--dark-color-for-text);
+        color: var(--text-color);
+    }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
-<link rel="stylesheet" href="assets/css/main.css"> 
 
 <link rel="stylesheet" href="modules/trading-journal/style.css">
 
