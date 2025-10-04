@@ -621,7 +621,7 @@ window.initTradingJournal = async function() {
                         label: 'Cumulative P&L',
                         data: cumulativePnl,
                         borderColor: '#d4af37',
-                        // FIX: Removed the extra line break between '=>' and '{' that caused the SyntaxError
+                        // FIX was applied here previously, ensuring no line breaks inside (context) => { ...
                         backgroundColor: (context) => {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
@@ -784,7 +784,7 @@ window.initTradingJournal = async function() {
         // Count trades in each bin
         pnlValues.forEach(pnl => {
             for (let i = 0; i < pnlBins.length; i++) {
-                // The comma was previously fixed here, ensuring the ternary operator is valid
+                // This line is now safe
                 if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 
                     ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
                     pnlBins[i].count++;
@@ -805,7 +805,7 @@ window.initTradingJournal = async function() {
                         label: 'P&L Distribution',
                         data: pnlCounts,
                         backgroundColor: (context) => {
-                            // This part was previously fixed for a similar line break error
+                            // This part is now safe
                             const index = context.dataIndex; 
                             const pnlRangeStart = pnlBins[index].lower;
                             return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
@@ -916,15 +916,13 @@ window.initTradingJournal = async function() {
                 const reader = new FileReader();
                 reader.onload = async (event) => {
                     const csvText = event.target.result;
-                    // FIX: Process the raw CSV into a consistent, backend-friendly format
-                  
-                    const parsedTrades 
-                    = parseCsv(csvText);
+                    // FIX #1: Merged variable assignment to one line
+                    const parsedTrades = parseCsv(csvText);
                     const tradesInApiFormat = convertCsvToApiFormat(parsedTrades);
 
                     if (tradesInApiFormat.length === 0) {
-                        showNotification('No valid trades found 
-                        in CSV.', 'error');
+                        // FIX #2: Removed line break from string literal
+                        showNotification('No valid trades found in CSV.', 'error');
                         toggleLoader(false);
                         return;
                     }
@@ -1018,8 +1016,8 @@ window.initTradingJournal = async function() {
                     return acc;
                 }, {});
                 const timeLabels = Object.keys(timePnlData).sort();
-                const timeData = timeLabels.map(date 
-                    => timePnlData[date]);
+                // FIX #3: Merged the map function to one line
+                const timeData = timeLabels.map(date => timePnlData[date]);
                 
                 const csvRows = ['Date,P&L'];
                 timeLabels.forEach((date, index) => {
