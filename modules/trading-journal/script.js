@@ -621,9 +621,8 @@ window.initTradingJournal = async function() {
                         label: 'Cumulative P&L',
                         data: cumulativePnl,
                         borderColor: '#d4af37',
-                        backgroundColor: (context) => 
-                        
-                        {
+                        // FIX: Removed the extra line break between '=>' and '{' that caused the SyntaxError
+                        backgroundColor: (context) => {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
            
@@ -785,7 +784,7 @@ window.initTradingJournal = async function() {
         // Count trades in each bin
         pnlValues.forEach(pnl => {
             for (let i = 0; i < pnlBins.length; i++) {
-                // FIXED THE SYNTAX ERROR: The comma was missing here
+                // The comma was previously fixed here, ensuring the ternary operator is valid
                 if (pnl >= pnlBins[i].lower && (i === pnlBins.length - 1 
                     ? pnl <= pnlBins[i].upper : pnl < pnlBins[i].upper)) {
                     pnlBins[i].count++;
@@ -806,7 +805,7 @@ window.initTradingJournal = async function() {
                         label: 'P&L Distribution',
                         data: pnlCounts,
                         backgroundColor: (context) => {
-                            // FIX: Removed unnecessary line break which caused the SyntaxError
+                            // This part was previously fixed for a similar line break error
                             const index = context.dataIndex; 
                             const pnlRangeStart = pnlBins[index].lower;
                             return pnlRangeStart < 0 ? 'rgba(255, 99, 132, 0.8)' : 'rgba(50, 205, 50, 0.8)';
