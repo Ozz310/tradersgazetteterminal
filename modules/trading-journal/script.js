@@ -642,6 +642,15 @@ window.initTradingJournal = async function() {
                 },
         
                 options: {
+                    // FIX: Added layout padding to ensure chart elements fit within the canvas boundary
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
@@ -702,6 +711,15 @@ window.initTradingJournal = async function() {
                     }]
                 },
                 options: {
+                    // FIX: Added layout padding to ensure chart elements fit within the canvas boundary
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
                     responsive: true,
        
                     maintainAspectRatio: false,
@@ -746,6 +764,15 @@ window.initTradingJournal = async function() {
                     }]
                 },
                 options: {
+                    // FIX: Added layout padding to ensure chart elements fit within the canvas boundary
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
   
@@ -816,6 +843,15 @@ window.initTradingJournal = async function() {
                 },
                 
                 options: {
+                    // FIX: Added layout padding to ensure chart elements fit within the canvas boundary
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
