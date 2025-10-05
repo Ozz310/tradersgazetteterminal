@@ -449,6 +449,7 @@ window.initTradingJournal = async function() {
         });
     }
 
+    // Chart instances declared here (for global access and destruction)
     let timePnlChart, assetPnlChart, winLossChart, pnlDistributionChart;
     
     /**
@@ -549,7 +550,7 @@ window.initTradingJournal = async function() {
                 return;
             }
 
-            // Destroy existing chart instances to prevent duplicates and crashes
+            // CRITICAL FIX: Destroy existing chart instances to prevent duplicates and crashes
             if (timePnlChart) timePnlChart.destroy();
             if (assetPnlChart) assetPnlChart.destroy();
             if (winLossChart) winLossChart.destroy();
