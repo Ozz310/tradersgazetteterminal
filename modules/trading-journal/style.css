@@ -44,9 +44,9 @@ a {
     border-bottom: 2px solid var(--gold-color);
     
     /* === FLUSH TO TOP FIX === */
-    /* CRITICAL FIX: Match the negative margin to the parent container's 20px top padding (from .module-container) */
-    margin-top: -20px; 
-    /* Remove any standard margin to ensure it touches the bottom of the top edge */
+    /* CRITICAL FIX: Set margin to 0. The parent container's padding (.module-container) 
+       must be removed using the `module-no-top-padding` class in the HTML. */
+    margin-top: 0; 
     margin-bottom: 0; 
     /* ======================== */
 }
