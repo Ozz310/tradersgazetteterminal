@@ -44,18 +44,18 @@ a {
     border-bottom: 2px solid var(--gold-color);
     
     /* === FLUSH TO TOP FIX === */
-    /* CRITICAL FIX: Set margin to 0. The parent container's padding (.module-container) 
-       must be removed using the `module-no-top-padding` class in the HTML. */
-    margin-top: 0; 
+    /* CRITICAL FIX: Aggressively counteract unexpected global desktop padding/margin (e.g., 20px from container + 10px from another element) */
+    margin-top: -30px; 
+    /* Ensure the banner does not create its own spacing below */
     margin-bottom: 0; 
     /* ======================== */
 }
 
 .journal-content-container {
     max-width: 1200px;
-    /* CHANGE: Remove top margin from container since the banner is flush */
+    /* Ensure this container creates the necessary space below the banner */
     margin: 0 auto; 
-    margin-top: 20px; /* Add margin back here for space below the banner */
+    margin-top: 20px; 
     padding: 0 20px;
     display: grid;
     grid-template-columns: 1fr;
