@@ -1,6 +1,6 @@
 /*
 |--------------------------------------------------------------------------
-| GLOBAL APPLICATION STYLES (Provided in User's First Turn)
+| GLOBAL APPLICATION STYLES (Consolidated)
 |--------------------------------------------------------------------------
 | This section contains variables, resets, and core component styling.
 */
@@ -276,7 +276,7 @@ body {
 h1, h2 {
     color: var(--header-gold-color); /* Use the new, richer gold for hierarchy */
     font-weight: 700;
-    margin-top: 0;
+    margin-top: 0; /* FIX: Hard reset to prevent margin collapse/overlap at the top of containers */
     margin-bottom: 20px; /* Generous vertical whitespace */
 }
 
@@ -599,7 +599,7 @@ h1, h2 {
 
 /*
 |--------------------------------------------------------------------------
-| TRADING JOURNAL MODULE STYLES (Added to restore UI)
+| TRADING JOURNAL MODULE STYLES (Fixed to restore UI)
 |--------------------------------------------------------------------------
 | This section contains styles specific to the Trading Journal component.
 */
@@ -607,7 +607,9 @@ h1, h2 {
 /* /modules/trading-journal/style.css */
 /* Main layout */
 .content-body.trading-journal-module {
-    padding: 20px;
+    /* CRITICAL FIX: The parent .module-container provides 20px of vertical padding. 
+       We only need to provide horizontal padding here to prevent margin collapse/overlap at the top. */
+    padding: 0 20px; 
 }
 
 .controls-row {
@@ -911,7 +913,7 @@ table.trade-journal-table {
 @media (max-width: 768px) {
     /* Main Layout */
     .content-body.trading-journal-module {
-        padding: 10px;
+        padding: 10px; /* Resetting padding for mobile view to ensure content is flush */
     }
 
     /* Controls */
