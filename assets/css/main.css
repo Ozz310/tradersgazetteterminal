@@ -34,12 +34,12 @@ html, body {
 /* Global Body Reset */
 body {
     font-family: var(--font-primary);
-    background-color: var(--dark-color-for-text) !important; /* CRITICAL FIX: Ensure the darkest background color is applied to the base, overriding any default */
+    background-color: var(--bg-color);
     color: var(--text-color);
     margin: 0; // Removed !important
     padding: 0;
     overflow-x: auto; // 🔑 FIX: Allow horizontal flow naturally (was 'hidden')
-    height: 100vh; // CRITICAL FIX: Ensure the body takes full viewport height for immediate background application
+    height: 100%; // Standard reset
     width: 100vw;
     display: flex;
     flex-direction: column;
