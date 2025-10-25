@@ -1,753 +1,525 @@
-/* Core Styling & Colors (Uses Global Variables from main.css) */
-
-/* NEW: Journal Hub Wrapper for overall page styling */
-.journal-hub {
-    /* Set a container around the entire content to give it depth */
-    min-height: 100vh;
+/* All styles are scoped to the .news-aggregator container */
+.news-aggregator {
     box-sizing: border-box;
-    /* Ensure no margins push down the content globally */
-    margin: 0;
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: auto; /* Allow the module wrapper to take necessary height */
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    /* --- ENFORCED VARS --- */
-    background-color: var(--dark-color-for-text);
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 1rem;
+/* 🚀 CRITICAL NEW CSS: Re-applies content padding and contains the rest of the module */
+.news-aggregator .news-content-area {
+    width: 100%;
+    padding: 0 20px 20px 20px;
+    box-sizing: border-box;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 500px;
 }
 
-h1, h2, h3, h4 {
-    font-weight: 300;
-    color: var(--text-color);
-}
 
-a {
-    /* Uses Radiant Gold Accent variable */
-    color: var(--gold-color);
-    text-decoration: none;
-}
-
-/* Journal-specific layout */
-.journal-cover-photo {
-    height: 250px;
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/Trading%20Journal.png');
+.news-aggregator .news-header-banner {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     background-size: cover;
-    background-position: center;
+    background-position: center center;
     background-repeat: no-repeat;
+    
+    /* BANNER FIX: Full-width stretch using negative margins */
+    margin-top: -20px;
+    margin-left: -20px;
+    margin-right: -20px;
+    width: calc(100% + 40px);
+    
+    /* Adjust border radius to be square on top */
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.news-aggregator .news-content-flex {
+    display: flex;
+    gap: 20px;
+    /* CRITICAL: align-items: stretch ensures both columns match the height of the tallest one. */
+    align-items: stretch;
+    flex-wrap: nowrap;
+    min-height: 0;
+    box-sizing: border-box;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    flex-grow: 0;
+    
+    /* 💥 CRITICAL FIX (Height Containment): Enforce the maximum height on the two-column container */
+    max-height: 660px;
+}
+
+/* 🔑 YT PLAYER FIX: Force height to 660px to be the stable height reference */
+.news-aggregator .youtube-live-container {
+    flex: 1 1 50%;
+    min-width: 300px;
     position: relative;
-    /* Uses Gold variable */
-    border-bottom: 2px solid var(--gold-color);
     
-    /* === FLUSH TO TOP FIX (Mobile Default) === */
-    /* Mobile is fine, so we ensure no conflicting margins globally */
-    margin-top: 0; 
-    /* Ensure the banner does not create its own spacing below */
-    margin-bottom: 0; 
-    /* ========================================= */
+    /* CRITICAL FIX: Must match max-height of parent .news-content-flex */
+    height: 100%;
+    
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    overflow: hidden;
+    background-color: var(--accent-color);
+    
+    /* 💥 NEW: Ensure video does not shrink from the 660px requirement */
+    min-height: 660px;
 }
 
-.journal-content-container {
-    max-width: 1200px;
-    /* Ensure this container creates the necessary space below the banner */
-    margin: 0 auto; 
-    margin-top: 20px; 
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+/* 🔑 YT PLAYER FIX: Make the iframe fill the container */
+.news-aggregator .youtube-live-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
-/* UI/UX Improvements */
-
-/* Buttons and Actions */
-.action-buttons {
+/* 🔑 NEWS AGGREGATOR FIX: Stretches to match the 660px tall YT player AND becomes the flex parent for the scrollable list */
+.news-aggregator .news-aggregator-container {
+    flex: 1 1 50%;
+    min-width: 300px;
+    background-color: var(--accent-color);
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    background: #1a1a1a;
-    border-radius: 8px;
-    padding: 15px;
-    flex-wrap: wrap;
-    /* IMPROVEMENT: Add shadow for visual separation */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    /* CRITICAL: Height must be 100% to fill the space provided by align-items: stretch */
+    height: 100%;
+    /* NEW: Explicitly define the minimum height to ensure it doesn't collapse below the video height */
+    min-height: 660px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    /* CRITICAL FIX FOR SCROLLING: Hides content that exceeds the 660px boundary */
+    overflow: hidden;
 }
 
-/* ========================================================================= */
-/* 🔑 CRITICAL AESTHETIC FIX: TGG PRIMARY CALL-TO-ACTION (CTA) STYLING */
-/* This is the SOLID GOLD look, used for Forms, Action Buttons, and Active Tabs */
-/* ========================================================================= */
+/* 🔑 FIX: Remove the "News Room" title text */
+.news-aggregator .news-title {
+    display: none;
+}
 
-.tgg-primary-cta, 
-.tab.active {
-    /* 1. ENFORCED SOLID GOLD GRADIENT (Matches the Active Table View Tab) */
-    background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+/* Tab Styles */
+.news-aggregator .news-tabs {
+    display: flex;
+    justify-content: flex-start;
+    /* CRITICAL: Ensure tabs don't shrink or grow */
+    flex-shrink: 0;
+    flex-grow: 0;
+    /* 💥 FIX: ADDED 15px TOP PADDING for visual spacing */
+    padding: 15px 20px 10px 20px;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow-x: auto;
+    white-space: nowrap;
+    z-index: 5;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    margin-bottom: 15px;
+}
+.news-aggregator .news-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT (Applying the desired button aesthetic) 🔑 */
+.news-aggregator .news-tab {
+    flex-grow: 0;
+    flex-shrink: 0;
     
-    /* 2. ENFORCED DARK TEXT ON GOLD */
-    color: var(--dark-color-for-text) !important;
+    /* INACTIVE STATE: Dark Recessed */
+    background: var(--accent-color) !important;
+    background: linear-gradient(145deg, var(--accent-color), #3c3c3c) !important;
+    color: var(--text-color) !important;
     
-    /* 3. ENFORCED LAYOUT & SHADOW */
-    padding: 12px 25px !important;
-    font-size: 1rem !important;
-    cursor: pointer;
+    padding: 10px 20px !important;
     border-radius: 8px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    transition: all 0.3s ease;
-    border: none !important;
+    margin: 0 5px;
+    border: 1px solid #444 !important;
     
-    /* Strong shadow for a 'premium' raised look */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-    outline: none !important;
-}
-
-/* The existing .submit-button should also use the same look, 
-   though it's better to explicitly use tgg-primary-cta in the HTML */
-button.submit-button,
-.submit-button {
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
-    color: var(--dark-color-for-text) !important;
-    border: none !important;
-    padding: 12px 25px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-    flex-grow: 1; 
-    min-width: 150px;
-}
-
-/* Hover state for all solid gold buttons */
-.tgg-primary-cta:hover, 
-.submit-button:hover,
-.tab.active:hover {
-    background: linear-gradient(145deg, #FFEFB0, #EEDD99) !important; /* Slightly lighter gold hover */
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Tabs - Unified Aesthetic (Now a Toggle Button Group) */
-.tab-switcher {
-    /* 💥 FIX: Uses flex to correctly align the toggle buttons side-by-side */
-    display: flex; 
-    margin-top: 20px;
-    background: #1a1a1a;
-    border-radius: 8px;
-    padding: 0; 
-    /* NEW: Add a subtle inner shadow to define the container */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4); 
-    overflow: hidden; 
-}
-
-/* ⭐ CRITICAL FIX: REPLACING LOCAL '.tab' STYLE WITH GLOBAL 'tgg-menu-button' AESTHETIC ⭐ */
-/* This is the Dark/Inactive Toggle Button Look */
-.journal-content-container .tab, 
-.tab {
-    /* 🔑 ENFORCEMENT: Use global menu button style for consistent UI/UX across Hubs */
-    flex: 1;
-    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-radius: 0; 
-    margin: 0; 
-    
-    /* Inherit global button styling (Dark Gradient) */
-    background: var(--accent-color);
-    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
-    
-    /* Default Tab Text is Crisp White/Light Grey */
-    color: var(--text-color); 
-    
-    border: 1px solid transparent; 
-    padding: 12px;
-    font-size: 0.95rem; 
-    font-weight: 600;
-    box-shadow: none !important; 
-}
-
-/* Add a subtle divider between buttons */
-.tab:not(:last-child) {
-    border-right: 1px solid #333;
-}
-
-/* The .tab.active style is now defined at the top with .tgg-primary-cta for consistency */
-
-.journal-content-container .tab:hover:not(.active),
-.tab:hover:not(.active) {
-    /* Match global tgg-menu-button:hover */
-    color: var(--hover-gold-color) !important; 
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
-}
-
-
-/* Data Cards and Widgets */
-.journal-data-card,
-.journal-entry-form-card {
-    background-color: #1a1a1a;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* ⭐ REFINED HEADING: Gold underline for visual impact (Uses VAR) ⭐ */
-.widget-title {
-    font-size: 1.5rem;
-    margin-top: 0;
-    border-bottom: 2px solid var(--gold-color);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-/* --- NEW: KEY PERFORMANCE INDICATOR (KPI) DASHBOARD STYLING --- */
-
-.kpi-dashboard-card {
-    background-color: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px; /* Space above charts/table */
-}
-
-.kpi-grid {
-    display: grid;
-    /* Use 'fit' to ensure responsiveness without media queries */
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-    gap: 20px;
-    text-align: center;
-}
-
-.kpi-item {
-    padding: 15px 10px;
-    border-radius: 6px;
-    background-color: #252525;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.4);
-    transition: transform 0.2s ease;
-}
-
-.kpi-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 0 5px rgba(240, 215, 136, 0.2);
-}
-
-.kpi-label {
-    font-size: 0.85rem;
-    color: #a8a8a8;
-    margin-bottom: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    text-shadow: none;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-.kpi-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--gold-color);
+.news-aggregator .news-tab:hover {
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for the accent color */
+    color: #F0D788 !important;
+    border-color: #F0D788 !important; /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)) !important;
+    transform: none;
 }
 
-.kpi-value.positive {
-    color: #38c172; /* Subtle Green for positive P&L/Win Rate */
+/* 💥 ACTIVE STATE (Source of Truth for Gold Color): Solid Gold CTA */
+.news-aggregator .news-tab.active {
+    background-image: none !important;
+    /* This gradient defines the gold color spectrum for the buttons */
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
+    
+    color: var(--dark-color-for-text) !important;
+    border: none !important;
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    
+    font-weight: 700 !important;
+    transform: none !important;
+}
+/* 🔑 END TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
+
+
+.news-aggregator .news-list {
+    /* 🔑 CRITICAL SCROLL FIX: Takes ALL remaining space in the news-aggregator-container. */
+    flex-grow: 1;
+    /* CRITICAL: The combination of min-height: 0 and flex-basis: 0 is the most reliable way 
+        to ensure flex-grow: 1 correctly calculates the remaining space in a column layout. */
+    min-height: 0;
+    flex-basis: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    
+    /* Reverted PADDING to preserve original spacing integrity */
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 20px;
+    padding-left: 20px;
+    
+    /* Reverted height: 100% to auto to allow flex-basis: 0 and flex-grow: 1 to control height */
+    height: auto;
+    box-sizing: border-box;
 }
 
-.kpi-value.negative {
-    color: #b33a3a; /* Deep Red for negative P&L/Loss Rate */
+.news-aggregator .news-list::-webkit-scrollbar {
+    width: 0;
+    display: none;
+}
+.news-aggregator .news-list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-/* Forms */
-/* Default (Desktop) Form Layout */
-#trade-form .form-row,
-#sync-form .form-row {
-    display: flex;
-    gap: 20px;
+.news-aggregator .news-article {
+    background-color: var(--border-color);
+    padding: 20px 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    /* ⭐ IMPLEMENTED: Enhanced Card Separation/Depth */
+    /* Gold-tinted inner shadow (using the gold shade defined by the button gradient's RGB value) */
+    box-shadow: inset 0 0 10px rgba(240, 215, 136, 0.1);
+}
+
+.news-aggregator .news-list > .news-article:last-child {
+    /* NEW: Ensure bottom padding/margin is visible *inside* the scroll area */
+    margin-bottom: 20px;
+}
+
+.news-aggregator .news-article:hover {
+    transform: translateY(-4px);
+    /* 💥 FIX (Gold Consistency): Gold border on hover (Uses the defined light gold hex) */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    border: 1px solid #F0D788;
+}
+
+/* ⭐ REFINED TYPOGRAPHY: Headline style (Journalistic Look) ⭐ */
+.news-aggregator .news-article h2 {
+    font-family: 'DM Serif Display', serif;
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+}
+
+.news-aggregator .news-article a {
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for the accent color */
+    color: #F0D788 !important;
+    text-decoration: none;
+    position: relative;
+}
+
+/* ⭐ DYNAMIC GOLD ACCENT: Micro-Interaction underline effect ⭐ */
+.news-aggregator .news-article h2 a:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 2px;
+    right: 0;
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    background: #F0D788;
+    transition: width 0.3s ease;
+}
+.news-aggregator .news-article h2 a:hover:after {
+    width: 100%;
+    left: 0;
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    background: #F0D788;
+}
+/* ⭐ END Micro-Interaction ⭐ */
+
+
+/* ⭐ IMPLEMENTED: REFINED TYPOGRAPHY: Dateline style (Now using consistent gold color) ⭐ */
+.news-aggregator .article-dateline {
+    font-size: 0.85rem;
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for consistency */
+    color: #F0D788 !important;
+    opacity: 1;
+    font-weight: 400;
+    display: block;
     margin-bottom: 15px;
 }
 
-.form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group.full-width {
-    flex: none;
-    width: 100%;
-}
-
-label {
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-    color: #ccc;
-}
-
-/* ⭐ MINIMALIST INPUTS & GOLD FOCUS ACCENT (Uses VARS and Hub standard sizes) ⭐ */
-input,
-select,
-textarea {
-    background-color: #252525;
-    border: 1px solid #333 !important; /* Enforce darker border */
+.news-aggregator .news-article p {
+    font-size: 1rem;
     color: var(--text-color);
-    padding: 12px !important; /* Enforce 12px padding from Hub */
-    border-radius: 8px !important; /* Enforce 8px radius from Hub */
-    font-size: 1rem !important; /* Enforce 1rem font from Hub */
-    box-sizing: border-box;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    line-height: 1.7;
+    margin: 0;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    /* Radiant Gold border on focus */
-    border-color: var(--gold-color) !important;
-    /* Enforce Hub-style focus shadow */
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4) !important; /* Enforce Hub shadow */
-}
-
-/* --- FORM TEXTAREA HEIGHT IMPROVEMENT --- */
-textarea {
-    min-height: 120px; /* Give the notes/plan section a proper height for input */
-    resize: vertical;
-}
-
-/* Tables */
-.journal-table-wrapper {
-    display: block; 
-}
-
-.journal-table-container {
-    overflow-x: auto;
-    margin-top: 20px;
-}
-
-#journalTable {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-/* ⭐ TABLE REFINEMENT: Subtle Zebra Striping & Hover (Uses VAR) ⭐ */
-#journalTable th,
-#journalTable td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #333;
-    white-space: nowrap;
-}
-
-#journalTable tbody tr:nth-child(even) {
-    background-color: #1f1f1f; 
-}
-
-#journalTable thead th {
-    background-color: var(--dark-color-for-text);
-    color: var(--gold-color);
+.news-aggregator .read-more-button {
+    display: inline-block;
+    font-size: 0.95rem;
     font-weight: 600;
+    margin-top: 15px;
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex */
+    color: #F0D788;
+    text-decoration: none;
+    transition: all 0.2s ease; /* Updated transition to catch text-shadow */
+}
+.news-aggregator .read-more-button:hover {
+    /* 💥 FIX (Hover Consistency): Apply a subtle gold text glow instead of changing color */
+    color: #F0D788; /* Ensure color remains gold */
+    /* Uses the gold shade defined by the button gradient's RGB value, with increased opacity */
+    text-shadow: 0 0 8px rgba(240, 215, 136, 0.8);
+}
+
+/* ⭐ IMPLEMENTED: 'Breaking' Tag Refinement (Capsule/Gold Look) ⭐ */
+.news-aggregator .breaking-ribbon {
+    display: inline-block;
+    /* Uses the gold shade defined by the button gradient's RGB value, with low opacity */
+    background-color: rgba(240, 215, 136, 0.1);
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for color */
+    color: #F0D788;
+    font-size: 0.75rem;
+    font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.85rem;
-}
-
-#journalTable tbody tr:hover {
-    background-color: #282828; 
-    /* ⭐ GOLD BORDER ON HOVER (Uses VAR) ⭐ */
-    box-shadow: inset 2px 0 0 0 var(--gold-color); 
-}
-
-/* --- TABLE P&L VISUALIZATION FIX --- */
-
-/* Text color for Profit/Loss in the table */
-.pnl-column-profit {
-    color: var(--gold-color) !important;
-    font-weight: 700;
-}
-
-.pnl-column-loss {
-    color: #b33a3a !important;
-    font-weight: 700;
-}
-
-/* --- UPDATED: Trade Card View Styling (Mobile-first) --- */
-.trade-card-list {
-    display: grid;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.trade-card {
-    background-color: #252525; 
-    /* Keep the left border as the P&L badge */
-    border-left: 5px solid; 
-    padding: 15px;
-    border-radius: 8px;
-    /* Deeper shadow for luxury look */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
-    transition: transform 0.2s ease, border-left-color 0.3s ease;
-    /* ⭐ NEW: Subtle border on the right for extra definition ⭐ */
-    border-right: 1px solid #333; 
-}
-
-.trade-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-}
-
-/* ⭐ P&L BADGES: Gold/Red/White Scheme for Clarity (Uses VARS) ⭐ */
-.trade-card.profit {
-    border-left-color: var(--gold-color); /* Gold for Profit */
-}
-
-.trade-card.loss {
-    border-left-color: #b33a3a; /* Deep Red for Loss (Subtle) - NOT a global variable */
-}
-
-.trade-card.breakeven {
-    border-left-color: var(--text-color); /* Crisp White for Break-Even */
-}
-
-/* ⭐ CARD HEADER REFINEMENT: Accent line for separation (Uses VAR) ⭐ */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* NEW: Use a gold accent line */
-    border-bottom: 1px solid var(--gold-color); 
-    padding-bottom: 10px;
+    padding: 4px 10px;
+    border-radius: 9999px; /* Capsule shape */
+    /* Uses the gold shade defined by the button gradient's RGB value, with low opacity */
+    border: 1px solid rgba(240, 215, 136, 0.3);
     margin-bottom: 10px;
 }
 
-.card-symbol {
-    font-size: 1.3rem; 
-    font-weight: 700;
-    color: var(--gold-color); 
-}
-
-/* ⭐ PNL TEXT SIZE: Larger P&L value (Uses VAR for color) ⭐ */
-.card-pnl {
-    font-size: 1.5rem; 
-    font-weight: 700;
-}
-
-/* ⭐ FIX: Trade Card Aesthetic & Spacing Fixes (Uses VAR for color) ⭐ */
-.trade-card .card-detail {
+.news-aggregator .news-branding-footer {
     display: flex;
-    justify-content: space-between;
-    padding: 3px 0; 
-    font-size: 0.95rem; 
-    /* Subtle separation line for detail rows */
-    border-bottom: 1px dotted rgba(241, 241, 241, 0.1); 
-}
-/* Ensure the last card detail doesn't have the dotted line */
-.trade-card .card-detail:last-of-type {
-    border-bottom: none;
-    margin-bottom: 5px; 
-}
-
-.trade-card .card-label { /* Increased specificity */
-    flex: 0 0 45%; 
-    color: #a8a8a8; /* Lighter grey for label */
-    font-weight: 400;
-}
-
-.trade-card .card-value { /* Increased specificity */
-    flex: 1 1 auto;
-    text-align: right; 
-    font-weight: 600;
-    color: var(--text-color); /* Uses VAR for color */
-    word-break: break-all; 
-}
-
-/* Modals, Animations, Utilities */
-.modal {
-    display: flex;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #1a1a1a;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    animation: modal-fade-in 0.3s ease-out;
-}
-
-.modal-content h2 {
-    font-size: 1.8rem;
-    border-bottom: 2px solid var(--gold-color); /* Uses VAR for color */
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.close {
-    color: var(--text-color); /* Uses VAR for color */
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* Animations */
-@keyframes modal-fade-in {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Utilities */
-.hidden {
-    display: none !important;
-}
-
-.notification {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #1a1a1a;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    font-weight: bold;
-    z-index: 2000;
-}
-
-.loader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top: 4px solid var(--gold-color); /* Uses VAR for color */
-    width: 40px;
-    height: 40px;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
-    z-index: 2000;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* --- ANALYTICS VIEW LAYOUT & UI/UX --- */
-
-/* ⭐ ANALYTICS CONTROLS UI/UX (Gold Dropdown & Button Group) ⭐ */
-.analytics-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    margin-bottom: 25px;
-    border-bottom: 1px solid #333;
-}
-
-.time-frame-selector {
-    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
+    padding: 15px 0 20px 0;
+    border-top: 1px solid var(--border-color);
+    /* NEW: Ensure footer does not grow or shrink */
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin-top: auto;
+    z-index: 5;
+    background-color: var(--accent-color);
 }
 
-/* Time Frame Selector Styling (Uses VAR) */
-#time-frame {
-    min-width: 150px;
-    background-color: var(--dark-color-for-text); /* Uses VAR for color */
-    border: 1px solid #333;
-    padding: 8px 15px;
-    font-weight: 600;
-}
-#time-frame:focus {
-    border-color: var(--gold-color); /* Uses VAR for color */
+.news-aggregator .news-branding-footer img {
+    max-width: 100px;
+    height: auto;
+    /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
+    filter: drop-shadow(0 0 10px rgba(240, 215, 136, 0.4));
+    transition: filter 0.3s ease;
 }
 
-/* ⭐ DESKTOP LAYOUT (2x2 Grid Enforcement) ⭐ */
-.analytics-grid {
-    display: flex; 
-    flex-direction: column;
-    gap: 30px; 
+.news-aggregator .news-branding-footer img:hover {
+    /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
+    filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.7));
 }
 
-.chart-row {
-    display: flex;
-    gap: 30px; 
-    width: 100%; 
+.news-aggregator .news-branding-footer p {
+    margin: 0;
+    /* 💥 FIX (Gold Consistency): Uses the defined light gold hex for color */
+    color: #F0D788;
+    font-size: 0.8rem;
+    font-weight: 500;
+    /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
+    text-shadow: 0 0 5px rgba(240, 215, 136, 0.4);
 }
 
-.chart-card {
-    flex: 1 1 50%; 
-    min-width: 0; 
-    background-color: #1a1a1a; 
-    padding: 20px;
+/* ⭐ SKELETON LOADER ENHANCEMENT: Styles and Animation ⭐ */
+@keyframes shimmer {
+    0% { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
+}
+
+.news-aggregator .skeleton-wrapper {
+    background-color: var(--content-bg-color);
+    padding: 0;
+}
+
+.news-aggregator .skeleton-article {
+    background-color: var(--border-color);
+    padding: 20px 25px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* REVERTED: Back to original height */
-    height: 380px; 
-    box-sizing: border-box;
-    transition: box-shadow 0.3s ease;
-    position: relative; 
-    /* CRITICAL FIX: Ensure the canvas cannot overflow the card boundaries */
-    overflow: hidden; 
+    margin-bottom: 25px;
 }
 
-.chart-card:hover {
-    /* Subtle gold highlight on hover for chart cards (Uses VAR) */
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3), 0 4px 10px rgba(0,0,0,0.6);
+.news-aggregator .skeleton-line {
+    height: 14px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background: linear-gradient(to right,
+        var(--border-color) 0%,
+        /* Uses the gold shade defined by the button gradient's RGB value (CONSISTENT) */
+        rgba(240, 215, 136, 0.1) 20%,
+        var(--border-color) 40%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite linear;
 }
 
-.chart-card h4 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    color: var(--gold-color); /* Gold headings for charts (Uses VAR) */
-    border-bottom: 1px solid #333;
-    padding-bottom: 5px;
+.news-aggregator .skeleton-line.short {
+    width: 40%;
+    height: 10px;
+    margin-top: 10px;
+}
+
+.news-aggregator .skeleton-line.medium {
+    width: 80%;
+}
+
+.news-aggregator .skeleton-line.long {
+    width: 100%;
+}
+
+.news-aggregator .skeleton-article .skeleton-line:first-child {
+    width: 70%;
+    height: 18px;
     margin-bottom: 15px;
 }
+/* ⭐ END SKELETON STYLES ⭐ */
 
-.chart-card canvas {
-    /* RECALCULATED/CORRECTED HEIGHT for 380px card: 380px (Card) - 40px (Padding) - 35px (H4) = 305px */
-    display: block;
-    width: 100% !important;
-    height: 305px !important; 
-    max-height: 100% !important; /* Ensure it respects the container */
-    box-sizing: border-box;
-}
 
-/* ======================================================= */
-/* --- MOBILE RESPONSIVENESS (Max Width 768px) --- */
-/* ======================================================= */
-
+/* Mobile responsiveness: stack elements vertically */
 @media (max-width: 768px) {
-    .journal-content-container {
-        padding: 0 10px; 
-    }
-    
-    /* KPI Grid Adjustments */
-    .kpi-grid {
-        grid-template-columns: 1fr 1fr; /* Force 2 columns max on mobile */
-        gap: 10px;
-    }
-    .kpi-value {
-        font-size: 1.5rem; /* Slightly smaller for mobile density */
-    }
-    
-    /* ⭐ ACTION BUTTON FIX: Force side-by-side on mobile and split 50/50 ⭐ */
-    .action-buttons {
-        flex-wrap: nowrap;
-        padding: 10px; /* Smaller padding */
-    }
-    
-    /* Apply the new solid gold style to the action buttons in the header for mobile */
-    .action-buttons .tgg-primary-cta {
-        flex: 1 1 50%;
-        min-width: unset; 
-        padding: 10px 15px !important; /* Smaller button for mobile */
-        font-size: 0.9rem !important;
-    }
-    
-    /* Analytics Controls stacking */
-    .analytics-controls {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    .time-frame-selector {
-        width: 100%;
-        justify-content: space-between;
-    }
-    #time-frame {
-        flex-grow: 1; 
-    }
-    .export-button {
-        width: 100%;
-    }
-    .analytics-controls .tgg-primary-cta {
-        width: 100%; 
+    .news-aggregator .news-content-area {
+        padding: 0 10px 10px 10px;
+        height: auto;
     }
 
-    /* Analytics Grid Collapse: Single column */
-    .chart-row {
+    .news-aggregator .news-content-flex {
         flex-direction: column;
-        gap: 20px;
+        height: auto;
+        flex-wrap: wrap;
+        padding: 0;
+        min-height: auto;
+        height: auto;
+        max-height: none; /* CRITICAL: Must be reset on mobile */
+    }
+
+    .news-aggregator .youtube-live-container,
+    .news-aggregator .news-aggregator-container {
+        flex-basis: auto;
+        min-width: unset;
+        width: 100%;
+        height: auto;
+        max-height: none;
     }
     
-    /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
-    .chart-card {
-        /* REVERTED: Back to original height */
-        height: 350px; 
-        padding: 15px; 
+    /* 🛠️ FIX 1: Reset min-height for mobile to avoid desktop constraint */
+    .news-aggregator .news-aggregator-container {
+        min-height: auto; /* Reset to auto to ensure the height is content-driven */
+        margin-top: 20px;
+        height: auto;
+        /* CRITICAL: Ensure container is allowed to scroll its content if necessary */
+        overflow: visible;
     }
-    .chart-card h4 {
+
+
+    /* CRITICAL MOBILE FIX: Aspect ratio trick for responsive video on mobile */
+    .news-aggregator .youtube-live-container {
+        padding-top: 56.25%; /* 16:9 aspect ratio */
+        position: relative;
+        height: 0;
+        /* CRITICAL FIX: Reset desktop height constraints on mobile */
+        min-height: unset;
+    }
+    .news-aggregator .youtube-live-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+
+    .news-aggregator .news-header-banner {
+        height: 180px;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    /* MOBILE: Scrollable Tabs */
+    .news-aggregator .news-tabs {
         margin-bottom: 10px;
-    }
-    .chart-card canvas {
-        /* RECALCULATED/CORRECTED HEIGHT for 350px card height: 350px - 30px (pad) - 30px (h4) = 290px */
-        width: 100% !important; 
-        height: 290px !important; 
+        padding: 0 10px 10px 10px;
     }
 
-    /* 1. Form Collapse: Stack form groups */
-    #trade-form .form-row,
-    #sync-form .form-row {
-        display: block; 
-        gap: 0;
-        margin-bottom: 0;
+    .news-aggregator .news-tab {
+        min-width: 100px;
     }
 
-    .form-group {
+    .news-aggregator .news-list {
+        padding-right: 10px;
+        padding-left: 10px;
+        
+        /* 🛠️ FIX 2: Reverting to the robust Flexbox growth logic for mobile */
+        flex-grow: 1; /* This is the key to filling the remaining space */
+        min-height: 0; /* Ensures flex-grow: 1 works correctly */
+        flex-basis: auto; /* Ensures flex-grow: 1 works correctly */
+        overflow-y: auto;
+        max-height: none; /* Removing this constraint lets it flow with the page */
+        height: auto; /* Allow height to be determined by content and flex-grow */
+        box-sizing: border-box;
+    }
+    
+    .news-aggregator .news-list > .news-article:last-child {
+        margin-bottom: 15px; /* NEW: Adjust bottom margin for mobile consistency */
+    }
+
+    .news-aggregator .news-article {
+        padding: 15px 20px;
         margin-bottom: 15px;
     }
+
+    .news-aggregator .news-article h2 {
+        font-size: 1.15rem;
+    }
+
+    .news-aggregator .news-article p {
+        font-size: 0.9rem;
+    }
     
-    /* 3. Trade Log View Toggle (Card vs Table) */
-    .journal-table-wrapper {
-        display: none;
-    }
-
-    .trade-card-list {
-        display: grid;
-    }
-}
-
-/* ======================================================= */
-/* --- DESKTOP VIEW (Min Width 769px) --- */
-/* ======================================================= */
-
-@media (min-width: 769px) {
-    /* 💥 CRITICAL DESKTOP FLUSH FIX & FULL-BLEED 💥 */
-    /* This applies the aggressive vertical pull and horizontal stretch 
-       (similar to the News module fix) only on desktop to counteract the 
-       main wrapper's padding/margin and force the full-bleed look. */
-    .journal-cover-photo {
-        /* 1. VERTICAL PULL: More aggressive than -40px to ensure flush */
-        margin-top: -60px !important;
-        
-        /* 2. HORIZONTAL PULL: Stretch to consume the 20px left/right padding of the main wrapper */
-        margin-left: -20px;
-        margin-right: -20px;
-        width: calc(100% + 40px);
-    }
-
-    /* Hide the card view on desktop/larger screens */
-    #trade-card-view {
-        display: none;
+    .news-aggregator .news-branding-footer {
+        padding: 15px 10px 20px 10px;
     }
 }
