@@ -43,12 +43,13 @@ a {
     /* Uses Gold variable */
     border-bottom: 2px solid var(--gold-color);
     
-    /* === FLUSH TO TOP FIX === */
-    /* CRITICAL FIX: Aggressively counteract unexpected global desktop padding/margin (e.g., 20px from container + 10px from another element) */
-    margin-top: -30px; 
+    /* === FLUSH TO TOP FIX (Mobile Default) === */
+    /* REVERTED: Set back to 0 globally, as mobile works fine. 
+       The desktop fix will be handled below in the media query. */
+    margin-top: 0; 
     /* Ensure the banner does not create its own spacing below */
     margin-bottom: 0; 
-    /* ======================== */
+    /* ========================================= */
 }
 
 .journal-content-container {
@@ -732,6 +733,13 @@ textarea {
 /* ======================================================= */
 
 @media (min-width: 769px) {
+    /* 💥 CRITICAL DESKTOP FLUSH FIX 💥 */
+    /* Only apply aggressive negative margin on DESKTOP to counteract 
+       the larger top padding/margin of the global layout wrapper. */
+    .journal-cover-photo {
+        margin-top: -40px !important;
+    }
+
     /* Hide the card view on desktop/larger screens */
     #trade-card-view {
         display: none;
