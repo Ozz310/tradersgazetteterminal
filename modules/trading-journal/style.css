@@ -44,8 +44,7 @@ a {
     border-bottom: 2px solid var(--gold-color);
     
     /* === FLUSH TO TOP FIX (Mobile Default) === */
-    /* REVERTED: Set back to 0 globally, as mobile works fine. 
-       The desktop fix will be handled below in the media query. */
+    /* Mobile is fine, so we ensure no conflicting margins globally */
     margin-top: 0; 
     /* Ensure the banner does not create its own spacing below */
     margin-bottom: 0; 
@@ -733,11 +732,18 @@ textarea {
 /* ======================================================= */
 
 @media (min-width: 769px) {
-    /* 💥 CRITICAL DESKTOP FLUSH FIX 💥 */
-    /* Only apply aggressive negative margin on DESKTOP to counteract 
-       the larger top padding/margin of the global layout wrapper. */
+    /* 💥 CRITICAL DESKTOP FLUSH FIX & FULL-BLEED 💥 */
+    /* This applies the aggressive vertical pull and horizontal stretch 
+       (similar to the News module fix) only on desktop to counteract the 
+       main wrapper's padding/margin and force the full-bleed look. */
     .journal-cover-photo {
-        margin-top: -40px !important;
+        /* 1. VERTICAL PULL: More aggressive than -40px to ensure flush */
+        margin-top: -60px !important;
+        
+        /* 2. HORIZONTAL PULL: Stretch to consume the 20px left/right padding of the main wrapper */
+        margin-left: -20px;
+        margin-right: -20px;
+        width: calc(100% + 40px);
     }
 
     /* Hide the card view on desktop/larger screens */
