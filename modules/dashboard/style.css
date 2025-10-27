@@ -75,7 +75,7 @@
     align-items: center;
     
     width: 100%;
-    /* Set a maximum clean width for the widget */
+    /* Default max-width for the clock and other focused widgets */
     max-width: 400px;  
     margin: 0;  
     
@@ -96,7 +96,7 @@
 
 /* 🚀 NEW: Loader Styles */
 .eab-loading, .eab-error {
-    /* 🚀 FIX: Make the loader/error message wider (override widget-card max-width) */
+    /* Default wider max-width for loading state */
     max-width: 600px; 
     width: 100%;
     text-align: center;
@@ -104,15 +104,29 @@
     background-color: var(--light-grey-placeholder);
     border-radius: 5px;
     margin: 25px auto; /* Center it */
-    color: var(--gold-accent);
     font-size: 1.1rem;
     font-weight: 500;
 }
+
+/* 🚀 FIX: Apply Solid Gold Gradient to Loader Text */
+.eab-loading {
+    /* This creates a text mask effect, only coloring the text with the gradient */
+    color: #F0D788; /* Fallback color */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    
+    /* Ensure background color is visible behind the text */
+    background-color: var(--light-grey-placeholder);
+    padding: 20px;
+}
+
 .eab-error {
     background-color: #381c1c; /* Darker red tone for errors */
     color: var(--bias-bearish);
 }
-
 
 .elite-alpha-brief:hover {
     box-shadow: 0 0 5px var(--gold-accent), 0 4px 15px rgba(0, 0, 0, 0.4);
@@ -161,11 +175,7 @@
     border: none !important;
 }
 
-/* * NOTE: The specific color classes (.eab-bias-bullish, .eab-bias-bearish, .eab-bias-neutral) 
- * are now redundant for the background but are kept for semantic clarity 
- * (e.g., if a user wanted to add an icon colored by sentiment). 
- * The gradient is enforced via the generic .eab-bias selector above.
- */
+/* ... (eab-headline, eab-toggle-btn, and content wrapper styles remain the same) ... */
 
 .eab-headline {
     font-size: 1.25rem;
@@ -268,7 +278,7 @@
     }
 }
 
-/* ... (Analog Clock and Time Zone Selector styles remain as in your provided code) ... */
+/* ... (Analog Clock and Time Zone Selector styles remain the same) ... */
 
 .live-clock-container {
     display: flex;
@@ -427,7 +437,30 @@
     letter-spacing: 1px;
 }
 
+/* ------------------------------------------- */
+/* 🚀 NEW: DESKTOP-ONLY STYLES (> 768px) */
+/* ------------------------------------------- */
+
+@media (min-width: 769px) {
+    /* 📐 FIX: Expand the Market Brief Card Horizontally */
+    /* Target the widget card containing the market brief */
+    .widget-card:has(.elite-alpha-brief) {
+        max-width: 900px; /* Rectangular width for desktop */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Ensure the loader matches the new card width on desktop */
+    .eab-loading, .eab-error {
+        max-width: 900px; 
+    }
+}
+
+
+/* ------------------------------------------- */
 /* Mobile responsive styles */
+/* ------------------------------------------- */
+
 @media (max-width: 768px) {
     .dashboard-page {
         padding: 0 0 20px 0; 
