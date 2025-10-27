@@ -7,6 +7,10 @@ window.tg_dashboard = window.tg_dashboard || {};
     let dashboardTimers = {};
     let activeTimeZone = '';
     let isLocalTime = true;
+    
+    // 💡 NEW: Placeholder for the Deployed GAS Web App URL
+    // IMPORTANT: REPLACE THIS WITH YOUR DEPLOYED GAS WEB APP URL
+    const GAS_MARKET_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE'; 
 
     function initDashboard() {
         const dashboardContainer = document.querySelector('.dashboard-page');
@@ -19,10 +23,112 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         setupLiveClock();
         setupTimeZoneButtons();
+        // 🚀 NEW: Initialize the Elite Alpha Brief (EAB)
+        fetchMarketBrief();
     }
 
+    // ---------------------------------------------
+    // 🚀 NEW: ELITE ALPHA BRIEF (EAB) LOGIC
+    // ---------------------------------------------
+    
+    /**
+     * Fetches the market brief from the GAS backend and renders it.
+     */
+    async function fetchMarketBrief() {
+        const briefContainer = document.getElementById('elite-alpha-brief');
+        if (!briefContainer) {
+            console.error('Elite Alpha Brief container not found.');
+            return;
+        }
+
+        try {
+            // Display loading state
+            briefContainer.innerHTML = '<div class="eab-loading">Fetching Elite Alpha Brief...</div>';
+            
+            const response = await fetch(GAS_MARKET_API_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data.error) {
+                briefContainer.innerHTML = `<div class="eab-error">Data unavailable: ${data.error}</div>`;
+                return;
+            }
+
+            renderMarketBrief(briefContainer, data);
+
+        } catch (error) {
+            console.error('Error fetching market brief:', error);
+            briefContainer.innerHTML = `<div class="eab-error">Failed to load Market Brief. Check API URL.</div>`;
+        }
+    }
+
+    /**
+     * Renders the fetched data into the EAB container.
+     * @param {HTMLElement} container The DOM element to render into.
+     * @param {object} data The market update data ({timestamp, headline, content}).
+     */
+    function renderMarketBrief(container, data) {
+        // Extract Analyst Bias from the end of the report content
+        const biasMatch = data.content.match(/Analyst Bias & Conclusion:(.*?)(BULLISH|BEARISH|NEUTRAL)/i);
+        const analystBias = biasMatch ? biasMatch[2].toUpperCase() : 'NEUTRAL';
+        const formattedDate = new Date(data.timestamp).toLocaleDateString('en-US', { 
+            month: 'short', day: 'numeric', year: 'numeric' 
+        });
+
+        // Use innerHTML for full component structure
+        container.innerHTML = `
+            <div class="eab-header" id="eabHeader">
+                <div class="eab-metadata">
+                    <span class="eab-date">${formattedDate}</span>
+                    <span class="eab-bias eab-bias-${analystBias.toLowerCase()}">${analystBias}</span>
+                </div>
+                <h2 class="eab-headline">${data.headline}</h2>
+                <button class="eab-toggle-btn" aria-expanded="false" aria-controls="eabContent">
+                    <span class="read-text">READ MORE</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </button>
+            </div>
+            <div class="eab-content-wrapper" id="eabContent" aria-hidden="true">
+                <div class="eab-content-inner">${data.content.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+        
+        // Setup listener for expand/collapse logic
+        document.querySelector('.eab-toggle-btn').addEventListener('click', toggleBriefContent);
+    }
+    
+    /**
+     * Toggles the visibility and state of the Elite Alpha Brief content.
+     */
+    function toggleBriefContent(event) {
+        const button = event.currentTarget;
+        const contentWrapper = document.getElementById('eabContent');
+        const icon = button.querySelector('.toggle-icon');
+
+        if (contentWrapper.classList.contains('is-expanded')) {
+            // Collapse
+            contentWrapper.classList.remove('is-expanded');
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+            button.setAttribute('aria-expanded', 'false');
+            contentWrapper.setAttribute('aria-hidden', 'true');
+            button.querySelector('.read-text').textContent = 'READ MORE';
+        } else {
+            // Expand
+            contentWrapper.classList.add('is-expanded');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+            button.setAttribute('aria-expanded', 'true');
+            contentWrapper.setAttribute('aria-hidden', 'false');
+            button.querySelector('.read-text').textContent = 'READ LESS';
+        }
+    }
+    // ---------------------------------------------
+    
     function setupLiveClock() {
-        // We use the local timezone on initial load
+        // ... (Clock setup remains the same)
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         updateClock(timezone);
         updateSessionIndicator();
@@ -43,8 +149,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         const digitalDate = document.getElementById('digital-date');
 
         // ✅ FIX: NULL CHECK AND SELF-CLEANUP
-        // If these elements are null, the module is no longer visible (unloaded/navigated away).
-        // Call the cleanup function to stop the timer, preventing the 'TypeError' loop.
         if (!hourHand || !minuteHand || !digitalTime || !digitalDate) {
             console.log('Clock elements not found. Cleaning up dashboard timer.');
             cleanupDashboard();
