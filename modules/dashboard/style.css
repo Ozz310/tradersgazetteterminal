@@ -15,10 +15,15 @@
     --ny-color: #ff5722;    /* Orange */
     --frankfurt-color: #8e44ad; /* Purple */
     
-    /* 🔑 NEW VARS: Analyst Bias Colors */
+    /* 🔑 NEW VARS: Analyst Bias Colors (Used as fallback/text color) */
     --bias-bullish: #4CAF50; /* Green */
     --bias-bearish: #F44336; /* Red */
     --bias-neutral: #FFD700; /* Gold */
+}
+
+/* 🚀 Global Box Sizing for Safety and Mobile Fix (retained) */
+.dashboard-page * {
+    box-sizing: border-box; 
 }
 
 /* Base styles for the dashboard */
@@ -26,7 +31,6 @@
     position: relative; 
     width: 100%; 
     min-height: auto; 
-    /* 🛠️ CRITICAL FIX: Changed background to match --content-bg-color (#2a2a2a) to eliminate the "weird black box" effect */
     background-color: var(--content-page-bg); 
     color: var(--white-text-color);
     font-family: 'Segoe UI', 'Roboto', sans-serif;
@@ -34,22 +38,16 @@
     
     /* 💥 CRITICAL FIX (Top Alignment): Pull the entire page up to cancel out the main app container's top padding. */
     margin-top: -40px; 
-    /* 💥 FINAL FIX: Set to ZERO horizontal padding, as .module-container now handles top/bottom. 
-        This allows the banner to hit 100% of the parent width. */
+    /* 💥 FINAL FIX: Set to ZERO horizontal padding, as .module-container now handles top/bottom. */
     padding: 0 0 40px 0; 
 }
 
 .dashboard-cover-photo {
-    /* 💥 FINAL FIX (Horizontal Stretch): Width is 100%, now that .module-container has no horizontal padding! */
     width: 100%; 
-    /* Desktop Height: 380px for better view of banner content */
     height: 380px;  
-    
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;  
-    
-    /* 💥 FINAL FIX: Margins are now clean, only the bottom separation remains. */
     margin: 0 0 40px 0; 
 }
 
@@ -57,20 +55,16 @@
     /* 💥 CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets (20px) */
     padding: 0 20px;
     
-    /* Uses flex to center the clock horizontally */
     display: flex;
-    /* 🚀 NEW: Align all items to start and allow wrapping for a vertical stack */
     flex-direction: column;
     align-items: center; 
     justify-content: flex-start; 
     
-    margin-top: 0; 
-    
+    margin-top: 0;  
     width: 100%;
 }
 
 .widget-card {
-    /* 🔑 FIX: Set the clock card background to the darker tone to sit nicely on the page background */
     background-color: var(--black-tone-3); 
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
@@ -99,6 +93,26 @@
     transition: box-shadow 0.3s ease-in-out, transform 0.1s ease-out;
     cursor: pointer; /* Indicate clickability for expansion */
 }
+
+/* 🚀 NEW: Loader Styles */
+.eab-loading, .eab-error {
+    /* 🚀 FIX: Make the loader/error message wider (override widget-card max-width) */
+    max-width: 600px; 
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: var(--light-grey-placeholder);
+    border-radius: 5px;
+    margin: 25px auto; /* Center it */
+    color: var(--gold-accent);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.eab-error {
+    background-color: #381c1c; /* Darker red tone for errors */
+    color: var(--bias-bearish);
+}
+
 
 .elite-alpha-brief:hover {
     box-shadow: 0 0 5px var(--gold-accent), 0 4px 15px rgba(0, 0, 0, 0.4);
@@ -136,20 +150,22 @@
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    
+    /* CRITICAL FIX: Ensure color contrast is high by using dark text */
+    color: var(--black-tone-3) !important; 
+    /* Remove default background colors */
+    background-color: transparent !important; 
+    
+    /* 🚀 FIX: Apply Solid Gold Gradient to ALL bias buttons */
+    background-image: linear-gradient(145deg, #F0D788, #DDAA33) !important;
+    border: none !important;
 }
 
-.eab-bias-bullish {
-    background-color: var(--bias-bullish);
-    color: var(--black-tone-3);
-}
-.eab-bias-bearish {
-    background-color: var(--bias-bearish);
-    color: var(--white-text-color);
-}
-.eab-bias-neutral {
-    background-color: var(--bias-neutral);
-    color: var(--black-tone-3);
-}
+/* * NOTE: The specific color classes (.eab-bias-bullish, .eab-bias-bearish, .eab-bias-neutral) 
+ * are now redundant for the background but are kept for semantic clarity 
+ * (e.g., if a user wanted to add an icon colored by sentiment). 
+ * The gradient is enforced via the generic .eab-bias selector above.
+ */
 
 .eab-headline {
     font-size: 1.25rem;
@@ -157,7 +173,6 @@
     color: var(--white-text-color);
     line-height: 1.4;
     margin: 0;
-    /* 🥇 UI/UX: Kinetic Typography style load effect */
     animation: fadeInSlide 0.5s ease-out; 
 }
 
@@ -193,39 +208,52 @@
     transition: transform 0.3s ease;
 }
 
-/* Content Styles - Collapse/Expand UX */
+/* 🚀 FIX 1: Content Styles - Viewport Constrained Scroll UX (Retained) */
 .eab-content-wrapper {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease-in-out;
     padding-top: 0;
-    
-    /* Accessibility */
     will-change: max-height; 
 }
 
 .eab-content-wrapper.is-expanded {
-    /* Set a value greater than the expected height of the content */
-    max-height: 5000px; 
+    /* 📐 Viewport Constrained Scroll (Desktop/Tablet) */
+    max-height: 70vh; 
+    overflow-y: auto; /* Enable vertical scrolling */
     padding-top: 1.5rem;
+}
+
+/* 🥇 FIX 1: Custom Scrollbar Styling (Minimalist Gold) (Retained) */
+.eab-content-wrapper::-webkit-scrollbar {
+    width: 6px; 
+}
+
+.eab-content-wrapper::-webkit-scrollbar-track {
+    background: var(--black-tone-3); 
+}
+
+.eab-content-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 215, 0, 0.4); 
+    border-radius: 20px; 
+    border: 1px solid var(--black-tone-3); 
 }
 
 .eab-content-inner {
     font-size: 0.95rem;
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.8);
-    white-space: pre-line; /* Respects line breaks from backend \n to <br> */
+    white-space: pre-line; 
 }
 
-/* Styling for numbered lists within the content (The core of the report) */
 .eab-content-inner p {
     margin-bottom: 1.5rem;
 }
 
 .eab-content-inner br {
-    display: block; /* Ensure breaks are rendered */
+    display: block; 
     content: "";
-    line-height: 1.5; /* Add space for better paragraph separation */
+    line-height: 1.5; 
 }
 
 /* Animating the Headline In (Kinetic Typography style) */
@@ -240,13 +268,7 @@
     }
 }
 
-/* Base styles for the analog clock */
-.widget-main-info {
-    /* Keep transitions clean here */
-    transition: box-shadow 0.5s ease-in-out;
-}
-
-/* ... (Remaining clock/session styles follow here) ... */
+/* ... (Analog Clock and Time Zone Selector styles remain as in your provided code) ... */
 
 .live-clock-container {
     display: flex;
@@ -342,9 +364,8 @@
 #digital-time {
     font-size: 3rem;
     font-weight: 300;
-    color: var(--gold-accent); /* Used accent for consistency */
+    color: var(--gold-accent); 
     display: block;
-    /* 🛠️ UI/UX: Added gold text glow for radiant, premium look */
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);  
 }
 
@@ -365,10 +386,9 @@
 }
 
 .tz-button {
-    /* INACTIVE STATE: Transparent background, Gold border, Gold text */
     background-color: transparent;
-    border: 1px solid var(--gold-accent); /* Use core variable */
-    color: var(--gold-accent); /* Use core variable */
+    border: 1px solid var(--gold-accent); 
+    color: var(--gold-accent); 
     font-size: 0.7rem;
     font-weight: bold;
     padding: 0.4rem 0.8rem;
@@ -376,12 +396,11 @@
     cursor: pointer;
     transition: all 0.2s ease;
     text-transform: uppercase;
-    box-shadow: none; /* Ensure no residual shadow */
+    box-shadow: none; 
 }
 
 .tz-button:hover {
-    /* HOVER STATE: Dark background, Gold text - Subtle change before becoming active */
-    background-color: #383838; /* Darker accent on hover */
+    background-color: #383838; 
     color: var(--gold-accent);
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
@@ -389,16 +408,11 @@
 
 /* 🔑 TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 .tz-button.active {
-    /* ACTIVE STATE: Enforced Solid Gold Gradient and Dark Text */
     background-image: none !important;
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important;  
-    
-    color: var(--black-tone-3) !important; /* CRITICAL: Dark text enforced */
-    border: none !important; /* Remove individual tab border */
-    
-    /* Premium Shadow Match */
+    color: var(--black-tone-3) !important; 
+    border: none !important; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
-    
     font-weight: 700 !important;
     transform: none;
 }
@@ -416,36 +430,31 @@
 /* Mobile responsive styles */
 @media (max-width: 768px) {
     .dashboard-page {
-        /* FIX: Mobile page padding adjusted (removed top padding) */
         padding: 0 0 20px 0; 
-        
-        /* 💥 CRITICAL FIX (Top Alignment Mobile): Reset top margin to cancel out mobile top padding (often 20px) */
         margin-top: -20px; 
     }
     
     .dashboard-cover-photo {
-        /* 💥 FINAL FIX (Horizontal Stretch Mobile): Width is 100% since module-container padding is 0 */
         width: 100%; 
-        /* Mobile Height: 180px for clean cropping */
         height: 180px;  
-        /* 💥 FINAL FIX: Clean margins, only bottom separation remains. */
         margin: 0 0 20px 0;
     }
 
     .dashboard-widgets-grid {
-        /* CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets on mobile (20px) */
-        padding: 0 20px;
-        
-        /* CRITICAL FIX: REMOVED negative margin-top */
+        /* CRITICAL FIX 3: Ensure 20px padding is maintained (Retained) */
+        padding: 0 20px; 
+        width: 100%; 
+        max-width: 100%; 
         margin-top: 0; 
     }
     
     .widget-card {
         padding: 1.5rem 1rem;  
+        /* Allow card to use the full width of the padded container (Retained) */
+        max-width: 100%; 
     }
     
     .analog-clock {
-        position: relative;
         width: 180px;  
         height: 180px;
     }
@@ -473,11 +482,21 @@
     
     /* Mobile-specific EAB adjustments */
     .elite-alpha-brief {
-        /* On mobile, EAB takes up more of the width by reducing max-width here if needed, 
-           but since widget-card is already max-width: 400px, it adapts well */
         padding: 1rem 1rem;
         margin-bottom: 20px;
     }
+    
+    /* 📐 FIX 1: Tighter Viewport Constraint on Mobile (Retained) */
+    .eab-content-wrapper.is-expanded {
+        max-height: 55vh; 
+    }
+    
+    /* 🚀 NEW: Loader Styles on Mobile */
+    .eab-loading, .eab-error {
+        max-width: 100%; /* Force full width on mobile */
+        margin: 15px 0;
+    }
+    
     .eab-headline {
         font-size: 1.1rem;
     }
