@@ -10,7 +10,7 @@ window.tg_dashboard = window.tg_dashboard || {};
     
     // 💡 CRITICAL FIX: The placeholder MUST be replaced with your actual Google Apps Script URL.
     // Ensure you deploy your GAS script as a Web App (Execute as: Me, Who has access: Anyone).
-    const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
+    const GAS_MARKET_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE'; 
 
     function initDashboard() {
         const dashboardContainer = document.querySelector('.dashboard-page');
@@ -41,22 +41,21 @@ window.tg_dashboard = window.tg_dashboard || {};
             return;
         }
         
-        // ❌ TEMPORARY FIX: Check if the developer has replaced the placeholder
+        // ❌ Check if the developer has replaced the placeholder
         if (GAS_MARKET_API_URL.includes('YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE')) {
             const errorMsg = '⚠️ CRITICAL ERROR: Market Brief URL is still the placeholder. Please replace "YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE" in dashboard.js with your actual Google Apps Script URL.';
             console.error(errorMsg);
+            // 🚀 FIX 2: Corrected Loading Text for Placeholder Error
             briefContainer.innerHTML = `<div class="eab-error">${errorMsg}</div>`;
             return; // Stop the fetch call
         }
-        // ❌ END TEMPORARY FIX
 
         try {
-            // Display loading state
-            briefContainer.innerHTML = '<div class="eab-loading">Fetching Elite Alpha Brief...</div>';
+            // 🚀 FIX 2: Corrected Loading Text
+            briefContainer.innerHTML = '<div class="eab-loading">Fetching Trader\'s Gazette Market Brief...</div>';
             
             const response = await fetch(GAS_MARKET_API_URL);
             if (!response.ok) {
-                // Now this will only run if the actual, non-placeholder URL returns a non-200 status
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
@@ -70,26 +69,17 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         } catch (error) {
             console.error('Error fetching market brief:', error);
-            briefContainer.innerHTML = `<div class="eab-error">Failed to load Market Brief. Check console for details.</div>`;
+            // 🚀 FIX 2: Corrected Loading Text in the error message
+            briefContainer.innerHTML = `<div class="eab-error">Failed to load Trader's Gazette Market Brief. Check console for details.</div>`;
         }
     }
     
-    // ... (rest of the functions remain the same) ...
-    // renderMarketBrief
-    // toggleBriefContent
-    // setupLiveClock
-    // updateClock
-    // setupTimeZoneButtons
-    // updateSessionIndicator
-    // cleanupDashboard
-
     /**
      * Renders the fetched data into the EAB container.
      * @param {HTMLElement} container The DOM element to render into.
      * @param {object} data The market update data ({timestamp, headline, content}).
      */
     function renderMarketBrief(container, data) {
-        // Extract Analyst Bias from the end of the report content
         const biasMatch = data.content.match(/Analyst Bias & Conclusion:(.*?)(BULLISH|BEARISH|NEUTRAL)/i);
         const analystBias = biasMatch ? biasMatch[2].toUpperCase() : 'NEUTRAL';
         const formattedDate = new Date(data.timestamp).toLocaleDateString('en-US', { 
@@ -115,7 +105,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         `;
         
         // Setup listener for expand/collapse logic
-        // Use a null check, as renderMarketBrief might be called multiple times in a real app
         const toggleButton = document.querySelector('.eab-toggle-btn');
         if (toggleButton) {
             toggleButton.addEventListener('click', toggleBriefContent);
@@ -149,15 +138,13 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
     }
 
+    // ... (rest of the dashboard.js file for clock and session indicators is unchanged) ...
+
     function setupLiveClock() {
-        // ... (Clock setup remains the same)
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         updateClock(timezone);
         updateSessionIndicator();
-        
-        // Timer is stored in dashboardTimers.clock
         dashboardTimers.clock = setInterval(() => {
-            // This interval runs the updateClock every second
             updateClock(activeTimeZone);
             updateSessionIndicator();
         }, 1000);
@@ -170,7 +157,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         const digitalTime = document.getElementById('digital-time');
         const digitalDate = document.getElementById('digital-date');
 
-        // ✅ FIX: NULL CHECK AND SELF-CLEANUP
         if (!hourHand || !minuteHand || !digitalTime || !digitalDate) {
             console.log('Clock elements not found. Cleaning up dashboard timer.');
             cleanupDashboard();
@@ -186,7 +172,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         const minuteDegrees = (minutes * 60 + seconds) / 3600 * 360;
         const hourDegrees = (hours % 12 * 3600 + minutes * 60 + seconds) / 43200 * 360;
         
-        // Line 50 (approximate): These lines now only execute if elements exist.
         minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
         hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
@@ -203,7 +188,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         buttons.forEach(button => {
             if (button.dataset.timezone === '') {
-                // This is the local button, activate it by default
                 button.classList.add('active');
             }
             button.addEventListener('click', () => {
@@ -220,9 +204,7 @@ window.tg_dashboard = window.tg_dashboard || {};
         const clockCard = document.getElementById('clock-card');
         const indicator = document.getElementById('session-indicator');
         
-        // ✅ CRITICAL NULL CHECK: Ensure these elements exist before manipulating style/content
         if (!clockCard || !indicator) {
-            // Do not call cleanupDashboard here, as updateClock will handle it.
             return; 
         }
         
@@ -267,19 +249,15 @@ window.tg_dashboard = window.tg_dashboard || {};
             sessionFound = true;
         }
         
-        // Handle overlaps - most significant sessions take precedence in text
-        if (nowUTC >= 780 && nowUTC < 1020) { // NY and London overlap
+        if (nowUTC >= 780 && nowUTC < 1020) {
             indicator.textContent = 'NY & London Overlap - High Liquidity';
-        } else if (nowUTC >= 480 && nowUTC < 540) { // Tokyo and London overlap
+        } else if (nowUTC >= 480 && nowUTC < 540) {
             indicator.textContent = 'Tokyo & London Overlap';
-        } else if (nowUTC >= 0 && nowUTC < 420) { // Tokyo and Sydney overlap
+        } else if (nowUTC >= 0 && nowUTC < 420) {
             indicator.textContent = 'Sydney & Tokyo Overlap';
         }
     }
 
-    /**
-     * @description Clears all dashboard timers. This is the intended cleanup mechanism.
-     */
     function cleanupDashboard() {
         if (dashboardTimers.clock) {
             clearInterval(dashboardTimers.clock);
@@ -288,7 +266,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         dashboardTimers = {};
     }
 
-    // Expose the functions to the global scope for the router
     window.tg_dashboard.initDashboard = initDashboard;
     window.tg_dashboard.cleanup = cleanupDashboard;
 
