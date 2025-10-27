@@ -10,7 +10,7 @@ window.tg_dashboard = window.tg_dashboard || {};
     
     // 💡 NEW: Placeholder for the Deployed GAS Web App URL
     // IMPORTANT: REPLACE THIS WITH YOUR DEPLOYED GAS WEB APP URL
-    const GAS_MARKET_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE'; 
+    const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
 
     function initDashboard() {
         const dashboardContainer = document.querySelector('.dashboard-page');
