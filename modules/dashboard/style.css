@@ -130,7 +130,7 @@
 }
 
 .elite-alpha-brief:hover {
-    box-shadow: 0 0 5px var(--gold-accent), 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 5px var(--gold-accent), 0 44px 15px rgba(0, 0, 0, 0.4);
     transform: translateY(-2px);
 }
 
@@ -307,14 +307,6 @@
 .tick-marks {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.tick {
-    position: absolute;
-    top: 0;
     left: 50%;
     width: 2px;
     height: 8px;
@@ -437,7 +429,7 @@
 }
 
 /* ------------------------------------------- */
-/* 🚀 FINAL DESKTOP-ONLY STYLES (> 768px) */
+## 🚀 FINAL DESKTOP-ONLY STYLES (> 768px)
 /* ------------------------------------------- */
 
 @media (min-width: 769px) {
@@ -445,23 +437,31 @@
     .dashboard-widgets-grid {
         flex-direction: row; /* Layout widgets side-by-side */
         align-items: flex-start; /* Align items to the top */
-        justify-content: center; /* Center the pair horizontally */
-        gap: 25px; /* Add space between the clock and the report card */
+        /* 🚀 NEW: Shift everything to the left for better spacing */
+        justify-content: flex-start; 
+        
+        /* 🚀 NEW: Increase space between the clock (left) and report (right) */
+        gap: 60px; 
+        
+        /* Ensure there's space on the left when using flex-start */
+        padding-left: 60px; 
     }
     
     /* 📐 FIX 1: Enforce narrow width on the Clock card */
     .widget-card:not(:has(.elite-alpha-brief)) {
         max-width: 400px;
-        /* Remove margin-bottom from the clock to keep it aligned with the report */
+        /* Remove vertical margin to keep it aligned */
         margin-bottom: 0; 
+        flex-shrink: 0; /* Keep clock size constant */
     }
     
     /* 📐 FIX 2: Expand the Market Brief Card Horizontally */
     .widget-card:has(.elite-alpha-brief) {
-        max-width: 900px; /* Rectangular width for desktop */
-        /* Margin-left/right are no longer needed as parent centers them */
+        /* 🚀 NEW: Set new target width (800px is double the clock's 400px) */
+        max-width: 800px; 
         margin: 0;
-        flex-shrink: 0; /* Prevent the card from shrinking */
+        flex-grow: 1; /* Allow the report card to grow if screen is huge */
+        flex-shrink: 1; 
     }
     
     /* 📐 CRITICAL FIX 3: Ensure the internal content container uses the full width */
@@ -472,13 +472,13 @@
     
     /* Ensure the loader matches the new card width on desktop */
     .eab-loading, .eab-error {
-        max-width: 900px; 
+        max-width: 800px; 
     }
 }
 
 
 /* ------------------------------------------- */
-/* Mobile responsive styles */
+## Mobile responsive styles
 /* ------------------------------------------- */
 
 @media (max-width: 768px) {
