@@ -277,7 +277,9 @@
     }
 }
 
-/* ... (Analog Clock and Time Zone Selector styles remain the same) ... */
+/* ------------------------------------------- */
+/* 🚀 CRITICAL FIX: ANALOG CLOCK STYLES REVERTED/CORRECTED */
+/* ------------------------------------------- */
 
 .live-clock-container {
     display: flex;
@@ -307,17 +309,29 @@
 .tick-marks {
     position: absolute;
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.tick {
+    position: absolute;
+    top: 0;
     left: 50%;
     width: 2px;
-    height: 8px;
+    /* Correct height to place the tick at the edge of the clock face */
+    height: 8px; 
     background-color: var(--white-text-color);
-    transform-origin: 0 125px;  
+    /* Correct origin for rotation */
+    transform-origin: 0 125px; 
 }
 
 .tick.hour {
+    /* Hour ticks are slightly longer */
     height: 15px;
     background-color: var(--gold-accent);
 }
+/* Note: The rotation for the ticks will be handled by JavaScript/React logic, not CSS. */
 
 .analog-hand {
     position: absolute;
@@ -448,7 +462,7 @@
         /* 🚀 NEW: Increase space between the clock (left) and report (right) */
         gap: 60px; 
         
-        /* Ensure there's enough padding on the left */
+        /* Ensure there's enough padding on the left when justified left */
         padding-left: 60px; 
     }
     
@@ -485,7 +499,6 @@
 /* ------------------------------------------- */
 
 @media (max-width: 768px) {
-    /* ... (All existing mobile styles remain unchanged) ... */
     .dashboard-page {
         padding: 0 0 20px 0; 
         margin-top: -20px; 
