@@ -433,32 +433,35 @@
 /* ------------------------------------------- */
 
 @media (min-width: 769px) {
-    /* 📐 CRITICAL FIX: Change parent container to row layout */
+    /* 📐 CRITICAL FIX: Ensure the grid uses full width and changes to row layout */
     .dashboard-widgets-grid {
+        /* This is the key change to ensure side-by-side layout works */
+        width: 100% !important; 
+        max-width: none; /* Remove any external max-width constraints */
+        
         flex-direction: row; /* Layout widgets side-by-side */
         align-items: flex-start; /* Align items to the top */
-        /* 🚀 NEW: Shift everything to the left for better spacing */
+        
+        /* 🚀 NEW: Shift everything to the left for better spacing and use flex-start */
         justify-content: flex-start; 
         
         /* 🚀 NEW: Increase space between the clock (left) and report (right) */
         gap: 60px; 
         
-        /* Ensure there's space on the left when using flex-start */
+        /* Ensure there's enough padding on the left */
         padding-left: 60px; 
     }
     
     /* 📐 FIX 1: Enforce narrow width on the Clock card */
     .widget-card:not(:has(.elite-alpha-brief)) {
         max-width: 400px;
-        /* Remove vertical margin to keep it aligned */
         margin-bottom: 0; 
         flex-shrink: 0; /* Keep clock size constant */
     }
     
-    /* 📐 FIX 2: Expand the Market Brief Card Horizontally */
+    /* 📐 FIX 2: Expand the Market Brief Card Horizontally (Double Width) */
     .widget-card:has(.elite-alpha-brief) {
-        /* 🚀 NEW: Set new target width (800px is double the clock's 400px) */
-        max-width: 800px; 
+        max-width: 800px; /* Double the clock's 400px width */
         margin: 0;
         flex-grow: 1; /* Allow the report card to grow if screen is huge */
         flex-shrink: 1; 
@@ -482,6 +485,7 @@
 /* ------------------------------------------- */
 
 @media (max-width: 768px) {
+    /* ... (All existing mobile styles remain unchanged) ... */
     .dashboard-page {
         padding: 0 0 20px 0; 
         margin-top: -20px; 
@@ -494,7 +498,6 @@
     }
 
     .dashboard-widgets-grid {
-        /* CRITICAL FIX 3: Ensure 20px padding is maintained (Retained) */
         padding: 0 20px; 
         width: 100%; 
         max-width: 100%; 
@@ -503,7 +506,6 @@
     
     .widget-card {
         padding: 1.5rem 1rem;  
-        /* Allow card to use the full width of the padded container (Retained) */
         max-width: 100%; 
     }
     
