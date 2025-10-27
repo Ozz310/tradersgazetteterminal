@@ -10,7 +10,7 @@ window.tg_dashboard = window.tg_dashboard || {};
     
     // 💡 CRITICAL FIX: The placeholder MUST be replaced with your actual Google Apps Script URL.
     // Ensure you deploy your GAS script as a Web App (Execute as: Me, Who has access: Anyone).
-    const GAS_MARKET_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE'; 
+    const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
 
     function initDashboard() {
         const dashboardContainer = document.querySelector('.dashboard-page');
