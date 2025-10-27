@@ -56,6 +56,7 @@
     padding: 0 20px;
     
     display: flex;
+    /* 🚀 FIX: Default to column stack for mobile-first approach */
     flex-direction: column;
     align-items: center; 
     justify-content: flex-start; 
@@ -79,7 +80,7 @@
     max-width: 400px;  
     margin: 0;  
     
-    /* 🚀 NEW: Margin bottom for stacking EAB below the clock */
+    /* 🚀 NEW: Margin bottom for stacking EAB below the clock (mobile/default) */
     margin-bottom: 25px; 
 }
 
@@ -174,8 +175,6 @@
     background-image: linear-gradient(145deg, #F0D788, #DDAA33) !important;
     border: none !important;
 }
-
-/* ... (eab-headline, eab-toggle-btn, and content wrapper styles remain the same) ... */
 
 .eab-headline {
     font-size: 1.25rem;
@@ -438,21 +437,35 @@
 }
 
 /* ------------------------------------------- */
-/* 🚀 NEW: DESKTOP-ONLY STYLES (> 768px) */
+/* 🚀 FINAL DESKTOP-ONLY STYLES (> 768px) */
 /* ------------------------------------------- */
 
 @media (min-width: 769px) {
-    /* 📐 FIX: Expand the Market Brief Card Horizontally */
-    /* Target the widget card containing the market brief */
-    .widget-card:has(.elite-alpha-brief) {
-        max-width: 900px; /* Rectangular width for desktop */
-        margin-left: auto;
-        margin-right: auto;
+    /* 📐 CRITICAL FIX: Change parent container to row layout */
+    .dashboard-widgets-grid {
+        flex-direction: row; /* Layout widgets side-by-side */
+        align-items: flex-start; /* Align items to the top */
+        justify-content: center; /* Center the pair horizontally */
+        gap: 25px; /* Add space between the clock and the report card */
     }
     
-    /* 📐 CRITICAL FIX: Ensure the internal content container uses the full width */
+    /* 📐 FIX 1: Enforce narrow width on the Clock card */
+    .widget-card:not(:has(.elite-alpha-brief)) {
+        max-width: 400px;
+        /* Remove margin-bottom from the clock to keep it aligned with the report */
+        margin-bottom: 0; 
+    }
+    
+    /* 📐 FIX 2: Expand the Market Brief Card Horizontally */
+    .widget-card:has(.elite-alpha-brief) {
+        max-width: 900px; /* Rectangular width for desktop */
+        /* Margin-left/right are no longer needed as parent centers them */
+        margin: 0;
+        flex-shrink: 0; /* Prevent the card from shrinking */
+    }
+    
+    /* 📐 CRITICAL FIX 3: Ensure the internal content container uses the full width */
     .widget-card:has(.elite-alpha-brief) .elite-alpha-brief {
-        /* Force the inner container to take up 100% of the wider parent card */
         max-width: 100%;
         width: 100%;
     }
