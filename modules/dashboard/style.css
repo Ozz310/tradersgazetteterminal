@@ -14,6 +14,11 @@
     --london-color: #4caf50; /* Green */
     --ny-color: #ff5722;    /* Orange */
     --frankfurt-color: #8e44ad; /* Purple */
+    
+    /* 🔑 NEW VARS: Analyst Bias Colors */
+    --bias-bullish: #4CAF50; /* Green */
+    --bias-bearish: #F44336; /* Red */
+    --bias-neutral: #FFD700; /* Gold */
 }
 
 /* Base styles for the dashboard */
@@ -30,7 +35,7 @@
     /* 💥 CRITICAL FIX (Top Alignment): Pull the entire page up to cancel out the main app container's top padding. */
     margin-top: -40px; 
     /* 💥 FINAL FIX: Set to ZERO horizontal padding, as .module-container now handles top/bottom. 
-       This allows the banner to hit 100% of the parent width. */
+        This allows the banner to hit 100% of the parent width. */
     padding: 0 0 40px 0; 
 }
 
@@ -54,8 +59,10 @@
     
     /* Uses flex to center the clock horizontally */
     display: flex;
-    justify-content: center; 
-    align-items: flex-start; 
+    /* 🚀 NEW: Align all items to start and allow wrapping for a vertical stack */
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-start; 
     
     margin-top: 0; 
     
@@ -77,13 +84,170 @@
     /* Set a maximum clean width for the widget */
     max-width: 400px;  
     margin: 0;  
+    
+    /* 🚀 NEW: Margin bottom for stacking EAB below the clock */
+    margin-bottom: 25px; 
 }
 
-.widget-main-info {
-    transition: box-shadow 0.5s ease-in-out;
+/* 🚀 NEW: ELITE ALPHA BRIEF STYLES */
+
+.elite-alpha-brief {
+    /* Reset padding for the full-width content brief */
+    padding: 1.5rem 1.5rem; 
+    
+    /* 🥇 UI/UX: Gold Edge Glow on Hover */
+    transition: box-shadow 0.3s ease-in-out, transform 0.1s ease-out;
+    cursor: pointer; /* Indicate clickability for expansion */
+}
+
+.elite-alpha-brief:hover {
+    box-shadow: 0 0 5px var(--gold-accent), 0 4px 15px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.eab-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.eab-metadata {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.eab-date {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    letter-spacing: 0.5px;
+    margin-right: 15px;
+}
+
+.eab-bias {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.eab-bias-bullish {
+    background-color: var(--bias-bullish);
+    color: var(--black-tone-3);
+}
+.eab-bias-bearish {
+    background-color: var(--bias-bearish);
+    color: var(--white-text-color);
+}
+.eab-bias-neutral {
+    background-color: var(--bias-neutral);
+    color: var(--black-tone-3);
+}
+
+.eab-headline {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white-text-color);
+    line-height: 1.4;
+    margin: 0;
+    /* 🥇 UI/UX: Kinetic Typography style load effect */
+    animation: fadeInSlide 0.5s ease-out; 
+}
+
+.eab-toggle-btn {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: var(--gold-accent);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.eab-toggle-btn:focus {
+    outline: none;
+    text-shadow: 0 0 5px var(--gold-accent);
+}
+
+.eab-toggle-btn .read-text {
+    font-size: 0.75rem;
+    margin-right: 5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--white-text-color);
+    opacity: 0.7;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+/* Content Styles - Collapse/Expand UX */
+.eab-content-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+    padding-top: 0;
+    
+    /* Accessibility */
+    will-change: max-height; 
+}
+
+.eab-content-wrapper.is-expanded {
+    /* Set a value greater than the expected height of the content */
+    max-height: 5000px; 
+    padding-top: 1.5rem;
+}
+
+.eab-content-inner {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: pre-line; /* Respects line breaks from backend \n to <br> */
+}
+
+/* Styling for numbered lists within the content (The core of the report) */
+.eab-content-inner p {
+    margin-bottom: 1.5rem;
+}
+
+.eab-content-inner br {
+    display: block; /* Ensure breaks are rendered */
+    content: "";
+    line-height: 1.5; /* Add space for better paragraph separation */
+}
+
+/* Animating the Headline In (Kinetic Typography style) */
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Base styles for the analog clock */
+.widget-main-info {
+    /* Keep transitions clean here */
+    transition: box-shadow 0.5s ease-in-out;
+}
+
+/* ... (Remaining clock/session styles follow here) ... */
+
 .live-clock-container {
     display: flex;
     flex-direction: column;
@@ -178,7 +342,7 @@
 #digital-time {
     font-size: 3rem;
     font-weight: 300;
-    color: var(--gold-color) !important; /* Use core gold variable */
+    color: var(--gold-accent); /* Used accent for consistency */
     display: block;
     /* 🛠️ UI/UX: Added gold text glow for radiant, premium look */
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);  
@@ -203,8 +367,8 @@
 .tz-button {
     /* INACTIVE STATE: Transparent background, Gold border, Gold text */
     background-color: transparent;
-    border: 1px solid var(--gold-color) !important; /* Use core variable */
-    color: var(--gold-color) !important; /* Use core variable */
+    border: 1px solid var(--gold-accent); /* Use core variable */
+    color: var(--gold-accent); /* Use core variable */
     font-size: 0.7rem;
     font-weight: bold;
     padding: 0.4rem 0.8rem;
@@ -218,7 +382,7 @@
 .tz-button:hover {
     /* HOVER STATE: Dark background, Gold text - Subtle change before becoming active */
     background-color: #383838; /* Darker accent on hover */
-    color: var(--gold-color);
+    color: var(--gold-accent);
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
@@ -229,7 +393,7 @@
     background-image: none !important;
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important;  
     
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
+    color: var(--black-tone-3) !important; /* CRITICAL: Dark text enforced */
     border: none !important; /* Remove individual tab border */
     
     /* Premium Shadow Match */
@@ -305,5 +469,19 @@
     .time-zone-selector {
         margin-top: 1rem;
         gap: 0.3rem;
+    }
+    
+    /* Mobile-specific EAB adjustments */
+    .elite-alpha-brief {
+        /* On mobile, EAB takes up more of the width by reducing max-width here if needed, 
+           but since widget-card is already max-width: 400px, it adapts well */
+        padding: 1rem 1rem;
+        margin-bottom: 20px;
+    }
+    .eab-headline {
+        font-size: 1.1rem;
+    }
+    .eab-content-inner {
+        font-size: 0.9rem;
     }
 }
