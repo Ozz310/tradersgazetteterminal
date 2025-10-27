@@ -8,8 +8,8 @@ window.tg_dashboard = window.tg_dashboard || {};
     let activeTimeZone = '';
     let isLocalTime = true;
     
-    // 💡 NEW: Placeholder for the Deployed GAS Web App URL
-    // IMPORTANT: REPLACE THIS WITH YOUR DEPLOYED GAS WEB APP URL
+    // 💡 CRITICAL FIX: The placeholder MUST be replaced with your actual Google Apps Script URL.
+    // Ensure you deploy your GAS script as a Web App (Execute as: Me, Who has access: Anyone).
     const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
 
     function initDashboard() {
@@ -23,12 +23,12 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         setupLiveClock();
         setupTimeZoneButtons();
-        // 🚀 NEW: Initialize the Elite Alpha Brief (EAB)
+        // 🚀 Initialize the Elite Alpha Brief (EAB)
         fetchMarketBrief();
     }
 
     // ---------------------------------------------
-    // 🚀 NEW: ELITE ALPHA BRIEF (EAB) LOGIC
+    // 🚀 ELITE ALPHA BRIEF (EAB) LOGIC
     // ---------------------------------------------
     
     /**
@@ -40,6 +40,15 @@ window.tg_dashboard = window.tg_dashboard || {};
             console.error('Elite Alpha Brief container not found.');
             return;
         }
+        
+        // ❌ TEMPORARY FIX: Check if the developer has replaced the placeholder
+        if (GAS_MARKET_API_URL.includes('YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE')) {
+            const errorMsg = '⚠️ CRITICAL ERROR: Market Brief URL is still the placeholder. Please replace "YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE" in dashboard.js with your actual Google Apps Script URL.';
+            console.error(errorMsg);
+            briefContainer.innerHTML = `<div class="eab-error">${errorMsg}</div>`;
+            return; // Stop the fetch call
+        }
+        // ❌ END TEMPORARY FIX
 
         try {
             // Display loading state
@@ -47,6 +56,7 @@ window.tg_dashboard = window.tg_dashboard || {};
             
             const response = await fetch(GAS_MARKET_API_URL);
             if (!response.ok) {
+                // Now this will only run if the actual, non-placeholder URL returns a non-200 status
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
@@ -60,9 +70,18 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         } catch (error) {
             console.error('Error fetching market brief:', error);
-            briefContainer.innerHTML = `<div class="eab-error">Failed to load Market Brief. Check API URL.</div>`;
+            briefContainer.innerHTML = `<div class="eab-error">Failed to load Market Brief. Check console for details.</div>`;
         }
     }
+    
+    // ... (rest of the functions remain the same) ...
+    // renderMarketBrief
+    // toggleBriefContent
+    // setupLiveClock
+    // updateClock
+    // setupTimeZoneButtons
+    // updateSessionIndicator
+    // cleanupDashboard
 
     /**
      * Renders the fetched data into the EAB container.
@@ -96,7 +115,11 @@ window.tg_dashboard = window.tg_dashboard || {};
         `;
         
         // Setup listener for expand/collapse logic
-        document.querySelector('.eab-toggle-btn').addEventListener('click', toggleBriefContent);
+        // Use a null check, as renderMarketBrief might be called multiple times in a real app
+        const toggleButton = document.querySelector('.eab-toggle-btn');
+        if (toggleButton) {
+            toggleButton.addEventListener('click', toggleBriefContent);
+        }
     }
     
     /**
@@ -125,8 +148,7 @@ window.tg_dashboard = window.tg_dashboard || {};
             button.querySelector('.read-text').textContent = 'READ LESS';
         }
     }
-    // ---------------------------------------------
-    
+
     function setupLiveClock() {
         // ... (Clock setup remains the same)
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
