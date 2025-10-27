@@ -450,6 +450,13 @@
         margin-right: auto;
     }
     
+    /* 📐 CRITICAL FIX: Ensure the internal content container uses the full width */
+    .widget-card:has(.elite-alpha-brief) .elite-alpha-brief {
+        /* Force the inner container to take up 100% of the wider parent card */
+        max-width: 100%;
+        width: 100%;
+    }
+    
     /* Ensure the loader matches the new card width on desktop */
     .eab-loading, .eab-error {
         max-width: 900px; 
