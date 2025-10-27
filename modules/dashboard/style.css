@@ -278,7 +278,7 @@
 }
 
 /* ------------------------------------------- */
-/* 🚀 CRITICAL FIX: ANALOG CLOCK STYLES REVERTED/CORRECTED */
+/* 🚀 ANALOG CLOCK STYLES (Restored) */
 /* ------------------------------------------- */
 
 .live-clock-container {
@@ -319,19 +319,15 @@
     top: 0;
     left: 50%;
     width: 2px;
-    /* Correct height to place the tick at the edge of the clock face */
     height: 8px; 
     background-color: var(--white-text-color);
-    /* Correct origin for rotation */
     transform-origin: 0 125px; 
 }
 
 .tick.hour {
-    /* Hour ticks are slightly longer */
     height: 15px;
     background-color: var(--gold-accent);
 }
-/* Note: The rotation for the ticks will be handled by JavaScript/React logic, not CSS. */
 
 .analog-hand {
     position: absolute;
@@ -443,53 +439,51 @@
 }
 
 /* ------------------------------------------- */
-## 🚀 FINAL DESKTOP-ONLY STYLES (> 768px)
+## 🚀 FINAL DESKTOP-ONLY LAYOUT FIX (> 768px)
 /* ------------------------------------------- */
 
 @media (min-width: 769px) {
-    /* 📐 CRITICAL FIX: Ensure the grid uses full width and changes to row layout */
+    /* 📐 CRITICAL FIX: Aggressively force the grid to take full width and use row layout */
     .dashboard-widgets-grid {
-        /* This is the key change to ensure side-by-side layout works */
-        width: 100% !important; 
-        max-width: none; /* Remove any external max-width constraints */
+        width: 100vw !important; /* Force to viewport width to break out of any parent container limits */
+        max-width: none !important; 
         
-        flex-direction: row; /* Layout widgets side-by-side */
-        align-items: flex-start; /* Align items to the top */
+        flex-direction: row !important; /* Force side-by-side */
+        align-items: flex-start; 
         
-        /* 🚀 NEW: Shift everything to the left for better spacing and use flex-start */
-        justify-content: flex-start; 
+        justify-content: flex-start; /* Push content to the left */
         
-        /* 🚀 NEW: Increase space between the clock (left) and report (right) */
+        /* Spacing for a cleaner look */
         gap: 60px; 
-        
-        /* Ensure there's enough padding on the left when justified left */
         padding-left: 60px; 
+        padding-right: 20px; /* Add padding to the right edge */
+        margin-left: 0;
+        margin-right: 0;
     }
     
     /* 📐 FIX 1: Enforce narrow width on the Clock card */
     .widget-card:not(:has(.elite-alpha-brief)) {
-        max-width: 400px;
+        max-width: 400px !important;
+        width: 400px !important;
         margin-bottom: 0; 
-        flex-shrink: 0; /* Keep clock size constant */
+        flex-shrink: 0; /* Ensures the clock's width is never reduced */
     }
     
     /* 📐 FIX 2: Expand the Market Brief Card Horizontally (Double Width) */
     .widget-card:has(.elite-alpha-brief) {
-        max-width: 800px; /* Double the clock's 400px width */
+        max-width: 800px !important; /* Double the clock's 400px width */
+        width: 800px !important;
         margin: 0;
-        flex-grow: 1; /* Allow the report card to grow if screen is huge */
-        flex-shrink: 1; 
+        flex-grow: 0; /* Ensure it stays at 800px and doesn't expand further */
+        flex-shrink: 0; 
     }
     
-    /* 📐 CRITICAL FIX 3: Ensure the internal content container uses the full width */
-    .widget-card:has(.elite-alpha-brief) .elite-alpha-brief {
-        max-width: 100%;
-        width: 100%;
-    }
-    
-    /* Ensure the loader matches the new card width on desktop */
-    .eab-loading, .eab-error {
-        max-width: 800px; 
+    /* 📐 CRITICAL FIX 3: Internal content and loader must match the card width */
+    .widget-card:has(.elite-alpha-brief) .elite-alpha-brief,
+    .eab-loading, 
+    .eab-error {
+        max-width: 100% !important;
+        width: 100% !important;
     }
 }
 
@@ -499,6 +493,7 @@
 /* ------------------------------------------- */
 
 @media (max-width: 768px) {
+    /* ... (All existing mobile styles remain unchanged - they are already stacked and correct) ... */
     .dashboard-page {
         padding: 0 0 20px 0; 
         margin-top: -20px; 
@@ -515,6 +510,7 @@
         width: 100%; 
         max-width: 100%; 
         margin-top: 0; 
+        flex-direction: column; /* Ensure mobile stack remains */
     }
     
     .widget-card {
