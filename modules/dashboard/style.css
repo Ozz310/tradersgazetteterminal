@@ -443,29 +443,34 @@
 /* ------------------------------------------- */
 
 @media (min-width: 769px) {
-    /* 📐 CRITICAL FIX: Aggressively force the grid to take full width and use row layout */
+    /* 📐 CRITICAL FIX: Force the grid container to use available width (minus sidebar) */
     .dashboard-widgets-grid {
-        width: 100vw !important; /* Force to viewport width to break out of any parent container limits */
-        max-width: none !important; 
+        /* Estimate sidebar width to be 200px based on image */
+        width: calc(100% - 200px) !important; 
+        max-width: none !important; 
         
         flex-direction: row !important; /* Force side-by-side */
-        align-items: flex-start; 
+        align-items: flex-start; 
         
         justify-content: flex-start; /* Push content to the left */
         
         /* Spacing for a cleaner look */
-        gap: 60px; 
-        padding-left: 60px; 
-        padding-right: 20px; /* Add padding to the right edge */
+        gap: 60px; 
+        /* Remove padding to the left, as the content area is now calculated from the sidebar edge */
+        padding-left: 0; 
+        padding-right: 20px; 
         margin-left: 0;
         margin-right: 0;
+        
+        /* Add margin to position it correctly next to the sidebar */
+        margin-left: 200px;
     }
     
     /* 📐 FIX 1: Enforce narrow width on the Clock card */
     .widget-card:not(:has(.elite-alpha-brief)) {
         max-width: 400px !important;
         width: 400px !important;
-        margin-bottom: 0; 
+        margin-bottom: 0; 
         flex-shrink: 0; /* Ensures the clock's width is never reduced */
     }
     
@@ -475,12 +480,12 @@
         width: 800px !important;
         margin: 0;
         flex-grow: 0; /* Ensure it stays at 800px and doesn't expand further */
-        flex-shrink: 0; 
+        flex-shrink: 0; 
     }
     
     /* 📐 CRITICAL FIX 3: Internal content and loader must match the card width */
     .widget-card:has(.elite-alpha-brief) .elite-alpha-brief,
-    .eab-loading, 
+    .eab-loading, 
     .eab-error {
         max-width: 100% !important;
         width: 100% !important;
