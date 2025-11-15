@@ -1,8 +1,25 @@
-// /modules/auth/reset-password.js - FULL UPDATED FILE (Fixing Navigation)
+// /modules/auth/reset-password.js - FULL UPDATED FILE (Implementing Robust Navigation)
 
 (() => {
     // This API URL points to your Cloudflare Worker.
     const API_URL = 'https://users-worker.mohammadosama310.workers.dev/';
+
+    // --- NEW: Utility function to force router execution ---
+    const redirectToLogin = () => {
+        // Clear the temporary tokens immediately
+        clearResetTokens();
+
+        // Check if the current hash is already the target hash (#auth)
+        if (window.location.hash === '#auth') {
+             // 🎯 FIX: Force a temporary hash change to guarantee the router is called
+             // when we set the hash back to '#auth' immediately after.
+             window.location.hash = '#temp-reset';
+        }
+        
+        // This second assignment will reliably trigger the hashchange event in app.js
+        window.location.hash = '#auth'; 
+    };
+    // ----------------------------------------------------
 
     /**
      * Initializes the password reset module.
@@ -15,15 +32,11 @@
             resetForm.addEventListener('submit', handlePasswordReset);
         }
         
-        // 🎯 FIX 1: Attach click listener to the 'Back to Login' link.
+        // 🎯 FIX 1: Attach click listener to the 'Back to Login' link, calling the utility function.
         if (backToLoginLink) {
             backToLoginLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Clear reset tokens on navigation
-                clearResetTokens();
-                
-                // 🔑 FIX: Directly set the hash to trigger the router.
-                window.location.hash = '#auth';
+                redirectToLogin(); // Uses the robust navigation function
             });
         }
         
@@ -42,9 +55,7 @@
     };
 
     /**
-     * Hashes a password using SHA-256. (Duplicated from auth.js for self-containment)
-     * @param {string} password The password to hash.
-     * @returns {Promise<string>} The hashed password.
+     * Hashes a password using SHA-256. (Unchanged)
      */
     async function hashPassword(password) {
         const encoder = new TextEncoder();
@@ -56,9 +67,7 @@
     }
 
     /**
-     * Displays a message to the user.
-     * @param {string} message The message to display.
-     * @param {boolean} isError True if the message is an error.
+     * Displays a message to the user. (Unchanged)
      */
     function displayMessage(message, isError = false) {
         const messageArea = document.getElementById('auth-message');
@@ -70,7 +79,7 @@
     }
 
     /**
-     * Removes the temporary tokens from localStorage after a successful reset or failure.
+     * Removes the temporary tokens from localStorage after a successful reset or failure. (Unchanged)
      */
     function clearResetTokens() {
         localStorage.removeItem('tg_reset_token');
@@ -121,13 +130,10 @@
 
             if (result.status === 'success') {
                 displayMessage('Password reset successfully! Redirecting to login...', false);
-                clearResetTokens();
                 
-                // 🔑 FIX 2: Ensure the redirect sets the hash and triggers the router.
-                // Using window.location.hash = '#auth' here is the simplest way to trigger
-                // the router's hashchange listener, which is the core of your SPA.
+                // 🎯 FIX 2: Call the utility function for clean redirect after success pause.
                 setTimeout(() => {
-                    window.location.hash = '#auth'; 
+                    redirectToLogin(); // Uses the robust navigation function
                 }, 2000); 
 
             } else {
