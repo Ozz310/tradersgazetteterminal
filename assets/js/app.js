@@ -1,4 +1,4 @@
-// /assets/js/app.js - FULL UPDATED FILE (Fixing Forgot Password Routing)
+// /assets/js/app.js - FULL UPDATED FILE (Fixing Reset Action Parameter)
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ⭐ FIXED FUNCTION: Load the main stylesheet once
+    // Load the main stylesheet once
     const loadMainCSS = () => {
         const mainCssId = 'main-app-style';
         if (!document.getElementById(mainCssId)) {
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 🛠️ FIX 1: Refactor sidebar event listener to use the router properly
+    // Refactor sidebar event listener to use the router properly
     sidebar.addEventListener('click', (e) => {
         const navItem = e.target.closest('.nav-item');
         if (navItem) {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 🛠️ FIX 2: Refactor mobile navigation event listener to use the router properly
+    // Refactor mobile navigation event listener to use the router properly
     if (bottomNav) {
         bottomNav.addEventListener('click', (e) => {
             const navItem = e.target.closest('.bottom-nav-item');
@@ -91,13 +91,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const resetAction = urlParams.get('action');
         const resetToken = urlParams.get('token');
-        const resetUserId = urlParams.get('userId');
+        // Note: The userId is currently missing from the link, so we don't strictly require it here.
+        // We will store it if present, but the token is the primary identifier.
+        const resetUserId = urlParams.get('userId'); 
 
-        if (resetAction === 'reset' && resetToken && resetUserId) {
+        // 🎯 FIX 1: Change expected action to 'reset-password'
+        if (resetAction === 'reset-password' && resetToken) {
             // Case 1: Password Reset Link
-            // Store params for the module to use and immediately load the reset module
+            
+            // Store params for the module to use
             localStorage.setItem('tg_reset_token', resetToken);
-            localStorage.setItem('tg_reset_userId', resetUserId);
+            if (resetUserId) { // Only store userId if it exists in the link
+                localStorage.setItem('tg_reset_userId', resetUserId);
+            } else {
+                 // Ensure any previous userId is cleared if the new link doesn't have one
+                 localStorage.removeItem('tg_reset_userId');
+            }
             
             // Clean the URL to ensure this block only runs once on initial click
             // This is critical. Redirect to a clean hash, preserving the current path.
@@ -105,8 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Force the load of the special reset module
             await loadModule('reset-password');
-            // We set currentModuleName to auth so cleanup doesn't run on the special module 
-            // and UI stays in auth state, but the form is for reset.
             currentModuleName = 'auth'; 
 
             // Handle UI for logged out state (as user is effectively logged out to reset password)
@@ -176,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hideLoader();
     };
     
-    // ✅ UPDATED FUNCTION: Centralized module cleanup logic to stop timers/listeners
+    // Centralized module cleanup logic to stop timers/listeners
     const cleanupModule = (moduleName) => {
         try {
             switch (moduleName) {
@@ -187,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log(`Cleanup executed for: ${moduleName}`);
                     }
                     break;
-                case 'news-aggregator': // ⭐ NEW CLEANUP CASE
+                case 'news-aggregator': 
                     // Calls the cleanup function in script.js to clear the auto-refresh interval
                     if (window.tg_news && typeof window.tg_news.cleanup === 'function') {
                         window.tg_news.cleanup();
@@ -261,9 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     htmlPath = `modules/auth/auth.html`;
                     scriptPath = `modules/auth/auth.js`;
                     break;
-                case 'reset-password': // ⭐ NEW CASE: Password Reset Module
+                case 'reset-password': // ⭐ Password Reset Module
                     htmlPath = `modules/auth/reset-password.html`; 
-                    scriptPath = `modules/auth/reset-password.js`; // New dedicated script
+                    scriptPath = `modules/auth/reset-password.js`; // Dedicated script
                     break;
                 case 'dashboard':
                     htmlPath = `modules/dashboard/index.html`;
@@ -298,8 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
             if (existingScript) existingScript.remove(); // Remove old script to prevent re-initialization issues
 
-            // ⚠️ FIX: If the script is the general auth.js, we don't want to reload it if it's already there from index.html
-            // However, since we are using 'reset-password' which has a *new* dedicated script, we must load that one.
+            // If the script is the general auth.js, we don't want to reload it if it's already there from index.html
             if (moduleName === 'auth' && document.querySelector(`script[src="modules/auth/auth.js"]`)) {
                 // If the auth script is already present (from index.html), just call its init function
                  if (window.tg_auth && typeof window.tg_auth.initAuthModule === 'function') {
@@ -322,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             window.tg_auth.initAuthModule(targetContainer);
                         }
                         break;
-                    case 'reset-password': // ⭐ NEW INIT: Call the dedicated reset function
+                    case 'reset-password': // ⭐ INIT: Call the dedicated reset function
                          if (window.tg_auth_reset && typeof window.tg_auth_reset.initResetModule === 'function') {
                             window.tg_auth_reset.initResetModule(targetContainer);
                         }
