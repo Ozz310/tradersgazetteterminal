@@ -1,4 +1,4 @@
-// /modules/auth/reset-password.js - NEW FILE
+// /modules/auth/reset-password.js - FULL UPDATED FILE (Removing userId Dependency)
 
 (() => {
     // This API URL points to your Cloudflare Worker.
@@ -21,6 +21,16 @@
                 clearResetTokens();
                 window.location.hash = '#auth';
             });
+        }
+        
+        // ⚠️ NEW: Check immediately if the token is missing and display the error
+        const token = localStorage.getItem('tg_reset_token');
+        if (!token) {
+            displayMessage('Reset session expired or token is missing. Please request a new link.', true);
+            // Optionally disable the form fields if the token is missing
+            resetForm.querySelector('#new-password').disabled = true;
+            resetForm.querySelector('#confirm-new-password').disabled = true;
+            resetForm.querySelector('#reset-password-submit-btn').disabled = true;
         }
     };
 
@@ -79,10 +89,10 @@
         }
 
         const token = localStorage.getItem('tg_reset_token');
-        const userId = localStorage.getItem('tg_reset_userId');
+        // const userId = localStorage.getItem('tg_reset_userId'); // Not used in current link format
 
-        if (!token || !userId) {
-            // This case means the user tried to access the form without the correct URL parameters
+        // 🎯 FIX: Check only for the token, as userId is not available in the link.
+        if (!token) {
             displayMessage('Reset session expired or token is missing. Please request a new link.', true);
             return;
         }
@@ -92,8 +102,7 @@
         try {
             const passwordHash = await hashPassword(newPassword);
             const data = { 
-                action: 'reset-password', 
-                userId, 
+                action: 'reset-password-execute', // ⚠️ CHANGE: Use a clearer action for the execute step
                 token, 
                 passwordHash // Send the pre-hashed password
             };
@@ -115,13 +124,13 @@
                 }, 2000); 
 
             } else {
-                displayMessage('Password reset failed: ' + result.message + '. Please try requesting a new link.', true);
+                displayMessage('Password reset failed: ' + (result.message || 'An unknown error occurred.') + '.', true);
                 // On failure, clear tokens for security/retry
                 clearResetTokens(); 
             }
         } catch (error) {
             console.error('Network error during password reset:', error);
-            displayMessage('An error occurred. Please check your network and try again.', true);
+            displayMessage('A network or server error occurred. Please check your network and try again.', true);
         } finally {
             submitBtn.disabled = false;
         }
