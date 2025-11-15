@@ -1,4 +1,4 @@
-// /modules/auth/reset-password.js - FULL UPDATED FILE (Removing userId Dependency)
+// /modules/auth/reset-password.js - FULL UPDATED FILE (Fixing Navigation)
 
 (() => {
     // This API URL points to your Cloudflare Worker.
@@ -14,23 +14,30 @@
         if (resetForm) {
             resetForm.addEventListener('submit', handlePasswordReset);
         }
+        
+        // 🎯 FIX 1: Attach click listener to the 'Back to Login' link.
         if (backToLoginLink) {
             backToLoginLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 // Clear reset tokens on navigation
                 clearResetTokens();
+                
+                // 🔑 FIX: Directly set the hash to trigger the router.
                 window.location.hash = '#auth';
             });
         }
         
-        // ⚠️ NEW: Check immediately if the token is missing and display the error
+        // ⚠️ Check immediately if the token is missing and display the error
         const token = localStorage.getItem('tg_reset_token');
         if (!token) {
             displayMessage('Reset session expired or token is missing. Please request a new link.', true);
+            
             // Optionally disable the form fields if the token is missing
-            resetForm.querySelector('#new-password').disabled = true;
-            resetForm.querySelector('#confirm-new-password').disabled = true;
-            resetForm.querySelector('#reset-password-submit-btn').disabled = true;
+            if (resetForm) {
+                resetForm.querySelector('#new-password').disabled = true;
+                resetForm.querySelector('#confirm-new-password').disabled = true;
+                resetForm.querySelector('#reset-password-submit-btn').disabled = true;
+            }
         }
     };
 
@@ -89,9 +96,7 @@
         }
 
         const token = localStorage.getItem('tg_reset_token');
-        // const userId = localStorage.getItem('tg_reset_userId'); // Not used in current link format
-
-        // 🎯 FIX: Check only for the token, as userId is not available in the link.
+        
         if (!token) {
             displayMessage('Reset session expired or token is missing. Please request a new link.', true);
             return;
@@ -102,9 +107,9 @@
         try {
             const passwordHash = await hashPassword(newPassword);
             const data = { 
-                action: 'reset-password-execute', // ⚠️ CHANGE: Use a clearer action for the execute step
+                action: 'reset-password-execute', 
                 token, 
-                passwordHash // Send the pre-hashed password
+                passwordHash
             };
 
             const response = await fetch(API_URL, {
@@ -118,14 +123,15 @@
                 displayMessage('Password reset successfully! Redirecting to login...', false);
                 clearResetTokens();
                 
-                // Wait briefly before redirecting to allow user to read the message
+                // 🔑 FIX 2: Ensure the redirect sets the hash and triggers the router.
+                // Using window.location.hash = '#auth' here is the simplest way to trigger
+                // the router's hashchange listener, which is the core of your SPA.
                 setTimeout(() => {
-                    window.location.hash = '#auth';
+                    window.location.hash = '#auth'; 
                 }, 2000); 
 
             } else {
-                displayMessage('Password reset failed: ' + (result.message || 'An unknown error occurred.') + '.', true);
-                // On failure, clear tokens for security/retry
+                displayMessage('Password reset failed: ' + (result.message || 'An unknown error occurred.') + '. Please try requesting a new link.', true);
                 clearResetTokens(); 
             }
         } catch (error) {
