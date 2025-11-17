@@ -1,44 +1,46 @@
 <div class="contact-us">
-    <div class="contact-us-cover-photo" style="background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png?raw=true');"></div>
-    <div class="contact-us-content-container">
-        <div class="contact-form-card">
-            <h2 class="widget-title">Get in Touch</h2>
-            <form id="contactForm" action="https://script.google.com/macros/s/AKfycbx3rdqktGHvKLtApWCmoQ9zAHognpNfCrptqCA-08enQVEYVsS12QUh04fYEluiA_zw/exec" method="POST" class="contact-form">
-                <div class="form-group">
-                    <label for="name">Your Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Your Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="contactNumber">Contact Number</label>
-                    <input type="tel" id="contactNumber" name="contactNumber" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="submit-button">Send Message</button>
-            </form>
-            <p id="formStatus" class="form-status"></p>
-        </div>
-        <div class="contact-channels-card">
-            <h2 class="widget-title">Or Chat with Us</h2>
-            <p>For immediate support, connect with us on our social channels.</p>
-            <div class="social-links">
-                <a href="https://t.me/Ozz310" target="_blank" class="social-button telegram-button">
-                    <i class="fab fa-telegram-plane"></i>
-                    Chat on Telegram
-                </a>
-                <a href="https://api.whatsapp.com/send/?phone=35796816787&text=Hi+TradersGazette%2C+I%27m+interested+in+your+trading+tools&type=phone_number&app_absent=0" target="_blank" class="social-button whatsapp-button">
-                    <i class="fab fa-whatsapp"></i>
-                    Chat on WhatsApp
-                </a>
-            </div>
-        </div>
-    </div>
+            <div class="contact-us__cover-photo" style="background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png?raw=true');"></div>
+    
+    <div class="contact-us__content-container">
+        <div class="contact-us__form-card">
+            <h2 class="contact-us__widget-title">Get in Touch</h2>
+            <form id="contactForm" action="https://script.google.com/macros/s/AKfycbx3rdqktGHvKLtApWCmoQ9zAHognpNfCrptqCA-08enQVEYVsS12QUh04fYEluiA_zw/exec" method="POST" class="contact-us__form">
+                                <div class="contact-us__form-group">
+                    <label for="name" class="contact-us__form-label">Your Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+                <div class="contact-us__form-group">
+                    <label for="email" class="contact-us__form-label">Your Email</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                </div>
+                <div class="contact-us__form-group">
+                    <label for="contactNumber" class="contact-us__form-label">Contact Number</label>
+                    <input type="tel" id="contactNumber" name="contactNumber" required placeholder="e.g., +1 555 1234">
+                </div>
+                <div class="contact-us__form-group">
+                    <label for="message" class="contact-us__form-label">Message</label>
+                    <textarea id="message" name="message" rows="5" required placeholder="How can we help you?"></textarea>
+                </div>
+                <button type="submit" class="submit-button">Send Message</button>
+            </form>
+            <p id="formStatus" class="form-status"></p>
+        </div>
+        
+        <div class="contact-us__channels-card">
+            <h2 class="contact-us__widget-title">Or Chat with Us</h2>
+            <p>For immediate support, connect with us on our social channels.</p>
+            <div class="contact-us__social-links">
+                <a href="https://t.me/Ozz310" target="_blank" class="contact-us__social-button contact-us__social-button--telegram">
+                    <i class="fab fa-telegram-plane"></i>
+                    Chat on Telegram
+                </a>
+                <a href="https://api.whatsapp.com/send/?phone=35796816787&text=Hi+TradersGazette%2C+I%27m+interested+in+your+trading+tools&type=phone_number&app_absent=0" target="_blank" class="contact-us__social-button contact-us__social-button--whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    Chat on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -51,4 +53,3 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-
