@@ -1,149 +1,141 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    /* 🔑 FIX: Add padding to shift ALL content away from the navigation menu */
-    padding: 20px 20px 20px 40px; /* Increased left padding (40px) to shift content right */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    /* Padding to shift content away from sidebar */
+    padding: 20px 20px 20px 40px;
 }
 
 .contact-us .contact-us-cover-photo {
-    width: 100%;
-    height: 250px;
-    /* 🔑 FIX: Using the verified raw image link */
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png'); 
-    background-size: cover;
-    background-position: center;
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
+    /* Inline styles in HTML handle height/width priority now */
     
-    /* 🔑 FIX: Re-applying the proven negative margin technique from news-aggregator */
-    margin-top: -20px; /* Counteract top padding of .contact-us */
-    margin-left: -40px; /* Counteract left padding of .contact-us */
-    margin-right: -20px; /* Counteract right padding of .contact-us */
+    /* Image Logic */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png'); 
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
     
-    /* Calculate full width: 100% of content area + left padding (40px) + right padding (20px) */
-    width: calc(100% + 60px); 
-    
-    /* Ensure visibility is not blocked by old rules */
-    display: block !important;
-    visibility: visible !important;
+    /* Negative Margins (Confirmed Working) */
+    margin-top: -20px; 
+    margin-left: -40px; 
+    margin-right: -20px; 
 }
 
 .contact-us .contact-us-content-container {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    /* 🔑 FIX: Remove module padding that is now on the root */
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
     padding: 0;
 }
 
-/* ... rest of the CSS remains unchanged ... */
+/* ... Rest of styles remain exactly as before ... */
 .contact-us .contact-form-card, .contact-us .contact-channels-card {
-    flex: 1;
-    min-width: 300px;
-    background-color: var(--accent-color);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
 .contact-us .widget-title {
-    color: var(--gold-color);
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--gold-color);
-    padding-bottom: 10px;
+    color: var(--gold-color);
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
 }
 
 .contact-us .contact-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
 }
 
 .contact-us .contact-form input, .contact-us .contact-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-    background-color: var(--sidebar-color);
-    color: var(--text-color);
-    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    box-sizing: border-box;
 }
 
 .contact-us .submit-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    background: var(--gold-color);
-    color: #1a1a1a;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: var(--gold-color);
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .contact-us .submit-button:hover {
-    background: var(--dark-gold-color);
-    transform: translateY(-2px);
+    background: var(--dark-gold-color);
+    transform: translateY(-2px);
 }
 
 .contact-us .contact-channels-card p {
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 0.95rem;
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 0.95rem;
 }
 
 .contact-us .social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .contact-us .social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    border-radius: 8px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .contact-us .social-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
 .contact-us .social-button i {
-    font-size: 1.2rem;
-    margin-right: 10px;
+    font-size: 1.2rem;
+    margin-right: 10px;
 }
 
 .contact-us .telegram-button {
-    background-color: #0088cc;
+    background-color: #0088cc;
 }
 
 .contact-us .whatsapp-button {
-    background-color: #25D366;
+    background-color: #25D366;
 }
 
 .contact-us .tawk-live-chat-placeholder {
-    color: #b0b0b0;
-    font-style: italic;
-    text-align: center;
-    margin-top: 20px;
+    color: #b0b0b0;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
 }
