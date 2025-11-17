@@ -1,36 +1,39 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    /* FIX: Remove padding from the main container to let the banner touch the edges. */
-    padding: 0;
+    /* RESTORED: Keep the original 20px padding for the whole module */
+    padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
+    min-height: calc(100vh - 40px);
 }
 
 .contact-us .contact-us-cover-photo {
     /* FIX: Using the verified raw image link for reliable asset loading */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png'); 
     
-    width: 100%; 
+    /* UPDATED: Surgical Negative Margins */
+    width: 100%; /* Keep width at 100% - let negative margins handle overflow */
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: -20px;
+    
     height: 250px;
     background-size: cover;
     background-position: center;
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 0; /* Spacing handled by padding on the next element */
+    margin-bottom: 20px; /* RESTORED: Keep spacing between banner and content */
 }
 
 .contact-us .contact-us-content-container {
-    /* FIX: Re-introduce the required 20px padding ONLY to the content BELOW the banner */
+    /* RESTORED: No specific padding needed here as the parent .contact-us handles it */
     width: 100%;
     max-width: 900px;
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-    padding: 20px; 
-    box-sizing: border-box;
 }
 
 .contact-us .contact-form-card, .contact-us .contact-channels-card {
