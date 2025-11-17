@@ -1,8 +1,8 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    /* 🔑 FIX: Aggressive negative margin to offset the top padding of the global parent container (.module-container) */
-    margin-top: -20px; 
-    padding: 0 0 20px 0; /* Remove horizontal padding and top padding */
+    /* 🔑 FIX: Increased negative margin to aggressively remove the top gap */
+    margin-top: -30px; /* Increased from -20px */
+    padding: 0 0 20px 0; /* Ensures bottom padding remains */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -12,7 +12,7 @@
 
 /* 🚀 BANNER FIX IMPLEMENTATION (Full Bleed) */
 .contact-us__cover-photo {
-    /* FIX: Full bleed using negative margins to offset global container padding (assumed 20px) */
+    /* Ensures horizontal full bleed */
     width: calc(100% + 40px); 
     margin-left: -20px; 
     margin-right: -20px;
@@ -28,16 +28,17 @@
 .contact-us__content-container {
     width: 100%;
     max-width: 900px;
-    padding: 0 20px; /* Add internal horizontal padding for content */
+    padding: 0 20px; 
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
 }
 
+/* Card Styling - Form and Channels */
 .contact-us__form-card, .contact-us__channels-card {
     flex: 1;
     min-width: 300px;
-    /* 🔑 FIX: Restore dark card background */
+    /* 🔑 FIX: Ensure dark card background is applied (was previously broken) */
     background-color: var(--accent-color); 
     padding: 30px;
     border-radius: 8px;
@@ -54,12 +55,12 @@
     padding-bottom: 10px;
 }
 
-/* Form Styling - Labels and Inputs (Approved UX changes) */
+/* Form Styling - Labels and Inputs (Fixing colors) */
 .contact-us__form-label {
     display: block;
     margin-bottom: 5px;
-    color: var(--secondary-text-color); 
-    font-size: 0.9rem;
+    color: var(--text-color); /* Used var(--text-color) for better visibility */
+    font-size: 1rem; /* Slightly increased size */
     font-weight: 500;
 }
 
@@ -69,8 +70,10 @@
     margin-bottom: 15px;
     border-radius: 5px;
     border: 1px solid var(--border-color);
+    /* 🔑 FIX: Apply dark background for inputs */
     background-color: var(--sidebar-color);
-    color: var(--text-color);
+    /* 🔑 FIX: Ensure text is visible in dark mode */
+    color: var(--text-color); 
     box-sizing: border-box;
     transition: all 0.2s ease;
 }
@@ -83,24 +86,22 @@
 }
 
 .contact-us__form input::placeholder, .contact-us__form textarea::placeholder {
-    color: var(--accent-color);
+    color: var(--secondary-text-color); /* Use a lighter color for placeholder text */
 }
 
-/* 🔑 Primary CTA (Submit Button) FIX - Explicit Gold Gradient */
+/* Primary CTA (Submit Button) - Explicit Gold Gradient (Confirmed working) */
 .contact-us__form .submit-button {
     width: 100%;
     background-image: none !important;
-    /* Re-enforce the required Solid Gold Gradient */
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
     color: var(--dark-color-for-text) !important; 
 }
 
 .contact-us__form .submit-button:hover {
-    /* Restore subtle hover effect */
     background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
 }
 
-/* Social Links Styling - FIX: Restore structure and colors */
+/* Social Links Styling - FIX: Restoring full styling */
 
 .contact-us__channels-card p {
     color: var(--text-color);
@@ -116,16 +117,18 @@
 }
 
 .contact-us__social-button {
-    display: flex;
+    /* 🔑 FIX: Restore display and structure */
+    display: flex; 
     align-items: center;
     justify-content: center;
     padding: 12px;
     border-radius: 8px;
-    color: #fff; /* White text color */
+    /* 🔑 FIX: Ensure white text color */
+    color: #fff; 
     text-decoration: none;
     font-weight: 700;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-image: none; /* Ensure no unwanted gradients */
+    background-image: none;
 }
 
 .contact-us__social-button:hover {
@@ -139,11 +142,11 @@
 }
 
 .contact-us__social-button--telegram {
-    background-color: #0088cc; /* Telegram brand blue */
+    background-color: #0088cc; 
 }
 
 .contact-us__social-button--whatsapp {
-    background-color: #25D366; /* WhatsApp brand green */
+    background-color: #25D366; 
 }
 
 /* --- Media Queries for Responsiveness --- */
