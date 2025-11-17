@@ -1,8 +1,8 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    /* 🔑 FIX: Extremely aggressive negative margin to guarantee gap removal. */
-    margin-top: -70px !important; /* STICKING TO THIS as it compensates for the external wrapper's padding */
-    padding: 0 0 20px 0; 
+    /* 🔑 FIX: Reset to the successful parent configuration from trading-ebooks. */
+    margin: 0;
+    padding: 20px; 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -12,13 +12,16 @@
 
 /* 🚀 BANNER FIX IMPLEMENTATION (Full Bleed) */
 .contact-us__cover-photo {
-    /* This ensures horizontal full bleed by compensating for the 20px padding applied by a presumed global wrapper */
-    width: calc(100% + 40px); 
-    margin-left: -20px; 
-    margin-right: -20px;
     height: 250px;
     background-size: cover;
     background-position: center;
+    
+    /* 🔑 THE FIX: Negative margin to counteract the 20px padding of the immediate parent (.contact-us). */
+    margin-top: -20px !important; 
+    margin-left: -20px !important; 
+    margin-right: -20px !important;
+    /* Calculate width to fill the full container width plus the 20px padding on each side */
+    width: calc(100% + 40px) !important;
     
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -28,7 +31,7 @@
 .contact-us__content-container {
     width: 100%;
     max-width: 900px;
-    padding: 0 20px; 
+    padding: 0; /* Padding handled by the parent .contact-us */
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -90,10 +93,11 @@
     color: var(--secondary-text-color);
 }
 
-/* Primary CTA (Submit Button) - Explicit Gold Gradient (Confirmed working) */
+/* Primary CTA (Submit Button) - Explicit Gold Gradient FIX */
 .contact-us__form .submit-button {
     width: 100%;
     background-image: none !important;
+    /* 🔑 FIX: Force the required Solid Gold Gradient */
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
     color: var(--dark-color-for-text) !important; 
 }
