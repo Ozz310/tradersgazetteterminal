@@ -1,7 +1,7 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
     /* 🔑 FIX: Extremely aggressive negative margin to guarantee gap removal. */
-    margin-top: -70px !important; /* Increased from -50px */
+    margin-top: -70px !important; /* STICKING TO THIS as it compensates for the external wrapper's padding */
     padding: 0 0 20px 0; 
     box-sizing: border-box;
     display: flex;
@@ -12,6 +12,7 @@
 
 /* 🚀 BANNER FIX IMPLEMENTATION (Full Bleed) */
 .contact-us__cover-photo {
+    /* This ensures horizontal full bleed by compensating for the 20px padding applied by a presumed global wrapper */
     width: calc(100% + 40px); 
     margin-left: -20px; 
     margin-right: -20px;
@@ -43,8 +44,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     box-sizing: border-box;
-    /* Ensuring min-height to visibly contain the elements */
-    min-height: 400px; 
+    min-height: 400px; /* Ensure structure is visible */
 }
 
 .contact-us__widget-title {
@@ -60,7 +60,7 @@
 .contact-us__form-label {
     display: block;
     margin-bottom: 5px;
-    color: var(--text-color) !important; /* Added !important */
+    color: var(--text-color) !important; 
     font-size: 1rem;
     font-weight: 500;
 }
@@ -105,7 +105,7 @@
 /* Social Links Styling - FIX: Restoring full styling with !important */
 
 .contact-us__channels-card p {
-    color: var(--text-color) !important; /* Added !important */
+    color: var(--text-color) !important; 
     line-height: 1.6;
     font-size: 0.95rem;
 }
@@ -140,7 +140,7 @@
 .contact-us__social-button i {
     font-size: 1.2rem;
     margin-right: 10px;
-    color: #fff !important; /* Ensure icon is white */
+    color: #fff !important;
 }
 
 .contact-us__social-button--telegram {
