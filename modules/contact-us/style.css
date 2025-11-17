@@ -1,176 +1,133 @@
+
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    /* 🔑 FIX: Reverting to a less aggressive negative margin. This compensates for the
-        padding/margin of the wrapper *outside* this module container. */
-    margin-top: -30px !important; /* Adjusted from -70px */
-    padding: 0 0 20px 0; 
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: calc(100vh - 40px);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px);
 }
 
-/* 🚀 BANNER FIX IMPLEMENTATION (Full Bleed) */
-.contact-us__cover-photo {
-    /* This ensures horizontal full bleed by compensating for the assumed 20px padding 
-       on the global app wrapper (20px left + 20px right = 40px offset). */
-    width: calc(100% + 40px); 
-    margin-left: -20px; 
-    margin-right: -20px;
-    height: 250px;
-    background-size: cover;
-    background-position: center;
-    
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
+.contact-us .contact-us-cover-photo {
+    width: 100%;
+    height: 250px;
+    background-image: url('https://via.placeholder.com/1920x250.png?text=Contact+Us+Banner');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
 }
 
-.contact-us__content-container {
-    width: 100%;
-    max-width: 900px;
-    padding: 0 20px; 
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+.contact-us .contact-us-content-container {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-/* Card Styling - Form and Channels (FIX: Restore dark background) */
-.contact-us__form-card, .contact-us__channels-card {
-    flex: 1;
-    min-width: 300px;
-    /* 🔑 FIX: Force dark card background */
-    background-color: var(--accent-color) !important; 
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
-    min-height: 400px; /* Ensure structure is visible */
+.contact-us .contact-form-card, .contact-us .contact-channels-card {
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
-.contact-us__widget-title {
-    color: var(--gold-color);
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--gold-color);
-    padding-bottom: 10px;
+.contact-us .widget-title {
+    color: var(--gold-color);
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
 }
 
-/* Form Styling - Labels and Inputs (FIX: Restore dark theme colors) */
-.contact-us__form-label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color) !important; 
-    font-size: 1rem;
-    font-weight: 500;
+.contact-us .contact-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
 }
 
-.contact-us__form input, .contact-us__form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color) !important;
-    /* 🔑 FIX: Force dark background for inputs */
-    background-color: var(--sidebar-color) !important;
-    /* 🔑 FIX: Force text color */
-    color: var(--text-color) !important; 
-    box-sizing: border-box;
-    transition: all 0.2s ease;
+.contact-us .contact-form input, .contact-us .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    box-sizing: border-box;
 }
 
-/* Gold Focus/Hover Effect */
-.contact-us__form input:focus, .contact-us__form textarea:focus {
-    outline: none;
-    border-color: var(--gold-color);
-    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+.contact-us .submit-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: var(--gold-color);
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.contact-us__form input::placeholder, .contact-us__form textarea::placeholder {
-    color: var(--secondary-text-color);
+.contact-us .submit-button:hover {
+    background: var(--dark-gold-color);
+    transform: translateY(-2px);
 }
 
-/* Primary CTA (Submit Button) - Explicit Gold Gradient FIX */
-.contact-us__form .submit-button {
-    width: 100%;
-    background-image: none !important;
-    /* 🔑 FIX: Enforce the required Solid Gold Gradient */
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
-    color: var(--dark-color-for-text) !important; 
+.contact-us .contact-channels-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 0.95rem;
 }
 
-.contact-us__form .submit-button:hover {
-    background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
+.contact-us .social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-/* Social Links Styling - FIX: Restoring full styling */
-
-.contact-us__channels-card p {
-    color: var(--text-color) !important; 
-    line-height: 1.6;
-    font-size: 0.95rem;
+.contact-us .social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.contact-us__social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+.contact-us .social-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-.contact-us__social-button {
-    /* 🔑 FIX: Force structural styles */
-    display: flex !important; 
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 12px !important;
-    border-radius: 8px !important;
-    /* 🔑 FIX: Force white text color */
-    color: #fff !important; 
-    text-decoration: none !important;
-    font-weight: 700 !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-image: none !important;
+.contact-us .social-button i {
+    font-size: 1.2rem;
+    margin-right: 10px;
 }
 
-.contact-us__social-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+.contact-us .telegram-button {
+    background-color: #0088cc;
 }
 
-.contact-us__social-button i {
-    font-size: 1.2rem;
-    margin-right: 10px;
-    color: #fff !important;
+.contact-us .whatsapp-button {
+    background-color: #25D366;
 }
 
-.contact-us__social-button--telegram {
-    background-color: #0088cc !important; 
-}
-
-.contact-us__social-button--whatsapp {
-    background-color: #25D366 !important; 
-}
-
-/* --- Media Queries for Responsiveness --- */
-@media (max-width: 768px) {
-    /* Mobile Banner Fix */
-    .contact-us__cover-photo {
-        margin-left: 0;
-        margin-right: 0;
-        width: 100%;
-    }
-    
-    /* Mobile Content Padding Fix */
-    .contact-us__content-container {
-        padding: 0 15px; 
-        flex-direction: column;
-    }
-    
-    .contact-us__form-card, .contact-us__channels-card {
-        min-width: unset;
-        width: 100%;
-    }
+.contact-us .tawk-live-chat-placeholder {
+    color: #b0b0b0;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
 }
