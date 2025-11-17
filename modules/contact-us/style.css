@@ -1,9 +1,8 @@
-
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    /* 🔑 FIX: Aggressive negative margin to fully remove the top gap */
-    margin-top: -50px !important; 
-    padding: 0 0 20px 0; 
+    /* 🔑 FIX: Extremely aggressive negative margin to guarantee gap removal. */
+    margin-top: -70px !important; /* Increased from -50px */
+    padding: 0 0 20px 0; 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -13,13 +12,13 @@
 
 /* 🚀 BANNER FIX IMPLEMENTATION (Full Bleed) */
 .contact-us__cover-photo {
-    width: calc(100% + 40px); 
-    margin-left: -20px; 
-    margin-right: -20px;
-    height: 250px;
-    background-size: cover;
-    background-position: center;
-    
+    width: calc(100% + 40px); 
+    margin-left: -20px; 
+    margin-right: -20px;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     margin-bottom: 20px;
@@ -28,7 +27,7 @@
 .contact-us__content-container {
     width: 100%;
     max-width: 900px;
-    padding: 0 20px; 
+    padding: 0 20px; 
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -38,12 +37,14 @@
 .contact-us__form-card, .contact-us__channels-card {
     flex: 1;
     min-width: 300px;
-    /* 🔑 FIX: Force dark card background */
-    background-color: var(--accent-color) !important; 
+    /* 🔑 FIX: Force dark card background */
+    background-color: var(--accent-color) !important; 
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     box-sizing: border-box;
+    /* Ensuring min-height to visibly contain the elements */
+    min-height: 400px; 
 }
 
 .contact-us__widget-title {
@@ -59,9 +60,9 @@
 .contact-us__form-label {
     display: block;
     margin-bottom: 5px;
-    color: var(--text-color); 
-    font-size: 1rem;
-    font-weight: 500;
+    color: var(--text-color) !important; /* Added !important */
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .contact-us__form input, .contact-us__form textarea {
@@ -70,41 +71,41 @@
     margin-bottom: 15px;
     border-radius: 5px;
     border: 1px solid var(--border-color) !important;
-    /* 🔑 FIX: Force dark background for inputs */
+    /* 🔑 FIX: Force dark background for inputs */
     background-color: var(--sidebar-color) !important;
-    /* 🔑 FIX: Force text color */
-    color: var(--text-color) !important; 
+    /* 🔑 FIX: Force text color */
+    color: var(--text-color) !important; 
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 /* Gold Focus/Hover Effect */
 .contact-us__form input:focus, .contact-us__form textarea:focus {
-    outline: none;
-    border-color: var(--gold-color);
-    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+    outline: none;
+    border-color: var(--gold-color);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
 }
 
 .contact-us__form input::placeholder, .contact-us__form textarea::placeholder {
-    color: var(--secondary-text-color);
+    color: var(--secondary-text-color);
 }
 
 /* Primary CTA (Submit Button) - Explicit Gold Gradient (Confirmed working) */
 .contact-us__form .submit-button {
-    width: 100%;
-    background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
-    color: var(--dark-color-for-text) !important; 
+    width: 100%;
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
+    color: var(--dark-color-for-text) !important; 
 }
 
 .contact-us__form .submit-button:hover {
-    background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
+    background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
 }
 
 /* Social Links Styling - FIX: Restoring full styling with !important */
 
 .contact-us__channels-card p {
-    color: var(--text-color);
+    color: var(--text-color) !important; /* Added !important */
     line-height: 1.6;
     font-size: 0.95rem;
 }
@@ -117,18 +118,18 @@
 }
 
 .contact-us__social-button {
-    /* 🔑 FIX: Force structural styles */
-    display: flex !important; 
+    /* 🔑 FIX: Force structural styles */
+    display: flex !important; 
     align-items: center !important;
     justify-content: center !important;
     padding: 12px !important;
     border-radius: 8px !important;
-    /* 🔑 FIX: Force white text color */
-    color: #fff !important; 
+    /* 🔑 FIX: Force white text color */
+    color: #fff !important; 
     text-decoration: none !important;
     font-weight: 700 !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-image: none !important;
+    background-image: none !important;
 }
 
 .contact-us__social-button:hover {
@@ -139,14 +140,15 @@
 .contact-us__social-button i {
     font-size: 1.2rem;
     margin-right: 10px;
+    color: #fff !important; /* Ensure icon is white */
 }
 
 .contact-us__social-button--telegram {
-    background-color: #0088cc !important; 
+    background-color: #0088cc !important; 
 }
 
 .contact-us__social-button--whatsapp {
-    background-color: #25D366 !important; 
+    background-color: #25D366 !important; 
 }
 
 /* --- Media Queries for Responsiveness --- */
