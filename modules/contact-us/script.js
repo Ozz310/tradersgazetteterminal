@@ -1,10 +1,10 @@
-// The Web App URL deployed from Google Apps Script
-// This is the URL that the JS fetch request will target.
+// The Web App URL is confirmed to be the same, running the updated GAS code (doPost and File ID)
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU-h3hQvbO7ca_NM3QymxKuiSH_6Z61C3CL4FuGhQdcFtNRL5ofMA5wdlSr5QFTnA/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('contactForm');
     const formStatus = document.getElementById('formStatus');
+    // Ensure the submit button element is retrieved safely
     const submitButton = form ? form.querySelector('.submit-button') : null;
 
     if (form && submitButton) {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {Event} e - The submit event object.
      */
     async function handleFormSubmit(e) {
-        // 🔑 FIX: This must run to prevent redirection!
+        // CRITICAL: Stop the default form submission and page reload
         e.preventDefault(); 
 
         // Disable button and show loading status
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Send the data to the GAS Web App URL
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
-                // 🔑 CRITICAL: Must use 'no-cors' mode for GAS to execute the script and not block the request
+                // CRITICAL: Must use 'no-cors' mode for GAS to execute the script and not block the request
                 mode: 'no-cors', 
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: urlEncodedData 
             });
 
-            // If we reach this line without a network error, the script execution was successful.
-            // Since we use 'no-cors', we cannot inspect the content, but the submission worked.
+            // If the fetch call completes without a network error (which it usually does 
+            // once deployment permissions are correctly set), we assume success.
 
             formStatus.textContent = '✅ Message sent successfully! We will be in touch shortly.';
             formStatus.style.color = '#25D366'; // Green for success
             form.reset(); // Clear the form fields
 
         } catch (error) {
-            // Handle network or fetch errors
+            // Handle network or fetch errors (e.g., if the user is offline)
             console.error('Submission Error:', error);
             formStatus.textContent = '❌ Submission failed. Please try again later or contact us via Telegram.';
             formStatus.style.color = 'red';
