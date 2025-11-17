@@ -1,148 +1,152 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: calc(100vh - 40px);
+    /* 🔑 FIX: Remove top and horizontal padding to allow full bleed banner. */
+    padding: 0 0 20px 0; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px);
 }
 
-.contact-us .contact-us-cover-photo {
-    width: 100%;
-    height: 250px;
-    background-image: url('https://via.placeholder.com/1920x250.png?text=Contact+Us+Banner');
-    background-size: cover;
-    background-position: center;
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
+/* 🚀 BANNER FIX IMPLEMENTATION (Full Bleed) */
+.contact-us__cover-photo {
+    width: calc(100% + 40px); /* Widen to cover the global 20px padding on the left and right */
+    margin-left: -20px; /* Offset global left padding */
+    margin-right: -20px; /* Offset global right padding */
+    height: 250px;
+    background-image: url('https://via.placeholder.com/1920x250.png?text=Contact+Us+Banner');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
 }
 
-.contact-us .contact-us-content-container {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+.contact-us__content-container {
+    width: 100%;
+    max-width: 900px;
+    padding: 0 20px; /* Add internal horizontal padding for content alignment with other modules */
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.contact-us .contact-form-card, .contact-us .contact-channels-card {
-    flex: 1;
-    min-width: 300px;
-    background-color: var(--accent-color);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
+.contact-us__form-card, .contact-us__channels-card {
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
-.contact-us .widget-title {
-    color: var(--gold-color);
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--gold-color);
-    padding-bottom: 10px;
+.contact-us__widget-title {
+    color: var(--gold-color);
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
 }
 
-.contact-us .contact-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
+.contact-us__form-label {
+    /* Label refinement: Minimal styling, clear separation */
+    display: block;
+    margin-bottom: 5px;
+    color: var(--secondary-text-color); /* Lighter secondary text color */
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
-.contact-us .contact-form input, .contact-us .contact-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-    background-color: var(--sidebar-color);
-    color: var(--text-color);
-    box-sizing: border-box;
+.contact-us__form input, .contact-us__form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
-/* 🔑 TGG PRIMARY CTA ENFORCEMENT 🔑 */
-.contact-us .submit-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.25s ease;
+/* 🌟 Input Gold Focus/Hover Effect */
+.contact-us__form input:focus, .contact-us__form textarea:focus {
+    outline: none;
+    border-color: var(--gold-color);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+.contact-us__form input::placeholder, .contact-us__form textarea::placeholder {
+    color: var(--accent-color); /* Subtle dark gray placeholder text */
+}
+
+/* 🔑 TGG PRIMARY CTA ENFORCEMENT FIX 🔑 */
+/* Removed all overrides and !important rules. Relying on main.css for .submit-button */
+
+.contact-us__channels-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.contact-us__social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.contact-us__social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-us__social-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.contact-us__social-button i {
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.contact-us__social-button--telegram {
+    background-color: #0088cc;
+}
+
+.contact-us__social-button--whatsapp {
+    background-color: #25D366;
+}
+
+/* --- Media Queries for Responsiveness --- */
+@media (max-width: 768px) {
+    /* Revert banner negative margins for mobile if required, or keep to ensure full bleed */
+    .contact-us__cover-photo {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+    }
     
-    /* ENFORCEMENT: Solid Gold Gradient background */
-    background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
-    border: none !important;
+    /* 📱 Mobile Content Padding Fix */
+    .contact-us__content-container {
+        padding: 0 15px; /* Use 15px horizontal padding for mobile view */
+        flex-direction: column;
+    }
     
-    /* Premium Shadow Match (Lifted) */
-    box-shadow: 
-        0 4px 10px rgba(0, 0, 0, 0.4) !important, 
-        inset 0 0 15px rgba(255, 255, 255, 0.1) !important;
-}
-
-.contact-us .submit-button:hover {
-    /* Subtle hover effect for luxury feel */
-    background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
-    transform: translateY(-2px);
-    box-shadow: 
-        0 6px 15px rgba(0, 0, 0, 0.6) !important, 
-        0 0 10px rgba(240, 215, 136, 0.6) !important; /* Gold glowing effect */
-}
-/* 🔑 END TGG PRIMARY CTA ENFORCEMENT 🔑 */
-
-.contact-us .contact-channels-card p {
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-.contact-us .social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.contact-us .social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    border-radius: 8px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.contact-us .social-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-
-.contact-us .social-button i {
-    font-size: 1.2rem;
-    margin-right: 10px;
-}
-
-.contact-us .telegram-button {
-    background-color: #0088cc;
-}
-
-.contact-us .whatsapp-button {
-    background-color: #25D366;
-}
-
-.contact-us .tawk-live-chat-placeholder {
-    color: #b0b0b0;
-    font-style: italic;
-    text-align: center;
-    margin-top: 20px;
+    /* Ensure cards look good on small screens */
+    .contact-us__form-card, .contact-us__channels-card {
+        min-width: unset;
+        width: 100%;
+    }
 }
