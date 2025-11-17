@@ -1,169 +1,133 @@
+
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    /* 🔑 FIX 1: Negative top margin to pull the entire module up, counteracting 
-        the global wrapper's top padding (likely 20px to 30px). */
-    margin-top: -30px; 
     padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: calc(100vh - 40px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 40px);
 }
 
 .contact-us .contact-us-cover-photo {
-    /* 🔑 FIX 2: Full-bleed horizontal banner fix, matching the trading-ebooks pattern. */
-    /* This overrides the 20px padding from the left and right of the main app content area. */
-    width: calc(100% + 40px);
-    margin-left: -20px;
-    margin-right: -20px;
-    
+    width: 100%;
     height: 250px;
-    background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png?raw=true'); /* Using the image from HTML */
-    background-size: cover;
-    background-position: center;
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
+    background-image: url('https://via.placeholder.com/1920x250.png?text=Contact+Us+Banner');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
 }
 
 .contact-us .contact-us-content-container {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .contact-us .contact-form-card, .contact-us .contact-channels-card {
-    flex: 1;
-    min-width: 300px;
-    background-color: var(--accent-color);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
 .contact-us .widget-title {
-    color: var(--gold-color);
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--gold-color);
-    padding-bottom: 10px;
+    color: var(--gold-color);
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 10px;
 }
 
 .contact-us .contact-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
 }
 
 .contact-us .contact-form input, .contact-us .contact-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-    background-color: var(--sidebar-color);
-    color: var(--text-color);
-    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    box-sizing: border-box;
 }
 
 .contact-us .submit-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    /* 🔑 FIX 3: Apply the required Solid Gold Gradient */
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
-    color: #1a1a1a;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: var(--gold-color);
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .contact-us .submit-button:hover {
-    /* Using a slightly brighter gold for hover effect */
-    background: linear-gradient(145deg, #FFEB9C, #F0D788); 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(221, 170, 51, 0.4);
+    background: var(--dark-gold-color);
+    transform: translateY(-2px);
 }
 
 .contact-us .contact-channels-card p {
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 0.95rem;
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 0.95rem;
 }
 
 .contact-us .social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .contact-us .social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    border-radius: 8px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .contact-us .social-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
 .contact-us .social-button i {
-    font-size: 1.2rem;
-    margin-right: 10px;
+    font-size: 1.2rem;
+    margin-right: 10px;
 }
 
 .contact-us .telegram-button {
-    background-color: #0088cc;
+    background-color: #0088cc;
 }
 
 .contact-us .whatsapp-button {
-    background-color: #25D366;
+    background-color: #25D366;
 }
 
 .contact-us .tawk-live-chat-placeholder {
-    color: #b0b0b0;
-    font-style: italic;
-    text-align: center;
-    margin-top: 20px;
-}
-
-/* --- Responsive Adjustments (UX Mode) --- */
-@media (max-width: 768px) {
-    .contact-us {
-        /* Remove negative margin on mobile if it causes issues with the responsive header/sidebar */
-        margin-top: 0; 
-        padding: 10px;
-    }
-
-    .contact-us .contact-us-cover-photo {
-        /* Ensure the full bleed works on smaller screens too */
-        margin-left: -10px;
-        margin-right: -10px;
-        width: calc(100% + 20px);
-    }
-    
-    .contact-us .contact-us-content-container {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .contact-us .contact-form-card, .contact-us .contact-channels-card {
-        padding: 20px;
-        min-width: 100%;
-    }
+    color: #b0b0b0;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
 }
