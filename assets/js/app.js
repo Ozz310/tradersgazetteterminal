@@ -1,4 +1,4 @@
-// /assets/js/app.js - FULL UPDATED FILE (With Global FOUC Fix)
+// /assets/js/app.js - FULL UPDATED FILE (With Global FOUC Fix & Smooth Logout)
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- NEW: Helper to handle FOUC transitions ---
+    // --- Helper to handle FOUC transitions ---
     const hideModuleContainer = () => {
         if (moduleContainer) moduleContainer.classList.add('module-loader-hidden');
         if (authContainer) authContainer.classList.add('module-loader-hidden');
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Main Router Logic
     const router = async () => {
         showLoader();
-        hideModuleContainer(); // 🔑 Hide content immediately on route change
+        hideModuleContainer(); // Hide content immediately on route change
 
         const urlParams = new URLSearchParams(window.location.search);
         const resetAction = urlParams.get('action');
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleStickyNotesVisibility('auth');
             
             hideLoader();
-            showModuleContainer(); // 🔑 Show content after reset module loaded
+            showModuleContainer(); // Show content after reset module loaded
             return; 
         }
 
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hideLoader();
-        showModuleContainer(); // 🔑 FOUC FIX: Reveal the content now that loading is done
+        showModuleContainer(); // FOUC FIX: Reveal the content now that loading is done
     };
     
     // Centralized module cleanup
@@ -334,8 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         break;
                     case 'contact-us':
-                        // Contact Us uses generic DOMContentLoaded but we can trigger its fade-in here if needed
-                        // The global showModuleContainer() will handle the visibility
                         if (window.initContactUs && typeof window.initContactUs === 'function') {
                              window.initContactUs();
                         }
@@ -374,8 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('tg_reset_token');
         localStorage.removeItem('tg_reset_userId');
         
-        window.location.hash = '#auth';
-        window.location.reload();
+        // 🔑 FIX: Removed window.location.reload()
+        window.location.hash = '#auth'; 
     }
 
     loadMainCSS(); 
