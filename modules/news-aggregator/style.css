@@ -115,7 +115,7 @@
     height: 100%;
 }
 
-/* Tabs: FIX 1: Z-INDEX STACKING FIX (Covering Buttons) */
+/* Tabs */
 .news-aggregator .news-tabs {
     display: flex;
     padding: 10px 20px;
@@ -144,7 +144,7 @@
 }
 
 .news-aggregator .news-tab.active {
-    /* Gold Gradient Re-applied (as requested) */
+    /* Gold Gradient Re-applied */
     background: var(--gold-text-gradient);
     color: #000;
     border: none;
@@ -159,7 +159,15 @@
     padding: 15px 20px;
     box-sizing: border-box;
     scroll-behavior: smooth;
-    /* No explicit z-index needed here, relies on parent's stacking context */
+    /* FIX: HIDE SCROLLBAR */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* FIX: HIDE SCROLLBAR (Chrome, Safari) */
+.news-aggregator .news-list::-webkit-scrollbar {
+    display: none;
+    width: 0 !important; /* Forces width to zero for webkit browsers */
+    height: 0 !important;
 }
 
 /* Article Card */
@@ -243,7 +251,7 @@
 
 .news-aggregator .read-more-button {
     font-size: 0.8rem;
-    /* FIX: Apply gold gradient to Read More button */
+    /* Apply gold gradient to Read More button */
     color: transparent; 
     background-image: var(--gold-text-gradient);
     background-clip: text;
