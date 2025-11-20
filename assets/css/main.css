@@ -2,10 +2,10 @@
 
 /* Initially hide all module content to prevent flashing */
 .module-loader-hidden {
-    opacity: 0 !important;
-    transition: opacity 0.5s ease-in-out;
-    /* Optional: Hide scrollbar during load */
-    overflow-y: hidden !important; 
+    opacity: 0 !important;
+    transition: opacity 0.5s ease-in-out;
+    /* Optional: Hide scrollbar during load */
+    overflow-y: hidden !important; 
 }
 
 /* --- END FOUC FIX --- */
@@ -19,593 +19,603 @@
 
 /* Core Variables and Resets */
 :root {
-    --bg-color: #1a1a1a;
-    --sidebar-color: #222;
-    --content-bg-color: #2a2a2a;
-    
-    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 */
-    --text-color: #f1f1f1; /* Crisp White/Light Grey text (Primary Text) */
-    --secondary-text-color: #c8c8c8; /* Lighter grey for data labels / descriptions */
-    --gold-color: #D4AF37; /* Radiant Gold Accent (Interactive/Borders) */
-    --header-gold-color: #C0A04C; /* Deeper, richer gold for H1/H2 titles */
-    --dark-color-for-text: #0D0D0D; /* Dominant Black/Dark Tones (for text on gold) */
-    --hover-gold-color: #e0c265; /* Lighter gold for hover/active states */
-    
-    --accent-color: #4a4a4a;
-    --nav-active-bg: #3e382b;
-    --border-color: #333;
-    --font-primary: 'Roboto', sans-serif;
-    --font-secondary: 'Merriweather', serif;
-    --sidebar-width: 220px;
-    --gold-shadow: 0 0 5px rgba(212, 175, 55, 0.6); /* Gold shadow using the correct color */
+    --bg-color: #1a1a1a;
+    --sidebar-color: #222;
+    --content-bg-color: #2a2a2a;
+    
+    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 */
+    --text-color: #f1f1f1; /* Crisp White/Light Grey text (Primary Text) */
+    --secondary-text-color: #c8c8c8; /* Lighter grey for data labels / descriptions */
+    --gold-color: #D4AF37; /* Radiant Gold Accent (Interactive/Borders) */
+    --header-gold-color: #C0A04C; /* Deeper, richer gold for H1/H2 titles */
+    --dark-color-for-text: #0D0D0D; /* Dominant Black/Dark Tones (for text on gold) */
+    --hover-gold-color: #e0c265; /* Lighter gold for hover/active states */
+    
+    --accent-color: #4a4a4a;
+    --nav-active-bg: #3e382b;
+    --border-color: #333;
+    --font-primary: 'Roboto', sans-serif;
+    --font-secondary: 'Merriweather', serif;
+    --sidebar-width: 220px;
+    --gold-shadow: 0 0 5px rgba(212, 175, 55, 0.6); /* Gold shadow using the correct color */
 }
 
 /* 🛠️ CRITICAL FIX: REMOVE GLOBAL OVERFLOW-X HIDING - THIS PREVENTS THE WHOLE APP AND SIDEBAR LOGO FROM BREAKING */
 html, body {
-    margin: 0; 
-    padding: 0; 
-    /* 🔑 FIX: Change 100vh !important back to 100% (or omit) and only control X-overflow. */
-    height: 100%; /* Use 100% so it can be flexible within the viewport */
-    overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally (was 'hidden') */
-    overflow-y: hidden; /* Keep content from scrolling the whole page */
+    margin: 0; 
+    padding: 0; 
+    /* 🔑 FIX: Change 100vh !important back to 100% (or omit) and only control X-overflow. */
+    height: 100%; /* Use 100% so it can be flexible within the viewport */
+    overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally (was 'hidden') */
+    overflow-y: hidden; /* Keep content from scrolling the whole page */
 }
 
 /* Global Body Reset */
 body {
-    font-family: var(--font-primary);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0; 
-    padding: 0;
-    overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally (was 'hidden') */
-    height: 100%; /* Standard reset */
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0; 
+    padding: 0;
+    overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally (was 'hidden') */
+    height: 100%; /* Standard reset */
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Auth Container */
 #auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--bg-color);
 }
 
 /* Main Container for the Terminal */
 .terminal-container {
-    /* 🔑 FIX: THIS element should control the full viewport height now */
-    height: 100vh; 
-    width: 100%;
-    margin-top: 0 !important;
-    display: flex;
-    overflow: hidden;
-    flex: 1;
+    /* 🔑 FIX: THIS element should control the full viewport height now */
+    height: 100vh; 
+    width: 100%;
+    margin-top: 0 !important;
+    display: flex;
+    overflow: hidden;
+    flex: 1;
 }
 
 /* Sidebar Styling - Top 1% UI/UX Refinements */
 .sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--sidebar-color);
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-    border-right: 1px solid var(--border-color);
-    flex-shrink: 0;
-    height: 100%; /* Important for internal flex layout */
-    transition: transform 0.3s ease-in-out;
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    border-right: 1px solid var(--border-color);
+    flex-shrink: 0;
+    height: 100%; /* Important for internal flex layout */
+    transition: transform 0.3s ease-in-out;
 }
 
 .sidebar-header {
-    text-align: center;
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    /* Subtle Gold Divider for Clean Separation */
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    /* Subtle Gold Divider for Clean Separation */
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .sidebar-logo {
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    border: 3px solid var(--gold-color);
-    box-shadow: var(--gold-shadow);
-    object-fit: cover;
-    transition: all 0.4s ease;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    border: 3px solid var(--gold-color);
+    box-shadow: var(--gold-shadow);
+    object-fit: cover;
+    transition: all 0.4s ease;
 }
 
 .sidebar-logo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px var(--gold-color);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--gold-color);
 }
 
 /* 🔑 Sidebar Navigation - The Fix for Overflow (All content scrolls) */
 .sidebar-nav {
-    flex-grow: 1;
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    flex-grow: 1;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .sidebar-nav::-webkit-scrollbar {
-    display: none;
+    display: none;
 }
 
 .sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Applies to ALL <a> links inside the nav (Dashboard to Log Out) */
 .nav-item {
-    display: flex;
-    align-items: center;
-    padding: 15px 25px;
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 400;
-    position: relative;
-    transition: all 0.2s ease;
-    /* SPATIAL FIX: Increased bottom margin for better vertical separation */
-    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 400;
+    position: relative;
+    transition: all 0.2s ease;
+    /* SPATIAL FIX: Increased bottom margin for better vertical separation */
+    margin-bottom: 6px;
 }
 
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--gold-color);
-    transform: none;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--gold-color);
+    transform: none;
 }
 
 .nav-item.active {
-    background-color: var(--nav-active-bg);
-    color: var(--gold-color);
-    font-weight: 500;
-    border-left: none;
-    text-shadow: 0 0 3px rgba(212, 175, 55, 0.5); /* Uses correct gold color */
+    background-color: var(--nav-active-bg);
+    color: var(--gold-color);
+    font-weight: 500;
+    border-left: none;
+    text-shadow: 0 0 3px rgba(212, 175, 55, 0.5); /* Uses correct gold color */
 }
 
 /* Active state indicator */
 .nav-item.active::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background-color: var(--gold-color);
-    border-radius: 2px;
-    box-shadow: 1px 0 5px var(--gold-color);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--gold-color);
+    border-radius: 2px;
+    box-shadow: 1px 0 5px var(--gold-color);
 }
 
 .nav-icon {
-    font-size: 1.6rem;
-    width: 30px;
-    text-align: center;
-    color: var(--text-color);
-    transition: color 0.2s ease;
+    font-size: 1.6rem;
+    width: 30px;
+    text-align: center;
+    color: var(--text-color);
+    transition: color 0.2s ease;
 }
 
 .nav-item.active .nav-icon {
-    color: var(--gold-color);
-    filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.5)); /* Uses correct gold color */
+    color: var(--gold-color);
+    filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.5)); /* Uses correct gold color */
 }
 
 .nav-label {
-    /* SPATIAL FIX: Reduced margin to pull label closer to icon (tighter visual unit) */
-    margin-left: 8px;
-    font-size: 0.9rem;
+    /* SPATIAL FIX: Reduced margin to pull label closer to icon (tighter visual unit) */
+    margin-left: 8px;
+    font-size: 0.9rem;
 }
 
 /* Main Content Wrapper */
 .content-wrapper {
-    flex-grow: 1;
-    height: 100%; 
-    overflow-y: hidden;
-    background-color: var(--content-bg-color);
-    display: flex;
-    flex-direction: column;
-    /* This width calculation is for explicit control, flex-grow: 1 also works */
-    width: calc(100% - var(--sidebar-width)); 
+    flex-grow: 1;
+    height: 100%; 
+    overflow-y: hidden;
+    background-color: var(--content-bg-color);
+    display: flex;
+    flex-direction: column;
+    /* This width calculation is for explicit control, flex-grow: 1 also works */
+    width: calc(100% - var(--sidebar-width)); 
 }
 
-/* 💥 CRITICAL GLOBAL FIX: REMOVED horizontal padding from this wrapper. 
-    Internal modules (like Dashboard) now handle their own padding. */
+/* 💥 CRITICAL GLOBAL FIX: REMOVED horizontal padding from this wrapper. 
+    Internal modules (like Dashboard) now handle their own padding. */
 .module-container {
-    flex-grow: 1;
-    overflow-y: auto;
-    /* 🚀 CRITICAL RE-INTRODUCTION: Restore only VERTICAL padding for internal module components */
-    padding: 20px 0; 
-    box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.2);
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    flex-grow: 1;
+    overflow-y: auto;
+    /* 🚀 CRITICAL RE-INTRODUCTION: Restore only VERTICAL padding for internal module components */
+    padding: 20px 0; 
+    box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.2);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 /* 🚀 CRITICAL FIX: The utility class to remove the top padding for full-bleed content (e.g., banner pages)
-    - Updated selector for robust global usage. */
+    - Updated selector for robust global usage. */
 .module-no-top-padding {
-    padding-top: 0 !important; /* 🔑 FIX: Apply to the element with this class */
-    margin-top: 0 !important; 
+    padding-top: 0 !important; /* 🔑 FIX: Apply to the element with this class */
+    margin-top: 0 !important; 
 }
 
 
 .module-container::-webkit-scrollbar {
-    display: none;
+    display: none;
 }
 
 
 /* Mobile Nav Toggle Button (Removed on desktop) */
 .mobile-nav-toggle {
-    display: none;
+    display: none;
 }
 
 /* Mobile Overlay (Removed on desktop) */
 .mobile-overlay {
-    display: none;
+    display: none;
 }
 
 /* Sticky Notes Component Styles */
 .sticky-notes-component-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 99;
-    /* CRITICAL FIX: Ensure it is initially hidden/controlled by JS */
-    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+    /* CRITICAL FIX: Ensure it is initially hidden/controlled by JS */
+    display: none;
 }
 
 /* Mobile nav is only shown on mobile. Hide on desktop. */
 .bottom-nav {
-    display: none;
+    display: none;
 }
 
 /* --- Global Reusable Components (TOP 1% Button Aesthetic) --- */
 
 /* Recessed Gold-Accent Card Style */
 .tg-card {
-    background-color: var(--sidebar-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    /* REFINEMENT: Generous internal padding for a premium look */
-    padding: 30px; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+    background-color: var(--sidebar-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    /* REFINEMENT: Generous internal padding for a premium look */
+    padding: 30px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
 }
 
 /* Hover effect: Subtle lift and gold edge accent */
 .tg-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
-                inset 0 0 5px rgba(212, 175, 55, 0.1); 
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
+                inset 0 0 5px rgba(212, 175, 55, 0.1); 
 }
 
 /* Global Heading Styles (Applies to all H1/H2 in the app) */
 h1, h2 {
-    color: var(--header-gold-color); /* Use the new, richer gold for hierarchy */
-    font-weight: 700;
-    margin-top: 0; /* FIX: Hard reset to prevent margin collapse/overlap at the top of containers */
-    margin-bottom: 20px; /* Generous vertical whitespace */
+    color: var(--header-gold-color); /* Use the new, richer gold for hierarchy */
+    font-weight: 700;
+    margin-top: 0; /* FIX: Hard reset to prevent margin collapse/overlap at the top of containers */
+    margin-bottom: 20px; /* Generous vertical whitespace */
 }
 
 /* Premium Primary Button (For forms, actions, etc.) - ENHANCED DEPTH */
 .tg-button-primary {
-    /* Critical: Button Reset applied to this class, not the generic tag */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    display: inline-block; /* Safest default for primary button */
+    /* Critical: Button Reset applied to this class, not the generic tag */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    display: inline-block; /* Safest default for primary button */
 
-    background-color: var(--gold-color);
-    color: var(--dark-color-for-text); /* CRITICAL: Dark text on gold */
-    border: 1px solid var(--hover-gold-color); 
-    padding: 14px 30px; 
-    border-radius: 10px; 
-    font-weight: 700; 
-    text-transform: uppercase;
-    letter-spacing: 1px; 
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
-    /* ENHANCED SHADOW: */
-    box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.6), 
-        inset 0 0 15px rgba(255, 255, 255, 0.2), 
-        0 0 8px rgba(212, 175, 55, 0.5); 
+    /* 🔑 FIX: Remove hardcoded color and use the Gold Gradient */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    
+    color: var(--dark-color-for-text); /* CRITICAL: Dark text on gold */
+    border: none; /* Remove border to rely on gradient/shadow */
+    
+    padding: 14px 30px; 
+    border-radius: 10px; 
+    font-weight: 700; 
+    text-transform: uppercase;
+    letter-spacing: 1px; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    
+    /* ENHANCED SHADOW: */
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.6), 
+        inset 0 0 15px rgba(255, 255, 255, 0.2), 
+        0 0 8px rgba(212, 175, 55, 0.5); 
 }
 
 .tg-button-primary:hover {
-    background-color: var(--hover-gold-color);
-    color: var(--dark-color-for-text); /* Lock text color to black on hover */
-    /* EXTREME HOVER: */
-    box-shadow: 
-        0 10px 20px rgba(0, 0, 0, 0.8), 
-        0 0 25px var(--gold-color); 
-    transform: translateY(-4px) scale(1.02); 
+    /* 🔑 FIX: Use filter for hover on gradient, slightly brighten */
+    filter: brightness(1.1);
+    color: var(--dark-color-for-text); /* Lock text color to black on hover */
+    /* EXTREME HOVER: */
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.8), 
+        0 0 25px var(--gold-color); 
+    transform: translateY(-4px) scale(1.02); 
 }
 
 /* Secondary Button (Minimalist) */
 .tg-button-secondary {
-    /* Critical: Button Reset applied to this class, not the generic tag */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    display: inline-block;
+    /* Critical: Button Reset applied to this class, not the generic tag */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    display: inline-block;
 
-    background-color: transparent;
-    color: var(--gold-color);
-    border: 1px solid var(--border-color);
-    padding: 12px 25px; 
-    border-radius: 10px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    background-color: transparent;
+    color: var(--gold-color);
+    border: 1px solid var(--border-color);
+    padding: 12px 25px; 
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .tg-button-secondary:hover {
-    border-color: var(--gold-color);
-    background-color: rgba(212, 175, 55, 0.15); 
-    color: var(--hover-gold-color);
+    border-color: var(--gold-color);
+    background-color: rgba(212, 175, 55, 0.15); 
+    color: var(--hover-gold-color);
 }
 
 /* 🆕 TOP 1% MENU/TOGGLE BUTTONS (The Dark/Gold Look) */
 .tgg-menu-button {
-    /* Critical: Button Reset applied to this class, not the generic tag */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    
-    /* FIX: Explicitly set display and width to ensure proper stacking layout */
-    display: block; 
-    width: 100%; 
+    /* Critical: Button Reset applied to this class, not the generic tag */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    
+    /* FIX: Explicitly set display and width to ensure proper stacking layout */
+    display: block; 
+    width: 100%; 
 
-    /* INACTIVE STATE: Dark Recessed */
-    background: var(--accent-color);
-    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
-    color: var(--text-color);
-    border: 1px solid #555;
-    padding: 12px 20px; /* Adjusted padding slightly for general use */
-    font-size: 0.95rem; /* Adjusted font size for general use */
-    font-weight: 600;
-    border-radius: 8px;
-    text-align: center; 
-    transition: all 0.3s ease;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
+    /* INACTIVE STATE: Dark Recessed */
+    background: var(--accent-color);
+    background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
+    color: var(--text-color);
+    border: 1px solid #555;
+    padding: 12px 20px; /* Adjusted padding slightly for general use */
+    font-size: 0.95rem; /* Adjusted font size for general use */
+    font-weight: 600;
+    border-radius: 8px;
+    text-align: center; 
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .tgg-menu-button:hover {
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
-    color: var(--hover-gold-color);
-    border-color: var(--gold-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
+    color: var(--hover-gold-color);
+    border-color: var(--gold-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .tgg-menu-button.active {
-    /* REVERTED: Back to the Solid Gold CTA look for active buttons */
-    background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; /* Solid Gold Gradient */
-    
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
-    border: none !important; /* Remove border */
-    
-    /* Premium Shadow Match */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-    
-    font-weight: 700 !important;
-    transform: none;
+    /* REVERTED: Back to the Solid Gold CTA look for active buttons */
+    background-image: none !important;
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; /* Solid Gold Gradient */
+    
+    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
+    border: none !important; /* Remove border */
+    
+    /* Premium Shadow Match */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    
+    font-weight: 700 !important;
+    transform: none;
 }
 
 /* 🆕 TOP 1% PREMIUM TOGGLE SWITCH (For settings, dark mode, etc.) */
 .tgg-switch-container {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
 }
 
 .tgg-switch-input {
-    /* Hide the default checkbox input */
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+    /* Hide the default checkbox input */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .tgg-switch-slider {
-    position: relative;
-    display: block;
-    width: 50px;
-    height: 28px;
-    border-radius: 14px;
-    background-color: var(--accent-color); /* Dark inactive color */
-    transition: background-color 0.4s ease;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: block;
+    width: 50px;
+    height: 28px;
+    border-radius: 14px;
+    background-color: var(--accent-color); /* Dark inactive color */
+    transition: background-color 0.4s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .tgg-switch-slider::before {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background-color: var(--text-color); /* Crisp White knob */
-    transition: transform 0.4s ease, background-color 0.4s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--text-color); /* Crisp White knob */
+    transition: transform 0.4s ease, background-color 0.4s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 /* Checked State (GOLD ACTIVE) */
 .tgg-switch-input:checked + .tgg-switch-slider {
-    background: var(--gold-color);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); /* Gold glow */
+    background: var(--gold-color);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); /* Gold glow */
 }
 
 .tgg-switch-input:checked + .tgg-switch-slider::before {
-    /* Move knob to the right */
-    transform: translateX(22px); 
-    background-color: var(--dark-color-for-text); /* Dark knob on gold background */
+    /* Move knob to the right */
+    transform: translateX(22px); 
+    background-color: var(--dark-color-for-text); /* Dark knob on gold background */
 }
 
 /* --- Global Button Aliases (ENFORCEMENT BLOCK) --- */
 /* Automatically map all primary action buttons (submit, tg-primary) to the new aesthetic */
 .submit-button,
-.tg-button-primary { 
-    /* Critical: Inherit ALL styling from the premium primary button */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    display: inline-block;
+.tg-button-primary { 
+    /* Critical: Inherit ALL styling from the premium primary button */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    box-sizing: border-box;
+    display: inline-block;
 
-    background-color: var(--gold-color) !important;
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text on gold */
-    border: 1px solid var(--hover-gold-color) !important;
-    padding: 14px 30px !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    cursor: pointer !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-    /* ENHANCED SHADOW: */
-    box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.6) !important,
-        inset 0 0 15px rgba(255, 255, 255, 0.2) !important,
-        0 0 8px rgba(212, 175, 55, 0.5) !important;
+    /* 🔑 CRITICAL FIX: Enforce Solid Gold Gradient background */
+    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
+    
+    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text on gold */
+    border: none !important; /* Remove border */
+    
+    padding: 14px 30px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    
+    /* ENHANCED SHADOW: */
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.6) !important,
+        inset 0 0 15px rgba(255, 255, 255, 0.2) !important,
+        0 0 8px rgba(212, 175, 55, 0.5) !important;
 }
 
 .submit-button:hover,
-.tg-button-primary:hover { 
-    background-color: var(--hover-gold-color) !important;
-    color: var(--dark-color-for-text) !important; /* CRITICAL ADDITION: Lock text color to black on hover */
-    /* EXTREME HOVER: */
-    box-shadow: 
-        0 10px 20px rgba(0, 0, 0, 0.8) !important, 
-        0 0 25px var(--gold-color) !important;
-    transform: translateY(-4px) scale(1.02) !important;
+.tg-button-primary:hover { 
+    /* 🔑 CRITICAL FIX: Use filter instead of background color for gradient hover effect */
+    filter: brightness(1.1) !important;
+    color: var(--dark-color-for-text) !important; /* CRITICAL ADDITION: Lock text color to black on hover */
+    /* EXTREME HOVER: */
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.8) !important, 
+        0 0 25px var(--gold-color) !important;
+    transform: translateY(-4px) scale(1.02) !important;
 }
 
 
 /* --- Mobile Specific Styles (Max-width 768px) --- */
 @media (max-width: 768px) {
-    /* Mobile Layout Reset */
-    .terminal-container {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        display: none; /* Hide desktop sidebar */
-    }
+    /* Mobile Layout Reset */
+    .terminal-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        display: none; /* Hide desktop sidebar */
+    }
 
-    /* Content Wrapper for Mobile */
-    .content-wrapper {
-        width: 100%;
-        margin-left: 0;
-        padding-bottom: 60px;
-    }
-    
-    .module-container {
-        flex-grow: 1;
-        overflow-y: auto;
-        /* CRITICAL: Keep mobile container padding at 0 for full-screen content, padding is handled in module CSS */
-        padding: 0; 
-    }
+    /* Content Wrapper for Mobile */
+    .content-wrapper {
+        width: 100%;
+        margin-left: 0;
+        padding-bottom: 60px;
+    }
+    
+    .module-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        /* CRITICAL: Keep mobile container padding at 0 for full-screen content, padding is handled in module CSS */
+        padding: 0; 
+    }
 
-    /* Bottom Navigation Bar */
-    .bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        background-color: var(--sidebar-color);
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
-        z-index: 100;
-        align-items: center;
-        padding: 0;
-    }
-    
-    /* NEW: Container for horizontal scrolling */
-    .bottom-nav-container {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        width: 100%;
-    }
-    
-    /* Hide scrollbar for a cleaner look */
-    .bottom-nav-container::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .bottom-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        color: var(--text-color);
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: 500;
-        transition: color 0.2s ease;
-        padding: 5px;
-        min-width: 80px;
-        flex-shrink: 0;
-        cursor: pointer;
-    }
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: var(--sidebar-color);
+        border-top: 1px solid var(--border-color);
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+        z-index: 100;
+        align-items: center;
+        padding: 0;
+    }
+    
+    /* NEW: Container for horizontal scrolling */
+    .bottom-nav-container {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+    
+    /* Hide scrollbar for a cleaner look */
+    .bottom-nav-container::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .bottom-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: color 0.2s ease;
+        padding: 5px;
+        min-width: 80px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
 
-    .bottom-nav-item i {
-        font-size: 1.4rem;
-        margin-bottom: 5px;
-    }
+    .bottom-nav-item i {
+        font-size: 1.4rem;
+        margin-bottom: 5px;
+    }
 
-    .bottom-nav-item.active {
-        color: var(--gold-color);
-        border-top: 2px solid var(--gold-color);
-        padding-top: 3px;
-    }
+    .bottom-nav-item.active {
+        color: var(--gold-color);
+        border-top: 2px solid var(--gold-color);
+        padding-top: 3px;
+    }
 
-    .bottom-nav-item:hover {
-        color: var(--gold-color);
-    }
-    
-    /* FIX: Adjust Sticky Notes position for mobile, above bottom-nav */
-    .sticky-notes-component-container {
-        bottom: 80px;
-        right: 15px;
-    }
+    .bottom-nav-item:hover {
+        color: var(--gold-color);
+    }
+    
+    /* FIX: Adjust Sticky Notes position for mobile, above bottom-nav */
+    .sticky-notes-component-container {
+        bottom: 80px;
+        right: 15px;
+    }
 }
 
 
@@ -619,357 +629,357 @@ h1, h2 {
 /* /modules/trading-journal/style.css */
 /* Main layout */
 .content-body.trading-journal-module {
-    /* CRITICAL FIX: The parent .module-container provides 20px of vertical padding. 
-       We only need to provide horizontal padding here to prevent margin collapse/overlap at the top. */
-    padding: 0 20px; 
+    /* CRITICAL FIX: The parent .module-container provides 20px of vertical padding. 
+       We only need to provide horizontal padding here to prevent margin collapse/overlap at the top. */
+    padding: 0 20px; 
 }
 
 .controls-row {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 /* Tab controls */
 .tab-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .tab-button {
-    cursor: pointer;
-    padding: 10px 15px;
-    background-color: #333; /* Dark background */
-    color: #d4af37; /* Primary gold/yellow color */
-    border-radius: 5px;
-    transition: background-color 0.2s;
-    font-weight: bold;
+    cursor: pointer;
+    padding: 10px 15px;
+    background-color: #333; /* Dark background */
+    color: #d4af37; /* Primary gold/yellow color */
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    font-weight: bold;
 }
 
 .tab-button.active {
-    background-color: #d4af37;
-    color: #000; /* Black text for active tab */
+    background-color: #d4af37;
+    color: #000; /* Black text for active tab */
 }
 
 /* General Card Style (for form and CSV modal) */
 .tgg-card {
-    background-color: #252525;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #252525;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Trade Entry Form Grid */
 .trade-form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 10px;
 }
 
 .trade-form-grid label {
-    display: block;
-    margin-bottom: 5px;
-    color: #d4af37;
-    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+    color: #d4af37;
+    font-weight: 500;
 }
 
 /* Journal Table Styles (Desktop View) */
 .journal-table-wrapper {
-    overflow-x: auto;
-    /* Hidden on mobile by script/media query */
+    overflow-x: auto;
+    /* Hidden on mobile by script/media query */
 }
 
 table.trade-journal-table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #f1f1f1;
-    white-space: nowrap; /* Prevent columns from wrapping */
+    width: 100%;
+    border-collapse: collapse;
+    color: #f1f1f1;
+    white-space: nowrap; /* Prevent columns from wrapping */
 }
 
 .trade-journal-table th, .trade-journal-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #333;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #333;
 }
 
 .trade-journal-table th {
-    background-color: #333;
-    color: #d4af37;
-    font-weight: bold;
-    text-transform: uppercase;
+    background-color: #333;
+    color: #d4af37;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 /* Hover effect on table rows */
 .trade-journal-table tbody tr:hover {
-    background-color: #333; /* Slightly darker on hover */
+    background-color: #333; /* Slightly darker on hover */
 }
 
 /* P&L COLORS */
 .pnl-column-profit {
-    color: #1aff70; /* Bright Green */
-    font-weight: bold;
+    color: #1aff70; /* Bright Green */
+    font-weight: bold;
 }
 
 .pnl-column-loss {
-    color: #ff4d4d; /* Bright Red */
-    font-weight: bold;
+    color: #ff4d4d; /* Bright Red */
+    font-weight: bold;
 }
 
 /* KPI DASHBOARD */
 .kpi-dashboard {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
 .kpi-card {
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #252525;
-    border: 1px solid #333;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #252525;
+    border: 1px solid #333;
 }
 
 .kpi-card h3 {
-    font-size: 1.1em;
-    color: #d4af37;
-    margin-bottom: 5px;
+    font-size: 1.1em;
+    color: #d4af37;
+    margin-bottom: 5px;
 }
 
 .kpi-card .value {
-    font-size: 2.2em;
-    font-weight: bold;
-    color: #f1f1f1;
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #f1f1f1;
 }
 
 .kpi-card .positive {
-    color: #1aff70; /* Green for profit/good metrics */
+    color: #1aff70; /* Green for profit/good metrics */
 }
 
 .kpi-card .negative {
-    color: #ff4d4d; /* Red for loss/bad metrics */
+    color: #ff4d4d; /* Red for loss/bad metrics */
 }
 
 /* Analytics Chart Styles */
 .chart-row {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
 .chart-card {
-    flex-grow: 1;
-    background-color: #252525;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 20px;
-    height: 400px; /* Standard height for charts */
+    flex-grow: 1;
+    background-color: #252525;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    height: 400px; /* Standard height for charts */
 }
 
 .chart-card h4 {
-    color: #d4af37;
-    margin-top: 0;
-    margin-bottom: 15px;
-    text-align: center;
+    color: #d4af37;
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .chart-card canvas {
-    /* Ensures canvas fills container and respects height */
-    max-height: 100%; 
+    /* Ensures canvas fills container and respects height */
+    max-height: 100%; 
 }
 
 
 /* --- MOBILE CARD VIEW (Default hidden on desktop) --- */
 .trade-card-list {
-    display: none; /* Default hidden on desktop */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
+    display: none; /* Default hidden on desktop */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
 }
 
 .trade-card {
-    background-color: #252525;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    transition: transform 0.2s;
+    background-color: #252525;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s;
 }
 
 .trade-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333;
 }
 
 .card-symbol {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #f1f1f1;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #f1f1f1;
 }
 
 .card-pnl {
-    font-size: 1.2em;
-    font-weight: bold;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 .trade-card.profit {
-    border-left: 5px solid #1aff70; /* Green indicator */
+    border-left: 5px solid #1aff70; /* Green indicator */
 }
 
 .trade-card.loss {
-    border-left: 5px solid #ff4d4d; /* Red indicator */
+    border-left: 5px solid #ff4d4d; /* Red indicator */
 }
 
 .trade-card.breakeven {
-    border-left: 5px solid #d4af37; /* Gold indicator */
+    border-left: 5px solid #d4af37; /* Gold indicator */
 }
 
 .card-detail {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px dotted #333;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dotted #333;
 }
 
 .card-label {
-    color: #d4af37;
-    font-weight: 500;
+    color: #d4af37;
+    font-weight: 500;
 }
 
 .card-value {
-    color: #f1f1f1;
-    text-align: right;
+    color: #f1f1f1;
+    text-align: right;
 }
 
 .notes-section {
-    flex-direction: column;
-    padding-top: 10px;
-    border-bottom: none;
+    flex-direction: column;
+    padding-top: 10px;
+    border-bottom: none;
 }
 
 .notes-section p {
-    margin-top: 5px;
-    padding: 5px;
-    background-color: #333;
-    border-radius: 4px;
-    white-space: pre-wrap; /* Respects notes formatting */
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #333;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Respects notes formatting */
 }
 
 /* Modal Styling for CSV Upload */
 .modal-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.8);
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
 }
 
 .modal-content {
-    background-color: #252525;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #333;
-    width: 80%; /* Could be adjusted */
-    max-width: 500px;
-    border-radius: 10px;
-    position: relative;
+    background-color: #252525;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #333;
+    width: 80%; /* Could be adjusted */
+    max-width: 500px;
+    border-radius: 10px;
+    position: relative;
 }
 
 .close-button {
-    color: #d4af37;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+    color: #d4af37;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .close-button:hover,
 .close-button:focus {
-    color: #fff;
-    text-decoration: none;
-    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .modal-content h3 {
-    color: #d4af37;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
+    color: #d4af37;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 
 /* --- Media Queries for Responsiveness --- */
 @media (max-width: 1200px) {
-    .kpi-dashboard {
-        grid-template-columns: repeat(2, 1fr); /* Collapse to 2 columns */
-    }
+    .kpi-dashboard {
+        grid-template-columns: repeat(2, 1fr); /* Collapse to 2 columns */
+    }
 }
 
 @media (max-width: 768px) {
-    /* Main Layout */
-    .content-body.trading-journal-module {
-        padding: 10px; /* Resetting padding for mobile view to ensure content is flush */
-    }
+    /* Main Layout */
+    .content-body.trading-journal-module {
+        padding: 10px; /* Resetting padding for mobile view to ensure content is flush */
+    }
 
-    /* Controls */
-    .controls-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .controls-row > div {
-        flex-grow: 1; 
-    }
-    .export-button {
-        width: 100%;
-    }
-    .analytics-controls .tgg-primary-cta {
-        width: 100%; 
-    }
+    /* Controls */
+    .controls-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .controls-row > div {
+        flex-grow: 1; 
+    }
+    .export-button {
+        width: 100%;
+    }
+    .analytics-controls .tgg-primary-cta {
+        width: 100%; 
+    }
 
-    /* Analytics Grid Collapse: Single column */
-    .chart-row {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
-    .chart-card {
-        /* REVERTED: Back to original height */
-        height: 350px; 
-        padding: 15px; 
-    }
-    .chart-card h4 {
-        margin-bottom: 10px;
-    }
-    .chart-card canvas {
-        /* FIX: Ensures canvas fills smaller card without overflow */
-        height: calc(100% - 30px) !important; 
-    }
-    
-    /* Table View Hiding: Handled by script, but CSS should confirm */
-    .journal-table-wrapper {
-        display: none;
-    }
+    /* Analytics Grid Collapse: Single column */
+    .chart-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
+    .chart-card {
+        /* REVERTED: Back to original height */
+        height: 350px; 
+        padding: 15px; 
+    }
+    .chart-card h4 {
+        margin-bottom: 10px;
+    }
+    .chart-card canvas {
+        /* FIX: Ensures canvas fills smaller card without overflow */
+        height: calc(100% - 30px) !important; 
+    }
+    
+    /* Table View Hiding: Handled by script, but CSS should confirm */
+    .journal-table-wrapper {
+        display: none;
+    }
 
-    /* Mobile Card View Display: Also handled by script but ensure it can be displayed */
-    .trade-card-list {
-        display: grid; /* Overrides default 'none' for mobile */
-    }
+    /* Mobile Card View Display: Also handled by script but ensure it can be displayed */
+    .trade-card-list {
+        display: grid; /* Overrides default 'none' for mobile */
+    }
 }
