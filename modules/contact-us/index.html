@@ -1,57 +1,45 @@
 <div class="contact-us module-no-top-padding"> 
-    <div class="contact-us-cover-photo" style="height: 255px !important; min-height: 255px !important; display: block !important; width: calc(100% + 60px) !important;"></div>
-    
-    <div class="contact-us-content-container">
-        <div class="contact-form-card">
-            <h2 class="widget-title">Get in Touch</h2>
-            <form id="contactForm" action="javascript:void(0);" method="POST" class="contact-form">
-                <div class="form-group">
-                    <label for="name">Your Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Your Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="contactNumber">Contact Number</label>
-                    <input type="tel" id="contactNumber" name="contactNumber" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="submit-button">Send Message</button>
-            </form>
-            <p id="formStatus" class="form-status"></p>
-        </div>
-        <div class="contact-channels-card">
-            <h2 class="widget-title">Or Chat with Us</h2>
-            <p>For immediate support, connect with us on our social channels.</p>
-            <div class="social-links">
-                <a href="https://t.me/Ozz310" target="_blank" class="social-button telegram-button">
-                    <i class="fab fa-telegram-plane"></i>
-                    Chat on Telegram
-                </a>
-                <a href="https://api.whatsapp.com/send/?phone=35796816787&text=Hi+TradersGazette%2C+I%27m+interested+in+your+trading+tools&type=phone_number&app_abs-ent=0" target="_blank" class="social-button whatsapp-button">
-                    <i class="fab fa-whatsapp"></i>
-                    Chat on WhatsApp
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+    <div class="contact-us-cover-photo" style="height: 255px; min-height: 255px; display: block; width: calc(100% + 60px);"></div>
+    ```
+*(No change here, just confirming the existing structure is clean.)*
 
-<script src="/modules/contact-us/script.js"></script>
+### 1.2 Update `modules/contact-us/style.css`
 
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://tawk.to/chat/6874d625e452b41910d78e4c/1j046918d';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
+We will add the `!important` rule back to the CSS properties that define the background color of the cards. The current screenshot shows the cards are inheriting the wrong background, so forcing the color might resolve the issue if a global style is overriding `var(--accent-color)`.
+
+**Change the `.contact-us-cover-photo` rules to make the URL more robust and define a fixed size for the background:**
+
+```css
+/* In modules/contact-us/style.css */
+
+.contact-us .contact-us-cover-photo {
+    /* Image Logic */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png'); 
+    background-size: cover;
+    background-repeat: no-repeat; /* ADDED */
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+    
+    /* Negative Margins (Confirmed Working) */
+    margin-top: -20px; 
+    margin-left: -40px; 
+    margin-right: -20px; 
+    
+    /* ADDED to ensure dimensions are respected if inline styles fail */
+    height: 255px !important; 
+    min-height: 255px !important;
+}
+
+/* Fix Card Background Overrides */
+.contact-us .contact-form-card, .contact-us .contact-channels-card {
+    flex: 1;
+    min-width: 300px;
+    /* ADDED !important to force the dark card color */
+    background-color: var(--accent-color) !important; 
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
+}
