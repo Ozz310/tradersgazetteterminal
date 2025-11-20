@@ -53,15 +53,17 @@
     border-color: var(--gold-color);
 }
 
+/* Header Banner - GLOBAL MARKET PULSE placeholder */
 .news-aggregator .news-header-banner {
     width: 100%;
-    height: 300px;
+    height: 300px; /* Desktop Height */
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    /* Compensation for the parent's padding (Desktop) */
     margin-top: -20px;
     margin-left: -20px;
     margin-right: -20px;
@@ -109,8 +111,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative; /* Establish stacking context for its children */
-    z-index: 1; /* Ensure it stacks correctly within .news-content-flex */
+    position: relative; 
+    z-index: 1; 
     height: 100%;
 }
 
@@ -124,8 +126,8 @@
     border-bottom: 1px solid var(--border-color);
     background: var(--sidebar-color);
     position: relative; 
-    z-index: 20; /* Ensure tabs are always on top of the scrolling news list */
-    flex-shrink: 0; /* Prevent tabs from shrinking */
+    z-index: 20; 
+    flex-shrink: 0; 
 }
 .news-aggregator .news-tabs::-webkit-scrollbar { display: none; }
 
@@ -139,7 +141,7 @@
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    flex-shrink: 0; /* Important for scrollable tabs */
+    flex-shrink: 0; 
 }
 
 .news-aggregator .news-tab.active {
@@ -165,7 +167,7 @@
 /* FIX: HIDE SCROLLBAR (Chrome, Safari) */
 .news-aggregator .news-list::-webkit-scrollbar {
     display: none;
-    width: 0 !important; /* Forces width to zero for webkit browsers */
+    width: 0 !important; 
     height: 0 !important;
 }
 
@@ -270,7 +272,7 @@
     border-top: 1px solid var(--border-color);
     background-color: var(--sidebar-color);
     transition: transform 0.3s ease;
-    z-index: 15; /* Ensure footer sits above the list content */
+    z-index: 15; 
     flex-shrink: 0;
 }
 .news-aggregator .news-branding-footer.footer-hidden {
@@ -284,11 +286,11 @@
     transition: filter 0.3s ease;
 }
 .news-aggregator .news-branding-footer img:hover {
-    filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.8)); /* Enhanced hover glow */
+    filter: drop-shadow(0 0 15px rgba(240, 215, 136, 0.8)); 
 }
 .news-aggregator .news-branding-footer p { margin: 0; font-size: 0.7rem; color: var(--secondary-text-color); }
 
-/* Error State (Remains the same) */
+/* Error State */
 .news-aggregator .news-error-state {
     display: flex;
     flex-direction: column;
@@ -311,7 +313,7 @@
     cursor: pointer;
 }
 
-/* SKELETON STYLES (Remains the same) */
+/* SKELETON STYLES */
 .news-aggregator .skeleton-article {
     background-color: var(--bg-color);
     padding: 15px;
@@ -331,7 +333,16 @@
 
 /* --- MOBILE RESPONSIVENESS (Max-Width 768px) --- */
 @media (max-width: 768px) {
-    .news-aggregator .news-header-banner { height: 150px; }
+    /* FIX: Restore the Header Banner and set its height for mobile */
+    .news-aggregator .news-header-banner { 
+        height: 150px; /* Reduced from 300px on desktop */
+        margin-bottom: 10px; /* Adjusted margin */
+        /* Re-apply the full-width edge-to-edge compensation */
+        margin-top: -20px; 
+        margin-left: -20px; 
+        margin-right: -20px; 
+        width: calc(100% + 40px); 
+    }
     
     /* Reduced padding for the whole area */
     .news-aggregator .news-content-area { padding: 0 0 60px 0; }
@@ -340,16 +351,16 @@
     .news-aggregator .news-content-flex {
         flex-direction: column;
         max-height: none; 
-        gap: 0; /* Remove gap between video and news list for continuous flow */
+        gap: 0; 
     }
 
     /* FIX: Restore the YouTube container to full width and remove radius/shadows to match mobile viewport edges */
     .news-aggregator .youtube-live-container {
         width: 100%;
-        flex: none; /* Let it size based on content/aspect ratio */
-        border-radius: 0; /* Full width edge-to-edge */
-        box-shadow: none; /* No shadow */
-        margin-bottom: 20px; /* Add margin after the video before news list starts */
+        flex: none; 
+        border-radius: 0; 
+        box-shadow: none; 
+        margin-bottom: 20px; 
     }
 
     /* FIX: News aggregator container should also be edge-to-edge */
@@ -379,11 +390,11 @@
     
     /* Headline Visibility: Tighter padding */
     .news-aggregator .news-article {
-        padding: 10px 12px; /* Reduced vertical padding */
-        margin-bottom: 8px; /* Reduced margin */
+        padding: 10px 12px; 
+        margin-bottom: 8px; 
     }
     .news-aggregator .news-article h2 { font-size: 1rem; margin-bottom: 5px; }
-    .news-aggregator .news-article p { display: none; } /* Hide summary by default on mobile */
+    .news-aggregator .news-article p { display: none; } 
     .news-aggregator .article-dateline { margin-bottom: 0; }
 
     .news-aggregator .news-toolbar { display: none; }
