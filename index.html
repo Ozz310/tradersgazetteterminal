@@ -12,14 +12,41 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
-    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        /* Must match the body background color defined in main.css: --bg-color: #1a1a1a; */
+        body.fouc-hidden {
+            background-color: #1a1a1a !important; 
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Essential styles for the loader itself while everything else is hidden */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a; /* Match body background */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loader-overlay.hidden {
+            display: none !important;
+        }
+    </style>
     <link rel="stylesheet" href="assets/css/sticky-notes.css">
     <link rel="stylesheet" href="assets/css/loader.css">
 
+    <link rel="stylesheet" href="/tradersgazetteterminal/assets/css/main.css" id="main-app-style">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
-<body>
+<body class="fouc-hidden">
     <div class="background-symbols">
         <span class="symbol symbol-1">$</span>
         <span class="symbol symbol-2">€</span>
