@@ -1,7 +1,7 @@
 /* /modules/dashboard/style.css */
 
 :root {
-    /* 🔑 NEW VAR: Define the content background color locally to match the content wrapper in main.css */
+    /* Define colors locally or rely on main.css vars */
     --content-page-bg: #2a2a2a;
     --black-tone-3: #1c1c1c;
     --gold-accent: #ffd700;
@@ -9,19 +9,18 @@
     --light-grey-placeholder: #222222;
 
     /* Session Text Colors */
-    --sydney-color: #00bcd4; /* Cyan */
-    --tokyo-color: #e91e63; /* Pink */
-    --london-color: #4caf50; /* Green */
-    --ny-color: #ff5722;    /* Orange */
-    --frankfurt-color: #8e44ad; /* Purple */
+    --sydney-color: #00bcd4; 
+    --tokyo-color: #e91e63; 
+    --london-color: #4caf50; 
+    --ny-color: #ff5722;    
+    --frankfurt-color: #8e44ad; 
     
-    /* 🔑 NEW VARS: Analyst Bias Colors (Used as fallback/text color) */
-    --bias-bullish: #4CAF50; /* Green */
-    --bias-bearish: #F44336; /* Red */
-    --bias-neutral: #FFD700; /* Gold */
+    /* Analyst Bias Colors */
+    --bias-bullish: #4CAF50; 
+    --bias-bearish: #F44336; 
+    --bias-neutral: #FFD700; 
 }
 
-/* 🚀 Global Box Sizing for Safety and Mobile Fix (retained) */
 .dashboard-page * {
     box-sizing: border-box; 
 }
@@ -35,10 +34,7 @@
     color: var(--white-text-color);
     font-family: 'Segoe UI', 'Roboto', sans-serif;
     overflow-x: hidden;
-    
-    /* 💥 CRITICAL FIX (Top Alignment): Pull the entire page up to cancel out the main app container's top padding. */
     margin-top: -40px; 
-    /* 💥 FINAL FIX: Set to ZERO horizontal padding, as .module-container now handles top/bottom. */
     padding: 0 0 40px 0; 
 }
 
@@ -51,18 +47,16 @@
     margin: 0 0 40px 0; 
 }
 
+/* 🚀 CRITICAL FIX: CSS GRID LAYOUT FOR WIDGETS */
 .dashboard-widgets-grid {
-    /* 💥 CRITICAL FIX: RE-INTRODUCE the necessary PADDING for the widgets (20px) */
     padding: 0 20px;
-    
-    display: flex;
-    /* 🚀 FIX: Default to column stack for mobile-first approach */
-    flex-direction: column;
-    align-items: center; 
-    justify-content: flex-start; 
-    
-    margin-top: 0;  
     width: 100%;
+    display: grid;
+    /* Mobile Default: Single Column */
+    grid-template-columns: 1fr; 
+    gap: 25px;
+    align-items: start;
+    justify-items: center;
 }
 
 .widget-card {
@@ -74,66 +68,57 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    
     width: 100%;
-    /* Default max-width for the clock and other focused widgets */
-    max-width: 400px;  
-    margin: 0;  
-    
-    /* 🚀 NEW: Margin bottom for stacking EAB below the clock (mobile/default) */
-    margin-bottom: 25px; 
+    max-width: 400px; /* Mobile max-width constraint */
 }
 
-/* 🚀 NEW: ELITE ALPHA BRIEF STYLES */
+/* --- ELITE ALPHA BRIEF STYLES --- */
 
 .elite-alpha-brief {
-    /* Reset padding for the full-width content brief */
     padding: 1.5rem 1.5rem; 
-    
-    /* 🥇 UI/UX: Gold Edge Glow on Hover */
     transition: box-shadow 0.3s ease-in-out, transform 0.1s ease-out;
-    cursor: pointer; /* Indicate clickability for expansion */
+    cursor: default; /* Only toggle button is clickable usually */
 }
 
-/* 🚀 NEW: Loader Styles */
+.elite-alpha-brief:hover {
+    box-shadow: 0 0 5px var(--gold-accent), 0 10px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+/* 🚀 FIX 3: Rectangular Loader Shape */
 .eab-loading, .eab-error {
-    /* Default wider max-width for loading state */
-    max-width: 600px; 
     width: 100%;
     text-align: center;
-    padding: 20px;
+    padding: 40px 20px; /* Increased padding for height */
     background-color: var(--light-grey-placeholder);
-    border-radius: 5px;
-    margin: 25px auto; /* Center it */
+    border-radius: 8px;
+    margin: 0; 
     font-size: 1.1rem;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Make it rectangular */
+    min-height: 300px; /* Match rough height of EAB content */
+    height: 100%;
 }
 
-/* 🚀 FIX: Apply Solid Gold Gradient to Loader Text */
 .eab-loading {
-    /* This creates a text mask effect, only coloring the text with the gradient */
-    color: #F0D788; /* Fallback color */
+    color: #F0D788; 
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-fill-color: transparent;
-    
-    /* Ensure background color is visible behind the text */
     background-color: var(--light-grey-placeholder);
-    padding: 20px;
 }
 
 .eab-error {
-    background-color: #381c1c; /* Darker red tone for errors */
+    background-color: #381c1c; 
     color: var(--bias-bearish);
 }
 
-.elite-alpha-brief:hover {
-    box-shadow: 0 0 5px var(--gold-accent), 0 44px 15px rgba(0, 0, 0, 0.4);
-    transform: translateY(-2px);
-}
-
+/* ... (Rest of EAB internal styles: header, metadata, bias, toggle - NO CHANGES NEEDED) ... */
 .eab-header {
     display: flex;
     flex-direction: column;
@@ -141,6 +126,7 @@
     position: relative;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    width: 100%; /* Ensure full width */
 }
 
 .eab-metadata {
@@ -165,13 +151,8 @@
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    
-    /* CRITICAL FIX: Ensure color contrast is high by using dark text */
     color: var(--black-tone-3) !important; 
-    /* Remove default background colors */
     background-color: transparent !important; 
-    
-    /* 🚀 FIX: Apply Solid Gold Gradient to ALL bias buttons */
     background-image: linear-gradient(145deg, #F0D788, #DDAA33) !important;
     border: none !important;
 }
@@ -213,11 +194,8 @@
     opacity: 0.7;
 }
 
-.toggle-icon {
-    transition: transform 0.3s ease;
-}
+.toggle-icon { transition: transform 0.3s ease; }
 
-/* 🚀 FIX 1: Content Styles - Viewport Constrained Scroll UX (Retained) */
 .eab-content-wrapper {
     max-height: 0;
     overflow: hidden;
@@ -227,21 +205,14 @@
 }
 
 .eab-content-wrapper.is-expanded {
-    /* 📐 Viewport Constrained Scroll (Desktop/Tablet) */
     max-height: 70vh; 
-    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-y: auto; 
     padding-top: 1.5rem;
 }
 
-/* 🥇 FIX 1: Custom Scrollbar Styling (Minimalist Gold) (Retained) */
-.eab-content-wrapper::-webkit-scrollbar {
-    width: 6px; 
-}
-
-.eab-content-wrapper::-webkit-scrollbar-track {
-    background: var(--black-tone-3); 
-}
-
+/* Scrollbar Styles */
+.eab-content-wrapper::-webkit-scrollbar { width: 6px; }
+.eab-content-wrapper::-webkit-scrollbar-track { background: var(--black-tone-3); }
 .eab-content-wrapper::-webkit-scrollbar-thumb {
     background-color: rgba(255, 215, 0, 0.4); 
     border-radius: 20px; 
@@ -255,32 +226,15 @@
     white-space: pre-line; 
 }
 
-.eab-content-inner p {
-    margin-bottom: 1.5rem;
-}
+.eab-content-inner p { margin-bottom: 1.5rem; }
+.eab-content-inner br { display: block; content: ""; line-height: 1.5; }
 
-.eab-content-inner br {
-    display: block; 
-    content: "";
-    line-height: 1.5; 
-}
-
-/* Animating the Headline In (Kinetic Typography style) */
 @keyframes fadeInSlide {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ------------------------------------------- */
-/* 🚀 ANALOG CLOCK STYLES (Restored) */
-/* ------------------------------------------- */
-
+/* --- ANALOG CLOCK STYLES (Unchanged) --- */
 .live-clock-container {
     display: flex;
     flex-direction: column;
@@ -386,7 +340,7 @@
     opacity: 0.8;
 }
 
-/* Styles for Time Zone Buttons and Session Indicator */
+/* Time Zone Buttons */
 .time-zone-selector {
     display: flex;
     flex-wrap: wrap;  
@@ -417,7 +371,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-/* 🔑 TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 .tz-button.active {
     background-image: none !important;
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important;  
@@ -427,7 +380,6 @@
     font-weight: 700 !important;
     transform: none;
 }
-/* 🔑 END TGG TOGGLE BUTTON ENFORCEMENT 🔑 */
 
 .session-indicator {
     text-align: center;
@@ -439,83 +391,53 @@
 }
 
 /* ------------------------------------------- */
-## 🚀 FINAL DESKTOP-ONLY LAYOUT FIX (> 768px)
+/* 🚀 FINAL DESKTOP LAYOUT FIX (> 1024px) */
 /* ------------------------------------------- */
 
-@media (min-width: 769px) {
-    /* 📐 CRITICAL FIX: Force the grid container to use available width (minus sidebar) */
+@media (min-width: 1024px) {
     .dashboard-widgets-grid {
-        /* Estimate sidebar width to be 200px based on image */
-        width: calc(100% - 200px) !important; 
-        max-width: none !important; 
-        
-        flex-direction: row !important; /* Force side-by-side */
-        align-items: flex-start; 
-        
-        justify-content: flex-start; /* Push content to the left */
-        
-        /* Spacing for a cleaner look */
-        gap: 60px; 
-        /* Remove padding to the left, as the content area is now calculated from the sidebar edge */
-        padding-left: 0; 
-        padding-right: 20px; 
-        margin-left: 0;
-        margin-right: 0;
-        
-        /* Add margin to position it correctly next to the sidebar */
-        margin-left: 200px;
+        /* Switch to 2 columns: Clock (Fixed) | Brief (Flexible) */
+        grid-template-columns: 400px 1fr;
+        align-items: start; /* Align cards to the top */
+        gap: 30px;
+        max-width: 1400px; /* Prevent it getting too wide on huge screens */
+        margin: 0 auto; /* Center the grid if it's smaller than the viewport */
     }
-    
-    /* 📐 FIX 1: Enforce narrow width on the Clock card */
-    .widget-card:not(:has(.elite-alpha-brief)) {
-        max-width: 400px !important;
-        width: 400px !important;
-        margin-bottom: 0; 
-        flex-shrink: 0; /* Ensures the clock's width is never reduced */
+
+    /* Clock Card styles for desktop */
+    #clock-card {
+        max-width: 100%; /* Fill the grid cell (400px) */
+        margin-bottom: 0;
     }
-    
-    /* 📐 FIX 2: Expand the Market Brief Card Horizontally (Double Width) */
-    .widget-card:has(.elite-alpha-brief) {
-        max-width: 800px !important; /* Double the clock's 400px width */
-        width: 800px !important;
+
+    /* Market Brief Card styles for desktop */
+    #elite-alpha-brief {
+        max-width: 100%; /* Fill the remaining space */
         margin: 0;
-        flex-grow: 0; /* Ensure it stays at 800px and doesn't expand further */
-        flex-shrink: 0; 
-    }
-    
-    /* 📐 CRITICAL FIX 3: Internal content and loader must match the card width */
-    .widget-card:has(.elite-alpha-brief) .elite-alpha-brief,
-    .eab-loading, 
-    .eab-error {
-        max-width: 100% !important;
-        width: 100% !important;
+        height: 100%; /* Match height if possible */
     }
 }
 
-
 /* ------------------------------------------- */
-## Mobile responsive styles
+/* Mobile responsive styles (Adjustments) */
 /* ------------------------------------------- */
 
 @media (max-width: 768px) {
-    /* ... (All existing mobile styles remain unchanged - they are already stacked and correct) ... */
     .dashboard-page {
         padding: 0 0 20px 0; 
         margin-top: -20px; 
     }
     
     .dashboard-cover-photo {
-        width: 100%; 
         height: 180px;  
         margin: 0 0 20px 0;
     }
 
+    /* Force single column on mobile */
     .dashboard-widgets-grid {
+        grid-template-columns: 1fr;
         padding: 0 20px; 
-        width: 100%; 
-        max-width: 100%; 
-        margin-top: 0; 
-        flex-direction: column; /* Ensure mobile stack remains */
+        gap: 25px;
     }
     
     .widget-card {
@@ -528,48 +450,27 @@
         height: 180px;
     }
     
-    .tick {
-        transform-origin: 0 90px;
-    }
-
-    .hour-hand {
-        height: 50px;
-    }
-
-    .minute-hand {
-        height: 70px;
-    }
-
-    #digital-time {
-        font-size: 2rem;
-    }
+    .tick { transform-origin: 0 90px; }
+    .hour-hand { height: 50px; }
+    .minute-hand { height: 70px; }
+    
+    #digital-time { font-size: 2rem; }
     
     .time-zone-selector {
         margin-top: 1rem;
         gap: 0.3rem;
     }
     
-    /* Mobile-specific EAB adjustments */
-    .elite-alpha-brief {
-        padding: 1rem 1rem;
-        margin-bottom: 20px;
-    }
-    
-    /* 📐 FIX 1: Tighter Viewport Constraint on Mobile (Retained) */
+    /* Mobile EAB Constraint */
     .eab-content-wrapper.is-expanded {
         max-height: 55vh; 
     }
     
-    /* 🚀 NEW: Loader Styles on Mobile */
+    /* Mobile Loader Size */
     .eab-loading, .eab-error {
-        max-width: 100%; /* Force full width on mobile */
-        margin: 15px 0;
+        min-height: 200px; /* Shorter on mobile */
     }
     
-    .eab-headline {
-        font-size: 1.1rem;
-    }
-    .eab-content-inner {
-        font-size: 0.9rem;
-    }
+    .eab-headline { font-size: 1.1rem; }
+    .eab-content-inner { font-size: 0.9rem; }
 }
