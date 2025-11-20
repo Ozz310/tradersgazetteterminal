@@ -1,6 +1,7 @@
-// /assets/js/app.js - FULL UPDATED FILE (With Global FOUC Fix & Smooth Logout)
+// /assets/js/app.js - FINAL CODE BLOCK FOR COMMIT
 
 document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body; // Reference to the body element
     const sidebar = document.getElementById('sidebar');
     const mainAppContainer = document.getElementById('main-app-container');
     const moduleContainer = document.getElementById('module-container');
@@ -27,32 +28,26 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Helper to handle FOUC transitions ---
-    const hideModuleContainer = () => {
+    // The FOUC fix is now primarily handled by the <body> class.
+    
+    // This is run at the start of a route change to hide the current module content
+    const hideModuleContent = () => {
+        // Hide the module container which handles content transitions
         if (moduleContainer) moduleContainer.classList.add('module-loader-hidden');
         if (authContainer) authContainer.classList.add('module-loader-hidden');
     };
 
-    const showModuleContainer = () => {
-        // Small delay to allow CSS parsing
+    // This is run at the end of a route change to show the new module content
+    const showModuleContent = () => {
+        // Small delay to allow CSS parsing and module rendering
         setTimeout(() => {
             if (moduleContainer) moduleContainer.classList.remove('module-loader-hidden');
             if (authContainer) authContainer.classList.remove('module-loader-hidden');
-        }, 100); 
+        }, 100);    
     };
     // --- END FOUC HELPERS ---
 
-    // Load the main stylesheet once
-    const loadMainCSS = () => {
-        const mainCssId = 'main-app-style';
-        if (!document.getElementById(mainCssId)) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            // Corrected path for main.css
-            link.href = '/tradersgazetteterminal/assets/css/main.css';
-            link.id = mainCssId;
-            document.head.appendChild(link);
-        }
-    };
+    // 🔑 loadMainCSS() FUNCTION REMOVED (CSS is now loaded directly in index.html <head>) 🔑
 
     // Sidebar event listener
     sidebar.addEventListener('click', (e) => {
@@ -95,8 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Main Router Logic
     const router = async () => {
+        // 🔑 CRITICAL FOUC FIX: Remove the body-level visibility lock 🔑
+        if (body.classList.contains('fouc-hidden')) {
+             // Use setTimeout to ensure the browser has parsed the external CSS (main.css)
+            setTimeout(() => {
+                 body.classList.remove('fouc-hidden');
+            }, 50); // Minimal delay
+        }
+        
         showLoader();
-        hideModuleContainer(); // Hide content immediately on route change
+        hideModuleContent(); // Hide content immediately on route change
 
         const urlParams = new URLSearchParams(window.location.search);
         const resetAction = urlParams.get('action');
@@ -126,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleStickyNotesVisibility('auth');
             
             hideLoader();
-            showModuleContainer(); // Show content after reset module loaded
+            showModuleContent(); // Show content after reset module loaded
             return; 
         }
 
@@ -176,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hideLoader();
-        showModuleContainer(); // FOUC FIX: Reveal the content now that loading is done
+        showModuleContent(); // FOUC FIX: Reveal the content now that loading is done
     };
     
     // Centralized module cleanup
@@ -193,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.tg_news.cleanup();
                     }
                     break;
+                // Add cleanup logic for other modules here
             }
         } catch (e) {
             console.error(`Failed to cleanup module ${moduleName}:`, e);
@@ -280,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (moduleName === 'auth' && document.querySelector(`script[src="modules/auth/auth.js"]`)) {
                  if (window.tg_auth && typeof window.tg_auth.initAuthModule === 'function') {
-                    window.tg_auth.initAuthModule(targetContainer);
+                     window.tg_auth.initAuthModule(targetContainer);
                  }
                  return;
             }
@@ -299,10 +303,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         break;
                     case 'reset-password':
-                         if (window.tg_auth_reset && typeof window.tg_auth_reset.initResetModule === 'function') {
-                            window.tg_auth_reset.initResetModule(targetContainer);
-                        }
-                        break;
+                          if (window.tg_auth_reset && typeof window.tg_auth_reset.initResetModule === 'function') {
+                              window.tg_auth_reset.initResetModule(targetContainer);
+                          }
+                          break;
                     case 'dashboard':
                         if (window.tg_dashboard && typeof window.tg_dashboard.initDashboard === 'function') {
                             window.tg_dashboard.initDashboard();
@@ -372,11 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('tg_reset_token');
         localStorage.removeItem('tg_reset_userId');
         
-        // 🔑 FIX: Removed window.location.reload()
+        // Router will now handle the navigation to #auth
         window.location.hash = '#auth'; 
     }
 
-    loadMainCSS(); 
+    // 🔑 loadMainCSS() CALL REMOVED 🔑
     window.addEventListener('hashchange', router);
     router();
 });
