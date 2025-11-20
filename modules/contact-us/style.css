@@ -1,4 +1,3 @@
-
 /* All styles are scoped to the .contact-us container */
 .contact-us {
     box-sizing: border-box;
@@ -11,11 +10,10 @@
 }
 
 .contact-us .contact-us-cover-photo {
-    /* Inline styles in HTML handle height/width priority now */
-    
     /* Image Logic */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png'); 
     background-size: cover;
+    background-repeat: no-repeat;
     background-position: center;
     border-radius: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -25,6 +23,10 @@
     margin-top: -20px; 
     margin-left: -40px; 
     margin-right: -20px; 
+    
+    /* Ensure dimensions are applied */
+    height: 255px !important; 
+    min-height: 255px !important;
 }
 
 .contact-us .contact-us-content-container {
@@ -39,7 +41,8 @@
 .contact-us .contact-form-card, .contact-us .contact-channels-card {
     flex: 1;
     min-width: 300px;
-    background-color: var(--accent-color);
+    /* FORCED COLOR: If global CSS is overriding var(--accent-color) */
+    background-color: var(--accent-color) !important; 
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
