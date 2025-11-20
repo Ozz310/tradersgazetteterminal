@@ -11,12 +11,10 @@ function initializeFormHandler() {
 
     // 🔑 CRITICAL CHECK: Ensure both the form and button elements exist before proceeding.
     if (!form || !submitButton) {
+        // If not found, log a note (useful if the console was silent before) and stop.
         console.warn('Contact form elements not found. Initialization aborted.');
         return; 
     }
-
-    // NOTE: FOUC FIX REVERTED. The form should be visible by default 
-    // and rely on global styles to manage page transitions.
 
     // Attach the event listener to the form's submit event
     form.addEventListener('submit', handleFormSubmit);
