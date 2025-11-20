@@ -1,4 +1,4 @@
-// /assets/js/app.js - FULL UPDATED FILE (Relative Paths Fix)
+// /assets/js/app.js - FINAL VERSION (Sync CSS Loading & Smooth Transitions)
 
 document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
@@ -10,14 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const backgroundSymbols = document.querySelector('.background-symbols');
     const bottomNav = document.querySelector('.bottom-nav');
     
+    // Store the name of the currently active module for cleanup
     let currentModuleName = null;
 
+    // Show the loader (Full screen overlay)
     const showLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.remove('hidden');
         }
     };
 
+    // Hide the loader
     const hideLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.add('hidden');
@@ -31,14 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showModuleContent = () => {
+        // Small delay to allow CSS parsing and module rendering
         setTimeout(() => {
             if (moduleContainer) moduleContainer.classList.remove('module-loader-hidden');
             if (authContainer) authContainer.classList.remove('module-loader-hidden');
-        }, 100);    
+        }, 50);    
     };
     // --- END FOUC HELPERS ---
-
-    // loadMainCSS() REMOVED (Handled in HTML)
 
     // Sidebar event listener
     sidebar.addEventListener('click', (e) => {
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Main Router Logic
     const router = async () => {
-        // FOUC FIX: Reveal body
+        // FOUC FIX: Reveal body if it was hidden by index.html
         if (body.classList.contains('fouc-hidden')) {
             setTimeout(() => {
                  body.classList.remove('fouc-hidden');
@@ -89,13 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         showLoader();
-        hideModuleContent();
+        hideModuleContent(); // Hide content immediately on route change
 
         const urlParams = new URLSearchParams(window.location.search);
         const resetAction = urlParams.get('action');
         const resetToken = urlParams.get('token');
         const resetUserId = urlParams.get('userId'); 
 
+        // Handle Password Reset URL
         if (resetAction === 'reset-password' && resetToken) {
             localStorage.setItem('tg_reset_token', resetToken);
             if (resetUserId) {
@@ -154,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cleanupModule(currentModuleName);
         }
 
+        // Load the new module and wait for it to fully initialize (including CSS)
         await loadModule(moduleName);
         
         currentModuleName = moduleName;
@@ -167,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hideLoader();
-        showModuleContent();
+        showModuleContent(); // FOUC FIX: Reveal the content now that CSS is guaranteed loaded
     };
     
     const cleanupModule = (moduleName) => {
@@ -206,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
             oldLink.remove();
         }
 
-        // 🔑 FIX: Use Relative Paths for module CSS to work with <base> tag
         let cssPath;
         if (moduleName === 'reset-password') {
             cssPath = `modules/auth/style.css`;
@@ -262,9 +265,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const html = await htmlResponse.text();
             targetContainer.innerHTML = html;
 
-            await new Promise(resolve => setTimeout(resolve, 0));
-
+            // Load Module CSS
             loadModuleCSS(moduleName);
+
+            // 🔑 CRITICAL FIX: Wait for CSS to load before proceeding
+            await new Promise(resolve => {
+                const newLink = document.querySelector('link.module-style');
+                if (!newLink) {
+                    resolve(); // No CSS or error, proceed anyway
+                    return;
+                }
+                // Resolve when CSS loads or errors (to prevent hanging)
+                newLink.onload = resolve;
+                newLink.onerror = resolve;
+                // Fallback safety timer in case event doesn't fire
+                setTimeout(resolve, 300);
+            });
 
             const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
             if (existingScript) existingScript.remove();
