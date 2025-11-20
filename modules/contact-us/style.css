@@ -1,172 +1,150 @@
 /* All styles are scoped to the .contact-us container */
 .contact-us {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    /* Padding to shift content away from sidebar */
-    padding: 20px 20px 20px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    /* Padding to shift content away from sidebar */
+    padding: 20px 20px 20px 40px;
 }
 
 .contact-us .contact-us-cover-photo {
-    /* Image Logic */
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png'); 
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
-    
-    /* Negative Margins (Confirmed Working) */
-    margin-top: -20px; 
-    margin-left: -40px; 
-    margin-right: -20px; 
-    
-    /* Ensure dimensions are applied */
-    height: 255px !important; 
-    min-height: 255px !important;
+    /* Inline styles in HTML handle height/width priority now */
+    /* Image Logic */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+    /* Negative Margins (Confirmed Working) */
+    margin-top: -20px;
+    margin-left: -40px;
+    margin-right: -20px;
 }
 
 .contact-us .contact-us-content-container {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 0;
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 0;
 }
 
 .contact-us .contact-form-card, .contact-us .contact-channels-card {
-    flex: 1;
-    min-width: 300px;
-    /* FORCED COLOR: If global CSS is overriding var(--accent-color) */
-    background-color: var(--accent-color) !important; 
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--accent-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
 /* 🎨 UPDATE: Headline Text Gradient */
 .contact-us .widget-title {
-    /* Fallback color */
-    color: #DDAA33; 
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    
-    /* Gradient Text Magic */
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    
-    /* Keep the border solid gold */
-    border-bottom: 2px solid #DDAA33;
-    padding-bottom: 10px;
+    /* Fallback color */
+    color: #DDAA33;
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    /* Gradient Text Magic */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Keep the border solid gold */
+    border-bottom: 2px solid #DDAA33;
+    padding-bottom: 10px;
 }
 
 .contact-us .contact-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
 }
 
 .contact-us .contact-form input, .contact-us .contact-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-    background-color: var(--sidebar-color);
-    color: var(--text-color);
-    box-sizing: border-box;
-    /* ANIMATION: Add transition for smooth focus effect */
-    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    box-sizing: border-box;
 }
-
-/* Gold Glow Animation on Focus */
-.contact-us .contact-form input:focus, 
-.contact-us .contact-form textarea:focus {
-    outline: none; /* Remove default blue focus outline */
-    border-color: #F0D788; /* Strong Gold Border */
-    box-shadow: 0 0 10px rgba(240, 215, 136, 0.5); /* Subtle Gold Shadow (Glow) */
-}
-
 
 /* 🎨 UPDATE: Button Gradient */
 .contact-us .submit-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    
-    /* Solid Gold Gradient Background */
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
-    
-    /* Dark text for readability on gold (Top 1% Contrast Rule) */
-    color: #1a1a1a;
-    
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    /* Solid Gold Gradient Background */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    /* Dark text for readability on gold (Top 1% Contrast Rule) */
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .contact-us .submit-button:hover {
-    /* Slight lift and glow on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 0 15px rgba(240, 215, 136, 0.6);
+    /* Slight lift and glow on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(240, 215, 136, 0.6);
 }
 
 .contact-us .contact-channels-card p {
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 0.95rem;
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 0.95rem;
 }
 
 .contact-us .social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .contact-us .social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    border-radius: 8px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .contact-us .social-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
 .contact-us .social-button i {
-    font-size: 1.2rem;
-    margin-right: 10px;
+    font-size: 1.2rem;
+    margin-right: 10px;
 }
 
 .contact-us .telegram-button {
-    background-color: #0088cc;
+    background-color: #0088cc;
 }
 
 .contact-us .whatsapp-button {
-    background-color: #25D366;
+    background-color: #25D366;
 }
 
 .contact-us .tawk-live-chat-placeholder {
-    color: #b0b0b0;
-    font-style: italic;
-    text-align: center;
-    margin-top: 20px;
+    color: #b0b0b0;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
 }
