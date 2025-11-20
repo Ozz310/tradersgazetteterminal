@@ -1,4 +1,4 @@
-// /assets/js/app.js - FULL UPDATED FILE (Fixing Reset Action Parameter)
+// /assets/js/app.js - FULL UPDATED FILE (With Global FOUC Fix)
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -8,12 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const loaderOverlay = document.getElementById('loader-overlay');
     const backgroundSymbols = document.querySelector('.background-symbols');
     const bottomNav = document.querySelector('.bottom-nav');
-    const loadedModules = new Map();
-
+    
     // Store the name of the currently active module for cleanup
     let currentModuleName = null;
 
-    // Show the loader
+    // Show the loader (Full screen overlay)
     const showLoader = () => {
         if (loaderOverlay) {
             loaderOverlay.classList.remove('hidden');
@@ -26,6 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
             loaderOverlay.classList.add('hidden');
         }
     };
+
+    // --- NEW: Helper to handle FOUC transitions ---
+    const hideModuleContainer = () => {
+        if (moduleContainer) moduleContainer.classList.add('module-loader-hidden');
+        if (authContainer) authContainer.classList.add('module-loader-hidden');
+    };
+
+    const showModuleContainer = () => {
+        // Small delay to allow CSS parsing
+        setTimeout(() => {
+            if (moduleContainer) moduleContainer.classList.remove('module-loader-hidden');
+            if (authContainer) authContainer.classList.remove('module-loader-hidden');
+        }, 100); 
+    };
+    // --- END FOUC HELPERS ---
 
     // Load the main stylesheet once
     const loadMainCSS = () => {
@@ -40,25 +54,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Refactor sidebar event listener to use the router properly
+    // Sidebar event listener
     sidebar.addEventListener('click', (e) => {
         const navItem = e.target.closest('.nav-item');
         if (navItem) {
             e.preventDefault();
             const moduleName = navItem.dataset.module;
             if (moduleName) {
-                // If it's logout, execute handleLogout immediately and stop.
                 if (moduleName === 'logout') {
                     handleLogout();
                     return;
                 }
-                // For all other modules (including Contact Us), just set the hash.
                 window.location.hash = '#' + moduleName;
             }
         }
     });
 
-    // Refactor mobile navigation event listener to use the router properly
+    // Mobile navigation event listener
     if (bottomNav) {
         bottomNav.addEventListener('click', (e) => {
             const navItem = e.target.closest('.bottom-nav-item');
@@ -66,12 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const moduleName = navItem.dataset.module;
                 if (moduleName) {
-                    // If it's logout, execute handleLogout immediately and stop.
                     if (moduleName === 'logout') {
                         handleLogout();
                         return;
                     }
-                    // For all other modules (including Contact Us), just set the hash.
                     window.location.hash = '#' + moduleName;
                 }
             }
@@ -83,40 +93,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return !!token;
     };
 
-    // 🔑 CORE FIX: Router must handle URL parameters for password reset
+    // Main Router Logic
     const router = async () => {
         showLoader();
+        hideModuleContainer(); // 🔑 Hide content immediately on route change
 
-        // --- NEW LOGIC FOR PASSWORD RESET LINK HANDLING ---
         const urlParams = new URLSearchParams(window.location.search);
         const resetAction = urlParams.get('action');
         const resetToken = urlParams.get('token');
-        // Note: The userId is currently missing from the link, so we don't strictly require it here.
-        // We will store it if present, but the token is the primary identifier.
         const resetUserId = urlParams.get('userId'); 
 
-        // 🎯 FIX 1: Change expected action to 'reset-password'
+        // Handle Password Reset URL
         if (resetAction === 'reset-password' && resetToken) {
-            // Case 1: Password Reset Link
-            
-            // Store params for the module to use
             localStorage.setItem('tg_reset_token', resetToken);
-            if (resetUserId) { // Only store userId if it exists in the link
+            if (resetUserId) {
                 localStorage.setItem('tg_reset_userId', resetUserId);
             } else {
-                 // Ensure any previous userId is cleared if the new link doesn't have one
                  localStorage.removeItem('tg_reset_userId');
             }
             
-            // Clean the URL to ensure this block only runs once on initial click
-            // This is critical. Redirect to a clean hash, preserving the current path.
             window.history.replaceState({}, document.title, window.location.pathname + '#auth');
             
-            // Force the load of the special reset module
             await loadModule('reset-password');
             currentModuleName = 'auth'; 
 
-            // Handle UI for logged out state (as user is effectively logged out to reset password)
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) {
@@ -124,27 +124,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainAppContainer.classList.add('hidden');
             }
             handleStickyNotesVisibility('auth');
+            
             hideLoader();
+            showModuleContainer(); // 🔑 Show content after reset module loaded
             return; 
         }
 
-        // CRITICAL FIX: After handling the special case, now check the hash as usual.
         const hash = window.location.hash || '#auth';
         let moduleName = hash.substring(1) || 'auth';
 
         if (moduleName !== 'auth' && moduleName !== 'reset-password' && !isAuthenticated()) {
             window.location.hash = '#auth';
-            moduleName = 'auth'; // Ensure we process 'auth' in the fallback
+            moduleName = 'auth'; 
             hideLoader();
+            // Don't show container yet, let loadModule handle it
             return;
         }
 
-        // Correctly handle sticky notes panel visibility
         handleStickyNotesVisibility(moduleName);
 
-        // --- LOGIC TO MANAGE UI BASED ON AUTHENTICATION STATE ---
         if (isAuthenticated()) {
-            // Logged in: Hide auth, show main app
             if (authContainer) authContainer.style.display = 'none';
             if (backgroundSymbols) backgroundSymbols.style.display = 'none';
             if (mainAppContainer) {
@@ -152,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainAppContainer.classList.remove('hidden');
             }
         } else {
-            // Logged out: Hide main app and notes, show auth page
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) {
@@ -161,17 +159,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- CORE CHANGE: Call cleanup function on the previous module before loading the new one ---
         if (currentModuleName && currentModuleName !== moduleName) {
             cleanupModule(currentModuleName);
         }
 
         await loadModule(moduleName);
         
-        // Update the current module name after successful load
         currentModuleName = moduleName;
 
-        // Update active class for both desktop and mobile navs
         document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -181,27 +176,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         hideLoader();
+        showModuleContainer(); // 🔑 FOUC FIX: Reveal the content now that loading is done
     };
     
-    // Centralized module cleanup logic to stop timers/listeners
+    // Centralized module cleanup
     const cleanupModule = (moduleName) => {
         try {
             switch (moduleName) {
                 case 'dashboard':
-                    // Calls the cleanup function in dashboard.js to clear intervals/listeners
                     if (window.tg_dashboard && typeof window.tg_dashboard.cleanup === 'function') {
                         window.tg_dashboard.cleanup();
-                        console.log(`Cleanup executed for: ${moduleName}`);
                     }
                     break;
                 case 'news-aggregator': 
-                    // Calls the cleanup function in script.js to clear the auto-refresh interval
                     if (window.tg_news && typeof window.tg_news.cleanup === 'function') {
                         window.tg_news.cleanup();
-                        console.log(`Cleanup executed for: ${moduleName}`);
                     }
                     break;
-                // Add cleanup cases for other modules (e.g., if they have intervals/listeners)
             }
         } catch (e) {
             console.error(`Failed to cleanup module ${moduleName}:`, e);
@@ -211,45 +202,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleStickyNotesVisibility = (moduleName) => {
         const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
         if (stickyNotesContainer) {
-            // Always show sticky notes container if authenticated and not on the auth page
             if (isAuthenticated() && moduleName !== 'auth' && moduleName !== 'reset-password') {
                 stickyNotesContainer.style.display = 'block';
             } else {
                 stickyNotesContainer.style.display = 'none';
             }
         }
-        // Note: The `sticky-notes.js` script handles the toggling of the panel itself.
     };
 
-    // Corrected function to dynamically load a module's CSS file
     const loadModuleCSS = (moduleName) => {
-        // Remove old CSS link if it exists to prevent style conflicts
         const oldLink = document.querySelector('link.module-style');
         if (oldLink) {
             oldLink.remove();
         }
 
-        // FIX: Load CSS for all modules
-        // -------------------------------------------------------------
-        // 🔑 TOP 1% FIX: Using the absolute path for GitHub Pages hosting.
         let cssPath;
-
         if (moduleName === 'reset-password') {
-            // Special case for reset-password using auth styles
             cssPath = `/tradersgazetteterminal/modules/auth/style.css`;
         } else {
             cssPath = `/tradersgazetteterminal/modules/${moduleName}/style.css`;
         }
-        // -------------------------------------------------------------
         
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
         newLink.href = cssPath;
-        newLink.classList.add('module-style'); // Add a class for easy removal
+        newLink.classList.add('module-style');
         document.head.appendChild(newLink);
     };
 
-    // START OF UPDATED loadModule FUNCTION
     const loadModule = async (moduleName) => {
         let targetContainer = moduleContainer;
         if (moduleName === 'auth' || moduleName === 'reset-password') {
@@ -257,20 +237,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Clean the target container before fetching new content
             targetContainer.innerHTML = '';
 
             let htmlPath, scriptPath;
 
-            // CORRECTED: Define paths based on module name using a switch for better readability
             switch (moduleName) {
                 case 'auth':
                     htmlPath = `modules/auth/auth.html`;
                     scriptPath = `modules/auth/auth.js`;
                     break;
-                case 'reset-password': // ⭐ Password Reset Module
+                case 'reset-password':
                     htmlPath = `modules/auth/reset-password.html`; 
-                    scriptPath = `modules/auth/reset-password.js`; // Dedicated script
+                    scriptPath = `modules/auth/reset-password.js`;
                     break;
                 case 'dashboard':
                     htmlPath = `modules/dashboard/index.html`;
@@ -281,13 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     scriptPath = `modules/trading-journal/script.js`;
                     break;
                 default:
-                    // This covers analysis-hub, risk-management-hub, trading-ebooks, cfd-brokers, contact-us, news-aggregator
                     htmlPath = `modules/${moduleName}/index.html`;
                     scriptPath = `modules/${moduleName}/script.js`;
                     break;
             }
 
-            // Fetch HTML content first
             const htmlResponse = await fetch(htmlPath);
             if (!htmlResponse.ok) {
                 throw new Error(`HTML content file not found for module: ${moduleName}. Status: ${htmlResponse.status}`);
@@ -295,40 +271,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const html = await htmlResponse.text();
             targetContainer.innerHTML = html;
 
-            // Wait for the browser to render the new HTML before loading the script
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            // Load module-specific CSS (now handled inside loadModuleCSS function)
             loadModuleCSS(moduleName);
 
-            // Dynamically load and initialize the module script
             const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
-            if (existingScript) existingScript.remove(); // Remove old script to prevent re-initialization issues
+            if (existingScript) existingScript.remove();
 
-            // If the script is the general auth.js, we don't want to reload it if it's already there from index.html
             if (moduleName === 'auth' && document.querySelector(`script[src="modules/auth/auth.js"]`)) {
-                // If the auth script is already present (from index.html), just call its init function
                  if (window.tg_auth && typeof window.tg_auth.initAuthModule === 'function') {
                     window.tg_auth.initAuthModule(targetContainer);
                  }
-                 hideLoader();
                  return;
             }
             
             const script = document.createElement('script');
             script.src = scriptPath;
             script.type = 'text/javascript';
-            script.async = true; // Ensure script is loaded asynchronously
+            script.async = true; 
 
             script.onload = () => {
-                // Call the initialization function from the global scope (if it exists)
+                // FOUC FIX: Logic for module init
                 switch (moduleName) {
                     case 'auth':
                         if (window.tg_auth && typeof window.tg_auth.initAuthModule === 'function') {
                             window.tg_auth.initAuthModule(targetContainer);
                         }
                         break;
-                    case 'reset-password': // ⭐ INIT: Call the dedicated reset function
+                    case 'reset-password':
                          if (window.tg_auth_reset && typeof window.tg_auth_reset.initResetModule === 'function') {
                             window.tg_auth_reset.initResetModule(targetContainer);
                         }
@@ -364,8 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         break;
                     case 'contact-us':
+                        // Contact Us uses generic DOMContentLoaded but we can trigger its fade-in here if needed
+                        // The global showModuleContainer() will handle the visibility
                         if (window.initContactUs && typeof window.initContactUs === 'function') {
-                            window.initContactUs();
+                             window.initContactUs();
                         }
                         break;
                     case 'analysis-hub':
@@ -391,34 +363,22 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
         }
     };
-    // END OF UPDATED loadModule FUNCTION
 
-    // Logout function
     function handleLogout() {
-        // Clean up current module before redirecting
         if (currentModuleName) {
             cleanupModule(currentModuleName);
         }
         
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
-        
-        // Remove reset-password tokens just in case
         localStorage.removeItem('tg_reset_token');
         localStorage.removeItem('tg_reset_userId');
         
-        // Set the hash to trigger the router for cleanup and redirect to #auth
         window.location.hash = '#auth';
-        // I will keep the reload here for full certainty of a clean logout state.
         window.location.reload();
     }
 
-    // Initial route handling
-    loadMainCSS(); // This will now correctly attempt to load the main dark theme
-    
-    // The router is responsible for listening to all hash changes and loading the module
+    loadMainCSS(); 
     window.addEventListener('hashchange', router);
-    
-    // Initial call to load the starting module (or auth page)
     router();
 });
