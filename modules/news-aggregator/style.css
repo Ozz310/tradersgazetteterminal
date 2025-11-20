@@ -53,7 +53,7 @@
     border-color: var(--gold-color);
 }
 
-/* Header Banner - GLOBAL MARKET PULSE placeholder */
+/* Header Banner - GLOBAL MARKET PULSE placeholder (Desktop View) */
 .news-aggregator .news-header-banner {
     width: 100%;
     height: 300px; /* Desktop Height */
@@ -333,19 +333,26 @@
 
 /* --- MOBILE RESPONSIVENESS (Max-Width 768px) --- */
 @media (max-width: 768px) {
-    /* FIX: Restore the Header Banner and set its height for mobile */
+    /* FIX: Restore the Header Banner, forcing visibility and simple full-width layout */
     .news-aggregator .news-header-banner { 
-        height: 150px; /* Reduced from 300px on desktop */
-        margin-bottom: 10px; /* Adjusted margin */
-        /* Re-apply the full-width edge-to-edge compensation */
-        margin-top: -20px; 
-        margin-left: -20px; 
-        margin-right: -20px; 
-        width: calc(100% + 40px); 
+        display: block !important; /* CRITICAL: Ensure it's not hidden */
+        height: 150px; /* Reduced height for mobile */
+        margin-bottom: 10px; 
+        
+        /* Simpler full-width approach (removes the negative margin compensation) */
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0; 
+
+        border-radius: 0;
+        box-shadow: none; 
     }
     
-    /* Reduced padding for the whole area */
-    .news-aggregator .news-content-area { padding: 0 0 60px 0; }
+    /* FIX: Set content area to full width by removing side padding, but add top margin to account for banner being at 0 margin-top */
+    .news-aggregator .news-content-area { 
+        padding: 20px 0 60px 0; /* Added top padding back, removed side padding */
+    }
 
     /* CRITICAL FIX: Ensure vertical stacking without max-height */
     .news-aggregator .news-content-flex {
@@ -354,7 +361,7 @@
         gap: 0; 
     }
 
-    /* FIX: Restore the YouTube container to full width and remove radius/shadows to match mobile viewport edges */
+    /* FIX: Restore the YouTube container to full width (edge-to-edge) */
     .news-aggregator .youtube-live-container {
         width: 100%;
         flex: none; 
@@ -377,13 +384,13 @@
         top: 0;
         z-index: 25; 
         background-color: var(--sidebar-color);
-        padding: 10px 15px;
+        padding: 10px 15px; /* Added side padding back here for mobile tabs */
         border-bottom: 1px solid var(--border-color);
         mask-image: linear-gradient(to right, black 90%, transparent 100%);
         -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
     }
     
-    /* News List Area: Adjust padding to match tabs */
+    /* News List Area: Adjust padding to match tabs padding */
     .news-aggregator .news-list {
         padding: 15px;
     }
