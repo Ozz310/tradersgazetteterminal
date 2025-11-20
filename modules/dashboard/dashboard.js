@@ -6,10 +6,11 @@ window.tg_dashboard = window.tg_dashboard || {};
 (function() {
     let dashboardTimers = {};
     let activeTimeZone = '';
-    let isLocalTime = true;
-    
+    // Default to local if no timezone is selected
+    const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    activeTimeZone = localTimezone; 
+
     // 💡 CRITICAL FIX: The placeholder MUST be replaced with your actual Google Apps Script URL.
-    // Ensure you deploy your GAS script as a Web App (Execute as: Me, Who has access: Anyone).
     const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
 
     function initDashboard() {
@@ -31,9 +32,6 @@ window.tg_dashboard = window.tg_dashboard || {};
     // 🚀 ELITE ALPHA BRIEF (EAB) LOGIC
     // ---------------------------------------------
     
-    /**
-     * Fetches the market brief from the GAS backend and renders it.
-     */
     async function fetchMarketBrief() {
         const briefContainer = document.getElementById('elite-alpha-brief');
         if (!briefContainer) {
@@ -41,17 +39,13 @@ window.tg_dashboard = window.tg_dashboard || {};
             return;
         }
         
-        // ❌ Check if the developer has replaced the placeholder
         if (GAS_MARKET_API_URL.includes('YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE')) {
-            const errorMsg = '⚠️ CRITICAL ERROR: Market Brief URL is still the placeholder. Please replace "YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE" in dashboard.js with your actual Google Apps Script URL.';
-            console.error(errorMsg);
-            // 🚀 FIX 2: Corrected Loading Text for Placeholder Error
+            const errorMsg = '⚠️ CRITICAL ERROR: Market Brief URL is still the placeholder.';
             briefContainer.innerHTML = `<div class="eab-error">${errorMsg}</div>`;
-            return; // Stop the fetch call
+            return; 
         }
 
         try {
-            // 🚀 FIX 2: Corrected Loading Text
             briefContainer.innerHTML = '<div class="eab-loading">Fetching Trader\'s Gazette Market Brief...</div>';
             
             const response = await fetch(GAS_MARKET_API_URL);
@@ -69,20 +63,17 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         } catch (error) {
             console.error('Error fetching market brief:', error);
-            // 🚀 FIX 2: Corrected Loading Text in the error message
             briefContainer.innerHTML = `<div class="eab-error">Failed to load Trader's Gazette Market Brief. Check console for details.</div>`;
         }
     }
     
-    /**
-     * Renders the fetched data into the EAB container.
-     * @param {HTMLElement} container The DOM element to render into.
-     * @param {object} data The market update data ({timestamp, headline, content}).
-     */
     function renderMarketBrief(container, data) {
-        const biasMatch = data.content.match(/Analyst Bias & Conclusion:(.*?)(BULLISH|BEARISH|NEUTRAL)/i);
+        // Extract bias or default to Neutral
+        const biasMatch = data.content ? data.content.match(/Analyst Bias & Conclusion:(.*?)(BULLISH|BEARISH|NEUTRAL)/i) : null;
         const analystBias = biasMatch ? biasMatch[2].toUpperCase() : 'NEUTRAL';
-        const formattedDate = new Date(data.timestamp).toLocaleDateString('en-US', { 
+        
+        const displayDate = data.timestamp ? new Date(data.timestamp) : new Date();
+        const formattedDate = displayDate.toLocaleDateString('en-US', { 
             month: 'short', day: 'numeric', year: 'numeric' 
         });
 
@@ -93,27 +84,23 @@ window.tg_dashboard = window.tg_dashboard || {};
                     <span class="eab-date">${formattedDate}</span>
                     <span class="eab-bias eab-bias-${analystBias.toLowerCase()}">${analystBias}</span>
                 </div>
-                <h2 class="eab-headline">${data.headline}</h2>
+                <h2 class="eab-headline">${data.headline || 'Market Brief'}</h2>
                 <button class="eab-toggle-btn" aria-expanded="false" aria-controls="eabContent">
                     <span class="read-text">READ MORE</span>
                     <i class="fas fa-chevron-down toggle-icon"></i>
                 </button>
             </div>
             <div class="eab-content-wrapper" id="eabContent" aria-hidden="true">
-                <div class="eab-content-inner">${data.content.replace(/\n/g, '<br>')}</div>
+                <div class="eab-content-inner">${(data.content || 'No content available.').replace(/\n/g, '<br>')}</div>
             </div>
         `;
         
-        // Setup listener for expand/collapse logic
         const toggleButton = document.querySelector('.eab-toggle-btn');
         if (toggleButton) {
             toggleButton.addEventListener('click', toggleBriefContent);
         }
     }
     
-    /**
-     * Toggles the visibility and state of the Elite Alpha Brief content.
-     */
     function toggleBriefContent(event) {
         const button = event.currentTarget;
         const contentWrapper = document.getElementById('eabContent');
@@ -138,20 +125,26 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
     }
 
-    // ... (rest of the dashboard.js file for clock and session indicators is unchanged) ...
+    // ---------------------------------------------
+    // 🚀 SESSION CLOCK LOGIC
+    // ---------------------------------------------
 
     function setupLiveClock() {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         updateClock(timezone);
-        updateSessionIndicator();
+        updateSessionIndicator(); // Initial check
+        
         dashboardTimers.clock = setInterval(() => {
-            updateClock(activeTimeZone);
+            updateClock(activeTimeZone || timezone);
             updateSessionIndicator();
         }, 1000);
     }
 
     function updateClock(timezone) {
+        // If timezone is empty string (Local), resolve it
+        if (!timezone) timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         activeTimeZone = timezone;
+
         const hourHand = document.getElementById('hourHand');
         const minuteHand = document.getElementById('minuteHand');
         const digitalTime = document.getElementById('digital-time');
@@ -164,97 +157,118 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
 
         const now = new Date();
-        const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const formattedTime = new Intl.DateTimeFormat('en-US', options).format(now);
         
-        const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
+        // Format time specifically for the selected timezone
+        const timeOptions = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        const formatter = new Intl.DateTimeFormat('en-US', timeOptions);
+        const parts = formatter.formatToParts(now);
         
+        const hours = parseInt(parts.find(p => p.type === 'hour').value);
+        const minutes = parseInt(parts.find(p => p.type === 'minute').value);
+        const seconds = parseInt(parts.find(p => p.type === 'second').value);
+        
+        // Calculate degrees
         const minuteDegrees = (minutes * 60 + seconds) / 3600 * 360;
         const hourDegrees = (hours % 12 * 3600 + minutes * 60 + seconds) / 43200 * 360;
         
         minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
         hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
-        const timeOptions = { timeZone: timezone, hour: '2-digit', minute: '2-digit' };
-        const dateOptions = { timeZone: timezone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        // Digital Display
+        const digitalTimeOptions = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: true };
+        const digitalDateOptions = { timeZone: timezone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         
-        digitalTime.textContent = new Intl.DateTimeFormat('en-US', timeOptions).format(now);
-        digitalDate.textContent = new Intl.DateTimeFormat('en-US', dateOptions).format(now);
+        digitalTime.textContent = new Intl.DateTimeFormat('en-US', digitalTimeOptions).format(now);
+        digitalDate.textContent = new Intl.DateTimeFormat('en-US', digitalDateOptions).format(now);
     }
 
     function setupTimeZoneButtons() {
         const buttons = document.querySelectorAll('.tz-button');
-        const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
         buttons.forEach(button => {
-            if (button.dataset.timezone === '') {
-                button.classList.add('active');
-            }
             button.addEventListener('click', () => {
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                const timezone = button.dataset.timezone === '' ? localTimezone : button.dataset.timezone;
+                const timezone = button.dataset.timezone;
                 updateClock(timezone);
             });
         });
     }
 
+    // 🚀 FIX: Robust Session Logic using Local Market Times (DST Aware)
     function updateSessionIndicator() {
         const clockCard = document.getElementById('clock-card');
         const indicator = document.getElementById('session-indicator');
         
-        if (!clockCard || !indicator) {
-            return; 
-        }
+        if (!clockCard || !indicator) return;
         
         const now = new Date();
-        const nowUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
 
-        const sessions = {
-            'Sydney': { start: 1320, end: 420, class: 'session-sydney', text: 'Sydney Session Active' },
-            'Tokyo': { start: 0, end: 540, class: 'session-tokyo', text: 'Tokyo Session Active' },
-            'Frankfurt': { start: 480, end: 1020, class: 'session-frankfurt', text: 'Frankfurt Session Active' },
-            'London': { start: 480, end: 1020, class: 'session-london', text: 'London Session Active' },
-            'New York': { start: 780, end: 1320, class: 'session-ny', text: 'New York Session Active' }
+        // Helper: Get current hour in a specific timezone (0-23)
+        const getHourInZone = (zone) => {
+            const parts = new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', hour12: false }).formatToParts(now);
+            return parseInt(parts.find(p => p.type === 'hour').value);
         };
 
-        let sessionFound = false;
-        clockCard.classList.remove('session-sydney', 'session-tokyo', 'session-london', 'session-frankfurt', 'session-ny');
-        indicator.textContent = 'Market Closed';
-
-        if ((nowUTC >= sessions.Sydney.start) || (nowUTC < sessions.Sydney.end)) {
-            clockCard.classList.add(sessions.Sydney.class);
-            indicator.textContent = sessions.Sydney.text;
-            sessionFound = true;
-        }
-        if ((nowUTC >= sessions.Tokyo.start) && (nowUTC < sessions.Tokyo.end)) {
-            clockCard.classList.add(sessions.Tokyo.class);
-            indicator.textContent = sessions.Tokyo.text;
-            sessionFound = true;
-        }
-        if ((nowUTC >= sessions.Frankfurt.start) && (nowUTC < sessions.Frankfurt.end)) {
-            clockCard.classList.add(sessions.Frankfurt.class);
-            indicator.textContent = sessions.Frankfurt.text;
-            sessionFound = true;
-        }
-        if ((nowUTC >= sessions.London.start) && (nowUTC < sessions.London.end)) {
-            clockCard.classList.add(sessions.London.class);
-            indicator.textContent = sessions.London.text;
-            sessionFound = true;
-        }
-        if ((nowUTC >= sessions['New York'].start) && (nowUTC < sessions['New York'].end)) {
-            clockCard.classList.add(sessions['New York'].class);
-            indicator.textContent = sessions['New York'].text;
-            sessionFound = true;
-        }
+        // Define active hours (Local to the market)
+        // Adjust these if you want specific trading hours (e.g., 8am vs 9am)
+        // Sydney: 7am - 4pm AEST/AEDT
+        // Tokyo: 9am - 6pm JST (No DST)
+        // Frankfurt: 8am - 5pm CET/CEST
+        // London: 8am - 5pm GMT/BST
+        // New York: 8am - 5pm EST/EDT
         
-        if (nowUTC >= 780 && nowUTC < 1020) {
-            indicator.textContent = 'NY & London Overlap - High Liquidity';
-        } else if (nowUTC >= 480 && nowUTC < 540) {
+        const sydneyHour = getHourInZone('Australia/Sydney');
+        const tokyoHour = getHourInZone('Asia/Tokyo');
+        const frankfurtHour = getHourInZone('Europe/Berlin');
+        const londonHour = getHourInZone('Europe/London');
+        const nyHour = getHourInZone('America/New_York');
+
+        // Reset
+        clockCard.classList.remove('session-sydney', 'session-tokyo', 'session-london', 'session-frankfurt', 'session-ny');
+        let activeSessions = [];
+
+        // Check Logic
+        const isSydneyOpen = sydneyHour >= 7 && sydneyHour < 16;
+        const isTokyoOpen = tokyoHour >= 9 && tokyoHour < 18;
+        const isFrankfurtOpen = frankfurtHour >= 8 && frankfurtHour < 17;
+        const isLondonOpen = londonHour >= 8 && londonHour < 17;
+        const isNyOpen = nyHour >= 8 && nyHour < 17;
+
+        if (isSydneyOpen) {
+            clockCard.classList.add('session-sydney');
+            activeSessions.push('Sydney');
+        }
+        if (isTokyoOpen) {
+            clockCard.classList.add('session-tokyo');
+            activeSessions.push('Tokyo');
+        }
+        if (isFrankfurtOpen) {
+            clockCard.classList.add('session-frankfurt');
+            activeSessions.push('Frankfurt');
+        }
+        if (isLondonOpen) {
+            clockCard.classList.add('session-london');
+            activeSessions.push('London');
+        }
+        if (isNyOpen) {
+            clockCard.classList.add('session-ny');
+            activeSessions.push('New York');
+        }
+
+        // Display Logic with Overlaps
+        if (isNyOpen && isLondonOpen) {
+            indicator.textContent = '⚡ NY & London Overlap - High Liquidity';
+            clockCard.classList.add('session-ny'); // Prioritize NY color in overlap
+        } else if (isTokyoOpen && isLondonOpen) {
             indicator.textContent = 'Tokyo & London Overlap';
-        } else if (nowUTC >= 0 && nowUTC < 420) {
+        } else if (isSydneyOpen && isTokyoOpen) {
             indicator.textContent = 'Sydney & Tokyo Overlap';
+        } else if (activeSessions.length > 0) {
+            indicator.textContent = `${activeSessions.join(' & ')} Session Active`;
+        } else {
+            indicator.textContent = 'Market Closed';
         }
     }
 
