@@ -1,6 +1,6 @@
 <div class="news-aggregator">
     <div class="news-header-banner" style="background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/News%20Room%20New.png');">
-        </div>
+    </div>
     
     <div class="news-content-area"> 
         <div class="news-content-flex">
@@ -14,22 +14,33 @@
             </div>
             
             <div class="news-aggregator-container">
-                <div class="news-title">News Room</div>
+                <div class="news-toolbar">
+                    <div class="news-title">News Room</div>
+                    <button id="view-toggle-btn" class="view-toggle-btn" title="Toggle Compact View">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
                 
                 <div class="news-tabs">
                     <button class="news-tab active" data-feed="general">GENERAL</button>
                     <button class="news-tab" data-feed="cnbc">CNBC</button>
                     <button class="news-tab" data-feed="market-watch">MARKET WATCH</button>
                     <button class="news-tab" data-feed="coin-telegraph">COIN TELEGRAPH</button>
-                    
                     <button class="news-tab" data-feed="news-bitcoin">NEWS BITCOIN</button>
                 </div>
 
                 <div id="news-list" class="news-list">
                     </div>
 
-                <div class="news-branding-footer">
-                    <img src="https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.15.jpeg?raw=true" alt="The Traders Gazette Logo">
+                <div id="news-error-state" class="news-error-state hidden">
+                    <i class="fas fa-exclamation-triangle error-icon"></i>
+                    <h3>Connection Lost</h3>
+                    <p>Unable to retrieve the latest headlines. Please check your connection.</p>
+                    <button class="retry-btn" onclick="window.tg_news.retryFetch()">Retry</button>
+                </div>
+
+                <div id="news-footer" class="news-branding-footer">
+                    <img src="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" alt="The Traders Gazette Logo">
                     <p>Powered by The Trader's Gazette</p>
                 </div>
             </div>
