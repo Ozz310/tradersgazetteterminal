@@ -3,6 +3,7 @@ window.tg_news = {};
 
 // --- Main initialization function to be called by app.js ---
 function initNewsAggregator() {
+    // ... (rest of the variables and constants remain the same) ...
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
 
     let refreshIntervalId;
@@ -10,13 +11,15 @@ function initNewsAggregator() {
     const CACHE_DURATION_MS = 300000; // 5 minutes cache
 
     let activeFeed = 'general';
-    let isCompactView = localStorage.getItem('tg_news_compact_view') === 'true';
+    // Load state correctly
+    let isCompactView = localStorage.getItem('tg_news_compact_view') === 'true'; 
 
     // DOM Elements
     const newsList = document.getElementById('news-list');
     const errorState = document.getElementById('news-error-state');
     const footer = document.getElementById('news-footer');
     const viewToggleBtn = document.getElementById('view-toggle-btn');
+    const newsAggregatorContainer = document.querySelector('.news-aggregator-container'); // Need this for desktop compact view class
 
     // --- 🛡️ Security: Input Sanitization ---
     function sanitizeHTML(str) {
@@ -37,7 +40,7 @@ function initNewsAggregator() {
         }
     }
 
-    // --- 💾 Caching Logic ---
+    // ... (getCachedNews and setCachedNews remain the same) ...
     function getCachedNews(feed) {
         try {
             const cached = localStorage.getItem(`tg_news_cache_${feed}`);
@@ -66,6 +69,7 @@ function initNewsAggregator() {
             console.warn('Failed to cache news:', e);
         }
     }
+
 
     // --- Fetching Logic ---
     async function fetchNews(feedSource) {
@@ -140,6 +144,12 @@ function initNewsAggregator() {
             return;
         }
 
+        // Apply compact view class to the main container
+        if (newsAggregatorContainer) {
+             if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
+             else newsAggregatorContainer.classList.remove('compact-view-active');
+        }
+
         const isSimpleRssFeed = ['cnbc', 'market-watch', 'coin-telegraph', 'news-bitcoin'].includes(feedSource);
         const map = isSimpleRssFeed ? 
             { headline: 'Title', summary: 'Summary', url: 'URL', time: 'Date Created' } : 
@@ -167,13 +177,14 @@ function initNewsAggregator() {
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
-            if (isCompactView) articleDiv.classList.add('compact');
+            // Card styling is now handled by the parent container class (compact-view-active) in CSS
 
             const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); // < 1 hour old
             const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             
             const displaySummary = summary ? summary.substring(0, 150) : '';
-            const summaryHtml = (!isCompactView && displaySummary) ? `<p>${displaySummary}...</p>` : '';
+            // NOTE: Summary and Read More are controlled by CSS when .compact-view-active is applied
+            const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
             const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More <i class="fas fa-external-link-alt"></i></a>` : '';
 
             articleDiv.innerHTML = `
@@ -183,7 +194,7 @@ function initNewsAggregator() {
                 </div>
                 <h2><a href="${url}" target="_blank" rel="noopener noreferrer">${headline}</a></h2>
                 ${summaryHtml}
-                ${!isCompactView ? readMoreHtml : ''}
+                ${readMoreHtml}
             `;
             fragment.appendChild(articleDiv);
         });
@@ -214,14 +225,13 @@ function initNewsAggregator() {
         isCompactView = !isCompactView;
         localStorage.setItem('tg_news_compact_view', isCompactView);
         
-        // Update UI
-        const articles = document.querySelectorAll('.news-article');
-        articles.forEach(art => {
-            if (isCompactView) art.classList.add('compact');
-            else art.classList.remove('compact');
-        });
-        
-        // Re-render current feed to handle summary hiding/showing correctly
+        // Toggle the class on the main container
+        if (newsAggregatorContainer) {
+            if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
+            else newsAggregatorContainer.classList.remove('compact-view-active');
+        }
+
+        // Re-render current feed to apply new styles/content visibility
         fetchNews(activeFeed); 
     }
 
@@ -250,7 +260,8 @@ function initNewsAggregator() {
     };
 
     function startAutoRefresh(feed) {
-        fetchNews(feed);
+        // Initial fetch sets the Compact View class correctly
+        fetchNews(feed); 
         refreshIntervalId = setInterval(() => {
              // Clear cache to force fresh fetch on interval
              localStorage.removeItem(`tg_news_cache_${feed}`);
@@ -265,5 +276,10 @@ function initNewsAggregator() {
     
     if (newsList) newsList.addEventListener('scroll', handleScroll);
 
+    // Initial check for compact view to set the class on load
+    if (newsAggregatorContainer) {
+         if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
+    }
+    
     startAutoRefresh(activeFeed);  
 }
