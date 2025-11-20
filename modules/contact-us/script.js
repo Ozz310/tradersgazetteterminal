@@ -1,5 +1,3 @@
-// modules/contact-us/script.js
-
 // The Web App URL is confirmed to be running the updated GAS code
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU-h3hQvbO7ca_NM3QymxKuiSH_6Z61C3CL4FuGhQdcFtNRL5ofMA5wdlSr5QFTnA/exec';
 
@@ -11,7 +9,7 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzU-h3hQvbO7ca_NM3Q
 function fadeContentIn() {
     const moduleContainer = document.getElementById('module-container');
     if (moduleContainer && moduleContainer.classList.contains('module-loader-hidden')) {
-        // Wait a short time to ensure CSS and module HTML are fully ready, then fade in
+        // Wait a short time (100ms) to ensure CSS is parsed and applied, then fade in
         setTimeout(() => {
             moduleContainer.classList.remove('module-loader-hidden');
             moduleContainer.style.overflowY = 'auto'; // Restore scrolling
@@ -21,34 +19,33 @@ function fadeContentIn() {
 
 /**
  * Initializes the form handler by safely attaching the event listener.
- * This is the main entry point for the module's script logic.
  */
 function initializeFormHandler() {
     const form = document.getElementById('contactForm');
     const formStatus = document.getElementById('formStatus');
     const submitButton = form ? form.querySelector('.submit-button') : null;
 
-    // 🔑 CRITICAL CHECK: Ensure both the form and button elements exist before proceeding.
+    // Critical check: If form is missing, likely another module is loaded or something broke.
     if (!form || !submitButton) {
         console.warn('Contact form elements not found. Initialization aborted.');
-        // Still fade in, as the rest of the Contact Us content (cards, social links) might be there
-        fadeContentIn(); 
+        // Still trigger fade-in so the user doesn't stare at a blank screen if partial content loaded
+        fadeContentIn();
         return;
     }
 
     form.addEventListener('submit', handleFormSubmit);
     console.log('Contact form event listener successfully attached.');
     
-    // Call the fade-in function after the module's main logic has executed
+    // 🔑 FOUC FIX: Trigger the fade-in now that the script has found the elements
     fadeContentIn(); 
-    
+
     // --- Submission Logic ---
     async function handleFormSubmit(e) {
         e.preventDefault();
 
         submitButton.disabled = true;
         formStatus.textContent = 'Sending message...';
-        formStatus.style.color = 'var(--hover-gold-color)'; // Gold color for loading
+        formStatus.style.color = '#F0D788'; 
 
         const formData = new FormData(form);
         const urlEncodedData = new URLSearchParams(formData).toString();
@@ -64,7 +61,7 @@ function initializeFormHandler() {
             });
 
             formStatus.textContent = '✅ Message sent successfully! We will be in touch shortly.';
-            formStatus.style.color = '#25D366'; // Green for success
+            formStatus.style.color = '#25D366'; 
             form.reset();
 
         } catch (error) {
@@ -79,8 +76,6 @@ function initializeFormHandler() {
     }
 }
 
-// 1. Attach to the standard DOM content loaded event
+// Standard Attachments
 document.addEventListener('DOMContentLoaded', initializeFormHandler);
-
-// 2. Fallback: If the first event misses the element for any reason, try again after the whole page loads
 window.onload = initializeFormHandler;
