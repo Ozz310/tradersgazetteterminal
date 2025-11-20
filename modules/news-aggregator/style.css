@@ -131,6 +131,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     margin-bottom: 15px;
+    position: relative; /* Added for the scroll indicator ::after */
 }
 .news-aggregator .news-tabs::-webkit-scrollbar {
     display: none;
@@ -482,6 +483,23 @@
     .news-aggregator .news-tabs {
         margin-bottom: 10px;
         padding: 0 10px 10px 10px;
+        /* 💡 UX FIX: Gradient mask for scrollable tabs */
+        position: relative; /* Ensure ::after positioning works */
+    }
+
+    /* 💡 UX FIX: Add gradient mask to indicate horizontal scrollability */
+    .news-aggregator .news-tabs::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        /* Positioned slightly inside the padding */
+        right: 10px;
+        height: 100%;
+        width: 40px; /* Wider fade area for better visibility */
+        /* Fade from the background color to transparent */
+        background: linear-gradient(to left, var(--accent-color) 40%, transparent 100%);
+        pointer-events: none; /* Allows clicks to pass through */
+        z-index: 6; 
     }
 
     .news-aggregator .news-tab {
