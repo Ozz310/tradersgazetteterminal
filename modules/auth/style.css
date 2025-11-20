@@ -1,150 +1,164 @@
-/* auth/style.css */
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATION MODULE STYLES (Login/Register)
+|--------------------------------------------------------------------------
+*/
 
 /* General Auth Container Styles */
 .auth-container {
-    /* Flexbox rules to center the content */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100%;
-    
-    /* Animation for the form transition */
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    transform: translateY(0);
+    /* Flexbox rules to center the content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    
+    /* Animation for the form transition */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    transform: translateY(0);
 }
 
 .auth-container.hidden {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none; /* Disable interaction when hidden */
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none; /* Disable interaction when hidden */
 }
 
 .auth-box {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 40px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-    position: relative;
-    z-index: 10; /* Keep the auth box on top */
+    /* 🔑 CRITICAL FIX: Use dark theme variables for the card */
+    background: var(--sidebar-color); /* Use a dark color for the card */
+    
+    /* Removed backdrop-filter: blur(10px) as it relies on content behind */
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7); /* Darker shadow for depth */
+    border: 1px solid var(--border-color); /* Use theme border color */
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10; /* Keep the auth box on top */
+    color: var(--text-color); /* Ensure text is light */
 }
 
 /* Form Container and Toggling */
 .form-container {
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .form-container.hidden {
-    display: none;
-    opacity: 0;
+    display: none;
+    opacity: 0;
 }
 
 /* Auth Heading */
 .auth-box h2 {
-    color: #fff;
-    margin-bottom: 20px;
-    font-size: 2em;
-    font-weight: 300;
+    /* 🔑 FIX: Use Header Gold color from theme variables */
+    color: var(--header-gold-color);
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: 700; /* Use a bold font weight */
 }
 
 /* Input Fields and Buttons */
 .auth-box input[type="email"],
 .auth-box input[type="password"],
 .auth-box input[type="text"] {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: #fff;
-    font-size: 16px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    /* 🔑 FIX: Use dark theme variables for input background and border */
+    background: var(--bg-color); 
+    border: 1px solid var(--border-color); 
+    
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box; /* Important for width calculation */
+    transition: all 0.3s ease-in-out;
 }
 
 .auth-box input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--secondary-text-color);
 }
 
 .auth-box input:focus {
-    border-color: #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    border-color: var(--gold-color);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
 }
 
-/* 🔑 UPDATED: Apply the Solid Gold Gradient */
+/* 🔑 UPDATED: Apply the Solid Gold Gradient (The button will also get styles from main.css .submit-button if used) */
 .auth-box button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    /* New Gold Gradient */
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
     
-    color: #1a1a1a;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
+    /* New Gold Gradient (Matching main.css) */
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    
+    /* 🔑 FIX: Use theme variable for dark text on gold */
+    color: var(--dark-color-for-text); 
+    font-size: 18px;
+    font-weight: 700; /* Consistent with main.css */
+    cursor: pointer;
     
     /* Updated transitions and initial shadow */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, filter 0.2s ease;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, filter 0.2s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 /* 🔑 UPDATED: Use CSS filter for hover effect consistency */
 .auth-box button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
 }
 
 /* Links and Messages */
 .auth-box a {
-    color: #ffd700;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.2s ease-in-out;
+    color: var(--gold-color);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease-in-out;
 }
 
 .auth-box a:hover {
-    color: #fff;
-    text-decoration: underline;
+    color: var(--hover-gold-color);
+    text-decoration: underline;
 }
 
 .auth-message {
-    margin-top: 15px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
 }
 
 .auth-message.error {
-    color: #ff6b6b;
+    color: #ff6b6b;
 }
 
 /* Background Symbols and Animations */
 .background-symbols {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
 }
 
 .symbol {
-    position: absolute;
-    color: rgba(255, 255, 255, 0.05); /* Very subtle white */
-    font-size: 5em;
-    pointer-events: none;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.02);
-    animation: float-animation 20s infinite ease-in-out;
+    position: absolute;
+    /* 🔑 FIX: Use a dark color with very low opacity to be subtle on a dark background */
+    color: rgba(255, 255, 255, 0.03); 
+    font-size: 5em;
+    pointer-events: none;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    animation: float-animation 20s infinite ease-in-out;
 }
 
 /* Individual symbol positions and animation delays */
@@ -161,16 +175,16 @@
 
 /* The actual floating keyframe animation */
 @keyframes float-animation {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 0.1;
-    }
-    50% {
-        transform: translate(calc(100vw * 0.1), calc(100vh * -0.1)) rotate(5deg);
-        opacity: 0.2;
-    }
-    100% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 0.1;
-    }
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.05;
+    }
+    50% {
+        transform: translate(calc(100vw * 0.1), calc(100vh * -0.1)) rotate(5deg);
+        opacity: 0.1;
+    }
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.05;
+    }
 }
