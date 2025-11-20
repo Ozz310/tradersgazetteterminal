@@ -97,7 +97,9 @@ function initNewsAggregator() {
             
             const articles = newsData.filter(article => {
                 const headlineKey = isSimpleRssFeed ? 'Title' : 'Headline';
-                return article[headlineKey] && article[headlineKey].trim() !== '';
+                // 🛠️ FIX 1: Safely check if the headline exists and is a string before calling .trim()
+                const headlineValue = article[headlineKey];
+                return typeof headlineValue === 'string' && headlineValue.trim() !== '';
             });
 
             displayNews(articles, feedSource);
