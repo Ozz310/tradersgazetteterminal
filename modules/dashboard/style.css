@@ -47,7 +47,7 @@
     margin: 0 0 40px 0; 
 }
 
-/* 🚀 CRITICAL FIX: CSS GRID LAYOUT FOR WIDGETS */
+/* --- WIDGETS GRID LAYOUT --- */
 .dashboard-widgets-grid {
     padding: 0 20px;
     width: 100%;
@@ -77,7 +77,9 @@
 .elite-alpha-brief {
     padding: 1.5rem 1.5rem; 
     transition: box-shadow 0.3s ease-in-out, transform 0.1s ease-out;
-    cursor: default; /* Only toggle button is clickable usually */
+    /* Flex container to handle internal scrolling layout */
+    display: flex;
+    flex-direction: column;
 }
 
 .elite-alpha-brief:hover {
@@ -85,11 +87,11 @@
     transform: translateY(-2px);
 }
 
-/* 🚀 FIX 3: Rectangular Loader Shape */
+/* Loader Styles */
 .eab-loading, .eab-error {
     width: 100%;
     text-align: center;
-    padding: 40px 20px; /* Increased padding for height */
+    padding: 40px 20px; 
     background-color: var(--light-grey-placeholder);
     border-radius: 8px;
     margin: 0; 
@@ -98,9 +100,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    /* Make it rectangular */
-    min-height: 300px; /* Match rough height of EAB content */
+    min-height: 300px; 
     height: 100%;
 }
 
@@ -110,7 +110,6 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    background-color: var(--light-grey-placeholder);
 }
 
 .eab-error {
@@ -118,7 +117,6 @@
     color: var(--bias-bearish);
 }
 
-/* ... (Rest of EAB internal styles: header, metadata, bias, toggle - NO CHANGES NEEDED) ... */
 .eab-header {
     display: flex;
     flex-direction: column;
@@ -126,7 +124,9 @@
     position: relative;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-    width: 100%; /* Ensure full width */
+    width: 100%; 
+    /* Prevent header from shrinking when content scrolls */
+    flex-shrink: 0; 
 }
 
 .eab-metadata {
@@ -166,6 +166,7 @@
     animation: fadeInSlide 0.5s ease-out; 
 }
 
+/* Toggle Button (Visible on Mobile by default) */
 .eab-toggle-btn {
     position: absolute;
     top: 5px;
@@ -196,27 +197,20 @@
 
 .toggle-icon { transition: transform 0.3s ease; }
 
+/* Content Wrapper */
 .eab-content-wrapper {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease-in-out;
     padding-top: 0;
     will-change: max-height; 
+    /* Basic scrollbar styling for expanded state on mobile */
+    overflow-y: auto; 
 }
 
 .eab-content-wrapper.is-expanded {
     max-height: 70vh; 
-    overflow-y: auto; 
     padding-top: 1.5rem;
-}
-
-/* Scrollbar Styles */
-.eab-content-wrapper::-webkit-scrollbar { width: 6px; }
-.eab-content-wrapper::-webkit-scrollbar-track { background: var(--black-tone-3); }
-.eab-content-wrapper::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 215, 0, 0.4); 
-    border-radius: 20px; 
-    border: 1px solid var(--black-tone-3); 
 }
 
 .eab-content-inner {
@@ -398,23 +392,73 @@
     .dashboard-widgets-grid {
         /* Switch to 2 columns: Clock (Fixed) | Brief (Flexible) */
         grid-template-columns: 400px 1fr;
-        align-items: start; /* Align cards to the top */
+        /* 🔑 FIX: Define a fixed height for the row so both cards match */
+        grid-template-rows: 580px; 
+        align-items: start; 
         gap: 30px;
-        max-width: 1400px; /* Prevent it getting too wide on huge screens */
-        margin: 0 auto; /* Center the grid if it's smaller than the viewport */
+        max-width: 1400px; 
+        margin: 0 auto; 
     }
 
     /* Clock Card styles for desktop */
     #clock-card {
-        max-width: 100%; /* Fill the grid cell (400px) */
+        max-width: 100%; 
+        height: 100%; /* Fill the grid row height */
         margin-bottom: 0;
     }
 
     /* Market Brief Card styles for desktop */
-    #elite-alpha-brief {
-        max-width: 100%; /* Fill the remaining space */
+    .widget-card:has(.elite-alpha-brief) {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 100%; /* Fill the grid row height */
         margin: 0;
-        height: 100%; /* Match height if possible */
+        padding: 0; /* Remove default card padding to let inner brief control it */
+        border: none; /* Let the inner brief handle border/bg if needed, or wrapper */
+        background: transparent;
+        box-shadow: none;
+    }
+
+    /* The Brief Container itself */
+    #elite-alpha-brief {
+        width: 100%;
+        height: 100%;
+        background-color: var(--black-tone-3); 
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 🔑 FIX: Hide the "Read More" button on Desktop */
+    .eab-toggle-btn {
+        display: none !important;
+    }
+
+    /* 🔑 FIX: Force Content to be Visible and Scrollable on Desktop */
+    .eab-content-wrapper {
+        /* Reset max-height constraint from mobile toggle */
+        max-height: unset !important; 
+        opacity: 1 !important;
+        display: block !important;
+        
+        /* Make it fill remaining space in the fixed-height card */
+        flex-grow: 1;
+        
+        /* Enable Internal Scrolling */
+        overflow-y: auto;
+        padding-top: 1.5rem;
+        
+        /* Invisible Scrollbar Settings */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    
+    /* Invisible Scrollbar for Chrome/Safari/Opera */
+    .eab-content-wrapper::-webkit-scrollbar {
+        display: none;
     }
 }
 
@@ -436,6 +480,7 @@
     /* Force single column on mobile */
     .dashboard-widgets-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto; /* Reset row height */
         padding: 0 20px; 
         gap: 25px;
     }
@@ -468,7 +513,7 @@
     
     /* Mobile Loader Size */
     .eab-loading, .eab-error {
-        min-height: 200px; /* Shorter on mobile */
+        min-height: 200px; 
     }
     
     .eab-headline { font-size: 1.1rem; }
