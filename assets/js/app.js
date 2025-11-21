@@ -1,3 +1,4 @@
+
 // /assets/js/app.js - FINAL VERSION (Sync CSS Loading & Smooth Transitions)
 
 document.addEventListener('DOMContentLoaded', () => {
