@@ -390,9 +390,9 @@
 
 @media (min-width: 1024px) {
     .dashboard-widgets-grid {
-        /* Switch to 2 columns: Clock (Fixed) | Brief (Flexible) */
-        grid-template-columns: 400px 1fr;
-        /* 🔑 FIX: Define a fixed height for the row so both cards match */
+        /* 🔑 FIX: Set clock width to 350px and let the brief take the rest (1fr) to be rectangular */
+        grid-template-columns: 350px 1fr;
+        /* Keep fixed height for alignment and to enable scrolling in the brief */
         grid-template-rows: 580px; 
         align-items: start; 
         gap: 30px;
@@ -413,8 +413,8 @@
         width: 100% !important;
         height: 100%; /* Fill the grid row height */
         margin: 0;
-        padding: 0; /* Remove default card padding to let inner brief control it */
-        border: none; /* Let the inner brief handle border/bg if needed, or wrapper */
+        padding: 0; 
+        border: none; 
         background: transparent;
         box-shadow: none;
     }
