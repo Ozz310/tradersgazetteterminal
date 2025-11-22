@@ -6,7 +6,7 @@ window.tg_dashboard = window.tg_dashboard || {};
 (function() {
     let dashboardTimers = {};
     
-    // 🔑 FIX: Use canonical time zones for DST stability
+    // 🔑 FIX: Keys aligned with HTML data-timezone
     const MARKET_TIMEZONES = {
         'NY': 'America/New_York',
         'LON': 'Europe/London',
@@ -15,11 +15,9 @@ window.tg_dashboard = window.tg_dashboard || {};
         'FRA': 'Europe/Berlin', 
     };
     
-    // Default to local if no timezone is selected
     const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     let activeTimeZone = localTimezone; 
 
-    // Define Market Trading Hours (Local Time 0-23)
     const MARKET_HOURS = {
         'Australia/Sydney': { open: 7, close: 16 }, 
         'Asia/Tokyo': { open: 9, close: 18 },      
@@ -28,7 +26,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         'America/New_York': { open: 8, close: 17 } 
     };
 
-    // 💡 CRITICAL FIX: The placeholder MUST be replaced with your actual Google Apps Script URL.
     const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
 
     function initDashboard() {
@@ -40,26 +37,18 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         console.log('Dashboard module initialized successfully.');
         
-        setupTimeZoneButtons(); // Setup buttons first to determine initial active zone
+        setupTimeZoneButtons(); 
         setupLiveClock();
-        // 🚀 Initialize the Elite Alpha Brief (EAB)
         fetchMarketBrief();
     }
 
-    // ---------------------------------------------
-    // 🚀 ELITE ALPHA BRIEF (EAB) LOGIC
-    // ---------------------------------------------
-    
+    // --- MARKET BRIEF LOGIC ---
     async function fetchMarketBrief() {
         const briefContainer = document.getElementById('elite-alpha-brief');
-        if (!briefContainer) {
-            console.error('Elite Alpha Brief container not found.');
-            return;
-        }
+        if (!briefContainer) return;
         
         if (GAS_MARKET_API_URL.includes('YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE')) {
-            const errorMsg = '⚠️ CRITICAL ERROR: Market Brief URL is still the placeholder.';
-            briefContainer.innerHTML = `<div class="eab-error">${errorMsg}</div>`;
+            briefContainer.innerHTML = `<div class="eab-error">Critical Error: API Placeholder not replaced.</div>`;
             return; 
         }
 
@@ -67,21 +56,18 @@ window.tg_dashboard = window.tg_dashboard || {};
             briefContainer.innerHTML = '<div class="eab-loading">Loading Trader\'s Gazette Market Brief...</div>';
             
             const response = await fetch(GAS_MARKET_API_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const data = await response.json();
 
             if (data.error) {
                 briefContainer.innerHTML = `<div class="eab-error">Data unavailable: ${data.error}</div>`;
                 return;
             }
-
             renderMarketBrief(briefContainer, data);
 
         } catch (error) {
             console.error('Error fetching market brief:', error);
-            briefContainer.innerHTML = `<div class="eab-error">Failed to load Trader's Gazette Market Brief. Check console for details.</div>`;
+            briefContainer.innerHTML = `<div class="eab-error">Failed to load Market Brief.</div>`;
         }
     }
     
@@ -112,9 +98,7 @@ window.tg_dashboard = window.tg_dashboard || {};
         `;
         
         const toggleButton = document.querySelector('.eab-toggle-btn');
-        if (toggleButton) {
-            toggleButton.addEventListener('click', toggleBriefContent);
-        }
+        if (toggleButton) toggleButton.addEventListener('click', toggleBriefContent);
     }
     
     function toggleBriefContent(event) {
@@ -123,7 +107,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         const icon = button.querySelector('.toggle-icon');
 
         if (contentWrapper.classList.contains('is-expanded')) {
-            // Collapse
             contentWrapper.classList.remove('is-expanded');
             icon.classList.remove('fa-chevron-up');
             icon.classList.add('fa-chevron-down');
@@ -131,7 +114,6 @@ window.tg_dashboard = window.tg_dashboard || {};
             contentWrapper.setAttribute('aria-hidden', 'true');
             button.querySelector('.read-text').textContent = 'READ MORE';
         } else {
-            // Expand
             contentWrapper.classList.add('is-expanded');
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-chevron-up');
@@ -141,13 +123,11 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
     }
 
-    // ---------------------------------------------
-    // 🚀 SESSION CLOCK LOGIC
-    // ---------------------------------------------
+    // --- CLOCK & SESSION LOGIC ---
 
     function setupLiveClock() {
         updateClock(activeTimeZone);
-        updateSessionIndicator(); 
+        updateSessionIndicator();
         
         dashboardTimers.clock = setInterval(() => {
             updateClock(activeTimeZone);
@@ -160,33 +140,26 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         buttons.forEach(button => {
             const tzKey = button.dataset.timezone;
+            // Map short code to full IANA zone
             const timezone = MARKET_TIMEZONES[tzKey] || localTimezone; 
             button.dataset.fullTimezone = timezone; 
             
             button.addEventListener('click', () => {
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                
                 const newTimezone = button.dataset.fullTimezone; 
+                // Update global active zone so interval picks it up
+                activeTimeZone = newTimezone;
                 updateClock(newTimezone);
             });
         });
 
-        // Initialize LOCAL button to active by default
         const localButton = document.querySelector('.tz-button[data-timezone="LOCAL"]');
-        if (localButton) { // Corrected selector logic
+        if (localButton) { 
             localButton.classList.add('active');
             localButton.dataset.fullTimezone = localTimezone; 
-        } else {
-             // Fallback for empty data-timezone
-             const emptyTzButton = document.querySelector('.tz-button[data-timezone=""]');
-             if(emptyTzButton) {
-                 emptyTzButton.classList.add('active');
-                 emptyTzButton.dataset.fullTimezone = localTimezone;
-             }
         }
     }
-
 
     function updateClock(timezone) {
         if (!timezone) timezone = localTimezone;
@@ -204,27 +177,18 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         const now = new Date();
         
-        // 🔑 FIX: Create a localized date object to accurately extract time components
+        // Reliable time components in target zone
         const dateInZone = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+        const hours = dateInZone.getHours();
+        const minutes = dateInZone.getMinutes();
+        const seconds = dateInZone.getSeconds();
         
-        // This process handles DST changes correctly by forcing the time interpretation 
-        // to be relative to the target timezone.
-        const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const formatter = new Intl.DateTimeFormat('en-US', options);
-        const parts = formatter.formatToParts(now);
-        
-        const hours = parseInt(parts.find(p => p.type === 'hour').value);
-        const minutes = parseInt(parts.find(p => p.type === 'minute').value);
-        const seconds = parseInt(parts.find(p => p.type === 'second').value);
-        
-        // Calculate degrees
         const minuteDegrees = (minutes * 60 + seconds) / 3600 * 360;
         const hourDegrees = (hours % 12 * 3600 + minutes * 60 + seconds) / 43200 * 360;
         
         minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
         hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
-        // Digital Display
         const digitalTimeOptions = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: true };
         const digitalDateOptions = { timeZone: timezone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         
@@ -232,7 +196,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         digitalDate.textContent = new Intl.DateTimeFormat('en-US', digitalDateOptions).format(now);
     }
 
-    // 🚀 FIX: Robust Session Logic using Local Market Times (DST Aware)
     function updateSessionIndicator() {
         const clockCard = document.getElementById('clock-card');
         const indicator = document.getElementById('session-indicator');
@@ -241,14 +204,13 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         const now = new Date();
 
-        // Helper: Get hour (0-23) and day (0-6) in target zone reliably
         const getHourAndDayInZone = (zone) => {
             try {
                 const dateString = now.toLocaleString('en-US', { timeZone: zone });
                 const dateInZone = new Date(dateString);
                 return {
                     hour: dateInZone.getHours(),
-                    jsDay: dateInZone.getDay() // 0=Sun, 6=Sat
+                    jsDay: dateInZone.getDay() 
                 };
             } catch (e) {
                 console.error('Timezone Error:', e);
@@ -267,7 +229,6 @@ window.tg_dashboard = window.tg_dashboard || {};
             if (!marketData) return false;
             const { open, close } = marketData;
             
-            // Check Mon-Fri (1-5) between open and close hours
             if (jsDay >= 1 && jsDay <= 5 && hour >= open && hour < close) {
                 clockCard.classList.add(`session-${classKey}`);
                 return true;
@@ -297,14 +258,10 @@ window.tg_dashboard = window.tg_dashboard || {};
     }
 
     function cleanupDashboard() {
-        if (dashboardTimers.clock) {
-            clearInterval(dashboardTimers.clock);
-            console.log('Clock interval successfully cleared.');
-        }
+        if (dashboardTimers.clock) clearInterval(dashboardTimers.clock);
         dashboardTimers = {};
     }
 
     window.tg_dashboard.initDashboard = initDashboard;
     window.tg_dashboard.cleanup = cleanupDashboard;
-
 })();
