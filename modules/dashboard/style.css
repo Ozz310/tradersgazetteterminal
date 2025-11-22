@@ -390,9 +390,9 @@
 
 @media (min-width: 1024px) {
     .dashboard-widgets-grid {
-        /* 🔑 FIX: Set clock width to 350px and let the brief take the rest (1fr) to be rectangular */
+        /* 🔑 FIX: Clock 350px, Brief expands (1fr) for rectangular shape */
         grid-template-columns: 350px 1fr;
-        /* Keep fixed height for alignment and to enable scrolling in the brief */
+        /* Keep fixed height for alignment */
         grid-template-rows: 580px; 
         align-items: start; 
         gap: 30px;
