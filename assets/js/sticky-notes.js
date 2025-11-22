@@ -20,12 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const MAX_ITEMS = 5;
         let notes = [];
         let isSaving = false;
-        let notesToMerge = []; // Global variable to hold cloud notes during a conflict
+        let notesToMerge = []; 
 
         const noteColors = ['#F7F7F7', '#FFEBCC', '#FFCCCC', '#D6FFD6'];
         const defaultNoteTitles = ['To Do List', 'Sticky Note 1', 'Sticky Note 2', 'Sticky Note 3'];
         
-        // --- Helper Functions ---
         function arraysAreEqual(arr1, arr2) {
             if (arr1.length !== arr2.length) return false;
             for (let i = 0; i < arr1.length; i++) {
@@ -34,40 +33,26 @@ document.addEventListener('DOMContentLoaded', function() {
             return true;
         }
 
-        function isMobile() {
-            return window.matchMedia("(max-width: 768px)").matches;
-        }
-
-        // --- Loader & Modal Functions ---
         function showLoader() {
-            if (loaderOverlay) {
-                loaderOverlay.classList.remove('hidden');
-            }
+            if (loaderOverlay) loaderOverlay.classList.remove('hidden');
         }
 
         function hideLoader() {
-            if (loaderOverlay) {
-                loaderOverlay.classList.add('hidden');
-            }
+            if (loaderOverlay) loaderOverlay.classList.add('hidden');
         }
         
         function showConflictModal() {
-            if (conflictModalOverlay) {
-                conflictModalOverlay.classList.remove('hidden');
-            }
+            if (conflictModalOverlay) conflictModalOverlay.classList.remove('hidden');
         }
 
         function hideConflictModal() {
-            if (conflictModalOverlay) {
-                conflictModalOverlay.classList.add('hidden');
-            }
+            if (conflictModalOverlay) conflictModalOverlay.classList.add('hidden');
         }
 
         function getUserId() {
             return localStorage.getItem('tg_userId');
         }
 
-        // --- Core Local Storage Functions ---
         function saveNotesLocally() {
             try {
                 localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
@@ -91,13 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
             renderNotes();
         }
 
-        // --- Backend API Functions ---
         async function fetchNotesFromBackend(forceSync = false) {
             const userId = getUserId(); 
-            if (!userId) {
-                console.error('User ID not found. Cannot fetch notes from backend.');
-                return;
-            }
+            if (!userId) return;
 
             try {
                 if (!forceSync) showLoader();
@@ -107,8 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data && data.notes) {
                     const cloudNotes = data.notes;
                     if (!arraysAreEqual(notes, cloudNotes)) {
-                        // Conflict detected
-                        notesToMerge = cloudNotes; // Store for the modal
+                        notesToMerge = cloudNotes; 
                         showConflictModal();
                     } else if (forceSync) {
                         syncStatus.textContent = 'Already synced!';
@@ -133,10 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         async function syncNotesToBackend() {
             const userId = getUserId();
-            if (isSaving || !userId) {
-                if (!userId) console.error('User ID not found. Cannot sync.');
-                return;
-            }
+            if (isSaving || !userId) return;
+            
             isSaving = true;
             syncBtn.disabled = true;
             syncBtn.classList.add('syncing');
@@ -149,12 +127,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({ userId: userId, notes: notes }),
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Server responded with a non-200 status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`Server responded with a non-200 status: ${response.status}`);
 
                 syncStatus.textContent = 'Synced successfully!';
-                console.log('Notes saved to backend.');
             } catch (error) {
                 console.error('Error saving notes to backend:', error);
                 syncStatus.textContent = 'Sync failed!';
@@ -167,10 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         function renderNotes() {
-            if (!notesList) {
-                console.error('Notes list element not found!');
-                return;
-            }
+            if (!notesList) return;
             notesList.innerHTML = '';
             notes.forEach((note, index) => {
                 const noteItem = document.createElement('div');
@@ -241,23 +213,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function addEventListenersToNotes() {
+            // 1. Add Item
             notesList.querySelectorAll('.add-item-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const noteItem = e.target.closest('.note-item');
                     const index = noteItem.getAttribute('data-index');
                     const [title, ...items] = notes[index].split('\n');
                     const filteredItems = items.filter(s => s.trim());
+                    
                     if (filteredItems.length < MAX_ITEMS) {
                         const newItem = btn.getAttribute('data-type') === 'task' ? '[ ] New Task' : '* New Note';
                         notes[index] += `\n${newItem}`;
+                        // Re-render required here to show new item
                         renderNotes();
+                        saveNotesLocally();
+                        
+                        // Focus on the new item
                         const newElement = notesList.querySelector(`.note-item[data-index="${index}"] .note-body [contenteditable="true"]:last-of-type`);
                         if(newElement) newElement.focus();
-                        saveNotesLocally();
                     }
                 });
             });
 
+            // 2. Delete Note
             notesList.querySelectorAll('.note-delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const noteItem = e.target.closest('.note-item');
@@ -269,66 +247,92 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
+            // 3. Delete Single Task
             notesList.querySelectorAll('.delete-task-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const noteItem = e.target.closest('.note-item');
                     const noteIndex = noteItem.getAttribute('data-index');
                     const listItem = e.target.closest('li');
-                    const taskIndex = Array.from(listItem.parentNode.children).indexOf(listItem);
+                    
+                    // Calculate index based on DOM position to avoid offset issues
+                    const listContainer = listItem.parentElement;
+                    const taskIndex = Array.from(listContainer.children).indexOf(listItem);
                     
                     const [title, ...items] = notes[noteIndex].split('\n');
-                    items.splice(taskIndex, 1);
-                    notes[noteIndex] = [title, ...items].join('\n');
+                    // Filter empty lines first to match DOM structure logic
+                    const cleanItems = items.filter(s => s.trim());
+                    
+                    cleanItems.splice(taskIndex, 1);
+                    
+                    // Reconstruct note
+                    notes[noteIndex] = [title, ...cleanItems].join('\n');
+                    
                     renderNotes();
                     saveNotesLocally();
                 });
             });
 
+            // 🚀 4. Checkbox Logic (FIXED: No Re-render)
             notesList.querySelectorAll('.todo-item input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', (e) => {
+                    const listItem = e.target.closest('li');
                     const noteItem = e.target.closest('.note-item');
                     const index = noteItem.getAttribute('data-index');
-                    const taskIndex = Array.from(e.target.closest('li').parentNode.children).indexOf(e.target.closest('li'));
                     
+                    const listContainer = listItem.parentElement;
+                    const taskIndex = Array.from(listContainer.children).indexOf(listItem);
+                    
+                    // Visual Update
+                    if (e.target.checked) listItem.classList.add('checked');
+                    else listItem.classList.remove('checked');
+
+                    // Data Update
                     const [title, ...items] = notes[index].split('\n');
-                    const isChecked = e.target.checked;
-                    const updatedItem = isChecked ? `[x] ${items[taskIndex].replace(/\[x\]|\[\s\]/g, '').trim()}` : `[ ] ${items[taskIndex].replace(/\[x\]|\[\s\]/g, '').trim()}`;
-                    items[taskIndex] = updatedItem;
+                    const cleanItems = items.filter(s => s.trim());
                     
-                    notes[index] = [title, ...items].join('\n');
+                    const currentLine = cleanItems[taskIndex];
+                    const textContent = currentLine.replace(/\[x\]|\[\s\]/g, '').trim();
+                    
+                    const newLine = e.target.checked ? `[x] ${textContent}` : `[ ] ${textContent}`;
+                    cleanItems[taskIndex] = newLine;
+                    
+                    notes[index] = [title, ...cleanItems].join('\n');
                     saveNotesLocally();
                 });
             });
 
+            // 🚀 5. Typing Logic (FIXED: No Re-render)
             notesList.querySelectorAll('.note-item [contenteditable="true"]').forEach(element => {
                 element.addEventListener('input', (e) => {
                     const noteItem = e.target.closest('.note-item');
                     const index = noteItem.getAttribute('data-index');
-                    const lines = Array.from(noteItem.querySelectorAll('.note-body [contenteditable="true"]'));
-                    const updatedContent = lines.map(el => {
-                        const isToDo = el.closest('.todo-item');
+                    const title = defaultNoteTitles[index];
+                    
+                    const listItems = noteItem.querySelectorAll('li');
+                    const updatedLines = Array.from(listItems).map(li => {
+                        const text = li.querySelector('span').textContent.trim();
+                        const isToDo = li.classList.contains('todo-item');
+                        
                         if (isToDo) {
-                            const isChecked = el.closest('.todo-item').querySelector('input').checked;
-                            return isChecked ? `[x] ${el.textContent.trim()}` : `[ ] ${el.textContent.trim()}`;
+                            const isChecked = li.querySelector('input').checked;
+                            return isChecked ? `[x] ${text}` : `[ ] ${text}`;
                         } else {
-                            return `* ${el.textContent.trim()}`;
+                            return `* ${text}`;
                         }
                     });
 
-                    const combinedContent = `${defaultNoteTitles[index]}:\n${updatedContent.join('\n')}`;
-                    notes[index] = combinedContent;
+                    notes[index] = `${title}:\n${updatedLines.join('\n')}`;
                     saveNotesLocally();
                 });
             });
         }
 
-        // --- Event Listeners for Panel ---
         toggleBtn.addEventListener('click', () => {
             panel.classList.toggle('open');
             toggleBtn.classList.toggle('active');
             if (panel.classList.contains('open')) {
                 loadNotesLocally();
-                fetchNotesFromBackend(); // Check for conflicts in the background
+                fetchNotesFromBackend(); 
             }
         });
 
@@ -338,12 +342,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (syncBtn) {
-            syncBtn.addEventListener('click', () => {
-                syncNotesToBackend();
-            });
+            syncBtn.addEventListener('click', () => syncNotesToBackend());
         }
 
-        // --- Conflict Modal Event Listeners ---
         useLocalBtn.addEventListener('click', () => {
             hideConflictModal();
             syncNotesToBackend();
