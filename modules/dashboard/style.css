@@ -1,7 +1,6 @@
 /* /modules/dashboard/style.css */
 
 :root {
-    /* Define colors locally or rely on main.css vars */
     --content-page-bg: #2a2a2a;
     --black-tone-3: #1c1c1c;
     --gold-accent: #ffd700;
@@ -21,11 +20,8 @@
     --bias-neutral: #FFD700; 
 }
 
-.dashboard-page * {
-    box-sizing: border-box; 
-}
+.dashboard-page * { box-sizing: border-box; }
 
-/* Base styles for the dashboard */
 .dashboard-page {
     position: relative; 
     width: 100%; 
@@ -52,7 +48,6 @@
     padding: 0 20px;
     width: 100%;
     display: grid;
-    /* Mobile Default: Single Column */
     grid-template-columns: 1fr; 
     gap: 25px;
     align-items: start;
@@ -69,15 +64,13 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 400px; /* Mobile max-width constraint */
+    max-width: 400px; /* Default mobile width */
 }
 
 /* --- ELITE ALPHA BRIEF STYLES --- */
-
 .elite-alpha-brief {
     padding: 1.5rem 1.5rem; 
     transition: box-shadow 0.3s ease-in-out, transform 0.1s ease-out;
-    /* Flex container to handle internal scrolling layout */
     display: flex;
     flex-direction: column;
 }
@@ -87,7 +80,6 @@
     transform: translateY(-2px);
 }
 
-/* Loader Styles */
 .eab-loading, .eab-error {
     width: 100%;
     text-align: center;
@@ -125,7 +117,6 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 215, 0, 0.1);
     width: 100%; 
-    /* Prevent header from shrinking when content scrolls */
     flex-shrink: 0; 
 }
 
@@ -137,20 +128,11 @@
     width: 100%;
 }
 
-.eab-date {
-    font-size: 0.85rem;
-    opacity: 0.6;
-    letter-spacing: 0.5px;
-    margin-right: 15px;
-}
+.eab-date { font-size: 0.85rem; opacity: 0.6; letter-spacing: 0.5px; margin-right: 15px; }
 
 .eab-bias {
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 1px;
     color: var(--black-tone-3) !important; 
     background-color: transparent !important; 
     background-image: linear-gradient(145deg, #F0D788, #DDAA33) !important;
@@ -158,68 +140,38 @@
 }
 
 .eab-headline {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--white-text-color);
-    line-height: 1.4;
-    margin: 0;
-    animation: fadeInSlide 0.5s ease-out; 
+    font-size: 1.25rem; font-weight: 600; color: var(--white-text-color);
+    line-height: 1.4; margin: 0; animation: fadeInSlide 0.5s ease-out; 
 }
 
-/* Toggle Button (Visible on Mobile by default) */
 .eab-toggle-btn {
-    position: absolute;
-    top: 5px;
-    right: 0;
-    background: transparent;
-    border: none;
-    color: var(--gold-accent);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0;
-    display: flex;
-    align-items: center;
+    position: absolute; top: 5px; right: 0; background: transparent; border: none;
+    color: var(--gold-accent); cursor: pointer; font-size: 0.9rem; padding: 0;
+    display: flex; align-items: center;
 }
-
-.eab-toggle-btn:focus {
-    outline: none;
-    text-shadow: 0 0 5px var(--gold-accent);
-}
-
+.eab-toggle-btn:focus { outline: none; text-shadow: 0 0 5px var(--gold-accent); }
 .eab-toggle-btn .read-text {
-    font-size: 0.75rem;
-    margin-right: 5px;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--white-text-color);
-    opacity: 0.7;
+    font-size: 0.75rem; margin-right: 5px; text-transform: uppercase;
+    font-weight: 500; color: var(--white-text-color); opacity: 0.7;
 }
-
 .toggle-icon { transition: transform 0.3s ease; }
 
-/* Content Wrapper */
 .eab-content-wrapper {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease-in-out;
-    padding-top: 0;
-    will-change: max-height; 
-    /* Basic scrollbar styling for expanded state on mobile */
-    overflow-y: auto; 
+    max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out;
+    padding-top: 0; will-change: max-height; overflow-y: auto; 
 }
+.eab-content-wrapper.is-expanded { max-height: 70vh; padding-top: 1.5rem; }
 
-.eab-content-wrapper.is-expanded {
-    max-height: 70vh; 
-    padding-top: 1.5rem;
+.eab-content-wrapper::-webkit-scrollbar { width: 6px; }
+.eab-content-wrapper::-webkit-scrollbar-track { background: var(--black-tone-3); }
+.eab-content-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 215, 0, 0.4); 
+    border-radius: 20px; border: 1px solid var(--black-tone-3); 
 }
 
 .eab-content-inner {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.8);
-    white-space: pre-line; 
+    font-size: 0.95rem; line-height: 1.7; color: rgba(255, 255, 255, 0.8); white-space: pre-line; 
 }
-
 .eab-content-inner p { margin-bottom: 1.5rem; }
 .eab-content-inner br { display: block; content: ""; line-height: 1.5; }
 
@@ -228,160 +180,66 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- ANALOG CLOCK STYLES (Unchanged) --- */
+/* --- ANALOG CLOCK STYLES --- */
 .live-clock-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0;  
+    display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0;  
 }
-
 .analog-clock {
-    position: relative;  
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-    z-index: 1;
+    position: relative; width: 250px; height: 250px; border-radius: 50%;
+    background-color: transparent; border: none; box-shadow: none; z-index: 1;
 }
-
-.analog-dial {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.tick-marks {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
+.analog-dial { position: relative; width: 100%; height: 100%; }
+.tick-marks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 .tick {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 2px;
-    height: 8px; 
-    background-color: var(--white-text-color);
-    transform-origin: 0 125px; 
+    position: absolute; top: 0; left: 50%; width: 2px; height: 8px; 
+    background-color: var(--white-text-color); transform-origin: 0 125px; 
 }
-
-.tick.hour {
-    height: 15px;
-    background-color: var(--gold-accent);
-}
-
+.tick.hour { height: 15px; background-color: var(--gold-accent); }
 .analog-hand {
-    position: absolute;
-    bottom: 50%;
-    left: 50%;
-    transform-origin: bottom center;
-    transition: transform 0.05s linear;
-    border-radius: 2px;
-    z-index: 2;
+    position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center;
+    transition: transform 0.05s linear; border-radius: 2px; z-index: 2;
 }
-
-.hour-hand {
-    width: 4px;
-    height: 60px;
-    background-color: var(--white-text-color);
-}
-
-.minute-hand {
-    width: 3px;
-    height: 80px;
-    background-color: var(--white-text-color);
-}
-
+.hour-hand { width: 4px; height: 60px; background-color: var(--white-text-color); }
+.minute-hand { width: 3px; height: 80px; background-color: var(--white-text-color); }
 .analog-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: var(--gold-accent);
-    border: 2px solid var(--black-tone-3);
-    z-index: 3;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 12px; height: 12px; border-radius: 50%; background-color: var(--gold-accent);
+    border: 2px solid var(--black-tone-3); z-index: 3;
 }
-
 .digital-display {
-    text-align: center;
-    margin-top: 3rem;  
-    color: var(--white-text-color);
-    letter-spacing: 2px;
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    text-align: center; margin-top: 3rem; color: var(--white-text-color);
+    letter-spacing: 2px; font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
-
 #digital-time {
-    font-size: 3rem;
-    font-weight: 300;
-    color: var(--gold-accent); 
-    display: block;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);  
+    font-size: 3rem; font-weight: 300; color: var(--gold-accent); 
+    display: block; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);  
 }
+#digital-date { font-size: 1rem; font-weight: 200; opacity: 0.8; }
 
-#digital-date {
-    font-size: 1rem;
-    font-weight: 200;
-    opacity: 0.8;
-}
-
-/* Time Zone Buttons */
 .time-zone-selector {
-    display: flex;
-    flex-wrap: wrap;  
-    justify-content: center;
-    gap: 0.5rem;  
-    margin-top: 1.5rem;  
-    max-width: 100%;
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 0.5rem; margin-top: 1.5rem; max-width: 100%;
 }
-
 .tz-button {
-    background-color: transparent;
-    border: 1px solid var(--gold-accent); 
-    color: var(--gold-accent); 
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 0.4rem 0.8rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    box-shadow: none; 
+    background-color: transparent; border: 1px solid var(--gold-accent); 
+    color: var(--gold-accent); font-size: 0.7rem; font-weight: bold;
+    padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;
+    transition: all 0.2s ease; text-transform: uppercase; box-shadow: none; 
 }
-
 .tz-button:hover {
-    background-color: #383838; 
-    color: var(--gold-accent);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    background-color: #383838; color: var(--gold-accent);
+    transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
-
 .tz-button.active {
     background-image: none !important;
     background: linear-gradient(145deg, #F0D788, #DDAA33) !important;  
-    color: var(--black-tone-3) !important; 
-    border: none !important; 
+    color: var(--black-tone-3) !important; border: none !important; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
-    font-weight: 700 !important;
-    transform: none;
+    font-weight: 700 !important; transform: none;
 }
-
 .session-indicator {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-align: center; margin-top: 1rem; font-size: 0.9rem;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
 }
 
 /* ------------------------------------------- */
@@ -390,9 +248,8 @@
 
 @media (min-width: 1024px) {
     .dashboard-widgets-grid {
-        /* 🔑 FIX: Clock 350px, Brief expands (1fr) for rectangular shape */
+        /* 🔑 FIX: Clock 350px fixed, Brief takes the rest (1fr) */
         grid-template-columns: 350px 1fr;
-        /* Keep fixed height for alignment */
         grid-template-rows: 580px; 
         align-items: start; 
         gap: 30px;
@@ -400,122 +257,61 @@
         margin: 0 auto; 
     }
 
-    /* Clock Card styles for desktop */
+    /* Clock Card - Keep width constrained */
     #clock-card {
         max-width: 100%; 
-        height: 100%; /* Fill the grid row height */
+        height: 100%; 
         margin-bottom: 0;
     }
 
-    /* Market Brief Card styles for desktop */
-    .widget-card:has(.elite-alpha-brief) {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: 100%; /* Fill the grid row height */
-        margin: 0;
-        padding: 0; 
-        border: none; 
-        background: transparent;
-        box-shadow: none;
-    }
-
-    /* The Brief Container itself */
+    /* 🔑 FIX: Target the Brief Card by ID to override max-width constraint */
     #elite-alpha-brief {
-        width: 100%;
-        height: 100%;
-        background-color: var(--black-tone-3); 
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        padding: 2.5rem 2rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
+        max-width: none !important; /* Expand to fill 1fr */
+        width: 100% !important;
+        height: 100%; 
+        margin: 0;
     }
 
-    /* 🔑 FIX: Hide the "Read More" button on Desktop */
-    .eab-toggle-btn {
-        display: none !important;
-    }
+    /* FIX: Hide "Read More" on Desktop */
+    .eab-toggle-btn { display: none !important; }
 
-    /* 🔑 FIX: Force Content to be Visible and Scrollable on Desktop */
+    /* FIX: Content Always Open on Desktop */
     .eab-content-wrapper {
-        /* Reset max-height constraint from mobile toggle */
         max-height: unset !important; 
         opacity: 1 !important;
         display: block !important;
-        
-        /* Make it fill remaining space in the fixed-height card */
         flex-grow: 1;
-        
-        /* Enable Internal Scrolling */
         overflow-y: auto;
         padding-top: 1.5rem;
-        
-        /* Invisible Scrollbar Settings */
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
+        -ms-overflow-style: none;  
+        scrollbar-width: none;  
     }
     
-    /* Invisible Scrollbar for Chrome/Safari/Opera */
-    .eab-content-wrapper::-webkit-scrollbar {
-        display: none;
-    }
+    .eab-content-wrapper::-webkit-scrollbar { display: none; }
 }
 
-/* ------------------------------------------- */
-/* Mobile responsive styles (Adjustments) */
-/* ------------------------------------------- */
-
+/* Mobile responsive styles */
 @media (max-width: 768px) {
-    .dashboard-page {
-        padding: 0 0 20px 0; 
-        margin-top: -20px; 
-    }
-    
-    .dashboard-cover-photo {
-        height: 180px;  
-        margin: 0 0 20px 0;
-    }
+    .dashboard-page { padding: 0 0 20px 0; margin-top: -20px; }
+    .dashboard-cover-photo { height: 180px; margin: 0 0 20px 0; }
 
-    /* Force single column on mobile */
     .dashboard-widgets-grid {
         grid-template-columns: 1fr;
-        grid-template-rows: auto; /* Reset row height */
+        grid-template-rows: auto;
         padding: 0 20px; 
         gap: 25px;
     }
     
-    .widget-card {
-        padding: 1.5rem 1rem;  
-        max-width: 100%; 
-    }
-    
-    .analog-clock {
-        width: 180px;  
-        height: 180px;
-    }
-    
+    .widget-card { padding: 1.5rem 1rem; max-width: 100%; }
+    .analog-clock { width: 180px; height: 180px; }
     .tick { transform-origin: 0 90px; }
     .hour-hand { height: 50px; }
     .minute-hand { height: 70px; }
-    
     #digital-time { font-size: 2rem; }
+    .time-zone-selector { margin-top: 1rem; gap: 0.3rem; }
     
-    .time-zone-selector {
-        margin-top: 1rem;
-        gap: 0.3rem;
-    }
-    
-    /* Mobile EAB Constraint */
-    .eab-content-wrapper.is-expanded {
-        max-height: 55vh; 
-    }
-    
-    /* Mobile Loader Size */
-    .eab-loading, .eab-error {
-        min-height: 200px; 
-    }
-    
+    .eab-content-wrapper.is-expanded { max-height: 55vh; }
+    .eab-loading, .eab-error { min-height: 200px; }
     .eab-headline { font-size: 1.1rem; }
     .eab-content-inner { font-size: 0.9rem; }
 }
