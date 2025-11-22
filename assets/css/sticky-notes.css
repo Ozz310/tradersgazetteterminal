@@ -11,7 +11,7 @@
     align-items: flex-end; /* Aligns items to the bottom */
 }
 
-/* --- Loader Overlay - Full Screen with Pulsing Gold Glow --- */
+/* --- Loader Overlay --- */
 .loader-overlay {
     position: fixed;
     top: 0;
@@ -38,7 +38,6 @@
     align-items: center;
 }
 
-/* Loader Spin and Pulsing Glow */
 .loader {
     width: 60px;
     height: 60px;
@@ -55,19 +54,10 @@
     letter-spacing: 2px;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
+@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes glow {
-    from {
-        box-shadow: 0 0 5px #F0D788;
-    }
-    to {
-        box-shadow: 0 0 20px #F0D788, 0 0 30px #F0D788;
-    }
+    from { box-shadow: 0 0 5px #F0D788; }
+    to { box-shadow: 0 0 20px #F0D788, 0 0 30px #F0D788; }
 }
 
 /* --- Sticky Notes Toggle Button (FAB) --- */
@@ -84,19 +74,13 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
-    
-    /* Position the button at the bottom center within its container */
     position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    
-    /* ADDED: Initial rotation for the + icon */
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
 }
 
-/* ADDED: Rotation for the active 'X' state */
 .sticky-notes-toggle-btn.active {
     transform: translateX(-50%) rotate(45deg);
 }
@@ -108,27 +92,23 @@
 
 .sticky-notes-toggle-btn:active {
     transform: translateX(-50%) translateY(0);
-    box-shadow: 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
-    /* For Desktop: A horizontal container for the notes */
     position: fixed;
     bottom: 90px;
-    left: 250px; /* Aligns with the end of the sidebar */
+    left: 250px;
     width: calc(100vw - 250px);
-    height: 450px; /* Set a fixed height */
+    height: 450px; 
     background: rgba(26, 26, 26, 0.8);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    
     transform: scale(0.8) translateY(10%);
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
     pointer-events: none;
-    
     display: flex;
     flex-direction: column;
     z-index: 999;
@@ -149,6 +129,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .sticky-notes-panel .panel-header h3 {
@@ -157,7 +138,6 @@
     color: #F0D788;
 }
 
-/* ADDED: Styles for the new sync button and status message */
 .sync-actions-container {
     display: flex;
     align-items: center;
@@ -170,22 +150,15 @@
     color: #F0D788;
     font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease;
+    transition: transform 0.3s ease-in-out;
 }
 
-.sync-btn:hover {
-    transform: scale(1.1);
-}
-
-.sync-btn.syncing .sync-icon {
-    animation: spin 1.5s linear infinite;
-}
+.sync-btn:hover { transform: scale(1.1); }
+.sync-btn.syncing .sync-icon { animation: spin 1.5s linear infinite; }
 
 .sync-status {
     font-size: 0.85rem;
     color: #f7f7f7;
-    transition: opacity 0.3s ease;
-    opacity: 1;
 }
 
 /* Notes List Container */
@@ -199,7 +172,7 @@
     gap: 20px;
 }
 
-/* Individual Note Styling */
+/* Note Item Styling */
 .note-item {
     background-color: #3a3a3a;
     border-left: 4px solid #F0D788;
@@ -210,14 +183,10 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;
-    height: auto;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
-.note-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
+.note-item:hover { transform: translateY(-2px); }
 
 .note-header {
     display: flex;
@@ -238,6 +207,7 @@
 .note-body {
     flex-grow: 1;
     overflow-y: auto;
+    max-height: 200px; /* Prevent single note taking up too much space */
 }
 
 .todo-list, .bullet-list {
@@ -270,6 +240,7 @@
 .todo-list li span, .bullet-list li span {
     outline: none;
     cursor: text;
+    flex-grow: 1;
 }
 
 .bullet-list li::before {
@@ -285,17 +256,13 @@
     font-size: 0.8rem;
     cursor: pointer;
     padding: 0;
-    transition: color 0.2s ease;
     visibility: hidden;
-    position: absolute;
-    right: 0;
 }
 
 .todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
     visibility: visible;
 }
 
-/* NEW: Empty state text styling */
 .empty-state-text {
     font-style: italic;
     font-size: 0.9rem;
@@ -305,7 +272,6 @@
     margin-top: 15px;
 }
 
-/* New rule for the 'limit reached' text */
 .limit-reached-message {
     font-size: 0.9rem;
     text-align: center;
@@ -327,13 +293,9 @@
     color: #36454F;
     font-weight: 500;
     cursor: pointer;
-    transition: color 0.2s ease;
 }
 
-.add-item-btn:hover {
-    color: #F0D788;
-    text-shadow: 0 0 5px rgba(240, 215, 136, 0.5);
-}
+.add-item-btn:hover { color: #F0D788; }
 
 .note-delete-btn {
     background: none;
@@ -341,17 +303,10 @@
     color: #e74c3c;
     font-size: 1rem;
     cursor: pointer;
-    transition: color 0.2s ease;
-    align-self: flex-end;
-}
-
-.note-delete-btn:hover {
-    color: #c0392b;
 }
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    /* Reposition the toggle button to the right-center of the screen */
     .sticky-notes-toggle-btn {
         position: fixed;
         top: 50%;
@@ -360,12 +315,11 @@
         transform: translateY(-50%);
     }
 
-    /* Adjust the toggle button active state for the new position */
     .sticky-notes-toggle-btn.active {
         transform: translateY(-50%) rotate(45deg);
     }
     
-    /* Modify the panel to be a full-screen overlay */
+    /* 🚀 FIX: Full Screen Overlay for Mobile */
     .sticky-notes-panel {
         position: fixed;
         top: 0;
@@ -375,117 +329,65 @@
         width: 100vw;
         height: 100vh;
         border-radius: 0;
-        background: rgba(26, 26, 26, 0.95);
+        background: rgba(26, 26, 26, 0.98);
         transform: scale(0.95) translateY(0);
+        
+        /* Ensure proper flex behavior */
+        display: flex;
+        flex-direction: column;
     }
     
-    /* Make the notes list scrollable on small screens */
+    /* 🚀 FIX: Scrollable Notes List */
     .notes-list {
-        display: block;
-        padding: 10px;
-        padding-bottom: 80px;
+        display: block; /* Stack notes vertically */
+        padding: 15px;
+        /* Critical: Add bottom padding so FAB doesn't cover last item */
+        padding-bottom: 100px; 
+        flex-grow: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
-    /* Remove padding and margins for a cleaner mobile layout */
+    .note-item {
+        margin-bottom: 20px;
+    }
+
     .sticky-notes-component-container {
         width: 100%;
         left: 0;
         right: 0;
-        justify-content: flex-end; /* Align to the right side on mobile */
-    }
-
-    .sticky-notes-panel {
-        width: 100%;
-        left: 0;
     }
 }
 
-/* --- NEW: Conflict Modal Styles --- */
+/* --- Conflict Modal Styles --- */
 .conflict-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(26, 26, 26, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; opacity: 1; transition: opacity 0.3s;
 }
-
-.conflict-modal-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
+.conflict-modal-overlay.hidden { opacity: 0; pointer-events: none; }
 
 .conflict-modal {
     background: #1a1a1a;
     border: 1px solid #4a4a4a;
     border-radius: 12px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-    padding: 30px;
-    text-align: center;
-    max-width: 450px;
-    width: 90%;
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.conflict-modal-overlay:not(.hidden) .conflict-modal {
-    transform: scale(1);
+    padding: 30px; text-align: center;
+    max-width: 450px; width: 90%;
 }
 
 .modal-header h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #F0D788;
-    border-bottom: 2px solid #F0D788;
-    padding-bottom: 10px;
+    margin: 0; font-size: 1.5rem; color: #F0D788;
+    border-bottom: 2px solid #F0D788; padding-bottom: 10px;
 }
-
-.modal-body p {
-    color: #f7f7f7;
-    font-size: 1rem;
-    margin: 20px 0;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
+.modal-body p { color: #f7f7f7; font-size: 1rem; margin: 20px 0; }
+.modal-footer { display: flex; justify-content: center; gap: 15px; }
 
 .modal-btn {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    padding: 12px 25px; border: none; border-radius: 8px;
+    font-weight: 500; cursor: pointer;
 }
-
-.modal-btn:hover {
-    transform: translateY(-2px);
-}
-
-.primary-btn {
-    background-color: #F0D788;
-    color: #1a1a1a;
-}
-
-.primary-btn:hover {
-    background-color: #FFD480;
-}
-
-.secondary-btn {
-    background-color: #3a3a3a;
-    color: #f7f7f7;
-    border: 1px solid #4a4a4a;
-}
-
-.secondary-btn:hover {
-    background-color: #4a4a4a;
-}
+.primary-btn { background-color: #F0D788; color: #1a1a1a; }
+.secondary-btn { background-color: #3a3a3a; color: #f7f7f7; border: 1px solid #4a4a4a; }
