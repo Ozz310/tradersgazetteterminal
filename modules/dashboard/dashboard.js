@@ -12,8 +12,7 @@ window.tg_dashboard = window.tg_dashboard || {};
         'LON': 'Europe/London',
         'TYO': 'Asia/Tokyo',
         'SYD': 'Australia/Sydney',
-        'FRA': 'Europe/Berlin', // Using Berlin for Frankfurt session
-        // 'LOCAL' will be added dynamically
+        'FRA': 'Europe/Berlin', 
     };
     
     // Default to local if no timezone is selected
@@ -21,13 +20,12 @@ window.tg_dashboard = window.tg_dashboard || {};
     let activeTimeZone = localTimezone; 
 
     // Define Market Trading Hours (Local Time 0-23)
-    // Focused on the most active trading hours (e.g., 8am to 5pm local time)
     const MARKET_HOURS = {
-        'Australia/Sydney': { open: 7, close: 16 }, // 7am - 4pm Sydney time
-        'Asia/Tokyo': { open: 9, close: 18 },      // 9am - 6pm Tokyo time
-        'Europe/Berlin': { open: 8, close: 17 },   // 8am - 5pm Frankfurt time
-        'Europe/London': { open: 8, close: 17 },   // 8am - 5pm London time
-        'America/New_York': { open: 8, close: 17 } // 8am - 5pm NY time
+        'Australia/Sydney': { open: 7, close: 16 }, 
+        'Asia/Tokyo': { open: 9, close: 18 },      
+        'Europe/Berlin': { open: 8, close: 17 },   
+        'Europe/London': { open: 8, close: 17 },   
+        'America/New_York': { open: 8, close: 17 } 
     };
 
     // 💡 CRITICAL FIX: The placeholder MUST be replaced with your actual Google Apps Script URL.
@@ -66,7 +64,7 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
 
         try {
-            briefContainer.innerHTML = '<div class="eab-loading">Fetching Trader\'s Gazette Market Brief...</div>';
+            briefContainer.innerHTML = '<div class="eab-loading">Loading Trader\'s Gazette Market Brief...</div>';
             
             const response = await fetch(GAS_MARKET_API_URL);
             if (!response.ok) {
@@ -148,7 +146,6 @@ window.tg_dashboard = window.tg_dashboard || {};
     // ---------------------------------------------
 
     function setupLiveClock() {
-        // Initialize clock with the initially selected timezone (which is local)
         updateClock(activeTimeZone);
         updateSessionIndicator(); 
         
@@ -163,17 +160,13 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         buttons.forEach(button => {
             const tzKey = button.dataset.timezone;
-            // Determine the full, canonical timezone identifier
             const timezone = MARKET_TIMEZONES[tzKey] || localTimezone; 
-
-            // Store the full timezone identifier on the button for use in updateClock
             button.dataset.fullTimezone = timezone; 
             
             button.addEventListener('click', () => {
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                // Set the global activeTimeZone variable to the full identifier
                 const newTimezone = button.dataset.fullTimezone; 
                 updateClock(newTimezone);
             });
@@ -181,9 +174,16 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         // Initialize LOCAL button to active by default
         const localButton = document.querySelector('.tz-button[data-timezone="LOCAL"]');
-        if (localButton) {
+        if (localButton) { // Corrected selector logic
             localButton.classList.add('active');
             localButton.dataset.fullTimezone = localTimezone; 
+        } else {
+             // Fallback for empty data-timezone
+             const emptyTzButton = document.querySelector('.tz-button[data-timezone=""]');
+             if(emptyTzButton) {
+                 emptyTzButton.classList.add('active');
+                 emptyTzButton.dataset.fullTimezone = localTimezone;
+             }
         }
     }
 
@@ -198,7 +198,6 @@ window.tg_dashboard = window.tg_dashboard || {};
         const digitalDate = document.getElementById('digital-date');
 
         if (!hourHand || !minuteHand || !digitalTime || !digitalDate) {
-            console.log('Clock elements not found. Cleaning up dashboard timer.');
             cleanupDashboard();
             return;
         }
@@ -242,43 +241,33 @@ window.tg_dashboard = window.tg_dashboard || {};
         
         const now = new Date();
 
-        // Helper: Get current hour (0-23) and day (0=Sun, 6=Sat) in a specific timezone
+        // Helper: Get hour (0-23) and day (0-6) in target zone reliably
         const getHourAndDayInZone = (zone) => {
-            const parts = new Intl.DateTimeFormat('en-US', { 
-                timeZone: zone, 
-                hour: 'numeric', 
-                hour12: false,
-                weekday: 'numeric' // 1=Mon, 7=Sun
-            }).formatToParts(now);
-            
-            const hour = parseInt(parts.find(p => p.type === 'hour').value);
-            const day = parseInt(parts.find(p => p.type === 'weekday').value); 
-            
-            // Convert Intl weekday (1-7) to Date's day format (0=Sun, 6=Sat)
-            const jsDay = day === 7 ? 0 : day; 
-            
-            return { hour, jsDay };
+            try {
+                const dateString = now.toLocaleString('en-US', { timeZone: zone });
+                const dateInZone = new Date(dateString);
+                return {
+                    hour: dateInZone.getHours(),
+                    jsDay: dateInZone.getDay() // 0=Sun, 6=Sat
+                };
+            } catch (e) {
+                console.error('Timezone Error:', e);
+                return { hour: 0, jsDay: 0 };
+            }
         };
 
-
-        // Reset
         clockCard.classList.remove('session-sydney', 'session-tokyo', 'session-london', 'session-frankfurt', 'session-ny');
         let activeSessions = [];
 
-        // Check Logic
-        
         const checkMarket = (tzKey, classKey) => {
             const zone = MARKET_TIMEZONES[tzKey];
             const { hour, jsDay } = getHourAndDayInZone(zone);
             const marketData = MARKET_HOURS[zone];
 
             if (!marketData) return false;
-            
             const { open, close } = marketData;
             
-            // FX Markets are open Mon-Fri (jsDay 1-5).
-            // Note: The market technically opens late Sunday evening (jsDay 0), 
-            // but for major session activity, we focus on M-F.
+            // Check Mon-Fri (1-5) between open and close hours
             if (jsDay >= 1 && jsDay <= 5 && hour >= open && hour < close) {
                 clockCard.classList.add(`session-${classKey}`);
                 return true;
@@ -286,39 +275,22 @@ window.tg_dashboard = window.tg_dashboard || {};
             return false;
         };
 
-        const isSydneyOpen = checkMarket('SYD', 'sydney');
-        const isTokyoOpen = checkMarket('TYO', 'tokyo');
-        const isFrankfurtOpen = checkMarket('FRA', 'frankfurt');
-        const isLondonOpen = checkMarket('LON', 'london');
-        const isNyOpen = checkMarket('NY', 'ny');
+        if (checkMarket('SYD', 'sydney')) activeSessions.push('Sydney');
+        if (checkMarket('TYO', 'tokyo')) activeSessions.push('Tokyo');
+        if (checkMarket('FRA', 'frankfurt')) activeSessions.push('Frankfurt');
+        if (checkMarket('LON', 'london')) activeSessions.push('London');
+        if (checkMarket('NY', 'ny')) activeSessions.push('New York');
 
-        if (isSydneyOpen) activeSessions.push('Sydney');
-        if (isTokyoOpen) activeSessions.push('Tokyo');
-        if (isFrankfurtOpen) activeSessions.push('Frankfurt');
-        if (isLondonOpen) activeSessions.push('London');
-        if (isNyOpen) activeSessions.push('New York');
-
-        // Display Logic with Overlaps
-        if (isNyOpen && isLondonOpen) {
+        if (activeSessions.includes('New York') && activeSessions.includes('London')) {
             indicator.textContent = '⚡ NY & London Overlap - High Liquidity';
             clockCard.classList.add('session-ny'); 
-        } else if (isLondonOpen && isFrankfurtOpen) {
-            indicator.textContent = 'London & Frankfurt Overlap';
-        } else if (isTokyoOpen && isLondonOpen) {
-            indicator.textContent = 'Tokyo & London Overlap';
-        } else if (isSydneyOpen && isTokyoOpen) {
-            indicator.textContent = 'Sydney & Tokyo Overlap';
         } else if (activeSessions.length > 0) {
             indicator.textContent = `${activeSessions.join(' & ')} Session Active`;
         } else {
-            // Check for weekend closure explicitly
             const { jsDay } = getHourAndDayInZone(localTimezone);
-            if (jsDay === 6) { // Saturday
+            if (jsDay === 6 || jsDay === 0) {
                  indicator.textContent = 'Weekend Closure';
-            } else if (jsDay === 0 && getHourAndDayInZone('Australia/Sydney').hour < 7) { // Sunday before Sydney open
-                 indicator.textContent = 'Weekend Closure';
-            }
-             else {
+            } else {
                  indicator.textContent = 'Off-Peak Trading Hours';
             }
         }
