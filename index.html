@@ -13,7 +13,7 @@
     <style>
         /* Fallback background if main.css is slow to load */
         body.fouc-hidden {
-            background-color: #1a1a1a !important; 
+            background-color: #0F1115 !important; /* Obsidian Black */
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
@@ -25,7 +25,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #1a1a1a; 
+            background-color: #0F1115; /* Obsidian Black */
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -58,93 +58,84 @@
     </div>
     
     <div id="main-app-container" class="terminal-container hidden">
+        
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="logo-link">
-                    <img src="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" alt="The Traders Gazette Logo" class="sidebar-logo" style="width: 65px; height: 65px; object-fit: cover; border-radius: 50%;">
+                    <img src="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" alt="The Traders Gazette Logo" class="sidebar-logo">
                 </a>
             </div>
+            
             <nav class="sidebar-nav">
                 <ul>
                     <a href="#" class="nav-item active" data-module="dashboard">
                         <i class="fas fa-tachometer-alt nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-item" data-module="trading-ebooks">
-                        <i class="fas fa-book-reader nav-icon"></i>
-                        <span class="nav-label">Trading E-Books</span>
-                    </a>
-                    <a href="#" class="nav-item" data-module="analysis-hub">
-                        <i class="fas fa-chart-line nav-icon"></i>
-                        <span class="nav-label">Analysis Hub</span>
-                    </a>
-                    <a href="#" class="nav-item" data-module="risk-management-hub">
-                        <i class="fas fa-balance-scale nav-icon"></i>
-                        <span class="nav-label">Risk Management Hub</span>
+                        <span class="nav-label">DASHBOARD</span>
                     </a>
                     <a href="#" class="nav-item" data-module="news-aggregator">
                         <i class="fas fa-newspaper nav-icon"></i>
-                        <span class="nav-label">News Room</span>
+                        <span class="nav-label">NEWS ROOM</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="analysis-hub">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-label">ANALYSIS HUB</span>
                     </a>
                     <a href="#" class="nav-item" data-module="trading-journal">
                         <i class="fas fa-book nav-icon"></i>
-                        <span class="nav-label">Trading Journal</span>
+                        <span class="nav-label">JOURNAL</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="trading-ebooks">
+                        <i class="fas fa-book-reader nav-icon"></i>
+                        <span class="nav-label">LIBRARY</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="risk-management-hub">
+                        <i class="fas fa-balance-scale nav-icon"></i>
+                        <span class="nav-label">RISK MGMT</span>
                     </a>
                     <a href="#" class="nav-item" data-module="cfd-brokers">
                         <i class="fas fa-handshake nav-icon"></i>
-                        <span class="nav-label">CFD Brokers</span>
+                        <span class="nav-label">BROKERS</span>
                     </a>
                     <a href="#" class="nav-item" data-module="contact-us">
                         <i class="fas fa-envelope nav-icon"></i>
-                        <span class="nav-label">Contact Us</span>
+                        <span class="nav-label">CONTACT</span>
                     </a>
-                    <a href="#" class="nav-item" data-module="logout">
+                    
+                    <li style="flex-grow: 1;"></li>
+
+                    <a href="#" class="nav-item logout-item" data-module="logout">
                         <i class="fas fa-sign-out-alt nav-icon"></i>
-                        <span class="nav-label">Log Out</span>
+                        <span class="nav-label">LOG OUT</span>
                     </a>
                 </ul>
             </nav>
         </aside>
+
         <main class="content-wrapper">
             <div id="module-container" class="module-container module-loader-hidden">
-            </div>
+                </div>
+            
             <nav class="bottom-nav">
                 <div class="bottom-nav-container">
                     <a href="#" class="bottom-nav-item active" data-module="dashboard">
                         <i class="fas fa-tachometer-alt"></i>
-                        <span class="bottom-nav-label">Dashboard</span>
-                    </a>
-                    <a href="#" class="bottom-nav-item" data-module="trading-ebooks">
-                        <i class="fas fa-book-reader"></i>
-                        <span class="bottom-nav-label">E-Books</span>
-                    </a>
-                    <a href="#" class="bottom-nav-item" data-module="analysis-hub">
-                        <i class="fas fa-chart-line"></i>
-                        <span class="bottom-nav-label">Analysis</span>
-                    </a>
-                    <a href="#" class="bottom-nav-item" data-module="risk-management-hub">
-                        <i class="fas fa-balance-scale"></i>
-                        <span class="bottom-nav-label">Risk Mgmt</span>
+                        <span class="bottom-nav-label">Dash</span>
                     </a>
                     <a href="#" class="bottom-nav-item" data-module="news-aggregator">
                         <i class="fas fa-newspaper"></i>
-                        <span class="bottom-nav-label">News Room</span>
+                        <span class="bottom-nav-label">News</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="analysis-hub">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="bottom-nav-label">Chart</span>
                     </a>
                     <a href="#" class="bottom-nav-item" data-module="trading-journal">
                         <i class="fas fa-book"></i>
-                        <span class="bottom-nav-label">Journal</span>
-                    </a>
-                    <a href="#" class="bottom-nav-item" data-module="cfd-brokers">
-                        <i class="fas fa-handshake"></i>
-                        <span class="bottom-nav-label">Brokers</span>
-                    </a>
-                    <a href="#" class="bottom-nav-item" data-module="contact-us">
-                        <i class="fas fa-envelope"></i>
-                        <span class="bottom-nav-label">Contact</span>
+                        <span class="bottom-nav-label">Log</span>
                     </a>
                     <a href="#" class="bottom-nav-item" data-module="logout">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span class="bottom-nav-label">Log Out</span>
+                        <span class="bottom-nav-label">Exit</span>
                     </a>
                 </div>
             </nav>
@@ -198,6 +189,6 @@
 
     <script src="/assets/js/app.js?v=1"></script> 
     <script src="/assets/js/sticky-notes.js"></script>
-    <script src="/modules/auth/auth.js"></script>
+    <script type="module" src="/modules/auth/auth.js"></script>
 </body>
 </html>
