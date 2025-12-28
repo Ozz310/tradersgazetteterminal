@@ -1,17 +1,19 @@
 /* /modules/dashboard/style.css */
 
-:root {
-    --content-page-bg: #2a2a2a;
-    --black-tone-3: #1c1c1c;
-    --gold-accent: #ffd700;
-    --white-text-color: #f0f0f0;
-    --light-grey-placeholder: #222222;
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD MODULE STYLES (OBSIDIAN THEME)
+|--------------------------------------------------------------------------
+*/
 
-    /* Session Text Colors */
+:root {
+    /* 🛠️ REMOVED HARDCODED GREYS - INHERIT FROM MAIN.CSS */
+    
+    /* Session Text Colors (Preserved functionality) */
     --sydney-color: #00bcd4; 
     --tokyo-color: #e91e63; 
     --london-color: #4caf50; 
-    --ny-color: #ff5722;    
+    --ny-color: #ff5722;     
     --frankfurt-color: #8e44ad; 
     
     /* Analyst Bias Colors */
@@ -26,8 +28,9 @@
     position: relative; 
     width: 100%; 
     min-height: auto; 
-    background-color: var(--content-page-bg); 
-    color: var(--white-text-color);
+    /* 🛠️ FIX: Use Global Obsidian Background */
+    background-color: transparent !important; 
+    color: var(--text-color);
     font-family: 'Segoe UI', 'Roboto', sans-serif;
     overflow-x: hidden;
     margin-top: -40px; 
@@ -41,6 +44,8 @@
     background-repeat: no-repeat;
     background-position: center center;  
     margin: 0 0 40px 0; 
+    /* Optional: Add a subtle overlay to blend photo with obsidian bg */
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
 /* --- WIDGETS GRID LAYOUT --- */
@@ -55,8 +60,9 @@
 }
 
 .widget-card {
-    background-color: var(--black-tone-3); 
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* 🛠️ FIX: Use Global Card Variables (Deep Neutral Black) */
+    background-color: var(--card-bg) !important; 
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 2.5rem 2rem;  
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -76,7 +82,7 @@
 }
 
 .elite-alpha-brief:hover {
-    box-shadow: 0 0 5px var(--gold-accent), 0 10px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 5px var(--gold-color), 0 10px 20px rgba(0, 0, 0, 0.4);
     transform: translateY(-2px);
 }
 
@@ -84,7 +90,9 @@
     width: 100%;
     text-align: center;
     padding: 40px 20px; 
-    background-color: var(--light-grey-placeholder);
+    /* 🛠️ FIX: Darker Loading State */
+    background-color: rgba(255,255,255,0.03);
+    border: 1px dashed var(--border-color);
     border-radius: 8px;
     margin: 0; 
     font-size: 1.1rem;
@@ -105,8 +113,9 @@
 }
 
 .eab-error {
-    background-color: #381c1c; 
+    background-color: rgba(244, 67, 54, 0.1); 
     color: var(--bias-bearish);
+    border-color: var(--bias-bearish);
 }
 
 .eab-header {
@@ -115,7 +124,7 @@
     align-items: flex-start;
     position: relative;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    border-bottom: 1px solid var(--border-color);
     width: 100%; 
     flex-shrink: 0; 
 }
@@ -128,31 +137,31 @@
     width: 100%;
 }
 
-.eab-date { font-size: 0.85rem; opacity: 0.6; letter-spacing: 0.5px; margin-right: 15px; }
+.eab-date { font-size: 0.85rem; opacity: 0.6; letter-spacing: 0.5px; margin-right: 15px; color: var(--secondary-text-color); }
 
 .eab-bias {
     font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 4px;
     text-transform: uppercase; letter-spacing: 1px;
-    color: var(--black-tone-3) !important; 
+    color: #000 !important; 
     background-color: transparent !important; 
-    background-image: linear-gradient(145deg, #F0D788, #DDAA33) !important;
+    background-image: var(--gold-gradient) !important;
     border: none !important;
 }
 
 .eab-headline {
-    font-size: 1.25rem; font-weight: 600; color: var(--white-text-color);
+    font-size: 1.25rem; font-weight: 600; color: var(--text-color);
     line-height: 1.4; margin: 0; animation: fadeInSlide 0.5s ease-out; 
 }
 
 .eab-toggle-btn {
     position: absolute; top: 5px; right: 0; background: transparent; border: none;
-    color: var(--gold-accent); cursor: pointer; font-size: 0.9rem; padding: 0;
+    color: var(--gold-color); cursor: pointer; font-size: 0.9rem; padding: 0;
     display: flex; align-items: center;
 }
-.eab-toggle-btn:focus { outline: none; text-shadow: 0 0 5px var(--gold-accent); }
+.eab-toggle-btn:focus { outline: none; text-shadow: 0 0 5px var(--gold-color); }
 .eab-toggle-btn .read-text {
     font-size: 0.75rem; margin-right: 5px; text-transform: uppercase;
-    font-weight: 500; color: var(--white-text-color); opacity: 0.7;
+    font-weight: 500; color: var(--text-color); opacity: 0.7;
 }
 .toggle-icon { transition: transform 0.3s ease; }
 
@@ -163,14 +172,14 @@
 .eab-content-wrapper.is-expanded { max-height: 70vh; padding-top: 1.5rem; }
 
 .eab-content-wrapper::-webkit-scrollbar { width: 6px; }
-.eab-content-wrapper::-webkit-scrollbar-track { background: var(--black-tone-3); }
+.eab-content-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
 .eab-content-wrapper::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 215, 0, 0.4); 
-    border-radius: 20px; border: 1px solid var(--black-tone-3); 
+    background-color: var(--gold-color); 
+    border-radius: 20px; border: 1px solid #000; 
 }
 
 .eab-content-inner {
-    font-size: 0.95rem; line-height: 1.7; color: rgba(255, 255, 255, 0.8); white-space: pre-line; 
+    font-size: 0.95rem; line-height: 1.7; color: var(--secondary-text-color); white-space: pre-line; 
 }
 .eab-content-inner p { margin-bottom: 1.5rem; }
 .eab-content-inner br { display: block; content: ""; line-height: 1.5; }
@@ -192,27 +201,27 @@
 .tick-marks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 .tick {
     position: absolute; top: 0; left: 50%; width: 2px; height: 8px; 
-    background-color: var(--white-text-color); transform-origin: 0 125px; 
+    background-color: var(--text-color); transform-origin: 0 125px; 
 }
-.tick.hour { height: 15px; background-color: var(--gold-accent); }
+.tick.hour { height: 15px; background-color: var(--gold-color); }
 .analog-hand {
     position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center;
     transition: transform 0.05s linear; border-radius: 2px; z-index: 2;
 }
-.hour-hand { width: 4px; height: 60px; background-color: var(--white-text-color); }
-.minute-hand { width: 3px; height: 80px; background-color: var(--white-text-color); }
+.hour-hand { width: 4px; height: 60px; background-color: var(--text-color); }
+.minute-hand { width: 3px; height: 80px; background-color: var(--text-color); }
 .analog-center {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 12px; height: 12px; border-radius: 50%; background-color: var(--gold-accent);
-    border: 2px solid var(--black-tone-3); z-index: 3;
+    width: 12px; height: 12px; border-radius: 50%; background-color: var(--gold-color);
+    border: 2px solid #000; z-index: 3;
 }
 .digital-display {
-    text-align: center; margin-top: 3rem; color: var(--white-text-color);
+    text-align: center; margin-top: 3rem; color: var(--text-color);
     letter-spacing: 2px; font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 #digital-time {
-    font-size: 3rem; font-weight: 300; color: var(--gold-accent); 
-    display: block; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);  
+    font-size: 3rem; font-weight: 300; color: var(--gold-color); 
+    display: block; text-shadow: 0 0 5px rgba(221, 170, 51, 0.3);  
 }
 #digital-date { font-size: 1rem; font-weight: 200; opacity: 0.8; }
 
@@ -221,19 +230,19 @@
     gap: 0.5rem; margin-top: 1.5rem; max-width: 100%;
 }
 .tz-button {
-    background-color: transparent; border: 1px solid var(--gold-accent); 
-    color: var(--gold-accent); font-size: 0.7rem; font-weight: bold;
+    background-color: transparent; border: 1px solid var(--gold-color); 
+    color: var(--gold-color); font-size: 0.7rem; font-weight: bold;
     padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;
     transition: all 0.2s ease; text-transform: uppercase; box-shadow: none; 
 }
 .tz-button:hover {
-    background-color: #383838; color: var(--gold-accent);
+    background-color: rgba(221, 170, 51, 0.1); color: var(--gold-color);
     transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 .tz-button.active {
     background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;  
-    color: var(--black-tone-3) !important; border: none !important; 
+    background: var(--gold-gradient) !important;  
+    color: #000 !important; border: none !important; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
     font-weight: 700 !important; transform: none;
 }
@@ -248,7 +257,6 @@
 
 @media (min-width: 1024px) {
     .dashboard-widgets-grid {
-        /* 🔑 FIX: Clock 350px fixed, Brief takes the rest (1fr) */
         grid-template-columns: 350px 1fr;
         grid-template-rows: 580px; 
         align-items: start; 
@@ -257,14 +265,12 @@
         margin: 0 auto; 
     }
 
-    /* Clock Card - Keep width constrained */
     #clock-card {
         max-width: 100%; 
         height: 100%; 
         margin-bottom: 0;
     }
 
-    /* 🔑 FIX: Target the Brief Card by ID to override max-width constraint */
     #elite-alpha-brief {
         max-width: none !important; /* Expand to fill 1fr */
         width: 100% !important;
@@ -272,10 +278,8 @@
         margin: 0;
     }
 
-    /* FIX: Hide "Read More" on Desktop */
     .eab-toggle-btn { display: none !important; }
 
-    /* FIX: Content Always Open on Desktop */
     .eab-content-wrapper {
         max-height: unset !important; 
         opacity: 1 !important;
