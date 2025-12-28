@@ -1,5 +1,6 @@
-/* --- CRITICAL: FOUC FIX STYLES (Module Loading) --- */
+/* assets/css/main.css - FINAL INTEGRATED VERSION (Institutional Vault + All Modules) */
 
+/* --- CRITICAL: FOUC FIX STYLES (Module Loading) --- */
 /* Initially hide all module content to prevent flashing */
 .module-loader-hidden {
     opacity: 0 !important;
@@ -7,7 +8,6 @@
     /* Optional: Hide scrollbar during load */
     overflow-y: hidden !important; 
 }
-
 /* --- END FOUC FIX --- */
 
 /*
@@ -19,46 +19,47 @@
 
 /* Core Variables and Resets */
 :root {
-    --bg-color: #1a1a1a;
-    --sidebar-color: #222;
-    --content-bg-color: #2a2a2a;
+    --bg-color: #0F1115; /* Deeper institutional black */
+    --sidebar-color: #161B22; /* Institutional gray-black */
+    --content-bg-color: #0F1115;
     
     /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 */
     --text-color: #f1f1f1; /* Crisp White/Light Grey text (Primary Text) */
-    --secondary-text-color: #c8c8c8; /* Lighter grey for data labels / descriptions */
-    --gold-color: #D4AF37; /* Radiant Gold Accent (Interactive/Borders) */
+    --secondary-text-color: #8B949E; /* Institutional Grey for data labels */
+    
+    /* THE INSTITUTIONAL GOLD GRADIENT */
+    --gold-gradient: linear-gradient(145deg, #F0D788, #DDAA33);
+    --gold-color: #DDAA33; 
     --header-gold-color: #C0A04C; /* Deeper, richer gold for H1/H2 titles */
     --dark-color-for-text: #0D0D0D; /* Dominant Black/Dark Tones (for text on gold) */
     --hover-gold-color: #e0c265; /* Lighter gold for hover/active states */
+    --hover-bg: rgba(240, 215, 136, 0.05);
     
     --accent-color: #4a4a4a;
-    --nav-active-bg: #3e382b;
-    --border-color: #333;
+    --nav-active-bg: transparent; /* Reset to allow gradient capsule */
+    --border-color: rgba(255,255,255,0.05);
+    
     --font-primary: 'Roboto', sans-serif;
     --font-secondary: 'Merriweather', serif;
-    --sidebar-width: 220px;
-    --gold-shadow: 0 0 5px rgba(212, 175, 55, 0.6); /* Gold shadow using the correct color */
+    --sidebar-width: 240px; /* Wider for Vault look */
+    
+    --gold-shadow: 0 0 15px rgba(221, 170, 51, 0.15);
 }
 
 /* 🛠️ CRITICAL FIX: REMOVE GLOBAL OVERFLOW-X HIDING - THIS PREVENTS THE WHOLE APP AND SIDEBAR LOGO FROM BREAKING */
 html, body {
     margin: 0; 
     padding: 0; 
-    /* 🔑 FIX: Change 100vh !important back to 100% (or omit) and only control X-overflow. */
     height: 100%; /* Use 100% so it can be flexible within the viewport */
     overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally (was 'hidden') */
     overflow-y: hidden; /* Keep content from scrolling the whole page */
+    background-color: var(--bg-color);
+    font-family: var(--font-primary);
+    color: var(--text-color);
 }
 
 /* Global Body Reset */
 body {
-    font-family: var(--font-primary);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0; 
-    padding: 0;
-    overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally (was 'hidden') */
-    height: 100%; /* Standard reset */
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -85,33 +86,34 @@ body {
     flex: 1;
 }
 
-/* Sidebar Styling - Top 1% UI/UX Refinements */
+/* --------------------------------------------------
+   SIDEBAR STYLING: "THE INSTITUTIONAL VAULT"
+   --------------------------------------------------
+*/
 .sidebar {
     width: var(--sidebar-width);
     background-color: var(--sidebar-color);
     display: flex;
     flex-direction: column;
-    padding: 20px 0;
+    padding: 0; /* Remove padding to let blocks touch edges */
     border-right: 1px solid var(--border-color);
     flex-shrink: 0;
     height: 100%; /* Important for internal flex layout */
-    transition: transform 0.3s ease-in-out;
+    z-index: 100;
 }
 
 .sidebar-header {
     text-align: center;
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    /* Subtle Gold Divider for Clean Separation */
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+    padding: 30px 0;
+    background: linear-gradient(to bottom, #161B22, #0F1115);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-logo {
-    width: 65px;
-    height: 65px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    border: 3px solid var(--gold-color);
+    border: 2px solid var(--gold-color);
     box-shadow: var(--gold-shadow);
     object-fit: cover;
     transition: all 0.4s ease;
@@ -119,13 +121,14 @@ body {
 
 .sidebar-logo:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px var(--gold-color);
+    box-shadow: 0 0 20px rgba(221, 170, 51, 0.4);
 }
 
 /* 🔑 Sidebar Navigation - The Fix for Overflow (All content scrolls) */
 .sidebar-nav {
     flex-grow: 1;
     overflow-y: auto;
+    padding-top: 10px;
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -140,66 +143,71 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
+    gap: 4px; /* Slight gap between blocks */
 }
 
-/* Applies to ALL <a> links inside the nav (Dashboard to Log Out) */
+/* THE "VAULT" NAVIGATION ITEM */
 .nav-item {
+    position: relative;
     display: flex;
     align-items: center;
-    padding: 15px 25px;
-    color: var(--text-color);
+    padding: 12px 20px;
+    color: var(--secondary-text-color);
     text-decoration: none;
-    font-weight: 400;
-    position: relative;
+    font-weight: 500;
+    font-size: 0.9rem;
     transition: all 0.2s ease;
-    /* SPATIAL FIX: Increased bottom margin for better vertical separation */
-    margin-bottom: 6px;
+    border-left: 3px solid transparent; /* The "Bloomberg" Indicator Slot */
+    margin-bottom: 2px;
 }
 
+/* The Hover State: "Ghost Capsule" */
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--gold-color);
+    color: #fff;
+    background-color: var(--hover-bg);
     transform: none;
 }
 
-.nav-item.active {
-    background-color: var(--nav-active-bg);
-    color: var(--gold-color);
-    font-weight: 500;
-    border-left: none;
-    text-shadow: 0 0 3px rgba(212, 175, 55, 0.5); /* Uses correct gold color */
+.nav-item .nav-icon {
+    width: 24px;
+    text-align: center;
+    margin-right: 15px;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+    color: var(--secondary-text-color);
 }
 
-/* Active state indicator */
+/* ACTIVE STATE: "GOLD INLAY" */
+.nav-item.active {
+    color: #000000 !important; /* Etched Black Text */
+    font-weight: 700;
+    background: transparent; /* Reset standard background */
+    border-left: 3px solid var(--gold-color); /* 1. Bloomberg Border */
+    text-shadow: none;
+}
+
+/* The "Floating Capsule" Background */
 .nav-item.active::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background-color: var(--gold-color);
-    border-radius: 2px;
-    box-shadow: 1px 0 5px var(--gold-color);
-}
-
-.nav-icon {
-    font-size: 1.6rem;
-    width: 30px;
-    text-align: center;
-    color: var(--text-color);
-    transition: color 0.2s ease;
+    top: 4px;
+    bottom: 4px;
+    left: 12px;
+    right: 12px;
+    background: var(--gold-gradient);
+    border-radius: 8px; /* The Pill Shape */
+    z-index: -1; /* Put it behind text */
+    box-shadow: 0 2px 10px rgba(221, 170, 51, 0.2);
 }
 
 .nav-item.active .nav-icon {
-    color: var(--gold-color);
-    filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.5)); /* Uses correct gold color */
+    color: #000000 !important; /* Black Icon */
+    filter: none;
 }
 
 .nav-label {
-    /* SPATIAL FIX: Reduced margin to pull label closer to icon (tighter visual unit) */
-    margin-left: 8px;
-    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    margin-left: 0; /* Reset previous margin */
 }
 
 /* Main Content Wrapper */
@@ -210,7 +218,6 @@ body {
     background-color: var(--content-bg-color);
     display: flex;
     flex-direction: column;
-    /* This width calculation is for explicit control, flex-grow: 1 also works */
     width: calc(100% - var(--sidebar-width)); 
 }
 
@@ -233,11 +240,9 @@ body {
     margin-top: 0 !important; 
 }
 
-
 .module-container::-webkit-scrollbar {
     display: none;
 }
-
 
 /* Mobile Nav Toggle Button (Removed on desktop) */
 .mobile-nav-toggle {
@@ -256,11 +261,6 @@ body {
     right: 20px;
     z-index: 99;
     /* CRITICAL FIX: Ensure it is initially hidden/controlled by JS */
-    display: none;
-}
-
-/* Mobile nav is only shown on mobile. Hide on desktop. */
-.bottom-nav {
     display: none;
 }
 
@@ -309,7 +309,7 @@ h1, h2 {
     display: inline-block; /* Safest default for primary button */
 
     /* 🔑 FIX: Remove hardcoded color and use the Gold Gradient */
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important;
+    background: var(--gold-gradient) !important;
     
     color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text on gold */
     border: none !important; /* Remove border to rely on gradient/shadow */
@@ -342,7 +342,6 @@ h1, h2 {
 
 /* Secondary Button (Minimalist) */
 .tg-button-secondary {
-    /* Critical: Button Reset applied to this class, not the generic tag */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -370,9 +369,8 @@ h1, h2 {
     color: var(--hover-gold-color);
 }
 
-/* 🆕 TOP 1% MENU/TOGGLE BUTTONS (The Dark/Gold Look) */
+/* 🆕 TOP 1% MENU/TOGGLE BUTTONS */
 .tgg-menu-button {
-    /* Critical: Button Reset applied to this class, not the generic tag */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -382,8 +380,6 @@ h1, h2 {
     cursor: pointer;
     font-family: var(--font-primary);
     box-sizing: border-box;
-    
-    /* FIX: Explicitly set display and width to ensure proper stacking layout */
     display: block; 
     width: 100%; 
 
@@ -392,8 +388,8 @@ h1, h2 {
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
     color: var(--text-color);
     border: 1px solid #555;
-    padding: 12px 20px; /* Adjusted padding slightly for general use */
-    font-size: 0.95rem; /* Adjusted font size for general use */
+    padding: 12px 20px; 
+    font-size: 0.95rem; 
     font-weight: 600;
     border-radius: 8px;
     text-align: center; 
@@ -402,28 +398,23 @@ h1, h2 {
 }
 
 .tgg-menu-button:hover {
-    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); /* Subtle darker hover */
+    background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); 
     color: var(--hover-gold-color);
     border-color: var(--gold-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .tgg-menu-button.active {
-    /* REVERTED: Back to the Solid Gold CTA look for active buttons */
     background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; /* Solid Gold Gradient */
-    
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
-    border: none !important; /* Remove border */
-    
-    /* Premium Shadow Match */
+    background: var(--gold-gradient) !important;
+    color: var(--dark-color-for-text) !important;
+    border: none !important;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-    
     font-weight: 700 !important;
     transform: none;
 }
 
-/* 🆕 TOP 1% PREMIUM TOGGLE SWITCH (For settings, dark mode, etc.) */
+/* 🆕 TOP 1% PREMIUM TOGGLE SWITCH */
 .tgg-switch-container {
     display: inline-flex;
     align-items: center;
@@ -432,7 +423,6 @@ h1, h2 {
 }
 
 .tgg-switch-input {
-    /* Hide the default checkbox input */
     position: absolute;
     opacity: 0;
     width: 0;
@@ -445,7 +435,7 @@ h1, h2 {
     width: 50px;
     height: 28px;
     border-radius: 14px;
-    background-color: var(--accent-color); /* Dark inactive color */
+    background-color: var(--accent-color); 
     transition: background-color 0.4s ease;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3);
 }
@@ -458,7 +448,7 @@ h1, h2 {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background-color: var(--text-color); /* Crisp White knob */
+    background-color: var(--text-color); 
     transition: transform 0.4s ease, background-color 0.4s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
@@ -466,21 +456,16 @@ h1, h2 {
 /* Checked State (GOLD ACTIVE) */
 .tgg-switch-input:checked + .tgg-switch-slider {
     background: var(--gold-color);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); /* Gold glow */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); 
 }
 
 .tgg-switch-input:checked + .tgg-switch-slider::before {
-    /* Move knob to the right */
     transform: translateX(22px); 
-    background-color: var(--dark-color-for-text); /* Dark knob on gold background */
+    background-color: var(--dark-color-for-text); 
 }
-
-/* --- Global Button Aliases (ENFORCEMENT BLOCK) --- */
-/* See .tg-button-primary definition above for the consolidated block */
 
 /* --- Mobile Specific Styles (Max-width 768px) --- */
 @media (max-width: 768px) {
-    /* Mobile Layout Reset */
     .terminal-container {
         display: flex;
         flex-direction: column;
@@ -490,7 +475,6 @@ h1, h2 {
         display: none; /* Hide desktop sidebar */
     }
 
-    /* Content Wrapper for Mobile */
     .content-wrapper {
         width: 100%;
         margin-left: 0;
@@ -500,13 +484,12 @@ h1, h2 {
     .module-container {
         flex-grow: 1;
         overflow-y: auto;
-        /* CRITICAL: Keep mobile container padding at 0 for full-screen content, padding is handled in module CSS */
         padding: 0; 
     }
 
     /* Bottom Navigation Bar */
     .bottom-nav {
-        display: flex;
+        display: flex; /* Show only on mobile */
         position: fixed;
         bottom: 0;
         left: 0;
@@ -518,18 +501,18 @@ h1, h2 {
         z-index: 100;
         align-items: center;
         padding: 0;
+        backdrop-filter: blur(10px);
     }
     
-    /* NEW: Container for horizontal scrolling */
     .bottom-nav-container {
         display: flex;
         flex-wrap: nowrap;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         width: 100%;
+        padding: 0 5px;
     }
     
-    /* Hide scrollbar for a cleaner look */
     .bottom-nav-container::-webkit-scrollbar {
         display: none;
     }
@@ -539,33 +522,43 @@ h1, h2 {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        color: var(--text-color);
+        color: var(--secondary-text-color);
         text-decoration: none;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         font-weight: 500;
-        transition: color 0.2s ease;
-        padding: 5px;
-        min-width: 80px;
+        transition: all 0.3s ease;
+        padding: 8px 12px;
+        min-width: 70px;
         flex-shrink: 0;
         cursor: pointer;
+        border-radius: 12px;
+        margin: 5px 2px;
     }
 
     .bottom-nav-item i {
-        font-size: 1.4rem;
-        margin-bottom: 5px;
+        font-size: 1.2rem;
+        margin-bottom: 4px;
     }
 
+    /* ACTIVE STATE MOBILE - MINI CAPSULE */
     .bottom-nav-item.active {
-        color: var(--gold-color);
-        border-top: 2px solid var(--gold-color);
-        padding-top: 3px;
+        background: var(--gold-gradient);
+        color: #000000 !important;
+        font-weight: 700;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(221, 170, 51, 0.3);
+        border-top: none; /* Override old border style */
+        padding-top: 8px; /* Reset padding */
+    }
+
+    .bottom-nav-item.active i {
+        color: #000000 !important;
     }
 
     .bottom-nav-item:hover {
-        color: var(--gold-color);
+        color: #fff;
     }
     
-    /* FIX: Adjust Sticky Notes position for mobile, above bottom-nav */
     .sticky-notes-component-container {
         bottom: 80px;
         right: 15px;
@@ -575,16 +568,13 @@ h1, h2 {
 
 /*
 |--------------------------------------------------------------------------
-| TRADING JOURNAL MODULE STYLES (Fixed to restore UI)
+| TRADING JOURNAL MODULE STYLES (Preserved)
 |--------------------------------------------------------------------------
-| This section contains styles specific to the Trading Journal component.
 */
 
 /* /modules/trading-journal/style.css */
 /* Main layout */
 .content-body.trading-journal-module {
-    /* CRITICAL FIX: The parent .module-container provides 20px of vertical padding. 
-       We only need to provide horizontal padding here to prevent margin collapse/overlap at the top. */
     padding: 0 20px; 
 }
 
@@ -605,8 +595,8 @@ h1, h2 {
 .tab-button {
     cursor: pointer;
     padding: 10px 15px;
-    background-color: #333; /* Dark background */
-    color: #d4af37; /* Primary gold/yellow color */
+    background-color: #333;
+    color: #d4af37;
     border-radius: 5px;
     transition: background-color 0.2s;
     font-weight: bold;
@@ -614,10 +604,10 @@ h1, h2 {
 
 .tab-button.active {
     background-color: #d4af37;
-    color: #000; /* Black text for active tab */
+    color: #000;
 }
 
-/* General Card Style (for form and CSV modal) */
+/* General Card Style */
 .tgg-card {
     background-color: #252525;
     border: 1px solid #333;
@@ -645,14 +635,13 @@ h1, h2 {
 /* Journal Table Styles (Desktop View) */
 .journal-table-wrapper {
     overflow-x: auto;
-    /* Hidden on mobile by script/media query */
 }
 
 table.trade-journal-table {
     width: 100%;
     border-collapse: collapse;
     color: #f1f1f1;
-    white-space: nowrap; /* Prevent columns from wrapping */
+    white-space: nowrap;
 }
 
 .trade-journal-table th, .trade-journal-table td {
@@ -668,21 +657,13 @@ table.trade-journal-table {
     text-transform: uppercase;
 }
 
-/* Hover effect on table rows */
 .trade-journal-table tbody tr:hover {
-    background-color: #333; /* Slightly darker on hover */
+    background-color: #333;
 }
 
 /* P&L COLORS */
-.pnl-column-profit {
-    color: #1aff70; /* Bright Green */
-    font-weight: bold;
-}
-
-.pnl-column-loss {
-    color: #ff4d4d; /* Bright Red */
-    font-weight: bold;
-}
+.pnl-column-profit { color: #1aff70; font-weight: bold; }
+.pnl-column-loss { color: #ff4d4d; font-weight: bold; }
 
 /* KPI DASHBOARD */
 .kpi-dashboard {
@@ -712,13 +693,8 @@ table.trade-journal-table {
     color: #f1f1f1;
 }
 
-.kpi-card .positive {
-    color: #1aff70; /* Green for profit/good metrics */
-}
-
-.kpi-card .negative {
-    color: #ff4d4d; /* Red for loss/bad metrics */
-}
+.kpi-card .positive { color: #1aff70; }
+.kpi-card .negative { color: #ff4d4d; }
 
 /* Analytics Chart Styles */
 .chart-row {
@@ -733,7 +709,7 @@ table.trade-journal-table {
     border: 1px solid #333;
     border-radius: 8px;
     padding: 20px;
-    height: 400px; /* Standard height for charts */
+    height: 400px;
 }
 
 .chart-card h4 {
@@ -744,14 +720,12 @@ table.trade-journal-table {
 }
 
 .chart-card canvas {
-    /* Ensures canvas fills container and respects height */
     max-height: 100%; 
 }
 
-
-/* --- MOBILE CARD VIEW (Default hidden on desktop) --- */
+/* --- MOBILE CARD VIEW --- */
 .trade-card-list {
-    display: none; /* Default hidden on desktop */
+    display: none;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 15px;
 }
@@ -765,9 +739,7 @@ table.trade-journal-table {
     transition: transform 0.2s;
 }
 
-.trade-card:hover {
-    transform: translateY(-2px);
-}
+.trade-card:hover { transform: translateY(-2px); }
 
 .card-header {
     display: flex;
@@ -778,28 +750,12 @@ table.trade-journal-table {
     border-bottom: 1px solid #333;
 }
 
-.card-symbol {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #f1f1f1;
-}
+.card-symbol { font-size: 1.2em; font-weight: bold; color: #f1f1f1; }
+.card-pnl { font-size: 1.2em; font-weight: bold; }
 
-.card-pnl {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.trade-card.profit {
-    border-left: 5px solid #1aff70; /* Green indicator */
-}
-
-.trade-card.loss {
-    border-left: 5px solid #ff4d4d; /* Red indicator */
-}
-
-.trade-card.breakeven {
-    border-left: 5px solid #d4af37; /* Gold indicator */
-}
+.trade-card.profit { border-left: 5px solid #1aff70; }
+.trade-card.loss { border-left: 5px solid #ff4d4d; }
+.trade-card.breakeven { border-left: 5px solid #d4af37; }
 
 .card-detail {
     display: flex;
@@ -808,15 +764,8 @@ table.trade-journal-table {
     border-bottom: 1px dotted #333;
 }
 
-.card-label {
-    color: #d4af37;
-    font-weight: 500;
-}
-
-.card-value {
-    color: #f1f1f1;
-    text-align: right;
-}
+.card-label { color: #d4af37; font-weight: 500; }
+.card-value { color: #f1f1f1; text-align: right; }
 
 .notes-section {
     flex-direction: column;
@@ -829,12 +778,12 @@ table.trade-journal-table {
     padding: 5px;
     background-color: #333;
     border-radius: 4px;
-    white-space: pre-wrap; /* Respects notes formatting */
+    white-space: pre-wrap;
 }
 
-/* Modal Styling for CSV Upload */
+/* Modal Styling */
 .modal-overlay {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -847,10 +796,10 @@ table.trade-journal-table {
 
 .modal-content {
     background-color: #252525;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #333;
-    width: 80%; /* Could be adjusted */
+    width: 80%;
     max-width: 500px;
     border-radius: 10px;
     position: relative;
@@ -864,12 +813,7 @@ table.trade-journal-table {
     cursor: pointer;
 }
 
-.close-button:hover,
-.close-button:focus {
-    color: #fff;
-    text-decoration: none;
-    cursor: pointer;
-}
+.close-button:hover { color: #fff; }
 
 .modal-content h3 {
     color: #d4af37;
@@ -878,62 +822,22 @@ table.trade-journal-table {
     margin-bottom: 15px;
 }
 
-
-/* --- Media Queries for Responsiveness --- */
+/* --- Media Queries --- */
 @media (max-width: 1200px) {
-    .kpi-dashboard {
-        grid-template-columns: repeat(2, 1fr); /* Collapse to 2 columns */
-    }
+    .kpi-dashboard { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-    /* Main Layout */
-    .content-body.trading-journal-module {
-        padding: 10px; /* Resetting padding for mobile view to ensure content is flush */
-    }
-
-    /* Controls */
-    .controls-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .controls-row > div {
-        flex-grow: 1; 
-    }
-    .export-button {
-        width: 100%;
-    }
-    .analytics-controls .tgg-primary-cta {
-        width: 100%; 
-    }
-
-    /* Analytics Grid Collapse: Single column */
-    .chart-row {
-        flex-direction: column;
-        gap: 20px;
-    }
+    .content-body.trading-journal-module { padding: 10px; }
+    .controls-row { flex-direction: column; gap: 10px; }
+    .controls-row > div { flex-grow: 1; }
+    .export-button { width: 100%; }
+    .analytics-controls .tgg-primary-cta { width: 100%; }
     
-    /* ⭐ AESTHETIC MOBILE UI/UX FIX: CONTROLLED VERTICAL EXPANSION ⭐ */
-    .chart-card {
-        /* REVERTED: Back to original height */
-        height: 350px; 
-        padding: 15px; 
-    }
-    .chart-card h4 {
-        margin-bottom: 10px;
-    }
-    .chart-card canvas {
-        /* FIX: Ensures canvas fills smaller card without overflow */
-        height: calc(100% - 30px) !important; 
-    }
+    .chart-row { flex-direction: column; gap: 20px; }
+    .chart-card { height: 350px; padding: 15px; }
+    .chart-card canvas { height: calc(100% - 30px) !important; }
     
-    /* Table View Hiding: Handled by script, but CSS should confirm */
-    .journal-table-wrapper {
-        display: none;
-    }
-
-    /* Mobile Card View Display: Also handled by script but ensure it can be displayed */
-    .trade-card-list {
-        display: grid; /* Overrides default 'none' for mobile */
-    }
+    .journal-table-wrapper { display: none; }
+    .trade-card-list { display: grid; }
 }
