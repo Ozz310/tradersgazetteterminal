@@ -1,4 +1,4 @@
-// /modules/auth/auth.js
+// /modules/auth/auth.js - FINAL SUBDOMAIN VERSION
 
 (() => {
     // This API URL points to your Cloudflare Worker.
@@ -13,9 +13,11 @@
      */
     const initAuthModule = (container) => {
         moduleContainer = container;
+        // The authBox is usually the wrapper defined in auth.html or index.html
         authBox = document.getElementById('auth-module');
+        
         if (!authBox) {
-            console.error('Auth module container not found.');
+            console.error('Auth module container (#auth-module) not found.');
             return;
         }
 
@@ -33,6 +35,7 @@
         const loginForm = authBox.querySelector('#login-form');
         const signupForm = authBox.querySelector('#signup-form');
         const forgotPasswordForm = authBox.querySelector('#forgot-password-form');
+        
         const signupToggle = authBox.querySelector('#signup-toggle');
         const forgotPasswordLink = authBox.querySelector('#forgot-password-link');
         const backToLoginLink = authBox.querySelector('#back-to-login-link');
@@ -107,11 +110,11 @@
     }
 
     /**
-     * Handles the login form submission and communicates with the backend.
+     * Handles the login form submission.
      */
     async function handleLogin(event) {
         event.preventDefault();
-        displayMessage('');
+        displayMessage('Authenticating...', false);
 
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
@@ -131,7 +134,10 @@
                 displayMessage('Login successful! Redirecting...', false);
                 localStorage.setItem('tg_token', result.token);
                 localStorage.setItem('tg_userId', result.userId);
-                // Trigger the app router to load the dashboard without a page reload
+                
+                // Trigger the app router to load the dashboard
+                // Since we are now on app.thetradersgazette.com, removing the hash 
+                // or setting to #dashboard will work perfectly via your app.js logic.
                 window.location.hash = '#dashboard';
             } else {
                 displayMessage('Login failed: ' + result.message, true);
@@ -143,16 +149,16 @@
     }
 
     /**
-     * Handles the signup form submission and communicates with the backend.
+     * Handles the signup form submission.
      */
     async function handleSignup(event) {
         event.preventDefault();
-        displayMessage('');
+        displayMessage('Creating account...', false);
 
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
-        const name = 'User'; // Placeholder name since your form doesn't have a name field
+        const name = 'User'; 
 
         if (password !== confirmPassword) {
             return displayMessage('Passwords do not match.', true);
@@ -189,7 +195,7 @@
      */
     async function handleForgotPassword(event) {
         event.preventDefault();
-        displayMessage('');
+        displayMessage('Processing request...', false);
 
         const email = document.getElementById('forgot-password-email').value;
         const data = { action: 'forgot-password', email };
@@ -203,12 +209,12 @@
             const result = await response.json();
 
             if (result.status === 'success') {
-                displayMessage('If an account with that email exists, a password reset link has been sent.', false);
+                displayMessage('If an account exists, a reset link has been sent.', false);
             } else {
                 displayMessage(result.message, true);
             }
         } catch (error) {
-            console.error('Network error during forgot password request:', error);
+            console.error('Network error during forgot password:', error);
             displayMessage('An error occurred. Please try again.', true);
         }
     }
