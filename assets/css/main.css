@@ -1,67 +1,62 @@
-/* assets/css/main.css - FINAL INTEGRATED VERSION (Institutional Vault + All Modules) */
+/* assets/css/main.css - FINAL OBSIDIAN THEME & DESKTOP FIXES */
 
-/* --- CRITICAL: FOUC FIX STYLES (Module Loading) --- */
-/* Initially hide all module content to prevent flashing */
+/* --- CRITICAL: FOUC FIX STYLES --- */
 .module-loader-hidden {
     opacity: 0 !important;
     transition: opacity 0.5s ease-in-out;
-    /* Optional: Hide scrollbar during load */
     overflow-y: hidden !important; 
 }
-/* --- END FOUC FIX --- */
 
 /*
 |--------------------------------------------------------------------------
-| GLOBAL APPLICATION STYLES (Consolidated)
+| GLOBAL APPLICATION STYLES
 |--------------------------------------------------------------------------
-| This section contains variables, resets, and core component styling.
 */
 
-/* Core Variables and Resets */
 :root {
-    --bg-color: #0F1115; /* Deeper institutional black */
+    /* 🎨 THEME: PURE OBSIDIAN BLACK & GOLD */
+    --bg-color: #0F1115; /* Main Obsidian Background */
+    --sidebar-color: #050505; /* Deepest Black for Sidebar Contrast */
+    --content-bg-color: #0F1115; /* Matches Main Background */
     
-    /* 🛠️ FIX 1: CHANGED FROM BLUE-GREY (#161B22) TO OBSIDIAN BLACK */
-    --sidebar-color: #050505; 
+    /* Text Colors */
+    --text-color: #f1f1f1; 
+    --secondary-text-color: #8B949E; 
     
-    --content-bg-color: #0F1115;
-    
-    /* 🔑 TRADER'S GAZETTE CORE COLOR ENFORCEMENT 🔑 */
-    --text-color: #f1f1f1; /* Crisp White/Light Grey text (Primary Text) */
-    --secondary-text-color: #8B949E; /* Institutional Grey for data labels */
-    
-    /* THE INSTITUTIONAL GOLD GRADIENT */
+    /* ✨ INSTITUTIONAL GOLD GRADIENT ✨ */
     --gold-gradient: linear-gradient(145deg, #F0D788, #DDAA33);
     --gold-color: #DDAA33; 
-    --header-gold-color: #C0A04C; /* Deeper, richer gold for H1/H2 titles */
-    --dark-color-for-text: #0D0D0D; /* Dominant Black/Dark Tones (for text on gold) */
-    --hover-gold-color: #e0c265; /* Lighter gold for hover/active states */
-    --hover-bg: rgba(240, 215, 136, 0.05);
+    --header-gold-color: #C0A04C; 
+    --dark-color-for-text: #0D0D0D; 
+    --hover-gold-color: #e0c265; 
     
-    --accent-color: #4a4a4a;
-    --nav-active-bg: transparent; /* Reset to allow gradient capsule */
-    --border-color: rgba(255,255,255,0.08); /* Subtle border adjustment */
+    /* Interaction Colors */
+    --hover-bg: rgba(240, 215, 136, 0.05); 
+    --accent-color: #1a1a1a;
+    --nav-active-bg: transparent; 
+    --border-color: rgba(255,255,255,0.08); 
     
+    /* Fonts & Dimensions */
     --font-primary: 'Roboto', sans-serif;
     --font-secondary: 'Merriweather', serif;
-    --sidebar-width: 260px; /* Wider for Vault look */
+    --sidebar-width: 260px; 
     
     --gold-shadow: 0 0 15px rgba(221, 170, 51, 0.15);
 }
 
-/* 🛠️ CRITICAL FIX: REMOVE GLOBAL OVERFLOW-X HIDING */
+/* Global Resets */
 html, body {
     margin: 0; 
     padding: 0; 
-    height: 100%; /* Use 100% so it can be flexible within the viewport */
-    overflow-x: auto; /* 🔑 FIX: Allow horizontal flow naturally */
-    overflow-y: hidden; /* Keep content from scrolling the whole page */
-    background-color: var(--bg-color);
+    height: 100%; 
+    overflow-x: auto; 
+    overflow-y: hidden; 
+    /* 🛠️ FIX 1: Enforce Obsidian Black on Body */
+    background-color: var(--bg-color) !important;
     font-family: var(--font-primary);
     color: var(--text-color);
 }
 
-/* Global Body Reset */
 body {
     width: 100vw;
     display: flex;
@@ -78,19 +73,20 @@ body {
     background-color: var(--bg-color);
 }
 
-/* Main Container for the Terminal */
+/* Main Terminal Layout */
 .terminal-container {
-    /* 🔑 FIX: THIS element should control the full viewport height now */
     height: 100vh; 
     width: 100%;
     margin-top: 0 !important;
     display: flex;
     overflow: hidden;
     flex: 1;
+    /* 🛠️ FIX 2: Enforce Obsidian Black on Container */
+    background-color: var(--bg-color);
 }
 
 /* --------------------------------------------------
-   SIDEBAR STYLING: "THE INSTITUTIONAL VAULT"
+   SIDEBAR STYLING
    --------------------------------------------------
 */
 .sidebar {
@@ -98,17 +94,16 @@ body {
     background-color: var(--sidebar-color);
     display: flex;
     flex-direction: column;
-    padding: 0; /* Remove padding to let blocks touch edges */
+    padding: 0; 
     border-right: 1px solid var(--border-color);
     flex-shrink: 0;
-    height: 100%; /* Important for internal flex layout */
+    height: 100%; 
     z-index: 100;
 }
 
 .sidebar-header {
     text-align: center;
     padding: 30px 0;
-    /* 🛠️ FIX 2: REMOVED BLUE GRADIENT, SET TO SIDEBAR COLOR */
     background: var(--sidebar-color);
     border-bottom: 1px solid var(--border-color);
 }
@@ -128,16 +123,14 @@ body {
     box-shadow: 0 0 20px rgba(221, 170, 51, 0.4);
 }
 
-/* 🔑 Sidebar Navigation - The Fix for Overflow (All content scrolls) */
 .sidebar-nav {
     flex-grow: 1;
     overflow-y: auto;
     padding-top: 15px;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    /* 🛠️ FIX 3: FLEX COLUMN TO SUPPORT PUSHING LOGOUT DOWN */
     display: flex;
     flex-direction: column;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .sidebar-nav::-webkit-scrollbar {
@@ -150,39 +143,36 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px; /* Slight gap between blocks */
-    /* 🛠️ FIX 3: ENSURE LIST GROWS TO FILL SPACE */
+    gap: 6px; 
     flex-grow: 1;
 }
 
-/* THE "VAULT" NAVIGATION ITEM */
+/* NAV ITEMS */
 .nav-item {
     position: relative;
     display: flex;
     align-items: center;
-    padding: 12px 20px;
+    padding: 14px 24px;
     color: var(--secondary-text-color);
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
     transition: all 0.2s ease;
-    border-left: 3px solid transparent; /* The "Bloomberg" Indicator Slot */
-    margin-bottom: 2px;
+    border-left: 3px solid transparent; 
 }
 
-/* 🛠️ FIX 3: LOGOUT ITEM CLASS TO PUSH TO BOTTOM */
+/* LOGOUT BUTTON */
 .logout-item {
-    margin-top: auto !important;
+    margin-top: auto !important; 
     border-top: 1px solid var(--border-color);
     padding-top: 20px;
     padding-bottom: 30px;
 }
 
-/* The Hover State: "Ghost Capsule" */
 .nav-item:hover {
     color: #fff;
     background-color: var(--hover-bg);
-    transform: none;
 }
 
 .nav-item .nav-icon {
@@ -190,70 +180,61 @@ body {
     text-align: center;
     margin-right: 15px;
     font-size: 1.1rem;
-    transition: color 0.2s ease;
     color: var(--secondary-text-color);
+    transition: color 0.2s ease;
 }
 
-/* ACTIVE STATE: "GOLD INLAY" */
+/* ACTIVE STATE */
 .nav-item.active {
-    color: #000000 !important; /* Etched Black Text */
-    font-weight: 700;
-    background: transparent; /* Reset standard background */
-    border-left: 3px solid var(--gold-color); /* 1. Bloomberg Border */
-    text-shadow: none;
+    color: #000000 !important; 
+    font-weight: 800;
+    background: transparent;
+    border-left: 3px solid var(--gold-color); 
 }
 
-/* The "Floating Capsule" Background */
 .nav-item.active::before {
     content: '';
     position: absolute;
-    top: 4px;
-    bottom: 4px;
-    left: 12px;
-    right: 12px;
+    top: 5px;
+    bottom: 5px;
+    left: 15px;
+    right: 15px;
     background: var(--gold-gradient);
-    border-radius: 8px; /* The Pill Shape */
-    z-index: -1; /* Put it behind text */
-    box-shadow: 0 2px 10px rgba(221, 170, 51, 0.2);
+    border-radius: 6px; 
+    z-index: -1; 
+    box-shadow: 0 4px 12px rgba(221, 170, 51, 0.25);
 }
 
 .nav-item.active .nav-icon {
-    color: #000000 !important; /* Black Icon */
-    filter: none;
+    color: #000000 !important; 
 }
 
-.nav-label {
-    letter-spacing: 0.5px;
-    margin-left: 0; /* Reset previous margin */
-}
-
-/* Main Content Wrapper */
+/* --------------------------------------------------
+   MAIN CONTENT AREA
+   --------------------------------------------------
+*/
 .content-wrapper {
     flex-grow: 1;
     height: 100%; 
     overflow-y: hidden;
-    background-color: var(--content-bg-color);
+    /* 🛠️ FIX 3: Enforce Obsidian Black on Content Wrapper */
+    background-color: var(--content-bg-color) !important;
     display: flex;
     flex-direction: column;
     width: calc(100% - var(--sidebar-width)); 
 }
 
-/* 💥 CRITICAL GLOBAL FIX: REMOVED horizontal padding from this wrapper. 
-    Internal modules (like Dashboard) now handle their own padding. */
 .module-container {
     flex-grow: 1;
     overflow-y: auto;
-    /* 🚀 CRITICAL RE-INTRODUCTION: Restore only VERTICAL padding for internal module components */
     padding: 20px 0; 
     box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.2);
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
-/* 🚀 CRITICAL FIX: The utility class to remove the top padding for full-bleed content (e.g., banner pages)
-    - Updated selector for robust global usage. */
 .module-no-top-padding {
-    padding-top: 0 !important; /* 🔑 FIX: Apply to the element with this class */
+    padding-top: 0 !important;
     margin-top: 0 !important; 
 }
 
@@ -261,123 +242,59 @@ body {
     display: none;
 }
 
-/* Mobile Nav Toggle Button (Removed on desktop) */
-.mobile-nav-toggle {
+.mobile-nav-toggle, .mobile-overlay {
     display: none;
 }
 
-/* Mobile Overlay (Removed on desktop) */
-.mobile-overlay {
-    display: none;
-}
-
-/* Sticky Notes Component Styles */
 .sticky-notes-component-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 99;
-    /* CRITICAL FIX: Ensure it is initially hidden/controlled by JS */
     display: none;
 }
 
-/* --- Global Reusable Components (TOP 1% Button Aesthetic) --- */
+/* --- Global Components --- */
 
-/* Recessed Gold-Accent Card Style */
 .tg-card {
     background-color: var(--sidebar-color);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    /* REFINEMENT: Generous internal padding for a premium look */
     padding: 30px; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
-/* Hover effect: Subtle lift and gold edge accent */
 .tg-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4),
-                inset 0 0 5px rgba(212, 175, 55, 0.1); 
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 0 5px rgba(212, 175, 55, 0.1); 
 }
 
-/* Global Heading Styles (Applies to all H1/H2 in the app) */
 h1, h2 {
-    color: var(--header-gold-color); /* Use the new, richer gold for hierarchy */
+    color: var(--header-gold-color);
     font-weight: 700;
-    margin-top: 0; /* FIX: Hard reset to prevent margin collapse/overlap at the top of containers */
-    margin-bottom: 20px; /* Generous vertical whitespace */
+    margin-top: 0; 
+    margin-bottom: 20px; 
 }
 
-/* Premium Primary Button (For forms, actions, etc.) - ENHANCED DEPTH */
-.tg-button-primary,
-.submit-button { 
-    /* Critical: Button Reset applied to this class, not the generic tag */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    display: inline-block; /* Safest default for primary button */
-
-    /* 🔑 FIX: Remove hardcoded color and use the Gold Gradient */
+.tg-button-primary, .submit-button { 
+    appearance: none; border: none; cursor: pointer; display: inline-block;
     background: var(--gold-gradient) !important;
-    
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text on gold */
-    border: none !important; /* Remove border to rely on gradient/shadow */
-    
-    padding: 14px 30px !important; 
-    border-radius: 10px !important; 
-    font-weight: 700 !important; 
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important; 
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important; 
-    
-    /* ENHANCED SHADOW: */
-    box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.6) !important, 
-        inset 0 0 15px rgba(255, 255, 255, 0.2) !important, 
-        0 0 8px rgba(212, 175, 55, 0.5) !important; 
+    color: var(--dark-color-for-text) !important;
+    padding: 14px 30px !important; border-radius: 10px !important; font-weight: 700 !important; text-transform: uppercase !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6) !important, inset 0 0 15px rgba(255, 255, 255, 0.2) !important; 
 }
 
-.tg-button-primary:hover,
-.submit-button:hover { 
-    /* 🔑 FIX: Use filter for hover on gradient, slightly brighten */
-    filter: brightness(1.1) !important;
-    color: var(--dark-color-for-text) !important; /* Lock text color to black on hover */
-    /* EXTREME HOVER: */
-    box-shadow: 
-        0 10px 20px rgba(0, 0, 0, 0.8) !important, 
-        0 0 25px var(--gold-color) !important; 
+.tg-button-primary:hover, .submit-button:hover { 
+    filter: brightness(1.1) !important; 
     transform: translateY(-4px) scale(1.02) !important; 
 }
 
-/* Secondary Button (Minimalist) */
 .tg-button-secondary {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    display: inline-block;
-
-    background-color: transparent;
-    color: var(--gold-color);
-    border: 1px solid var(--border-color);
-    padding: 12px 25px; 
-    border-radius: 10px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    appearance: none; border: none; margin: 0; text-align: center; text-decoration: none; cursor: pointer;
+    font-family: var(--font-primary); box-sizing: border-box; display: inline-block;
+    background-color: transparent; color: var(--gold-color);
+    border: 1px solid var(--border-color); padding: 12px 25px; border-radius: 10px; font-weight: 500; transition: all 0.3s ease;
 }
 
 .tg-button-secondary:hover {
@@ -386,208 +303,102 @@ h1, h2 {
     color: var(--hover-gold-color);
 }
 
-/* 🆕 TOP 1% MENU/TOGGLE BUTTONS */
 .tgg-menu-button {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-primary);
-    box-sizing: border-box;
-    display: block; 
-    width: 100%; 
-
-    /* INACTIVE STATE: Dark Recessed */
-    background: var(--accent-color);
+    appearance: none; border: none; margin: 0; text-decoration: none; cursor: pointer;
+    font-family: var(--font-primary); box-sizing: border-box; display: block; width: 100%; 
     background: linear-gradient(145deg, var(--accent-color), #3c3c3c);
-    color: var(--text-color);
-    border: 1px solid #555;
-    padding: 12px 20px; 
-    font-size: 0.95rem; 
-    font-weight: 600;
-    border-radius: 8px;
-    text-align: center; 
-    transition: all 0.3s ease;
+    color: var(--text-color); border: 1px solid #555; padding: 12px 20px; font-size: 0.95rem; font-weight: 600;
+    border-radius: 8px; text-align: center; transition: all 0.3s ease;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .tgg-menu-button:hover {
     background: linear-gradient(145deg, #5a5a5a, var(--accent-color)); 
-    color: var(--hover-gold-color);
-    border-color: var(--gold-color);
+    color: var(--hover-gold-color); border-color: var(--gold-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .tgg-menu-button.active {
-    background-image: none !important;
     background: var(--gold-gradient) !important;
-    color: var(--dark-color-for-text) !important;
-    border: none !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-    font-weight: 700 !important;
-    transform: none;
+    color: var(--dark-color-for-text) !important; border: none !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important; font-weight: 700 !important; transform: none;
 }
 
-/* 🆕 TOP 1% PREMIUM TOGGLE SWITCH */
-.tgg-switch-container {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
+.tgg-switch-container { display: inline-flex; align-items: center; cursor: pointer; user-select: none; }
+.tgg-switch-input { position: absolute; opacity: 0; width: 0; height: 0; }
+.tgg-switch-slider { position: relative; display: block; width: 50px; height: 28px; border-radius: 14px; background-color: var(--accent-color); transition: background-color 0.4s ease; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3); }
+.tgg-switch-slider::before { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background-color: var(--text-color); transition: transform 0.4s ease, background-color 0.4s ease; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); }
+.tgg-switch-input:checked + .tgg-switch-slider { background: var(--gold-color); box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); }
+.tgg-switch-input:checked + .tgg-switch-slider::before { transform: translateX(22px); background-color: var(--dark-color-for-text); }
+
+/* --------------------------------------------------
+   MOBILE & FOOTER VISIBILITY FIXES
+   --------------------------------------------------
+*/
+
+/* 🛠️ FIX 4: STRICTLY HIDE BOTTOM NAV ON DESKTOP */
+/* This prevents "html links" from showing up at the bottom footer area on large screens */
+.bottom-nav {
+    display: none !important;
 }
 
-.tgg-switch-input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.tgg-switch-slider {
-    position: relative;
-    display: block;
-    width: 50px;
-    height: 28px;
-    border-radius: 14px;
-    background-color: var(--accent-color); 
-    transition: background-color 0.4s ease;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3);
-}
-
-.tgg-switch-slider::before {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background-color: var(--text-color); 
-    transition: transform 0.4s ease, background-color 0.4s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-/* Checked State (GOLD ACTIVE) */
-.tgg-switch-input:checked + .tgg-switch-slider {
-    background: var(--gold-color);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6); 
-}
-
-.tgg-switch-input:checked + .tgg-switch-slider::before {
-    transform: translateX(22px); 
-    background-color: var(--dark-color-for-text); 
-}
-
-/* --- Mobile Specific Styles (Max-width 768px) --- */
+/* Mobile Media Query */
 @media (max-width: 768px) {
-    .terminal-container {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        display: none; /* Hide desktop sidebar */
-    }
+    .terminal-container { flex-direction: column; }
+    .sidebar { display: none; }
+    .content-wrapper { width: 100%; margin-left: 0; padding-bottom: 70px; }
+    .module-container { padding: 0; }
 
-    .content-wrapper {
-        width: 100%;
-        margin-left: 0;
-        padding-bottom: 70px;
-    }
-    
-    .module-container {
-        padding: 0; 
-    }
-
-    /* 🛠️ FIX 4: MOBILE SLIDER (Bottom Nav) */
+    /* 🛠️ FIX 5: SHOW BOTTOM NAV ONLY ON MOBILE */
     .bottom-nav {
-        display: flex; /* Show only on mobile */
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        background-color: rgba(5, 5, 5, 0.95); /* Deep Black Background */
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
-        z-index: 100;
-        align-items: center;
-        padding: 0;
-        backdrop-filter: blur(10px);
+        display: flex !important; /* Force show on mobile */
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+        background-color: rgba(5, 5, 5, 0.95); border-top: 1px solid var(--border-color);
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.5); z-index: 100;
+        align-items: center; padding: 0; backdrop-filter: blur(10px);
     }
     
     .bottom-nav-container {
-        display: flex;
-        flex-wrap: nowrap; /* Prevent wrapping (Slider) */
-        overflow-x: auto; /* Enable horizontal scroll */
-        -webkit-overflow-scrolling: touch;
-        width: 100%;
-        padding: 0 10px;
-        align-items: center;
+        display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        width: 100%; padding: 0 10px; align-items: center;
     }
     
-    .bottom-nav-container::-webkit-scrollbar {
-        display: none;
-    }
+    .bottom-nav-container::-webkit-scrollbar { display: none; }
     
     .bottom-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: var(--secondary-text-color);
-        text-decoration: none;
-        font-size: 0.65rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        padding: 8px 12px;
-        min-width: 75px; /* Fixed width for slider items */
-        flex-shrink: 0;
-        cursor: pointer;
-        border-radius: 12px;
-        margin-right: 5px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; color: var(--secondary-text-color); text-decoration: none;
+        font-size: 0.65rem; font-weight: 500; transition: all 0.3s ease;
+        padding: 8px 12px; min-width: 75px; flex-shrink: 0; cursor: pointer;
+        border-radius: 12px; margin-right: 5px;
     }
 
-    .bottom-nav-item i {
-        font-size: 1.3rem;
-        margin-bottom: 4px;
-    }
+    .bottom-nav-item i { font-size: 1.3rem; margin-bottom: 4px; }
 
-    /* ACTIVE STATE MOBILE - MINI CAPSULE */
     .bottom-nav-item.active {
-        background: var(--gold-gradient);
-        color: #000000 !important;
-        font-weight: 700;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(221, 170, 51, 0.3);
-        border-top: none; 
-        padding-top: 8px; 
-    }
-
-    .bottom-nav-item.active i {
-        color: #000000 !important;
-    }
-
-    .bottom-nav-item:hover {
-        color: #fff;
+        background: var(--gold-gradient); color: #000000 !important; font-weight: 700;
+        transform: translateY(-2px); box-shadow: 0 4px 10px rgba(221, 170, 51, 0.3);
+        border-top: none; padding-top: 8px; 
     }
     
-    .sticky-notes-component-container {
-        bottom: 80px;
-        right: 15px;
-    }
+    .bottom-nav-item.active i { color: #000000 !important; }
+    .bottom-nav-item:hover { color: #fff; }
+    
+    .sticky-notes-component-container { bottom: 80px; right: 15px; }
+    
+    .content-body.trading-journal-module { padding: 10px; }
+    .controls-row { flex-direction: column; gap: 10px; }
+    .controls-row > div { flex-grow: 1; }
+    .export-button { width: 100%; }
+    .analytics-controls .tgg-primary-cta { width: 100%; }
+    .chart-row { flex-direction: column; gap: 20px; }
+    .chart-card { height: 350px; padding: 15px; }
+    .chart-card canvas { height: calc(100% - 30px) !important; }
+    .journal-table-wrapper { display: none; }
+    .trade-card-list { display: grid; }
 }
 
-/*
-|--------------------------------------------------------------------------
-| TRADING JOURNAL / COMPONENTS (Preserved)
-|--------------------------------------------------------------------------
-*/
-/* Trading Journal */
+/* Trading Journal Modules (Preserved) */
 .content-body.trading-journal-module { padding: 0 20px; }
 .controls-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
 .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -613,33 +424,6 @@ table.trade-journal-table { width: 100%; border-collapse: collapse; color: #f1f1
 .trade-card { background-color: #252525; border: 1px solid #333; border-radius: 8px; padding: 15px; }
 .modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); }
 .modal-content { background-color: #252525; margin: 15% auto; padding: 20px; border: 1px solid #333; width: 80%; max-width: 500px; border-radius: 10px; }
-
-/* Buttons */
-.tg-button-primary, .submit-button { 
-    appearance: none; border: none; cursor: pointer; display: inline-block;
-    background: var(--gold-gradient) !important;
-    color: var(--dark-color-for-text) !important;
-    padding: 14px 30px !important; border-radius: 10px !important; font-weight: 700 !important; text-transform: uppercase !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6) !important, inset 0 0 15px rgba(255, 255, 255, 0.2) !important; 
-}
-.tg-button-primary:hover, .submit-button:hover { 
-    filter: brightness(1.1) !important; 
-    transform: translateY(-4px) scale(1.02) !important; 
-}
-
-/* Mobile Adjustments */
+.close-button { color: #d4af37; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+.modal-content h3 { color: #d4af37; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
 @media (max-width: 1200px) { .kpi-dashboard { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) {
-    .content-body.trading-journal-module { padding: 10px; }
-    .controls-row { flex-direction: column; gap: 10px; }
-    .controls-row > div { flex-grow: 1; }
-    .export-button { width: 100%; }
-    .analytics-controls .tgg-primary-cta { width: 100%; }
-    
-    .chart-row { flex-direction: column; gap: 20px; }
-    .chart-card { height: 350px; padding: 15px; }
-    .chart-card canvas { height: calc(100% - 30px) !important; }
-    
-    .journal-table-wrapper { display: none; }
-    .trade-card-list { display: grid; }
-}
