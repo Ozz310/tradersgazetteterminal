@@ -1,169 +1,187 @@
-/* auth/style.css */
+/* modules/auth/style.css */
+/* TG TERMINAL - AUTHENTICATION MODULE STYLES */
 
-/* General Auth Container Styles */
-.auth-container {
+/* --- Layout & Container --- */
+#auth-module {
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    justify-content: center;
+    min-height: 100vh; /* Changed from 700px to vh for better responsiveness */
+    font-family: 'Inter', sans-serif;
+    color: white;
     width: 100%;
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+/* --- 3D Glass Card Effect --- */
+.glass-card-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    perspective: 1200px;
+    padding: 20px; /* Safety padding for mobile */
+}
+
+.glass-card {
+    position: relative;
+    background: rgba(10, 10, 10, 0.95); /* Deep Black Premium */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+}
+
+/* --- Ambient Gold Glow --- */
+.ambient-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(221, 170, 51, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- Typography --- */
+.auth-header h2 {
+    font-family: serif; /* Matches premium aesthetic */
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    margin-top: 0;
+}
+
+.auth-header p {
+    color: #8B949E;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.text-gold { color: #DDAA33; }
+
+/* --- Inputs --- */
+.tg-input {
+    width: 100%;
+    background-color: #111;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: white;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tg-input:focus {
+    border-color: #DDAA33;
+    box-shadow: 0 0 0 2px rgba(221, 170, 51, 0.2);
+    outline: none;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #8B949E;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+/* --- Buttons --- */
+.tg-btn-primary {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border-radius: 6px;
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    color: black;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.tg-btn-primary:hover {
+    box-shadow: 0 0 20px rgba(221, 170, 51, 0.4);
+    transform: translateY(-1px);
+}
+
+.tg-btn-primary:active {
     transform: translateY(0);
 }
 
-.auth-container.hidden {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none; 
-}
+/* --- Utilities --- */
+.hidden { display: none !important; }
 
-.auth-box {
-    /* Dark background failsafe */
-    background: var(--sidebar-color, #222); 
-    border-radius: 15px;
-    padding: 40px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
-    border: 1px solid var(--border-color);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
+.divider {
     position: relative;
-    z-index: 10; 
-    color: var(--text-color); 
+    text-align: center;
+    margin: 25px 0;
 }
 
-.form-container {
-    transition: opacity 0.3s ease-in-out;
-}
-
-.form-container.hidden {
-    display: none;
-    opacity: 0;
-}
-
-.auth-box h2 {
-    color: var(--header-gold-color);
-    margin-bottom: 20px;
-    font-size: 2em;
-    font-weight: 700; 
-}
-
-/* Input Fields */
-.auth-box input[type="email"],
-.auth-box input[type="password"],
-.auth-box input[type="text"] {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: var(--bg-color, #1a1a1a); 
-    border: 1px solid var(--border-color); 
-    border-radius: 8px;
-    color: var(--text-color);
-    font-size: 16px;
-    outline: none;
-    box-sizing: border-box; 
-    transition: all 0.3s ease-in-out;
-}
-
-.auth-box input::placeholder {
-    color: var(--secondary-text-color);
-}
-
-.auth-box input:focus {
-    border-color: var(--gold-color);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-}
-
-/* Buttons - Gold Gradient */
-.auth-box button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
-    color: var(--dark-color-for-text); 
-    font-size: 18px;
-    font-weight: 700; 
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, filter 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-.auth-box button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
-}
-
-/* Links and Messages */
-.auth-box a {
-    color: var(--gold-color);
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.2s ease-in-out;
-}
-
-.auth-box a:hover {
-    color: var(--hover-gold-color);
-    text-decoration: underline;
-}
-
-.auth-message {
-    margin-top: 15px;
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--text-color);
-}
-
-.auth-message.error {
-    color: #ff6b6b;
-}
-
-/* --- RESTORED: Background Symbols and Animations --- */
-.background-symbols {
-    position: fixed;
-    top: 0;
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
     left: 0;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 0; /* Behind the card */
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 0;
 }
 
-.symbol {
-    position: absolute;
-    /* Subtle dark symbols */
-    color: rgba(255, 255, 255, 0.03); 
-    font-size: 5em;
-    pointer-events: none;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    animation: float-animation 20s infinite ease-in-out;
+.divider span {
+    position: relative;
+    background: #0a0a0a; /* Matches card bg */
+    padding: 0 10px;
+    color: #8B949E;
+    font-size: 0.7rem;
+    z-index: 1;
+    text-transform: uppercase;
 }
 
-/* Positions */
-.symbol-1 { top: 10%; left: 5%; animation-delay: 0s; }
-.symbol-2 { top: 30%; left: 25%; animation-delay: 3s; font-size: 7em; }
-.symbol-3 { top: 50%; left: 40%; animation-delay: 6s; }
-.symbol-4 { top: 70%; left: 15%; animation-delay: 9s; font-size: 6em; }
-.symbol-5 { top: 20%; left: 60%; animation-delay: 12s; }
-.symbol-6 { top: 80%; left: 80%; animation-delay: 15s; font-size: 8em; }
-.symbol-7 { top: 45%; left: 90%; animation-delay: 18s; }
-.symbol-8 { top: 5%; left: 70%; animation-delay: 21s; font-size: 9em; }
-.symbol-9 { top: 85%; left: 30%; animation-delay: 24s; }
-.symbol-10 { top: 60%; left: 5%; animation-delay: 27s; font-size: 4em; }
+/* --- Links --- */
+.links {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
 
-/* Keyframes */
-@keyframes float-animation {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 0.05;
-    }
-    50% {
-        transform: translate(calc(100vw * 0.1), calc(100vh * -0.1)) rotate(5deg);
-        opacity: 0.1;
-    }
-    100% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 0.05;
-    }
+.link-text { 
+    color: #8B949E; 
+    text-decoration: none; 
+    transition: color 0.2s; 
+}
+.link-text:hover { color: #DDAA33; }
+
+.link-accent { 
+    color: #DDAA33; 
+    font-weight: 600; 
+    text-decoration: none; 
+}
+.link-accent:hover { text-decoration: underline; }
+
+/* --- Status Messages --- */
+#auth-message {
+    margin-bottom: 20px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    transition: all 0.3s ease;
 }
