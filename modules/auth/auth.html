@@ -1,116 +1,257 @@
-<div id="auth-module" class="relative min-h-[650px] flex items-center justify-center p-4 font-sans">
+<style>
+    /* --- CRITICAL STYLES (Forces the layout even if Tailwind fails) --- */
     
-    <div class="relative w-full max-w-md group perspective-1200">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-[#DDAA33]/10 blur-[80px] rounded-full animate-pulse-slow pointer-events-none"></div>
+    /* The Main Wrapper */
+    #auth-module {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 700px;
+        font-family: 'Inter', sans-serif;
+        color: white;
+    }
 
-        <div class="relative bg-[#0a0a0a] border border-white/10 rounded-2xl p-8 shadow-2xl overflow-hidden backdrop-blur-xl">
-            
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#DDAA33] to-transparent opacity-50 animate-scan pointer-events-none"></div>
+    /* 3D Glass Card Container */
+    .glass-card-container {
+        position: relative;
+        width: 100%;
+        max-width: 450px;
+        perspective: 1200px; /* Enables 3D effect */
+    }
 
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-serif font-bold text-white mb-2 tracking-tight">Terminal <span class="text-[#DDAA33]">Access</span></h2>
-                <p class="text-[#8B949E] text-xs uppercase tracking-widest">Institutional Identity Verification</p>
+    /* The Card Itself */
+    .glass-card {
+        position: relative;
+        background: rgba(10, 10, 10, 0.95); /* Deep Black */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+    }
+
+    /* Ambient Gold Glow Behind Card */
+    .ambient-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(221, 170, 51, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* Text Styles */
+    .auth-header h2 {
+        font-family: serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    .auth-header p {
+        color: #8B949E;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .text-gold { color: #DDAA33; }
+
+    /* Inputs */
+    .tg-input {
+        width: 100%;
+        background-color: #111;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        padding: 12px 16px;
+        color: white;
+        font-size: 0.9rem;
+        margin-top: 4px;
+        box-sizing: border-box; /* Fixes width issues */
+        transition: border-color 0.2s;
+    }
+    .tg-input:focus {
+        border-color: #DDAA33;
+        outline: none;
+    }
+    .input-label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #8B949E;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+    }
+
+    /* Buttons */
+    .tg-btn-primary {
+        width: 100%;
+        padding: 14px;
+        margin-top: 20px;
+        border-radius: 6px;
+        background: linear-gradient(145deg, #F0D788, #DDAA33);
+        color: black;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s, box-shadow 0.2s;
+    }
+    .tg-btn-primary:hover {
+        box-shadow: 0 0 20px rgba(221, 170, 51, 0.4);
+        transform: translateY(-1px);
+    }
+
+    /* Utilities */
+    .hidden { display: none; }
+    .divider {
+        position: relative;
+        text-align: center;
+        margin: 25px 0;
+    }
+    .divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        z-index: 0;
+    }
+    .divider span {
+        position: relative;
+        background: #0a0a0a;
+        padding: 0 10px;
+        color: #8B949E;
+        font-size: 0.7rem;
+        z-index: 1;
+        text-transform: uppercase;
+    }
+    .links {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .link-text { color: #8B949E; text-decoration: none; transition: color 0.2s; }
+    .link-text:hover { color: #DDAA33; }
+    .link-accent { color: #DDAA33; font-weight: 600; text-decoration: none; }
+
+    /* Security Scan Animation */
+    .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #DDAA33, transparent);
+        opacity: 0.5;
+        animation: scan 3s infinite ease-in-out;
+        pointer-events: none;
+    }
+    @keyframes scan {
+        0% { transform: translateY(0); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(400px); opacity: 0; }
+    }
+</style>
+
+<div id="auth-module">
+    
+    <div class="glass-card-container">
+        <div class="ambient-glow"></div>
+
+        <div class="glass-card">
+            <div class="scan-line"></div>
+
+            <div class="auth-header">
+                <h2>Terminal <span class="text-gold">Access</span></h2>
+                <p>Institutional Identity Verification</p>
             </div>
 
-            <div id="auth-message" class="hidden mb-6 p-3 rounded bg-white/5 border border-white/10 text-center text-sm"></div>
+            <div id="auth-message" class="hidden" style="margin-bottom: 20px; padding: 10px; text-align: center; border-radius: 4px; font-size: 0.8rem;"></div>
 
-            <div class="mb-8">
-                <div id="google-button-container" class="min-h-[40px] flex justify-center">
-                    <div class="w-6 h-6 border-2 border-[#DDAA33] border-t-transparent rounded-full animate-spin"></div>
+            <div id="google-button-container" style="display: flex; justify-content: center; min-height: 40px;">
                 </div>
-                
-                <div class="relative my-6 text-center">
-                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
-                    <span class="relative bg-[#0a0a0a] px-2 text-[10px] text-[#8B949E] uppercase tracking-wider">Or Authenticate via Email</span>
-                </div>
+
+            <div class="divider">
+                <span>Or Authenticate via Email</span>
             </div>
 
-            <div id="login-form-container" class="form-container space-y-5">
-                <form id="login-form" class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Email Identity</label>
-                        <input type="email" id="login-email" required 
-                               class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:ring-1 focus:ring-[#DDAA33] focus:outline-none transition-colors placeholder-white/20">
+            <div id="login-form-container" class="form-container">
+                <form id="login-form">
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Email Identity</label>
+                        <input type="email" id="login-email" class="tg-input" required placeholder="trader@fund.com">
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Access Key</label>
-                        <input type="password" id="login-password" required 
-                               class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:ring-1 focus:ring-[#DDAA33] focus:outline-none transition-colors">
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Access Key</label>
+                        <input type="password" id="login-password" class="tg-input" required placeholder="••••••••">
                     </div>
                     
-                    <button type="submit" class="w-full py-3 rounded bg-[linear-gradient(145deg,#F0D788,#DDAA33)] text-black font-bold text-sm uppercase tracking-wide hover:shadow-[0_0_20px_rgba(221,170,51,0.3)] transition-all transform hover:-translate-y-0.5 active:scale-95">
-                        Initialize Session
-                    </button>
+                    <button type="submit" class="tg-btn-primary">Initialize Session</button>
                 </form>
                 
-                <div class="flex justify-between text-xs mt-6 pt-4 border-t border-white/5">
-                    <a href="#" id="forgot-password-link" class="text-[#8B949E] hover:text-[#DDAA33] transition-colors">Forgot Credentials?</a>
-                    <a href="#" id="signup-toggle" class="text-[#DDAA33] hover:underline font-semibold">Register New Identity</a>
+                <div class="links">
+                    <a href="#" id="forgot-password-link" class="link-text">Forgot Credentials?</a>
+                    <a href="#" id="signup-toggle" class="link-accent">Register New Identity</a>
                 </div>
             </div>
 
-            <div id="signup-form-container" class="form-container hidden space-y-5">
-                <form id="signup-form" class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Full Name</label>
-                        <input type="text" id="signup-name" required 
-                               class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:outline-none">
+            <div id="signup-form-container" class="form-container hidden">
+                <form id="signup-form">
+                    <div style="margin-bottom: 12px;">
+                        <label class="input-label">Full Name</label>
+                        <input type="text" id="signup-name" class="tg-input" required>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Email Identity</label>
-                        <input type="email" id="signup-email" required 
-                               class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:outline-none">
+                    <div style="margin-bottom: 12px;">
+                        <label class="input-label">Email Identity</label>
+                        <input type="email" id="signup-email" class="tg-input" required>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Password</label>
-                            <input type="password" id="signup-password" required 
-                                   class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:outline-none">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                        <div>
+                            <label class="input-label">Password</label>
+                            <input type="password" id="signup-password" class="tg-input" required>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Confirm</label>
-                            <input type="password" id="confirm-password" required 
-                                   class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:outline-none">
+                        <div>
+                            <label class="input-label">Confirm</label>
+                            <input type="password" id="confirm-password" class="tg-input" required>
                         </div>
                     </div>
                     
-                    <button type="submit" class="w-full py-3 rounded bg-[linear-gradient(145deg,#F0D788,#DDAA33)] text-black font-bold text-sm uppercase tracking-wide hover:shadow-[0_0_20px_rgba(221,170,51,0.3)] transition-all">
-                        Create Access Identity
-                    </button>
+                    <button type="submit" class="tg-btn-primary">Create Access Identity</button>
                 </form>
-                <div class="text-center text-xs mt-6 pt-4 border-t border-white/5">
-                    <a href="#" id="back-to-login-link" class="text-[#8B949E] hover:text-[#DDAA33]">Return to Terminal Login</a>
+                <div class="links" style="justify-content: center;">
+                    <a href="#" id="back-to-login-link" class="link-text">Return to Terminal Login</a>
                 </div>
             </div>
 
-            <div id="forgot-password-form-container" class="form-container hidden space-y-5">
-                <p class="text-xs text-[#8B949E] text-center mb-4 leading-relaxed">Enter your registered email address. The system will dispatch a secure reset token if the identity exists.</p>
-                <form id="forgot-password-form" class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-[#8B949E] uppercase tracking-wider pl-1">Email Identity</label>
-                        <input type="email" id="forgot-password-email" required 
-                               class="w-full bg-[#111] border border-white/10 rounded px-4 py-3 text-white text-sm focus:border-[#DDAA33] focus:outline-none">
+            <div id="forgot-password-form-container" class="form-container hidden">
+                <p style="color: #8B949E; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">
+                    Enter your registered email. The system will dispatch a secure reset token.
+                </p>
+                <form id="forgot-password-form">
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Email Identity</label>
+                        <input type="email" id="forgot-password-email" class="tg-input" required>
                     </div>
-                    <button type="submit" class="w-full py-3 rounded bg-[linear-gradient(145deg,#F0D788,#DDAA33)] text-black font-bold text-sm uppercase tracking-wide hover:shadow-[0_0_20px_rgba(221,170,51,0.3)] transition-all">
-                        Request Reset Token
-                    </button>
+                    <button type="submit" class="tg-btn-primary">Request Reset Token</button>
                 </form>
-                <div class="text-center text-xs mt-6 pt-4 border-t border-white/5">
-                    <a href="#" id="back-to-login-link2" class="text-[#8B949E] hover:text-[#DDAA33]">Return to Terminal Login</a>
+                <div class="links" style="justify-content: center;">
+                    <a href="#" id="back-to-login-link2" class="link-text">Return to Terminal Login</a>
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-
-<style>
-    /* Security Scan Animation */
-    @keyframes scan {
-        0% { transform: translateX(-100%); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateX(100%); opacity: 0; }
-    }
-    .animate-scan { animation: scan 3s infinite ease-in-out; }
-    .perspective-1200 { perspective: 1200px; }
-</style>
