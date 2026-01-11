@@ -9,7 +9,7 @@
         
         // 🔴 PASTE YOUR REAL GOOGLE CLIENT ID BELOW
         // Example: '123456789-abcdefg.apps.googleusercontent.com'
-        GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID_HERE', 
+        GOOGLE_CLIENT_ID: '222293743796-dl4uqm8mkatnhqaetbbu4ae9lthle135.apps.googleusercontent.com', 
     };
     
     let moduleContainer = null;
