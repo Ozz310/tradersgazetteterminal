@@ -173,29 +173,66 @@
                             <div class="export-button">
                                 <button id="export-table-csv" class="tgg-primary-cta">Download CSV</button>
                             </div>
-                            <div id="trade-card-view" class="trade-card-list">
+
+                            <div id="journal-skeleton" class="journal-list">
+                                <div class="skeleton-row">
+                                    <div class="skeleton skeleton-tag"></div>
+                                    <div style="flex:1">
+                                        <div class="skeleton skeleton-title"></div>
+                                        <div class="skeleton skeleton-text"></div>
+                                    </div>
+                                    <div class="skeleton skeleton-tag"></div>
+                                </div>
+                                <div class="skeleton-row">
+                                    <div class="skeleton skeleton-tag"></div>
+                                    <div style="flex:1">
+                                        <div class="skeleton skeleton-title"></div>
+                                        <div class="skeleton skeleton-text"></div>
+                                    </div>
+                                    <div class="skeleton skeleton-tag"></div>
+                                </div>
+                                <div class="skeleton-row">
+                                    <div class="skeleton skeleton-tag"></div>
+                                    <div style="flex:1">
+                                        <div class="skeleton skeleton-title"></div>
+                                        <div class="skeleton skeleton-text"></div>
+                                    </div>
+                                    <div class="skeleton skeleton-tag"></div>
+                                </div>
+                                <div class="skeleton-row">
+                                    <div class="skeleton skeleton-tag"></div>
+                                    <div style="flex:1">
+                                        <div class="skeleton skeleton-title"></div>
+                                        <div class="skeleton skeleton-text"></div>
+                                    </div>
+                                    <div class="skeleton skeleton-tag"></div>
+                                </div>
                             </div>
-                            <div class="journal-table-wrapper journal-table-container">
-                                <table id="journalTable">
-                                    <thead>
-                                        <tr>
-                                            <th data-sort="date">Date</th>
-                                            <th data-sort="symbol">Symbol</th>
-                                            <th data-sort="assetType">Asset Type</th>
-                                            <th data-sort="buySell">Buy/Sell</th>
-                                            <th data-sort="entryPrice">Entry Price</th>
-                                            <th data-sort="exitPrice">Exit Price</th>
-                                            <th data-sort="takeProfit">Take Profit</th>
-                                            <th data-sort="stopLoss">Stop Loss</th>
-                                            <th data-sort="pnlNet">P&L Net</th>
-                                            <th data-sort="positionSize">Position Size</th>
-                                            <th data-sort="strategyName">Strategy Name</th>
-                                            <th data-sort="notes">Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="trade-table-body"></tbody>
-                                </table>
+                            <div id="journal-content-wrapper" class="content-hidden">
+                                <div id="trade-card-view" class="trade-card-list"></div>
+                                <div class="journal-table-wrapper journal-table-container">
+                                    <table id="journalTable">
+                                        <thead>
+                                            <tr>
+                                                <th data-sort="date">Date</th>
+                                                <th data-sort="symbol">Symbol</th>
+                                                <th data-sort="assetType">Asset Type</th>
+                                                <th data-sort="buySell">Buy/Sell</th>
+                                                <th data-sort="entryPrice">Entry Price</th>
+                                                <th data-sort="exitPrice">Exit Price</th>
+                                                <th data-sort="takeProfit">Take Profit</th>
+                                                <th data-sort="stopLoss">Stop Loss</th>
+                                                <th data-sort="pnlNet">P&L Net</th>
+                                                <th data-sort="positionSize">Position Size</th>
+                                                <th data-sort="strategyName">Strategy Name</th>
+                                                <th data-sort="notes">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="trade-table-body"></tbody>
+                                    </table>
+                                </div>
                             </div>
+
                         </div>
                         <div id="upload-csv-modal" class="modal hidden">
                             <div class="modal-content">
@@ -212,9 +249,7 @@
                             </div>
                         </div>
                         <div id="notification" class="notification hidden"></div>
-                        <div id="loader" class="loader hidden"></div>
-                        
-                    </div> </div> </div> </div> </div> <script src="/tradersgazetteterminal/modules/trading-journal/script.js"></script>
+                        </div> </div> </div> </div> </div> <script src="/tradersgazetteterminal/modules/trading-journal/script.js"></script>
     <script>
         // CRITICAL: Initialize the module when the DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
