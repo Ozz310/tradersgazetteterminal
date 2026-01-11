@@ -1,5 +1,4 @@
-
-// /assets/js/app.js - FINAL VERSION (Sync CSS Loading & Smooth Transitions)
+// /assets/js/app.js - SKELETON UI INTEGRATED
 
 document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
@@ -7,59 +6,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainAppContainer = document.getElementById('main-app-container');
     const moduleContainer = document.getElementById('module-container');
     const authContainer = document.getElementById('auth-container');
-    const loaderOverlay = document.getElementById('loader-overlay');
     const backgroundSymbols = document.querySelector('.background-symbols');
     const bottomNav = document.querySelector('.bottom-nav');
     
-    // Store the name of the currently active module for cleanup
     let currentModuleName = null;
 
-    // Show the loader (Full screen overlay)
-    const showLoader = () => {
-        if (loaderOverlay) {
-            loaderOverlay.classList.remove('hidden');
+    // --- NEW: SKELETON UI HELPERS ---
+    const showSkeleton = () => {
+        if (moduleContainer) {
+            moduleContainer.innerHTML = `
+                <div class="skeleton-wrapper" style="padding: 20px;">
+                    <div class="skeleton-box skeleton-header"></div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="skeleton-box skeleton-card"></div>
+                        <div class="skeleton-box skeleton-card"></div>
+                        <div class="skeleton-box skeleton-card"></div>
+                    </div>
+                </div>`;
         }
     };
 
-    // Hide the loader
-    const hideLoader = () => {
-        if (loaderOverlay) {
-            loaderOverlay.classList.add('hidden');
-        }
-    };
-
-    // --- Helper to handle FOUC transitions ---
     const hideModuleContent = () => {
         if (moduleContainer) moduleContainer.classList.add('module-loader-hidden');
         if (authContainer) authContainer.classList.add('module-loader-hidden');
     };
 
     const showModuleContent = () => {
-        // Small delay to allow CSS parsing and module rendering
         setTimeout(() => {
             if (moduleContainer) moduleContainer.classList.remove('module-loader-hidden');
             if (authContainer) authContainer.classList.remove('module-loader-hidden');
         }, 50);    
     };
-    // --- END FOUC HELPERS ---
+    // --- END SKELETON HELPERS ---
 
-    // Sidebar event listener
+    // Navigation Listeners (Sidebar)
     sidebar.addEventListener('click', (e) => {
         const navItem = e.target.closest('.nav-item');
         if (navItem) {
             e.preventDefault();
             const moduleName = navItem.dataset.module;
             if (moduleName) {
-                if (moduleName === 'logout') {
-                    handleLogout();
-                    return;
-                }
+                if (moduleName === 'logout') { handleLogout(); return; }
                 window.location.hash = '#' + moduleName;
             }
         }
     });
 
-    // Mobile navigation event listener
+    // Navigation Listeners (Mobile)
     if (bottomNav) {
         bottomNav.addEventListener('click', (e) => {
             const navItem = e.target.closest('.bottom-nav-item');
@@ -67,32 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const moduleName = navItem.dataset.module;
                 if (moduleName) {
-                    if (moduleName === 'logout') {
-                        handleLogout();
-                        return;
-                    }
+                    if (moduleName === 'logout') { handleLogout(); return; }
                     window.location.hash = '#' + moduleName;
                 }
             }
         });
     }
 
-    const isAuthenticated = () => {
-        const token = localStorage.getItem('tg_token');
-        return !!token;
-    };
+    const isAuthenticated = () => !!localStorage.getItem('tg_token');
 
-    // Main Router Logic
     const router = async () => {
-        // FOUC FIX: Reveal body if it was hidden by index.html
+        // FOUC FIX
         if (body.classList.contains('fouc-hidden')) {
-            setTimeout(() => {
-                 body.classList.remove('fouc-hidden');
-            }, 50); 
+            setTimeout(() => body.classList.remove('fouc-hidden'), 50); 
         }
         
-        showLoader();
-        hideModuleContent(); // Hide content immediately on route change
+        hideModuleContent();
 
         const urlParams = new URLSearchParams(window.location.search);
         const resetAction = urlParams.get('action');
@@ -102,17 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle Password Reset URL
         if (resetAction === 'reset-password' && resetToken) {
             localStorage.setItem('tg_reset_token', resetToken);
-            if (resetUserId) {
-                localStorage.setItem('tg_reset_userId', resetUserId);
-            } else {
-                 localStorage.removeItem('tg_reset_userId');
-            }
-            
+            if (resetUserId) localStorage.setItem('tg_reset_userId', resetUserId);
             window.history.replaceState({}, document.title, window.location.pathname + '#auth');
-            
             await loadModule('reset-password');
             currentModuleName = 'auth'; 
-
             if (authContainer) authContainer.style.display = 'flex';
             if (backgroundSymbols) backgroundSymbols.style.display = 'block';
             if (mainAppContainer) {
@@ -120,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainAppContainer.classList.add('hidden');
             }
             handleStickyNotesVisibility('auth');
-            
-            hideLoader();
             showModuleContent();
             return; 
         }
@@ -132,8 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (moduleName !== 'auth' && moduleName !== 'reset-password' && !isAuthenticated()) {
             window.location.hash = '#auth';
             moduleName = 'auth'; 
-            hideLoader();
             return;
+        }
+
+        // 🦴 INJECT SKELETON: Only if entering a main terminal module
+        if (moduleName !== 'auth' && moduleName !== 'reset-password') {
+            showSkeleton();
         }
 
         handleStickyNotesVisibility(moduleName);
@@ -158,66 +136,43 @@ document.addEventListener('DOMContentLoaded', () => {
             cleanupModule(currentModuleName);
         }
 
-        // Load the new module and wait for it to fully initialize (including CSS)
         await loadModule(moduleName);
-        
         currentModuleName = moduleName;
 
         document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(item => {
             item.classList.remove('active');
         });
         const activeNavItems = document.querySelectorAll(`[data-module="${moduleName}"]`);
-        activeNavItems.forEach(item => {
-            item.classList.add('active');
-        });
+        activeNavItems.forEach(item => item.classList.add('active'));
 
-        hideLoader();
-        showModuleContent(); // FOUC FIX: Reveal the content now that CSS is guaranteed loaded
+        showModuleContent();
     };
     
+    // Cleanup, Sticky Notes, and CSS loaders remain identical to your current code
     const cleanupModule = (moduleName) => {
         try {
             switch (moduleName) {
                 case 'dashboard':
-                    if (window.tg_dashboard && typeof window.tg_dashboard.cleanup === 'function') {
-                        window.tg_dashboard.cleanup();
-                    }
+                    if (window.tg_dashboard && typeof window.tg_dashboard.cleanup === 'function') window.tg_dashboard.cleanup();
                     break;
                 case 'news-aggregator': 
-                    if (window.tg_news && typeof window.tg_news.cleanup === 'function') {
-                        window.tg_news.cleanup();
-                    }
+                    if (window.tg_news && typeof window.tg_news.cleanup === 'function') window.tg_news.cleanup();
                     break;
             }
-        } catch (e) {
-            console.error(`Failed to cleanup module ${moduleName}:`, e);
-        }
+        } catch (e) { console.error(`Failed cleanup: ${moduleName}`, e); }
     };
 
     const handleStickyNotesVisibility = (moduleName) => {
         const stickyNotesContainer = document.querySelector('.sticky-notes-component-container');
         if (stickyNotesContainer) {
-            if (isAuthenticated() && moduleName !== 'auth' && moduleName !== 'reset-password') {
-                stickyNotesContainer.style.display = 'block';
-            } else {
-                stickyNotesContainer.style.display = 'none';
-            }
+            stickyNotesContainer.style.display = (isAuthenticated() && moduleName !== 'auth' && moduleName !== 'reset-password') ? 'block' : 'none';
         }
     };
 
     const loadModuleCSS = (moduleName) => {
         const oldLink = document.querySelector('link.module-style');
-        if (oldLink) {
-            oldLink.remove();
-        }
-
-        let cssPath;
-        if (moduleName === 'reset-password') {
-            cssPath = `modules/auth/style.css`;
-        } else {
-            cssPath = `modules/${moduleName}/style.css`;
-        }
-        
+        if (oldLink) oldLink.remove();
+        let cssPath = (moduleName === 'reset-password') ? `modules/auth/style.css` : `modules/${moduleName}/style.css`;
         const newLink = document.createElement('link');
         newLink.rel = 'stylesheet';
         newLink.href = cssPath;
@@ -226,71 +181,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadModule = async (moduleName) => {
-        let targetContainer = moduleContainer;
-        if (moduleName === 'auth' || moduleName === 'reset-password') {
-            targetContainer = authContainer;
-        }
-
+        let targetContainer = (moduleName === 'auth' || moduleName === 'reset-password') ? authContainer : moduleContainer;
         try {
-            targetContainer.innerHTML = '';
-
             let htmlPath, scriptPath;
-
             switch (moduleName) {
-                case 'auth':
-                    htmlPath = `modules/auth/auth.html`;
-                    scriptPath = `modules/auth/auth.js`;
-                    break;
-                case 'reset-password':
-                    htmlPath = `modules/auth/reset-password.html`; 
-                    scriptPath = `modules/auth/reset-password.js`;
-                    break;
-                case 'dashboard':
-                    htmlPath = `modules/dashboard/index.html`;
-                    scriptPath = `modules/dashboard/dashboard.js`;
-                    break;
-                case 'trading-journal':
-                    htmlPath = `modules/trading-journal/index.html`;
-                    scriptPath = `modules/trading-journal/script.js`;
-                    break;
-                default:
-                    htmlPath = `modules/${moduleName}/index.html`;
-                    scriptPath = `modules/${moduleName}/script.js`;
-                    break;
+                case 'auth': htmlPath = `modules/auth/auth.html`; scriptPath = `modules/auth/auth.js`; break;
+                case 'reset-password': htmlPath = `modules/auth/reset-password.html`; scriptPath = `modules/auth/reset-password.js`; break;
+                case 'dashboard': htmlPath = `modules/dashboard/index.html`; scriptPath = `modules/dashboard/dashboard.js`; break;
+                case 'trading-journal': htmlPath = `modules/trading-journal/index.html`; scriptPath = `modules/trading-journal/script.js`; break;
+                default: htmlPath = `modules/${moduleName}/index.html`; scriptPath = `modules/${moduleName}/script.js`; break;
             }
 
             const htmlResponse = await fetch(htmlPath);
-            if (!htmlResponse.ok) {
-                throw new Error(`HTML content file not found for module: ${moduleName}. Status: ${htmlResponse.status}`);
-            }
+            if (!htmlResponse.ok) throw new Error(`HTML not found: ${moduleName}`);
             const html = await htmlResponse.text();
+            
+            // Swap content
             targetContainer.innerHTML = html;
-
-            // Load Module CSS
             loadModuleCSS(moduleName);
 
-            // 🔑 CRITICAL FIX: Wait for CSS to load before proceeding
+            // Wait for CSS
             await new Promise(resolve => {
-                const newLink = document.querySelector('link.module-style');
-                if (!newLink) {
-                    resolve(); // No CSS or error, proceed anyway
-                    return;
-                }
-                // Resolve when CSS loads or errors (to prevent hanging)
-                newLink.onload = resolve;
-                newLink.onerror = resolve;
-                // Fallback safety timer in case event doesn't fire
+                const link = document.querySelector('link.module-style');
+                if (!link) { resolve(); return; }
+                link.onload = resolve;
+                link.onerror = resolve;
                 setTimeout(resolve, 300);
             });
 
             const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
             if (existingScript) existingScript.remove();
 
-            if (moduleName === 'auth' && document.querySelector(`script[src="modules/auth/auth.js"]`)) {
-                 if (window.tg_auth && typeof window.tg_auth.initAuthModule === 'function') {
-                     window.tg_auth.initAuthModule(targetContainer);
-                 }
-                 return;
+            if (moduleName === 'auth' && window.tg_auth?.initAuthModule) {
+                window.tg_auth.initAuthModule(targetContainer);
+                return;
             }
             
             const script = document.createElement('script');
@@ -299,86 +223,29 @@ document.addEventListener('DOMContentLoaded', () => {
             script.async = true; 
 
             script.onload = () => {
+                // Your Switch for Initialization
                 switch (moduleName) {
-                    case 'auth':
-                        if (window.tg_auth && typeof window.tg_auth.initAuthModule === 'function') {
-                            window.tg_auth.initAuthModule(targetContainer);
-                        }
-                        break;
-                    case 'reset-password':
-                          if (window.tg_auth_reset && typeof window.tg_auth_reset.initResetModule === 'function') {
-                              window.tg_auth_reset.initResetModule(targetContainer);
-                          }
-                          break;
-                    case 'dashboard':
-                        if (window.tg_dashboard && typeof window.tg_dashboard.initDashboard === 'function') {
-                            window.tg_dashboard.initDashboard();
-                        }
-                        break;
-                    case 'trading-journal':
-                        if (window.initTradingJournal && typeof window.initTradingJournal === 'function') {
-                            window.initTradingJournal();
-                        }
-                        break;
-                    case 'risk-management-hub':
-                        if (window.initRiskManagementHub && typeof window.initRiskManagementHub === 'function') {
-                            window.initRiskManagementHub();
-                        }
-                        break;
-                    case 'news-aggregator':
-                        if (window.initNewsAggregator && typeof window.initNewsAggregator === 'function') {
-                            window.initNewsAggregator();
-                        }
-                        break;
-                    case 'trading-ebooks':
-                        if (window.initTradingEbooks && typeof window.initTradingEbooks === 'function') {
-                            window.initTradingEbooks();
-                        }
-                        break;
-                    case 'cfd-brokers':
-                        if (window.initCfdBrokers && typeof window.initCfdBrokers === 'function') {
-                            window.initCfdBrokers();
-                        }
-                        break;
-                    case 'contact-us':
-                        if (window.initContactUs && typeof window.initContactUs === 'function') {
-                             window.initContactUs();
-                        }
-                        break;
-                    case 'analysis-hub':
-                        if (window.initAnalysisHub && typeof window.initAnalysisHub === 'function') {
-                            window.initAnalysisHub();
-                        }
-                        break;
-                    default:
-                        console.warn(`No specific init function found for module: ${moduleName}.`);
-                        break;
+                    case 'auth': window.tg_auth?.initAuthModule?.(targetContainer); break;
+                    case 'reset-password': window.tg_auth_reset?.initResetModule?.(targetContainer); break;
+                    case 'dashboard': window.tg_dashboard?.initDashboard?.(); break;
+                    case 'trading-journal': window.initTradingJournal?.(); break;
+                    case 'risk-management-hub': window.initRiskManagementHub?.(); break;
+                    case 'news-aggregator': window.initNewsAggregator?.(); break;
+                    case 'trading-ebooks': window.initTradingEbooks?.(); break;
+                    case 'cfd-brokers': window.initCfdBrokers?.(); break;
+                    case 'contact-us': window.initContactUs?.(); break;
+                    case 'analysis-hub': window.initAnalysisHub?.(); break;
                 }
-                console.log(`Module loaded: ${moduleName}`);
             };
-
-            script.onerror = () => {
-                console.warn(`Failed to load script for module: ${moduleName}. This may be expected.`);
-            };
-
             document.body.appendChild(script);
-
         } catch (error) {
-            console.error(`Error loading module ${moduleName}:`, error);
-            targetContainer.innerHTML = `<div class="error-message">Failed to load module. Please try again later.</div>`;
+            targetContainer.innerHTML = `<div class="error-message">Failed to load module.</div>`;
         }
     };
 
     function handleLogout() {
-        if (currentModuleName) {
-            cleanupModule(currentModuleName);
-        }
-        
-        localStorage.removeItem('tg_token');
-        localStorage.removeItem('tg_userId');
-        localStorage.removeItem('tg_reset_token');
-        localStorage.removeItem('tg_reset_userId');
-        
+        if (currentModuleName) cleanupModule(currentModuleName);
+        localStorage.clear(); // Clear all for safety
         window.location.hash = '#auth'; 
     }
 
