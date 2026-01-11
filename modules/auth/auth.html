@@ -78,6 +78,30 @@
                 </div>
             </div>
 
+            <div id="reset-password-container" class="form-container hidden">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: #DDAA33; font-size: 1.2rem; margin-bottom: 5px;">Set New Access Key</h3>
+                    <p style="font-size: 0.8rem; color: #8B949E;">Create a strong password for your account.</p>
+                </div>
+
+                <form id="reset-password-form">
+                    <input type="hidden" id="reset-token"> <div style="margin-bottom: 15px;">
+                        <label class="input-label">New Password</label>
+                        <input type="password" id="new-password" class="tg-input" required placeholder="••••••••">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Confirm Password</label>
+                        <input type="password" id="confirm-new-password" class="tg-input" required placeholder="••••••••">
+                    </div>
+                    
+                    <button type="submit" class="tg-btn-primary">Update Secure Key</button>
+                </form>
+                
+                <div class="links" style="justify-content: center;">
+                    <a href="#" id="back-to-login-link-reset" class="link-text">Return to Login</a>
+                </div>
+            </div>
+
             <div id="verify-pending-container" class="form-container hidden" style="text-align: center; padding: 20px 0;">
                 <div style="font-size: 3rem; margin-bottom: 20px;">✉️</div>
                 <h3 style="color: #DDAA33; margin-bottom: 10px; font-size: 1.2rem;">Verification Dispatched</h3>
