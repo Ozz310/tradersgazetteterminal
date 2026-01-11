@@ -1,5 +1,5 @@
 // /modules/auth/auth.js - ENTERPRISE EDITION
-// v3.5: Full Auth Suite (Login, Signup, Verify, Reset, Social)
+// v3.7: Fixed Redirects & Reset Logic
 
 (() => {
     // --- CONFIGURATION ---
@@ -35,7 +35,7 @@
         injectGoogleAuth();
         addEventListeners();
 
-        // 🚀 ROUTING LOGIC (Handle Email Links)
+        // 🚀 ROUTING LOGIC
         if (mode === 'verify' && token) {
             handleEmailVerification(token);
         } 
@@ -70,11 +70,9 @@
                 if(statusText) statusText.innerHTML = `<span style="color:#DDAA33; font-weight:bold;">Identity Verified.</span><br>Redirecting to Terminal...`;
                 
                 setTimeout(() => {
-                    // Clean URL
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    showForm('login-form');
-                    displayMessage("Verification Successful. Please Login.", false);
-                }, 2500);
+                    // Force Reload to Login Page (Clears URL params)
+                    window.location.href = window.location.pathname;
+                }, 2000);
             } else {
                 if(statusText) statusText.innerHTML = `<span style="color:#fecaca">Error: ${result.message}</span>`;
             }
@@ -145,7 +143,6 @@
                 headers: { 'Content-Type': 'application/json' }
             });
             
-            // Check for HTML Error (Crash)
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") === -1) {
                 console.error("Backend Error (HTML received)");
@@ -162,11 +159,11 @@
                     completeLogin(result);
                 } 
                 else if (data.action === 'reset-password') {
-                    // Reset Success -> To Login
+                    // Reset Success -> Force Reload to Login
                     displayMessage('Password Updated. Redirecting...', false);
                     setTimeout(() => {
-                         window.history.replaceState({}, document.title, window.location.pathname);
-                         showForm('login-form');
+                         // 🛑 FIX: Force a hard reload to clear ?mode=reset
+                         window.location.href = window.location.pathname; 
                     }, 2000);
                 }
                 else {
@@ -208,7 +205,7 @@
         const target = authBox.querySelector(`#${formId}-container`);
         if (target) target.classList.remove('hidden');
         
-        // Clear global message area unless showing verification
+        // Clear global message area unless showing verification status
         if (formId === 'verify-pending' || formId === 'verify-processing') {
              const msg = document.getElementById('auth-message');
              if (msg) msg.classList.add('hidden');
@@ -289,7 +286,7 @@
             sendAuthRequest({ action: 'forgot-password', email: email });
         });
 
-        // SUBMIT RESET (New Password)
+        // SUBMIT RESET (New Password) - 🆕 Re-Attached Logic
         const resetForm = authBox.querySelector('#reset-password-form');
         if (resetForm) resetForm.addEventListener('submit', handleResetSubmit);
 
