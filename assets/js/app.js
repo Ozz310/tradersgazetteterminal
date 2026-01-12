@@ -1,158 +1,247 @@
-/* TG TERMINAL BUILDER v6.2 - CORE ROUTER (RECOVERY PATCH)
-   "The Iron Sieve" Protocol - Fixes Black Screen & Pathing
+/* TG TERMINAL BUILDER v6.3 - SOVEREIGN ROUTER
+   Features: Phantom Transitions, Smart Pathing, Anti-Black Screen Protocol
 */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initRouter();
-    loadModule('dashboard'); // Default load
-});
-
-function initRouter() {
-    const navItems = document.querySelectorAll('.nav-item, .bottom-nav-item');
+    // DOM Elements
+    const body = document.body;
+    const sidebar = document.getElementById('sidebar');
+    const mainAppContainer = document.getElementById('main-app-container');
+    const moduleContainer = document.getElementById('module-container');
+    const authContainer = document.getElementById('auth-container');
+    const backgroundSymbols = document.querySelector('.background-symbols');
+    const bottomNav = document.querySelector('.bottom-nav');
     
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            navItems.forEach(nav => nav.classList.remove('active'));
-            
-            const targetModule = item.dataset.module;
-            document.querySelectorAll(`[data-module="${targetModule}"]`).forEach(el => el.classList.add('active'));
+    let currentModuleName = null;
 
-            if (targetModule === 'logout') {
+    // --- 1. NAVIGATION & AUTH LISTENERS ---
+
+    const handleNavClick = (e) => {
+        const navItem = e.target.closest('[data-module]');
+        if (navItem) {
+            e.preventDefault();
+            const moduleName = navItem.dataset.module;
+            if (moduleName === 'logout') {
                 handleLogout();
             } else {
-                loadModule(targetModule);
+                window.location.hash = '#' + moduleName;
             }
-        });
-    });
-}
+        }
+    };
 
-async function loadModule(moduleName) {
-    const container = document.getElementById('module-container');
-    const basePath = `/modules/${moduleName}`; 
+    if (sidebar) sidebar.addEventListener('click', handleNavClick);
+    if (bottomNav) bottomNav.addEventListener('click', handleNavClick);
 
-    // 1. FADE OUT
-    container.classList.add('fade-out');
-    await new Promise(resolve => setTimeout(resolve, 100));
+    const isAuthenticated = () => !!localStorage.getItem('tg_token');
 
-    // 2. SKELETON UI
-    container.innerHTML = getTerminalSkeleton();
-    container.classList.remove('fade-out');
-    container.classList.add('fade-in-end'); 
+    // --- 2. ROUTER ORCHESTRATOR ---
 
-    try {
-        // 3. FETCH HTML
-        const response = await fetch(`${basePath}/index.html`);
-        if (!response.ok) throw new Error(`Module ${moduleName} not found`);
-        
-        let html = await response.text();
+    const router = async () => {
+        // Fix FOUC
+        if (body.classList.contains('fouc-hidden')) {
+            body.classList.remove('fouc-hidden');
+        }
 
-        // 4. PARSE CONTENT
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        
-        // Extract content (Handle full page or partial)
-        const contentSource = doc.querySelector('.terminal-container') || doc.body;
-        const newContent = contentSource.innerHTML;
+        const hash = window.location.hash || '#auth';
+        let moduleName = hash.substring(1) || 'auth';
 
-        // 5. PREPARE STAGE (Fade out skeleton)
-        container.classList.remove('fade-in-end');
-        container.classList.add('fade-out');
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Auth Gatekeeper
+        if (moduleName !== 'auth' && moduleName !== 'reset-password' && !isAuthenticated()) {
+            window.location.hash = '#auth';
+            return;
+        }
 
-        // 6. INJECT & SANITIZE (CRITICAL FIX FOR BLACK SCREEN)
-        container.innerHTML = newContent;
-        
-        // Force-remove any 'hidden' classes that might be blocking view
-        // (Since we handle transitions, content should be natively visible)
-        const hiddenElements = container.querySelectorAll('.hidden, .module-loader-hidden, .invisible');
-        hiddenElements.forEach(el => {
-            el.classList.remove('hidden', 'module-loader-hidden', 'invisible');
-            el.style.display = ''; // Reset inline display
-            el.style.opacity = '1'; // Force opacity
-            el.style.visibility = 'visible';
-        });
-
-        // 7. SCRIPT REBASING & FALLBACK
-        const scripts = doc.querySelectorAll('script');
-        scripts.forEach(oldScript => {
-            const newScript = document.createElement('script');
-            const src = oldScript.getAttribute('src');
-
-            if (src) {
-                // Determine Path
-                let finalSrc = src;
-                if (!src.startsWith('/') && !src.startsWith('http')) {
-                    finalSrc = `${basePath}/${src}`;
-                }
-
-                newScript.src = finalSrc;
-                
-                // ERROR HANDLER (Smart Fallback)
-                newScript.onerror = () => {
-                    console.warn(`[TG Terminal] Failed to load ${finalSrc}`);
-                    
-                    // If dashboard.js fails, try script.js automatically
-                    if (finalSrc.endsWith(`${moduleName}.js`)) {
-                        const fallbackSrc = `${basePath}/script.js`;
-                        console.log(`[TG Terminal] Attempting fallback: ${fallbackSrc}`);
-                        const fallbackScript = document.createElement('script');
-                        fallbackScript.src = fallbackSrc;
-                        document.body.appendChild(fallbackScript);
-                    }
-                };
+        // Layout Switching (Auth Mode vs Terminal Mode)
+        if (isAuthenticated() && moduleName !== 'auth') {
+            if (authContainer) authContainer.style.display = 'none';
+            if (backgroundSymbols) backgroundSymbols.style.display = 'none';
+            if (mainAppContainer) {
+                mainAppContainer.style.display = 'flex';
+                mainAppContainer.classList.remove('hidden');
             }
+        } else {
+            if (authContainer) authContainer.style.display = 'flex';
+            if (backgroundSymbols) backgroundSymbols.style.display = 'block';
+            if (mainAppContainer) {
+                mainAppContainer.style.display = 'none';
+                mainAppContainer.classList.add('hidden');
+            }
+        }
+
+        // Cleanup Old Module
+        if (currentModuleName && currentModuleName !== moduleName) {
+            cleanupModule(currentModuleName);
+        }
+
+        // Update Nav UI
+        document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        const activeNavItems = document.querySelectorAll(`[data-module="${moduleName}"]`);
+        activeNavItems.forEach(item => item.classList.add('active'));
+
+        // EXECUTE LOAD
+        await loadModule(moduleName);
+        currentModuleName = moduleName;
+    };
+
+    // --- 3. THE PHANTOM ENGINE (Module Loader) ---
+
+    const loadModule = async (moduleName) => {
+        let targetContainer = (moduleName === 'auth' || moduleName === 'reset-password') ? authContainer : moduleContainer;
+        
+        // A. TRANSITION START: Fade Out
+        targetContainer.classList.add('fade-out');
+        await new Promise(r => setTimeout(r, 100));
+
+        // B. SKELETON INJECTION (Only for Terminal modules)
+        if (moduleName !== 'auth' && moduleName !== 'reset-password') {
+            targetContainer.innerHTML = getTerminalSkeleton();
+            targetContainer.classList.remove('fade-out');
+            targetContainer.classList.add('fade-in-end');
+        }
+
+        try {
+            // C. PATH RESOLUTION strategy
+            const basePath = `modules/${moduleName}`;
+            let htmlPath = `${basePath}/index.html`;
+            let scriptPath = `${basePath}/script.js`; // Default standard
+
+            // Custom Path Overrides (Legacy Compatibility)
+            if (moduleName === 'auth') { htmlPath = 'modules/auth/auth.html'; scriptPath = 'modules/auth/auth.js'; }
+            if (moduleName === 'reset-password') { htmlPath = 'modules/auth/reset-password.html'; scriptPath = 'modules/auth/reset-password.js'; }
+            if (moduleName === 'dashboard') { 
+                // Try dashboard.js first, but we have a fallback below
+                scriptPath = 'modules/dashboard/dashboard.js'; 
+            }
+
+            // D. FETCH CONTENT
+            const response = await fetch(htmlPath);
+            if (!response.ok) throw new Error(`HTML ${htmlPath} not found`);
+            const html = await response.text();
+
+            // E. PARSE & PREPARE
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            // robust selector to get content
+            const newContent = doc.querySelector('.terminal-container')?.innerHTML || doc.body.innerHTML;
+
+            // F. SWAP SKELETON FOR CONTENT
+            targetContainer.classList.remove('fade-in-end');
+            targetContainer.classList.add('fade-out');
             
-            // Copy attributes & inline content
-            Array.from(oldScript.attributes).forEach(attr => {
-                if (attr.name !== 'src' && attr.name !== 'onerror') {
-                    newScript.setAttribute(attr.name, attr.value);
-                }
+            // Short delay for swap
+            await new Promise(r => setTimeout(r, 50));
+
+            targetContainer.innerHTML = newContent;
+
+            // --- G. CRITICAL: FORCE VISIBILITY (Anti-Black Screen) ---
+            // If the HTML has .hidden classes waiting for JS, remove them immediately
+            const hiddenEls = targetContainer.querySelectorAll('.hidden, .module-loader-hidden, .invisible');
+            hiddenEls.forEach(el => {
+                el.classList.remove('hidden', 'module-loader-hidden', 'invisible');
+                el.style.opacity = '1';
+                el.style.display = 'block'; // Ensure block display
             });
-            if (oldScript.innerHTML) newScript.textContent = oldScript.textContent;
 
-            document.body.appendChild(newScript);
-        });
+            // H. LOAD CSS
+            loadModuleCSS(moduleName);
 
-        // 8. FADE IN REAL CONTENT
-        container.classList.remove('fade-out');
-        container.classList.add('fade-in-end');
+            // I. LOAD SCRIPT (With Fallback)
+            const oldScript = document.querySelector(`script[data-module-script="${moduleName}"]`);
+            if (oldScript) oldScript.remove();
 
-        // Cleanup
-        setTimeout(() => {
-            container.classList.remove('fade-in-end');
-        }, 300);
+            const script = document.createElement('script');
+            script.src = scriptPath;
+            script.type = 'text/javascript';
+            script.async = true;
+            script.setAttribute('data-module-script', moduleName);
+            
+            script.onload = () => initModuleFunction(moduleName);
+            
+            // SMART FALLBACK: If dashboard.js fails, try script.js
+            script.onerror = () => {
+                console.warn(`Primary script ${scriptPath} failed. Attempting fallback...`);
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = `${basePath}/script.js`;
+                fallbackScript.type = 'text/javascript';
+                fallbackScript.onload = () => initModuleFunction(moduleName);
+                document.body.appendChild(fallbackScript);
+            };
 
-    } catch (error) {
-        console.error("Module Load Failed:", error);
-        container.innerHTML = `
-            <div style="padding: 2rem; text-align: center; color: #ff5252;">
-                <h3>Connection Error</h3>
-                <p>Unable to load ${moduleName}.</p>
-                <small>${error.message}</small>
+            document.body.appendChild(script);
+
+            // J. FADE IN FINAL
+            targetContainer.classList.remove('fade-out');
+            targetContainer.classList.add('fade-in-end');
+            setTimeout(() => targetContainer.classList.remove('fade-in-end'), 300);
+
+        } catch (error) {
+            console.error(`Error loading ${moduleName}:`, error);
+            // Even on error, show the container so it's not black
+            targetContainer.innerHTML = `
+                <div style="padding: 20px; color: #ff6b6b; text-align: center;">
+                    <h3>Module Load Error</h3>
+                    <p>Failed to load ${moduleName}.</p>
+                    <small>${error.message}</small>
+                </div>
+            `;
+            targetContainer.classList.remove('fade-out');
+            targetContainer.classList.add('fade-in-end');
+        }
+    };
+
+    // --- 4. HELPERS ---
+
+    const initModuleFunction = (moduleName) => {
+        if (moduleName === 'auth' && window.tg_auth?.initAuthModule) window.tg_auth.initAuthModule();
+        else if (moduleName === 'trading-journal' && window.initTradingJournal) window.initTradingJournal();
+        else if (moduleName === 'dashboard') {
+            // Support both potential naming conventions
+            if (window.tg_dashboard?.initDashboard) window.tg_dashboard.initDashboard();
+            else if (window.initDashboard) window.initDashboard();
+        }
+    };
+
+    const loadModuleCSS = (moduleName) => {
+        const oldLink = document.querySelector('link.module-style');
+        if (oldLink) oldLink.remove();
+        
+        let cssPath = `modules/${moduleName}/style.css`;
+        if (moduleName === 'reset-password') cssPath = 'modules/auth/style.css';
+
+        const newLink = document.createElement('link');
+        newLink.rel = 'stylesheet';
+        newLink.href = cssPath;
+        newLink.classList.add('module-style');
+        document.head.appendChild(newLink);
+    };
+
+    const cleanupModule = (moduleName) => {
+        if (moduleName === 'dashboard' && window.tg_dashboard?.cleanup) window.tg_dashboard.cleanup();
+    };
+
+    function handleLogout() {
+        if (currentModuleName) cleanupModule(currentModuleName);
+        localStorage.removeItem('tg_token');
+        localStorage.removeItem('tg_userId');
+        window.location.hash = '#auth';
+        location.reload(); // Force reload to clear state
+    }
+
+    function getTerminalSkeleton() {
+        return `
+            <div class="terminal-skeleton" style="padding:20px; height:100%; display:grid; grid-template-rows:60px 1fr; gap:20px;">
+                <div class="sk-header" style="background:#1a1d24; border-radius:8px; width:100%; height:100%;"></div>
+                <div class="sk-grid" style="display:grid; grid-template-columns:2fr 1fr; gap:20px; height:100%;">
+                    <div class="sk-card" style="background:#1a1d24; border-radius:8px; height:100%;"></div>
+                    <div class="sk-card" style="background:#1a1d24; border-radius:8px; height:100%;"></div>
+                </div>
             </div>
         `;
-        container.classList.remove('fade-out');
-        container.classList.add('fade-in-end');
     }
-}
 
-function getTerminalSkeleton() {
-    return `
-        <div class="terminal-skeleton">
-            <div class="sk-header">
-                <div class="sk-title skeleton-pulse"></div>
-                <div class="sk-actions skeleton-pulse"></div>
-            </div>
-            <div class="sk-grid">
-                <div class="sk-card large skeleton-pulse"></div>
-                <div class="sk-card skeleton-pulse"></div>
-                <div class="sk-card skeleton-pulse"></div>
-            </div>
-        </div>
-    `;
-}
-
-function handleLogout() {
-    window.location.href = '/login.html';
-}
+    // Initialize
+    window.addEventListener('hashchange', router);
+    router();
+});
