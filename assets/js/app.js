@@ -1,161 +1,150 @@
-// /assets/js/app.js - v2.0 (Skeleton-First Router)
-document.addEventListener('DOMContentLoaded', () => {
-    const body = document.body;
-    const sidebar = document.getElementById('sidebar');
-    const mainAppContainer = document.getElementById('main-app-container');
-    const moduleContainer = document.getElementById('module-container');
-    const authContainer = document.getElementById('auth-container');
-    const backgroundSymbols = document.querySelector('.background-symbols');
-    const bottomNav = document.querySelector('.bottom-nav');
-    
-    let currentModuleName = null;
+/* TG TERMINAL BUILDER v6.0 - CORE ROUTER
+    "The Iron Sieve" Protocol
+*/
 
-    // 1. Navigation Event Listeners
-    const handleNavClick = (e) => {
-        const navItem = e.target.closest('[data-module]');
-        if (navItem) {
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Router
+    initRouter();
+    
+    // Default load (Dashboard)
+    loadModule('dashboard');
+});
+
+function initRouter() {
+    const navItems = document.querySelectorAll('.nav-item, .bottom-nav-item');
+    
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
             e.preventDefault();
-            const moduleName = navItem.dataset.module;
-            if (moduleName === 'logout') {
+            
+            // Visual Active State Update
+            navItems.forEach(nav => nav.classList.remove('active'));
+            
+            // Highlight the clicked item (and its counterpart on sidebar/bottom)
+            const targetModule = item.dataset.module;
+            document.querySelectorAll(`[data-module="${targetModule}"]`).forEach(el => el.classList.add('active'));
+
+            if (targetModule === 'logout') {
                 handleLogout();
             } else {
-                window.location.hash = '#' + moduleName;
+                loadModule(targetModule);
             }
-        }
-    };
-
-    if (sidebar) sidebar.addEventListener('click', handleNavClick);
-    if (bottomNav) bottomNav.addEventListener('click', handleNavClick);
-
-    const isAuthenticated = () => !!localStorage.getItem('tg_token');
-
-    // 2. Main Router Logic
-    const router = async () => {
-        // Handle FOUC class if it exists
-        if (body.classList.contains('fouc-hidden')) {
-            body.classList.remove('fouc-hidden');
-        }
-
-        const hash = window.location.hash || '#auth';
-        let moduleName = hash.substring(1) || 'auth';
-
-        // Auth Protection
-        if (moduleName !== 'auth' && moduleName !== 'reset-password' && !isAuthenticated()) {
-            window.location.hash = '#auth';
-            return;
-        }
-
-        // Layout Switching (Auth vs Main App)
-        if (isAuthenticated()) {
-            if (authContainer) authContainer.style.display = 'none';
-            if (backgroundSymbols) backgroundSymbols.style.display = 'none';
-            if (mainAppContainer) {
-                mainAppContainer.style.display = 'flex';
-                mainAppContainer.classList.remove('hidden');
-            }
-        } else {
-            if (authContainer) authContainer.style.display = 'flex';
-            if (backgroundSymbols) backgroundSymbols.style.display = 'block';
-            if (mainAppContainer) {
-                mainAppContainer.style.display = 'none';
-                mainAppContainer.classList.add('hidden');
-            }
-        }
-
-        // Cleanup previous module
-        if (currentModuleName && currentModuleName !== moduleName) {
-            cleanupModule(currentModuleName);
-        }
-
-        // Load New Module
-        await loadModule(moduleName);
-        currentModuleName = moduleName;
-
-        // Update Active Navigation State
-        document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(item => {
-            item.classList.remove('active');
         });
-        const activeNavItems = document.querySelectorAll(`[data-module="${moduleName}"]`);
-        activeNavItems.forEach(item => item.classList.add('active'));
-    };
+    });
+}
 
-    // 3. Module Loader (No Artificial Delays)
-    const loadModule = async (moduleName) => {
-        let targetContainer = (moduleName === 'auth' || moduleName === 'reset-password') ? authContainer : moduleContainer;
+/**
+ * THE PHANTOM TRANSITION ENGINE
+ * Orchestrates the smooth swap of modules using Skeleton UI
+ */
+async function loadModule(moduleName) {
+    const container = document.getElementById('module-container');
+    const basePath = `/modules/${moduleName}`; // Standardized pathing
+
+    // STEP 1: FADE OUT CURRENT MODULE
+    container.classList.add('fade-out');
+
+    // Wait for fade out to finish (200ms)
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // STEP 2: INJECT PHANTOM SKELETON
+    // This gives immediate visual feedback while network fetches happen
+    container.innerHTML = getTerminalSkeleton();
+    container.classList.remove('fade-out');
+    container.classList.add('fade-in-start'); // Prepare for entry
+    
+    // Force browser reflow to ensure opacity:0 is registered
+    void container.offsetWidth; 
+    
+    container.classList.remove('fade-in-start');
+    container.classList.add('fade-in-end'); // Fade skeleton in
+
+    try {
+        // STEP 3: FETCH REAL DATA (Parallel Fetching)
+        // We fetch HTML and CSS/JS paths simultaneously
+        const response = await fetch(`${basePath}/index.html`);
         
-        try {
-            // Determine paths
-            let htmlPath = `modules/${moduleName}/index.html`;
-            let scriptPath = `modules/${moduleName}/script.js`;
-            
-            // Handle edge case paths
-            if (moduleName === 'auth') { htmlPath = 'modules/auth/auth.html'; scriptPath = 'modules/auth/auth.js'; }
-            if (moduleName === 'reset-password') { htmlPath = 'modules/auth/reset-password.html'; scriptPath = 'modules/auth/reset-password.js'; }
-            if (moduleName === 'trading-journal') { htmlPath = 'modules/trading-journal/index.html'; scriptPath = 'modules/trading-journal/script.js'; }
-            if (moduleName === 'dashboard') { htmlPath = 'modules/dashboard/index.html'; scriptPath = 'modules/dashboard/dashboard.js'; }
-
-            // Fetch HTML
-            const response = await fetch(htmlPath);
-            if (!response.ok) throw new Error(`HTML not found: ${response.status}`);
-            const html = await response.text();
-            
-            // Inject HTML immediately (This shows the Skeleton!)
-            targetContainer.innerHTML = html;
-
-            // Load CSS
-            loadModuleCSS(moduleName);
-
-            // Load Script
-            const oldScript = document.querySelector(`script[src="${scriptPath}"]`);
-            if (oldScript) oldScript.remove();
-
-            const script = document.createElement('script');
-            script.src = scriptPath;
-            script.type = 'text/javascript';
-            script.async = true;
-            script.onload = () => initModuleFunction(moduleName);
-            document.body.appendChild(script);
-
-        } catch (error) {
-            console.error(`Error loading ${moduleName}:`, error);
-            targetContainer.innerHTML = `<div class="error-message">Failed to load module content.</div>`;
-        }
-    };
-
-    // Helper: Initialize the specific function for the module
-    const initModuleFunction = (moduleName) => {
-        if (moduleName === 'auth' && window.tg_auth?.initAuthModule) window.tg_auth.initAuthModule();
-        else if (moduleName === 'trading-journal' && window.initTradingJournal) window.initTradingJournal();
-        else if (moduleName === 'dashboard' && window.tg_dashboard?.initDashboard) window.tg_dashboard.initDashboard();
-        // Add other module initializers here as needed
-    };
-
-    const loadModuleCSS = (moduleName) => {
-        const oldLink = document.querySelector('link.module-style');
-        if (oldLink) oldLink.remove();
+        if (!response.ok) throw new Error(`Module ${moduleName} not found`);
         
-        let cssPath = `modules/${moduleName}/style.css`;
-        if (moduleName === 'reset-password') cssPath = 'modules/auth/style.css';
+        let html = await response.text();
 
-        const newLink = document.createElement('link');
-        newLink.rel = 'stylesheet';
-        newLink.href = cssPath;
-        newLink.classList.add('module-style');
-        document.head.appendChild(newLink);
-    };
+        // STEP 4: PARSE & PREPARE
+        // We need to strip out the full HTML structure if the module includes <head> etc.
+        // Or simply extract the body content if the file is a full HTML page.
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extract the core content (assuming it's wrapped in a specific class or body)
+        // Fallback to body.innerHTML if no specific container found
+        const newContent = doc.querySelector('.terminal-container') ? doc.querySelector('.terminal-container').innerHTML : doc.body.innerHTML;
 
-    const cleanupModule = (moduleName) => {
-        if (moduleName === 'dashboard' && window.tg_dashboard?.cleanup) window.tg_dashboard.cleanup();
-        // Add other cleanup logic if needed
-    };
+        // STEP 5: SWAP SKELETON FOR REAL CONTENT
+        // We do a quick swap. Since the container is already visible, 
+        // we might want to hide it briefly if we want a "pop" effect, 
+        // but for smoothness, we just replace the innerHTML.
+        
+        // Optional: Fade out skeleton briefly
+        container.classList.remove('fade-in-end');
+        container.classList.add('fade-out');
+        await new Promise(resolve => setTimeout(resolve, 150));
 
-    function handleLogout() {
-        if (currentModuleName) cleanupModule(currentModuleName);
-        localStorage.removeItem('tg_token');
-        localStorage.removeItem('tg_userId');
-        window.location.hash = '#auth';
+        // INJECT
+        container.innerHTML = newContent;
+        
+        // Handle Scripts (Execute them manually because innerHTML doesn't run scripts)
+        const scripts = doc.querySelectorAll('script');
+        scripts.forEach(oldScript => {
+            const newScript = document.createElement('script');
+            // Copy attributes
+            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            // Copy content
+            newScript.textContent = oldScript.textContent;
+            // Append to body to execute
+            document.body.appendChild(newScript);
+        });
+
+        // STEP 6: FADE IN REAL CONTENT
+        container.classList.remove('fade-out');
+        container.classList.add('fade-in-start');
+        void container.offsetWidth; // Force Reflow
+        container.classList.remove('fade-in-start');
+        container.classList.add('fade-in-end');
+
+        // Cleanup: Remove transition classes after animation
+        setTimeout(() => {
+            container.classList.remove('fade-in-end');
+        }, 300);
+
+    } catch (error) {
+        console.error("Module Load Failed:", error);
+        container.innerHTML = `<div class="error-state">
+            <h3>Connection Lost</h3>
+            <p>Unable to load ${moduleName}. Retrying...</p>
+        </div>`;
     }
+}
 
-    window.addEventListener('hashchange', router);
-    router();
-});
+/**
+ * Returns the HTML structure for the "Universal Terminal Skeleton"
+ * matches the CSS in transitions.css
+ */
+function getTerminalSkeleton() {
+    return `
+        <div class="terminal-skeleton">
+            <div class="sk-header">
+                <div class="sk-title skeleton-pulse"></div>
+                <div class="sk-actions skeleton-pulse"></div>
+            </div>
+            <div class="sk-grid">
+                <div class="sk-card large skeleton-pulse"></div>
+                <div class="sk-card skeleton-pulse"></div>
+                <div class="sk-card skeleton-pulse"></div>
+            </div>
+        </div>
+    `;
+}
+
+function handleLogout() {
+    // Simple redirect for now
+    window.location.href = '/login.html';
+}
