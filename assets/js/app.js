@@ -1,5 +1,5 @@
-/* TG TERMINAL BUILDER v6.0 - CORE ROUTER
-    "The Iron Sieve" Protocol
+/* TG TERMINAL BUILDER v6.1 - CORE ROUTER (HOTFIXED)
+    "The Iron Sieve" Protocol - Now with Path Rebasing
 */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,62 +44,78 @@ async function loadModule(moduleName) {
     // STEP 1: FADE OUT CURRENT MODULE
     container.classList.add('fade-out');
 
-    // Wait for fade out to finish (200ms)
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // Wait for fade out to finish (shortened to 100ms for snappiness)
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     // STEP 2: INJECT PHANTOM SKELETON
-    // This gives immediate visual feedback while network fetches happen
     container.innerHTML = getTerminalSkeleton();
     container.classList.remove('fade-out');
-    container.classList.add('fade-in-start'); // Prepare for entry
+    container.classList.add('fade-in-start'); 
     
-    // Force browser reflow to ensure opacity:0 is registered
-    void container.offsetWidth; 
+    void container.offsetWidth; // Force Reflow
     
     container.classList.remove('fade-in-start');
-    container.classList.add('fade-in-end'); // Fade skeleton in
+    container.classList.add('fade-in-end'); 
 
     try {
-        // STEP 3: FETCH REAL DATA (Parallel Fetching)
-        // We fetch HTML and CSS/JS paths simultaneously
+        // STEP 3: FETCH REAL DATA
+        // Note: Ensure your server serves /modules/dashboard/index.html correctly
         const response = await fetch(`${basePath}/index.html`);
         
-        if (!response.ok) throw new Error(`Module ${moduleName} not found`);
+        if (!response.ok) throw new Error(`Module ${moduleName} not found (Status: ${response.status})`);
         
         let html = await response.text();
 
         // STEP 4: PARSE & PREPARE
-        // We need to strip out the full HTML structure if the module includes <head> etc.
-        // Or simply extract the body content if the file is a full HTML page.
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Extract the core content (assuming it's wrapped in a specific class or body)
-        // Fallback to body.innerHTML if no specific container found
-        const newContent = doc.querySelector('.terminal-container') ? doc.querySelector('.terminal-container').innerHTML : doc.body.innerHTML;
+        // Extract content - Robust check for container or body
+        const newContent = doc.querySelector('.terminal-container') 
+            ? doc.querySelector('.terminal-container').innerHTML 
+            : doc.body.innerHTML;
 
         // STEP 5: SWAP SKELETON FOR REAL CONTENT
-        // We do a quick swap. Since the container is already visible, 
-        // we might want to hide it briefly if we want a "pop" effect, 
-        // but for smoothness, we just replace the innerHTML.
-        
-        // Optional: Fade out skeleton briefly
+        // Fade out skeleton briefly
         container.classList.remove('fade-in-end');
         container.classList.add('fade-out');
-        await new Promise(resolve => setTimeout(resolve, 150));
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        // INJECT
+        // INJECT HTML
         container.innerHTML = newContent;
         
-        // Handle Scripts (Execute them manually because innerHTML doesn't run scripts)
+        // --- CRITICAL FIX: SCRIPT REBASING ---
+        // We must re-execute scripts AND fix their paths
         const scripts = doc.querySelectorAll('script');
+        
         scripts.forEach(oldScript => {
             const newScript = document.createElement('script');
-            // Copy attributes
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            // Copy content
-            newScript.textContent = oldScript.textContent;
-            // Append to body to execute
+            
+            // Rebase 'src' attributes
+            if (oldScript.src) {
+                const src = oldScript.getAttribute('src');
+                // If it's a relative path (doesn't start with / or http), prepend module path
+                if (!src.startsWith('/') && !src.startsWith('http')) {
+                    newScript.src = `${basePath}/${src}`;
+                    console.log(`[TG Terminal] Rebasing script: ${src} -> ${newScript.src}`);
+                } else {
+                    newScript.src = src;
+                }
+            }
+            
+            // Copy other attributes (type, async, defer, etc.)
+            Array.from(oldScript.attributes).forEach(attr => {
+                if (attr.name !== 'src') {
+                    newScript.setAttribute(attr.name, attr.value);
+                }
+            });
+
+            // Copy inline script content if any
+            if (oldScript.innerHTML) {
+                newScript.textContent = oldScript.textContent;
+            }
+
+            // Execute
             document.body.appendChild(newScript);
         });
 
@@ -110,24 +126,27 @@ async function loadModule(moduleName) {
         container.classList.remove('fade-in-start');
         container.classList.add('fade-in-end');
 
-        // Cleanup: Remove transition classes after animation
+        // Cleanup transition classes
         setTimeout(() => {
             container.classList.remove('fade-in-end');
         }, 300);
 
     } catch (error) {
         console.error("Module Load Failed:", error);
-        container.innerHTML = `<div class="error-state">
-            <h3>Connection Lost</h3>
-            <p>Unable to load ${moduleName}. Retrying...</p>
-        </div>`;
+        // Remove skeleton and show error
+        container.innerHTML = `
+            <div class="error-state" style="padding: 20px; color: #ff4d4d; text-align: center;">
+                <h3><i class="fas fa-exclamation-triangle"></i> Module Load Error</h3>
+                <p>Could not load <strong>${moduleName}</strong>.</p>
+                <p style="font-size: 0.8em; opacity: 0.7;">Debug: ${error.message}</p>
+                <button onclick="location.reload()" class="tgg-primary-cta" style="margin-top:10px">Reload Terminal</button>
+            </div>
+        `;
+        container.classList.remove('fade-out');
+        container.classList.add('fade-in-end');
     }
 }
 
-/**
- * Returns the HTML structure for the "Universal Terminal Skeleton"
- * matches the CSS in transitions.css
- */
 function getTerminalSkeleton() {
     return `
         <div class="terminal-skeleton">
@@ -145,6 +164,5 @@ function getTerminalSkeleton() {
 }
 
 function handleLogout() {
-    // Simple redirect for now
     window.location.href = '/login.html';
 }
