@@ -1,5 +1,5 @@
-/* TG TERMINAL BUILDER v6.3 - SOVEREIGN ROUTER
-   Features: Phantom Transitions, Smart Pathing, Anti-Black Screen Protocol
+/* TG TERMINAL BUILDER v6.4 - SOVEREIGN ROUTER
+   Features: CSS-First Loading (No Flash), Phantom Transitions, Smart Pathing
 */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -105,49 +105,46 @@ document.addEventListener('DOMContentLoaded', () => {
             // C. PATH RESOLUTION strategy
             const basePath = `modules/${moduleName}`;
             let htmlPath = `${basePath}/index.html`;
-            let scriptPath = `${basePath}/script.js`; // Default standard
+            let scriptPath = `${basePath}/script.js`; 
 
-            // Custom Path Overrides (Legacy Compatibility)
+            // Custom Path Overrides
             if (moduleName === 'auth') { htmlPath = 'modules/auth/auth.html'; scriptPath = 'modules/auth/auth.js'; }
             if (moduleName === 'reset-password') { htmlPath = 'modules/auth/reset-password.html'; scriptPath = 'modules/auth/reset-password.js'; }
-            if (moduleName === 'dashboard') { 
-                // Try dashboard.js first, but we have a fallback below
-                scriptPath = 'modules/dashboard/dashboard.js'; 
-            }
+            if (moduleName === 'dashboard') { scriptPath = 'modules/dashboard/dashboard.js'; }
 
-            // D. FETCH CONTENT
-            const response = await fetch(htmlPath);
-            if (!response.ok) throw new Error(`HTML ${htmlPath} not found`);
-            const html = await response.text();
+            // D. PARALLEL FETCH (HTML + CSS)
+            // We load CSS *before* swapping the HTML to prevent flash
+            const [htmlResponse, cssLoaded] = await Promise.all([
+                fetch(htmlPath),
+                loadModuleCSS(moduleName) // This now returns a Promise
+            ]);
+
+            if (!htmlResponse.ok) throw new Error(`HTML ${htmlPath} not found`);
+            const html = await htmlResponse.text();
 
             // E. PARSE & PREPARE
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            // robust selector to get content
             const newContent = doc.querySelector('.terminal-container')?.innerHTML || doc.body.innerHTML;
 
             // F. SWAP SKELETON FOR CONTENT
+            // CSS is already loaded, so this swap should be visually seamless
             targetContainer.classList.remove('fade-in-end');
             targetContainer.classList.add('fade-out');
             
-            // Short delay for swap
-            await new Promise(r => setTimeout(r, 50));
+            await new Promise(r => setTimeout(r, 50)); // Tiny buffer
 
             targetContainer.innerHTML = newContent;
 
             // --- G. CRITICAL: FORCE VISIBILITY (Anti-Black Screen) ---
-            // If the HTML has .hidden classes waiting for JS, remove them immediately
             const hiddenEls = targetContainer.querySelectorAll('.hidden, .module-loader-hidden, .invisible');
             hiddenEls.forEach(el => {
                 el.classList.remove('hidden', 'module-loader-hidden', 'invisible');
                 el.style.opacity = '1';
-                el.style.display = 'block'; // Ensure block display
+                el.style.display = 'block'; 
             });
 
-            // H. LOAD CSS
-            loadModuleCSS(moduleName);
-
-            // I. LOAD SCRIPT (With Fallback)
+            // H. LOAD SCRIPT (With Fallback)
             const oldScript = document.querySelector(`script[data-module-script="${moduleName}"]`);
             if (oldScript) oldScript.remove();
 
@@ -159,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             script.onload = () => initModuleFunction(moduleName);
             
-            // SMART FALLBACK: If dashboard.js fails, try script.js
             script.onerror = () => {
                 console.warn(`Primary script ${scriptPath} failed. Attempting fallback...`);
                 const fallbackScript = document.createElement('script');
@@ -171,14 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.body.appendChild(script);
 
-            // J. FADE IN FINAL
+            // I. FADE IN FINAL
             targetContainer.classList.remove('fade-out');
             targetContainer.classList.add('fade-in-end');
             setTimeout(() => targetContainer.classList.remove('fade-in-end'), 300);
 
         } catch (error) {
             console.error(`Error loading ${moduleName}:`, error);
-            // Even on error, show the container so it's not black
             targetContainer.innerHTML = `
                 <div style="padding: 20px; color: #ff6b6b; text-align: center;">
                     <h3>Module Load Error</h3>
@@ -197,28 +192,44 @@ document.addEventListener('DOMContentLoaded', () => {
         if (moduleName === 'auth' && window.tg_auth?.initAuthModule) window.tg_auth.initAuthModule();
         else if (moduleName === 'trading-journal' && window.initTradingJournal) window.initTradingJournal();
         else if (moduleName === 'dashboard') {
-            // Support both potential naming conventions
             if (window.tg_dashboard?.initDashboard) window.tg_dashboard.initDashboard();
             else if (window.initDashboard) window.initDashboard();
+        } else if (moduleName === 'news-aggregator' && window.initNewsAggregator) {
+             window.initNewsAggregator();
         }
     };
 
+    // UPDATED: Now returns a Promise to wait for styles
     const loadModuleCSS = (moduleName) => {
-        const oldLink = document.querySelector('link.module-style');
-        if (oldLink) oldLink.remove();
-        
-        let cssPath = `modules/${moduleName}/style.css`;
-        if (moduleName === 'reset-password') cssPath = 'modules/auth/style.css';
+        return new Promise((resolve) => {
+            const oldLink = document.querySelector('link.module-style');
+            if (oldLink) oldLink.remove();
+            
+            let cssPath = `modules/${moduleName}/style.css`;
+            if (moduleName === 'reset-password') cssPath = 'modules/auth/style.css';
 
-        const newLink = document.createElement('link');
-        newLink.rel = 'stylesheet';
-        newLink.href = cssPath;
-        newLink.classList.add('module-style');
-        document.head.appendChild(newLink);
+            const newLink = document.createElement('link');
+            newLink.rel = 'stylesheet';
+            newLink.href = cssPath;
+            newLink.classList.add('module-style');
+            
+            // Resolve when loaded or if it errors (don't block indefinitely)
+            newLink.onload = () => resolve(true);
+            newLink.onerror = () => {
+                console.warn(`CSS load failed for ${moduleName}`);
+                resolve(false); 
+            };
+            
+            document.head.appendChild(newLink);
+            
+            // Safety timeout: If CSS takes > 1s, proceed anyway
+            setTimeout(() => resolve(false), 1000);
+        });
     };
 
     const cleanupModule = (moduleName) => {
         if (moduleName === 'dashboard' && window.tg_dashboard?.cleanup) window.tg_dashboard.cleanup();
+        if (moduleName === 'news-aggregator' && window.tg_news?.cleanup) window.tg_news.cleanup();
     };
 
     function handleLogout() {
@@ -226,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('tg_token');
         localStorage.removeItem('tg_userId');
         window.location.hash = '#auth';
-        location.reload(); // Force reload to clear state
+        location.reload(); 
     }
 
     function getTerminalSkeleton() {
