@@ -3,14 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced Trading Journal and Analytics Dashboard for the TG Terminal. Track pnl, win-rate, and strategy performance in real-time.">
     <title>Trading Journal - Trader's Gazette Terminal</title>
     
-    <link rel="stylesheet" href="/tradersgazetteterminal/assets/css/main.css">
-    <link rel="stylesheet" href="/tradersgazetteterminal/modules/trading-journal/style.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/modules/trading-journal/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "TG Terminal Trading Journal",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD"
+      },
+      "featureList": "Trade Logging, P&L Analytics, Win-Rate Calculation, Strategy Performance Tracking"
+    }
+    </script>
 </head>
 <body>
     <div class="terminal-container">
@@ -240,7 +257,13 @@
 
                         <div id="notification" class="notification hidden"></div>
                         
-                    </div> </div> </div> </div> </div> <script src="/tradersgazetteterminal/modules/trading-journal/script.js"></script>
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+
+    <script src="/modules/trading-journal/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // CRITICAL: Initialize the module when the DOM is ready
