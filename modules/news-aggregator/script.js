@@ -70,21 +70,44 @@ function initNewsAggregator() {
         }
     }
 
+    // --- Helper: Show Skeleton ---
+    function showSkeleton() {
+        if (!newsList) return;
+        newsList.innerHTML = `
+            <div class="skeleton-wrapper">
+                ${Array(3).fill(`
+                <div class="skeleton-article">
+                    <div class="skeleton-line" style="width: 70%"></div>
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line medium"></div>
+                </div>`).join('')}
+            </div>
+        `;
+    }
+
     // --- Fetching Logic ---
     async function fetchNews(feedSource) {
         if (!newsList) return;
+
+        // Hide error state initially
+        if (errorState) {
+            errorState.classList.add('hidden');
+            errorState.style.display = 'none';
+        }
+        newsList.classList.remove('hidden');
 
         // 1. Check Cache
         const cachedArticles = getCachedNews(feedSource);
         if (cachedArticles) {
             console.log(`News Aggregator: Loaded '${feedSource}' from cache.`);
             renderNews(cachedArticles, feedSource);
-            // Ensure error state is hidden if cache loads
-            if (errorState) {
-                errorState.classList.add('hidden');
-                errorState.style.display = 'none';
-            }
             return;
+        }
+
+        // 2. If no cache, ensure Skeleton is visible (Safety check)
+        // If the list is empty or has old data (though handleTabSwitch clears it), show skeleton
+        if (!newsList.querySelector('.skeleton-wrapper')) {
+            showSkeleton();
         }
 
         let sheetName = 'News Articles';
@@ -97,27 +120,6 @@ function initNewsAggregator() {
         }
         
         const fetchUrl = `${GOOGLE_SHEET_BASE_URL}?sheet=${sheetName}`;
-
-        // Show Skeleton Loader (only if list is empty to prevent jumping)
-        if (newsList.children.length === 0) {
-            newsList.innerHTML = `
-                <div class="skeleton-wrapper">
-                    ${Array(3).fill(`
-                    <div class="skeleton-article">
-                        <div class="skeleton-line" style="width: 70%"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line medium"></div>
-                    </div>`).join('')}
-                </div>
-            `;
-        }
-        
-        // Hide error state BEFORE fetch starts
-        if (errorState) {
-            errorState.classList.add('hidden');
-            errorState.style.display = 'none'; // Force hide
-        }
-        newsList.classList.remove('hidden');
 
         try {
             const response = await fetch(fetchUrl);
@@ -132,29 +134,19 @@ function initNewsAggregator() {
                 return typeof headlineValue === 'string' && headlineValue.trim() !== '';
             });
 
-            // SUCCESS: Explicitly ensure error is hidden again
-            if (errorState) {
-                errorState.classList.add('hidden');
-                errorState.style.display = 'none';
-            }
-            
             setCachedNews(feedSource, articles);
             renderNews(articles, feedSource);
             
         } catch (error) {
             console.error(`Error fetching ${feedSource} news:`, error);
             
-            // SMART ERROR HANDLING:
-            // Only show the big error screen if we have NO content.
-            // If we have content (e.g., from a previous render), don't block it.
+            // Only show error if we are stuck on skeleton or empty
             if (newsList.children.length === 0 || newsList.querySelector('.skeleton-wrapper')) {
                 newsList.classList.add('hidden');
                 if (errorState) {
                     errorState.classList.remove('hidden');
-                    errorState.style.display = 'flex'; // Ensure flex layout
+                    errorState.style.display = 'flex';
                 }
-            } else {
-                console.warn('Suppressing error overlay because content is visible.');
             }
         }
     }
@@ -163,7 +155,6 @@ function initNewsAggregator() {
     function renderNews(articlesToDisplay, feedSource) {
         if (!newsList) return;
         
-        // Clear list only right before appending new real data
         newsList.innerHTML = '';
 
         if (!articlesToDisplay || articlesToDisplay.length === 0) {
@@ -227,8 +218,6 @@ function initNewsAggregator() {
             
         } catch (renderError) {
             console.error("Error during rendering:", renderError);
-            // If rendering fails, we might still have partial content, 
-            // so we don't necessarily want to nuke everything, but good to know.
         }
     }
 
@@ -240,10 +229,17 @@ function initNewsAggregator() {
         const newFeed = target.dataset.feed;
         if (newFeed === activeFeed) return;
 
+        // 1. Update UI Tabs
         document.querySelectorAll('.news-tab').forEach(tab => tab.classList.remove('active'));
         target.classList.add('active');
         activeFeed = newFeed;
 
+        // 2. CRITICAL UX FIX: Instant Wipe & Skeleton
+        // Immediately clear old content and show skeleton.
+        // This prevents "Data Bleed" where old news lingers.
+        showSkeleton(); 
+
+        // 3. Reset Timer & Fetch
         clearInterval(refreshIntervalId);
         startAutoRefresh(activeFeed);
         
@@ -258,6 +254,7 @@ function initNewsAggregator() {
             if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
             else newsAggregatorContainer.classList.remove('compact-view-active');
         }
+        // No need to wipe for view toggle, just re-fetch/render cache
         fetchNews(activeFeed); 
     }
 
@@ -299,12 +296,13 @@ function initNewsAggregator() {
     if (newsList) newsList.addEventListener('scroll', handleScroll);
 
     if (retryBtn) {
-        // Clone node to remove old listeners (safety hygiene)
         const newRetryBtn = retryBtn.cloneNode(true);
         retryBtn.parentNode.replaceChild(newRetryBtn, retryBtn);
         newRetryBtn.addEventListener('click', () => {
             console.log('Retrying fetch...');
-            if (errorState) errorState.classList.add('hidden'); // Immediate visual feedback
+            if (errorState) errorState.classList.add('hidden');
+            // Show skeleton on retry too
+            showSkeleton();
             fetchNews(activeFeed);
         });
     }
@@ -313,5 +311,7 @@ function initNewsAggregator() {
          if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
     }
     
+    // Initial Load - Ensure Skeleton shows if there's a delay
+    showSkeleton();
     startAutoRefresh(activeFeed);  
 }
