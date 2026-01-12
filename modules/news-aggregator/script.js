@@ -1,7 +1,7 @@
 // Global object to manage module state and cleanup
 window.tg_news = window.tg_news || {};
 
-// --- Main initialization function to be called by app.js ---
+// --- Main initialization function ---
 function initNewsAggregator() {
     // Configuration
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
@@ -20,8 +20,9 @@ function initNewsAggregator() {
     const newsAggregatorContainer = document.querySelector('.news-aggregator-container');
     const retryBtn = document.getElementById('news-retry-btn');
 
-    // --- 🛡️ Security: Input Sanitization ---
+    // --- 🛡️ Security & Formatting ---
     function sanitizeHTML(str) {
+        if (!str) return '';
         const temp = document.createElement('div');
         temp.textContent = str;
         return temp.innerHTML;
@@ -39,6 +40,7 @@ function initNewsAggregator() {
         }
     }
 
+    // --- Caching ---
     function getCachedNews(feed) {
         try {
             const cached = localStorage.getItem(`tg_news_cache_${feed}`);
@@ -72,11 +74,16 @@ function initNewsAggregator() {
     async function fetchNews(feedSource) {
         if (!newsList) return;
 
-        // 1. Check Cache first
+        // 1. Check Cache
         const cachedArticles = getCachedNews(feedSource);
         if (cachedArticles) {
             console.log(`News Aggregator: Loaded '${feedSource}' from cache.`);
             renderNews(cachedArticles, feedSource);
+            // Ensure error state is hidden if cache loads
+            if (errorState) {
+                errorState.classList.add('hidden');
+                errorState.style.display = 'none';
+            }
             return;
         }
 
@@ -91,19 +98,25 @@ function initNewsAggregator() {
         
         const fetchUrl = `${GOOGLE_SHEET_BASE_URL}?sheet=${sheetName}`;
 
-        // Show Skeleton Loader
-        newsList.innerHTML = `
-            <div class="skeleton-wrapper">
-                ${Array(3).fill(`
-                <div class="skeleton-article">
-                    <div class="skeleton-line" style="width: 70%"></div>
-                    <div class="skeleton-line short"></div>
-                    <div class="skeleton-line medium"></div>
-                </div>`).join('')}
-            </div>
-        `;
+        // Show Skeleton Loader (only if list is empty to prevent jumping)
+        if (newsList.children.length === 0) {
+            newsList.innerHTML = `
+                <div class="skeleton-wrapper">
+                    ${Array(3).fill(`
+                    <div class="skeleton-article">
+                        <div class="skeleton-line" style="width: 70%"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line medium"></div>
+                    </div>`).join('')}
+                </div>
+            `;
+        }
         
-        if (errorState) errorState.classList.add('hidden');
+        // Hide error state BEFORE fetch starts
+        if (errorState) {
+            errorState.classList.add('hidden');
+            errorState.style.display = 'none'; // Force hide
+        }
         newsList.classList.remove('hidden');
 
         try {
@@ -119,21 +132,41 @@ function initNewsAggregator() {
                 return typeof headlineValue === 'string' && headlineValue.trim() !== '';
             });
 
+            // SUCCESS: Explicitly ensure error is hidden again
+            if (errorState) {
+                errorState.classList.add('hidden');
+                errorState.style.display = 'none';
+            }
+            
             setCachedNews(feedSource, articles);
             renderNews(articles, feedSource);
+            
         } catch (error) {
             console.error(`Error fetching ${feedSource} news:`, error);
-            newsList.classList.add('hidden');
-            if (errorState) errorState.classList.remove('hidden');
+            
+            // SMART ERROR HANDLING:
+            // Only show the big error screen if we have NO content.
+            // If we have content (e.g., from a previous render), don't block it.
+            if (newsList.children.length === 0 || newsList.querySelector('.skeleton-wrapper')) {
+                newsList.classList.add('hidden');
+                if (errorState) {
+                    errorState.classList.remove('hidden');
+                    errorState.style.display = 'flex'; // Ensure flex layout
+                }
+            } else {
+                console.warn('Suppressing error overlay because content is visible.');
+            }
         }
     }
 
     // --- ⚡ Rendering Logic ---
     function renderNews(articlesToDisplay, feedSource) {
         if (!newsList) return;
+        
+        // Clear list only right before appending new real data
         newsList.innerHTML = '';
 
-        if (articlesToDisplay.length === 0) {
+        if (!articlesToDisplay || articlesToDisplay.length === 0) {
             newsList.innerHTML = '<p class="no-news">No news articles found.</p>';
             return;
         }
@@ -150,46 +183,53 @@ function initNewsAggregator() {
 
         const fragment = document.createDocumentFragment();
 
-        articlesToDisplay.sort((a, b) => {
-            const dateA = new Date(a[map.time]);
-            const dateB = new Date(b[map.time]);
-            return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
-        });
+        try {
+            articlesToDisplay.sort((a, b) => {
+                const dateA = new Date(a[map.time]);
+                const dateB = new Date(b[map.time]);
+                return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+            });
 
-        articlesToDisplay.forEach((article, index) => {
-            const headline = sanitizeHTML(article[map.headline] || '');
-            const summary = sanitizeHTML(article[map.summary] || '');
-            let url = article[map.url] || '#';
-            const publishedTime = article[map.time] || '';
+            articlesToDisplay.forEach((article, index) => {
+                const headline = sanitizeHTML(article[map.headline] || '');
+                const summary = sanitizeHTML(article[map.summary] || '');
+                let url = article[map.url] || '#';
+                const publishedTime = article[map.time] || '';
+                
+                if (url !== '' && url !== '#') {
+                    url = url.replace(/^"|"$/g, '').trim();
+                    if (!url.startsWith('http')) url = 'https://' + url;
+                }
+
+                const articleDiv = document.createElement('div');
+                articleDiv.classList.add('news-article');
+
+                const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); 
+                const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
+                
+                const displaySummary = summary ? summary.substring(0, 150) : '';
+                const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
+                const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More <i class="fas fa-external-link-alt"></i></a>` : '';
+
+                articleDiv.innerHTML = `
+                    <div class="article-header">
+                        ${breakingHtml}
+                        <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
+                    </div>
+                    <h2><a href="${url}" target="_blank" rel="noopener noreferrer">${headline}</a></h2>
+                    ${summaryHtml}
+                    ${readMoreHtml}
+                `;
+                fragment.appendChild(articleDiv);
+            });
+
+            newsList.appendChild(fragment);
             
-            if (url !== '' && url !== '#') {
-                url = url.replace(/^"|"$/g, '').trim();
-                if (!url.startsWith('http')) url = 'https://' + url;
-            }
-
-            const articleDiv = document.createElement('div');
-            articleDiv.classList.add('news-article');
-
-            const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); 
-            const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
-            
-            const displaySummary = summary ? summary.substring(0, 150) : '';
-            const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
-            const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More <i class="fas fa-external-link-alt"></i></a>` : '';
-
-            articleDiv.innerHTML = `
-                <div class="article-header">
-                    ${breakingHtml}
-                    <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
-                </div>
-                <h2><a href="${url}" target="_blank" rel="noopener noreferrer">${headline}</a></h2>
-                ${summaryHtml}
-                ${readMoreHtml}
-            `;
-            fragment.appendChild(articleDiv);
-        });
-
-        newsList.appendChild(fragment);
+        } catch (renderError) {
+            console.error("Error during rendering:", renderError);
+            // If rendering fails, we might still have partial content, 
+            // so we don't necessarily want to nuke everything, but good to know.
+        }
     }
 
     // --- Event Handlers ---
@@ -235,13 +275,11 @@ function initNewsAggregator() {
     }
 
     // --- Cleanup & Init ---
-    // Fix: Explicitly define retryFetch on the window object so external calls (if any remain) work
     window.tg_news.retryFetch = () => fetchNews(activeFeed);
     
     window.tg_news.cleanup = function() {
         if (refreshIntervalId) clearInterval(refreshIntervalId);
         if (newsList) newsList.removeEventListener('scroll', handleScroll);
-        // Clean up listeners if necessary, though they are usually removed with the DOM
     };
 
     function startAutoRefresh(feed) {
@@ -260,10 +298,13 @@ function initNewsAggregator() {
     
     if (newsList) newsList.addEventListener('scroll', handleScroll);
 
-    // NEW: Safe Event Listener for Retry Button
     if (retryBtn) {
-        retryBtn.addEventListener('click', () => {
+        // Clone node to remove old listeners (safety hygiene)
+        const newRetryBtn = retryBtn.cloneNode(true);
+        retryBtn.parentNode.replaceChild(newRetryBtn, retryBtn);
+        newRetryBtn.addEventListener('click', () => {
             console.log('Retrying fetch...');
+            if (errorState) errorState.classList.add('hidden'); // Immediate visual feedback
             fetchNews(activeFeed);
         });
     }
