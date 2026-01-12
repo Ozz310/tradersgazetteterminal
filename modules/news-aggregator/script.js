@@ -1,17 +1,15 @@
 // Global object to manage module state and cleanup
-window.tg_news = {};
+window.tg_news = window.tg_news || {};
 
 // --- Main initialization function to be called by app.js ---
 function initNewsAggregator() {
-    // ... (rest of the variables and constants remain the same) ...
+    // Configuration
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
-
-    let refreshIntervalId;
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
     const CACHE_DURATION_MS = 300000; // 5 minutes cache
 
+    let refreshIntervalId;
     let activeFeed = 'general';
-    // Load state correctly
     let isCompactView = localStorage.getItem('tg_news_compact_view') === 'true'; 
 
     // DOM Elements
@@ -19,7 +17,8 @@ function initNewsAggregator() {
     const errorState = document.getElementById('news-error-state');
     const footer = document.getElementById('news-footer');
     const viewToggleBtn = document.getElementById('view-toggle-btn');
-    const newsAggregatorContainer = document.querySelector('.news-aggregator-container'); // Need this for desktop compact view class
+    const newsAggregatorContainer = document.querySelector('.news-aggregator-container');
+    const retryBtn = document.getElementById('news-retry-btn');
 
     // --- 🛡️ Security: Input Sanitization ---
     function sanitizeHTML(str) {
@@ -40,7 +39,6 @@ function initNewsAggregator() {
         }
     }
 
-    // ... (getCachedNews and setCachedNews remain the same) ...
     function getCachedNews(feed) {
         try {
             const cached = localStorage.getItem(`tg_news_cache_${feed}`);
@@ -69,7 +67,6 @@ function initNewsAggregator() {
             console.warn('Failed to cache news:', e);
         }
     }
-
 
     // --- Fetching Logic ---
     async function fetchNews(feedSource) {
@@ -106,7 +103,6 @@ function initNewsAggregator() {
             </div>
         `;
         
-        // Hide error state if visible
         if (errorState) errorState.classList.add('hidden');
         newsList.classList.remove('hidden');
 
@@ -123,9 +119,7 @@ function initNewsAggregator() {
                 return typeof headlineValue === 'string' && headlineValue.trim() !== '';
             });
 
-            // Save to cache
             setCachedNews(feedSource, articles);
-
             renderNews(articles, feedSource);
         } catch (error) {
             console.error(`Error fetching ${feedSource} news:`, error);
@@ -134,7 +128,7 @@ function initNewsAggregator() {
         }
     }
 
-    // --- ⚡ Rendering Logic (Document Fragment) ---
+    // --- ⚡ Rendering Logic ---
     function renderNews(articlesToDisplay, feedSource) {
         if (!newsList) return;
         newsList.innerHTML = '';
@@ -144,7 +138,6 @@ function initNewsAggregator() {
             return;
         }
 
-        // Apply compact view class to the main container
         if (newsAggregatorContainer) {
              if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
              else newsAggregatorContainer.classList.remove('compact-view-active');
@@ -155,7 +148,6 @@ function initNewsAggregator() {
             { headline: 'Title', summary: 'Summary', url: 'URL', time: 'Date Created' } : 
             { headline: 'Headline', summary: 'Summary', url: 'URL', time: 'Published Time' };
 
-        // Use Fragment for performance
         const fragment = document.createDocumentFragment();
 
         articlesToDisplay.sort((a, b) => {
@@ -177,13 +169,11 @@ function initNewsAggregator() {
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
-            // Card styling is now handled by the parent container class (compact-view-active) in CSS
 
-            const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); // < 1 hour old
+            const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); 
             const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             
             const displaySummary = summary ? summary.substring(0, 150) : '';
-            // NOTE: Summary and Read More are controlled by CSS when .compact-view-active is applied
             const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
             const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More <i class="fas fa-external-link-alt"></i></a>` : '';
 
@@ -217,7 +207,6 @@ function initNewsAggregator() {
         clearInterval(refreshIntervalId);
         startAutoRefresh(activeFeed);
         
-        // Scroll tabs to view (UX)
         target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
@@ -225,50 +214,45 @@ function initNewsAggregator() {
         isCompactView = !isCompactView;
         localStorage.setItem('tg_news_compact_view', isCompactView);
         
-        // Toggle the class on the main container
         if (newsAggregatorContainer) {
             if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
             else newsAggregatorContainer.classList.remove('compact-view-active');
         }
-
-        // Re-render current feed to apply new styles/content visibility
         fetchNews(activeFeed); 
     }
 
-    // 📱 Mobile Footer Auto-Hide
     let lastScrollTop = 0;
     function handleScroll() {
         if (!footer || window.innerWidth > 768) return;
         
         const scrollTop = newsList.scrollTop;
         if (scrollTop > lastScrollTop && scrollTop > 50) {
-            // Scrolling down
             footer.classList.add('footer-hidden');
         } else {
-            // Scrolling up
             footer.classList.remove('footer-hidden');
         }
         lastScrollTop = scrollTop;
     }
 
     // --- Cleanup & Init ---
+    // Fix: Explicitly define retryFetch on the window object so external calls (if any remain) work
     window.tg_news.retryFetch = () => fetchNews(activeFeed);
     
     window.tg_news.cleanup = function() {
         if (refreshIntervalId) clearInterval(refreshIntervalId);
         if (newsList) newsList.removeEventListener('scroll', handleScroll);
+        // Clean up listeners if necessary, though they are usually removed with the DOM
     };
 
     function startAutoRefresh(feed) {
-        // Initial fetch sets the Compact View class correctly
         fetchNews(feed); 
         refreshIntervalId = setInterval(() => {
-             // Clear cache to force fresh fetch on interval
              localStorage.removeItem(`tg_news_cache_${feed}`);
              fetchNews(feed);
         }, AUTO_REFRESH_INTERVAL_MS);
     }
 
+    // --- Event Listener Assignments ---
     const newsTabsContainer = document.querySelector('.news-tabs');
     if (newsTabsContainer) newsTabsContainer.addEventListener('click', handleTabSwitch);
     
@@ -276,7 +260,14 @@ function initNewsAggregator() {
     
     if (newsList) newsList.addEventListener('scroll', handleScroll);
 
-    // Initial check for compact view to set the class on load
+    // NEW: Safe Event Listener for Retry Button
+    if (retryBtn) {
+        retryBtn.addEventListener('click', () => {
+            console.log('Retrying fetch...');
+            fetchNews(activeFeed);
+        });
+    }
+
     if (newsAggregatorContainer) {
          if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
     }
