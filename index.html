@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TG Terminal: The Sovereign Commander's interface for financial market dominance. Real-time charting, news aggregation, and trade journaling.">
     <title>The Traders Gazette - Terminal</title>
     
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" sizes="16x16">
@@ -11,37 +12,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        /* Fallback background to ensure Obsidian Black immediately */
+        /* Critical Rendering Path: FOUC Protection */
         body.fouc-hidden {
             background-color: #0F1115 !important; /* Obsidian Black */
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
-
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0F1115; /* Obsidian Black */
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .loader-overlay.hidden {
-            display: none !important;
-        }
     </style>
 
     <link rel="stylesheet" href="/assets/css/sticky-notes.css">
-    <link rel="stylesheet" href="/assets/css/loader.css">
+    <link rel="stylesheet" href="/assets/css/transitions.css">
     <link rel="stylesheet" href="/assets/css/main.css" id="main-app-style">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "TG Terminal",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
 </head>
 <body class="fouc-hidden">
     
@@ -98,8 +99,8 @@
         </aside>
 
         <main class="content-wrapper">
-            <div id="module-container" class="module-container module-loader-hidden">
-                </div>
+            <div id="module-container" class="module-container">
+            </div>
             
             <nav class="bottom-nav">
                 <div class="bottom-nav-container">
@@ -165,13 +166,6 @@
         <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
             <i class="fas fa-plus"></i>
         </button>
-    </div>
-    
-    <div id="loader-overlay" class="loader-overlay">
-        <div class="loader-container">
-            <div class="loader"></div>
-            <p class="loader-text">Loading...</p>
-        </div>
     </div>
     
     <div id="conflict-modal-overlay" class="conflict-modal-overlay hidden">
