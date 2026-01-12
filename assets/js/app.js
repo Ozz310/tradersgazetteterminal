@@ -1,13 +1,10 @@
-/* TG TERMINAL BUILDER v6.1 - CORE ROUTER (HOTFIXED)
-    "The Iron Sieve" Protocol - Now with Path Rebasing
+/* TG TERMINAL BUILDER v6.2 - CORE ROUTER (RECOVERY PATCH)
+   "The Iron Sieve" Protocol - Fixes Black Screen & Pathing
 */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Router
     initRouter();
-    
-    // Default load (Dashboard)
-    loadModule('dashboard');
+    loadModule('dashboard'); // Default load
 });
 
 function initRouter() {
@@ -16,11 +13,8 @@ function initRouter() {
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Visual Active State Update
             navItems.forEach(nav => nav.classList.remove('active'));
             
-            // Highlight the clicked item (and its counterpart on sidebar/bottom)
             const targetModule = item.dataset.module;
             document.querySelectorAll(`[data-module="${targetModule}"]`).forEach(el => el.classList.add('active'));
 
@@ -33,113 +27,109 @@ function initRouter() {
     });
 }
 
-/**
- * THE PHANTOM TRANSITION ENGINE
- * Orchestrates the smooth swap of modules using Skeleton UI
- */
 async function loadModule(moduleName) {
     const container = document.getElementById('module-container');
-    const basePath = `/modules/${moduleName}`; // Standardized pathing
+    const basePath = `/modules/${moduleName}`; 
 
-    // STEP 1: FADE OUT CURRENT MODULE
+    // 1. FADE OUT
     container.classList.add('fade-out');
-
-    // Wait for fade out to finish (shortened to 100ms for snappiness)
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // STEP 2: INJECT PHANTOM SKELETON
+    // 2. SKELETON UI
     container.innerHTML = getTerminalSkeleton();
     container.classList.remove('fade-out');
-    container.classList.add('fade-in-start'); 
-    
-    void container.offsetWidth; // Force Reflow
-    
-    container.classList.remove('fade-in-start');
     container.classList.add('fade-in-end'); 
 
     try {
-        // STEP 3: FETCH REAL DATA
-        // Note: Ensure your server serves /modules/dashboard/index.html correctly
+        // 3. FETCH HTML
         const response = await fetch(`${basePath}/index.html`);
-        
-        if (!response.ok) throw new Error(`Module ${moduleName} not found (Status: ${response.status})`);
+        if (!response.ok) throw new Error(`Module ${moduleName} not found`);
         
         let html = await response.text();
 
-        // STEP 4: PARSE & PREPARE
+        // 4. PARSE CONTENT
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Extract content - Robust check for container or body
-        const newContent = doc.querySelector('.terminal-container') 
-            ? doc.querySelector('.terminal-container').innerHTML 
-            : doc.body.innerHTML;
+        // Extract content (Handle full page or partial)
+        const contentSource = doc.querySelector('.terminal-container') || doc.body;
+        const newContent = contentSource.innerHTML;
 
-        // STEP 5: SWAP SKELETON FOR REAL CONTENT
-        // Fade out skeleton briefly
+        // 5. PREPARE STAGE (Fade out skeleton)
         container.classList.remove('fade-in-end');
         container.classList.add('fade-out');
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // INJECT HTML
+        // 6. INJECT & SANITIZE (CRITICAL FIX FOR BLACK SCREEN)
         container.innerHTML = newContent;
         
-        // --- CRITICAL FIX: SCRIPT REBASING ---
-        // We must re-execute scripts AND fix their paths
+        // Force-remove any 'hidden' classes that might be blocking view
+        // (Since we handle transitions, content should be natively visible)
+        const hiddenElements = container.querySelectorAll('.hidden, .module-loader-hidden, .invisible');
+        hiddenElements.forEach(el => {
+            el.classList.remove('hidden', 'module-loader-hidden', 'invisible');
+            el.style.display = ''; // Reset inline display
+            el.style.opacity = '1'; // Force opacity
+            el.style.visibility = 'visible';
+        });
+
+        // 7. SCRIPT REBASING & FALLBACK
         const scripts = doc.querySelectorAll('script');
-        
         scripts.forEach(oldScript => {
             const newScript = document.createElement('script');
-            
-            // Rebase 'src' attributes
-            if (oldScript.src) {
-                const src = oldScript.getAttribute('src');
-                // If it's a relative path (doesn't start with / or http), prepend module path
+            const src = oldScript.getAttribute('src');
+
+            if (src) {
+                // Determine Path
+                let finalSrc = src;
                 if (!src.startsWith('/') && !src.startsWith('http')) {
-                    newScript.src = `${basePath}/${src}`;
-                    console.log(`[TG Terminal] Rebasing script: ${src} -> ${newScript.src}`);
-                } else {
-                    newScript.src = src;
+                    finalSrc = `${basePath}/${src}`;
                 }
+
+                newScript.src = finalSrc;
+                
+                // ERROR HANDLER (Smart Fallback)
+                newScript.onerror = () => {
+                    console.warn(`[TG Terminal] Failed to load ${finalSrc}`);
+                    
+                    // If dashboard.js fails, try script.js automatically
+                    if (finalSrc.endsWith(`${moduleName}.js`)) {
+                        const fallbackSrc = `${basePath}/script.js`;
+                        console.log(`[TG Terminal] Attempting fallback: ${fallbackSrc}`);
+                        const fallbackScript = document.createElement('script');
+                        fallbackScript.src = fallbackSrc;
+                        document.body.appendChild(fallbackScript);
+                    }
+                };
             }
             
-            // Copy other attributes (type, async, defer, etc.)
+            // Copy attributes & inline content
             Array.from(oldScript.attributes).forEach(attr => {
-                if (attr.name !== 'src') {
+                if (attr.name !== 'src' && attr.name !== 'onerror') {
                     newScript.setAttribute(attr.name, attr.value);
                 }
             });
+            if (oldScript.innerHTML) newScript.textContent = oldScript.textContent;
 
-            // Copy inline script content if any
-            if (oldScript.innerHTML) {
-                newScript.textContent = oldScript.textContent;
-            }
-
-            // Execute
             document.body.appendChild(newScript);
         });
 
-        // STEP 6: FADE IN REAL CONTENT
+        // 8. FADE IN REAL CONTENT
         container.classList.remove('fade-out');
-        container.classList.add('fade-in-start');
-        void container.offsetWidth; // Force Reflow
-        container.classList.remove('fade-in-start');
         container.classList.add('fade-in-end');
 
-        // Cleanup transition classes
+        // Cleanup
         setTimeout(() => {
             container.classList.remove('fade-in-end');
         }, 300);
 
     } catch (error) {
         console.error("Module Load Failed:", error);
-        // Remove skeleton and show error
         container.innerHTML = `
-            <div class="error-state" style="padding: 20px; color: #ff4d4d; text-align: center;">
-                <h3><i class="fas fa-exclamation-triangle"></i> Module Load Error</h3>
-                <p>Could not load <strong>${moduleName}</strong>.</p>
-                <p style="font-size: 0.8em; opacity: 0.7;">Debug: ${error.message}</p>
-                <button onclick="location.reload()" class="tgg-primary-cta" style="margin-top:10px">Reload Terminal</button>
+            <div style="padding: 2rem; text-align: center; color: #ff5252;">
+                <h3>Connection Error</h3>
+                <p>Unable to load ${moduleName}.</p>
+                <small>${error.message}</small>
             </div>
         `;
         container.classList.remove('fade-out');
