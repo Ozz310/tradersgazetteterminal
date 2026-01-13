@@ -639,15 +639,14 @@ window.initTradingJournal = async function() {
             addEntryButton.addEventListener('click', () => {
                 entryFormCard.classList.toggle('hidden');
                 if (!entryFormCard.classList.contains('hidden')) {
-                    if (uploadCsvModal) uploadCsvModal.classList.add('hidden');
+                    if (uploadCsvModal) {
+                        uploadCsvModal.classList.add('hidden');
+                        uploadCsvModal.style.display = 'none'; // Force close
+                    }
                 }
             });
             tradeForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                // Simple loader override for form submission if needed, or stick to skeleton toggle
-                // For now, toggleLoader(true) triggers skeleton, which is fine, 
-                // but might want a "saving..." spinner instead. 
-                // Let's use custom notification for better UX.
                 showNotification("Saving trade...", "success"); 
                 
                 const tradeData = {
@@ -678,15 +677,22 @@ window.initTradingJournal = async function() {
         }
 
         if (uploadCsvButton && uploadCsvForm && uploadCsvModal && closeCsvModal) {
+            // FIX: When opening, remove hidden class AND clear inline style
             uploadCsvButton.addEventListener('click', () => {
                 uploadCsvModal.classList.remove('hidden');
+                uploadCsvModal.style.display = 'flex'; // Use flex to center, matches .modal CSS usually
                 if (entryFormCard) entryFormCard.classList.add('hidden');
             });
+            // FIX: When closing, add hidden class AND force inline style to none
             closeCsvModal.addEventListener('click', () => {
                 uploadCsvModal.classList.add('hidden');
+                uploadCsvModal.style.display = 'none';
             });
             window.addEventListener('click', (e) => {
-                if (e.target === uploadCsvModal) uploadCsvModal.classList.add('hidden');
+                if (e.target === uploadCsvModal) {
+                    uploadCsvModal.classList.add('hidden');
+                    uploadCsvModal.style.display = 'none';
+                }
             });
             uploadCsvForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -717,6 +723,7 @@ window.initTradingJournal = async function() {
                     } else {
                         showNotification(`Uploaded ${response.newTradesCount} trades successfully.`);
                         uploadCsvModal.classList.add('hidden');
+                        uploadCsvModal.style.display = 'none'; // Force close
                         loadTrades();
                     }
                 };
