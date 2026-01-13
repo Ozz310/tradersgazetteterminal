@@ -5,10 +5,6 @@ window.tg_news = window.tg_news || {};
 function initNewsAggregator() {
     // Configuration
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
-    
-    // ⚠️ REPLACE WITH YOUR CLOUDFLARE WORKER URL AFTER DEPLOYMENT ⚠️
-    const CLOUDFLARE_WORKER_URL = 'https://tg-news-proxy.mohammadosama310.workers.dev/'; 
-    
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
     const CACHE_DURATION_MS = 300000; 
 
@@ -19,25 +15,11 @@ function initNewsAggregator() {
     // DOM Elements
     const newsList = document.getElementById('news-list');
     const errorState = document.getElementById('news-error-state');
-    const footer = document.getElementById('news-footer');
     const viewToggleBtn = document.getElementById('view-toggle-btn');
     const newsAggregatorContainer = document.querySelector('.news-aggregator-container');
     const retryBtn = document.getElementById('news-retry-btn');
-    
-    // Modal Elements
-    const modalOverlay = document.getElementById('news-modal-overlay');
-    const modalTitle = document.getElementById('modal-article-title');
-    const modalFrame = document.getElementById('news-reader-frame');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-    const modalExtBtn = document.getElementById('modal-open-ext-btn');
-    
-    // Briefing Layer Elements
-    const modalDate = document.getElementById('modal-meta-date');
-    const modalSource = document.getElementById('modal-meta-source');
-    const modalBriefingHeadline = document.getElementById('modal-briefing-headline');
-    const modalBriefingSummary = document.getElementById('modal-briefing-summary');
 
-    // --- 🛡️ Security & Formatting ---
+    // --- 🛡️ Formatting Helpers ---
     function sanitizeHTML(str) {
         if (!str) return '';
         const temp = document.createElement('div');
@@ -107,58 +89,6 @@ function initNewsAggregator() {
             errorState.classList.remove('hidden');
             errorState.style.display = 'flex'; 
         }
-    }
-
-    // --- ⚡ MODAL LOGIC (Instant Briefing + Stealth Proxy) ---
-    function openModal(article) {
-        if (!modalOverlay) return;
-        
-        // 1. INSTANT BRIEFING: Populate Text Layer immediately
-        modalTitle.textContent = "Executive Briefing";
-        if (modalDate) modalDate.textContent = formatNewspaperDateline(article.time);
-        if (modalSource) modalSource.textContent = activeFeed.toUpperCase();
-        if (modalBriefingHeadline) modalBriefingHeadline.textContent = sanitizeHTML(article.headline);
-        if (modalBriefingSummary) {
-            modalBriefingSummary.innerHTML = sanitizeHTML(article.summary) || "Retrieving full intelligence...";
-        }
-
-        // 2. PREPARE IFRAME: Reset State
-        modalFrame.src = ""; // Clear previous
-        modalFrame.style.opacity = "0"; // Hide until ready
-        modalFrame.style.display = "block"; // Ensure it's not hidden from previous errors
-        
-        // 3. STEALTH PROXY: Construct Worker URL
-        // We route the target URL through your Cloudflare Worker
-        const proxyUrl = `${CLOUDFLARE_WORKER_URL}?url=${encodeURIComponent(article.url)}`;
-        
-        modalFrame.src = proxyUrl;
-        modalOverlay.classList.add('active');
-        
-        // 4. THE REVEAL: Fade in Iframe ONLY when loaded
-        modalFrame.onload = () => {
-             // Small delay to ensure render is complete
-             setTimeout(() => {
-                 modalFrame.style.opacity = "1";
-             }, 500);
-        };
-
-        // 5. ERROR HANDLING: If proxy fails, keep showing the Briefing Layer
-        modalFrame.onerror = () => {
-            console.log("Proxy load failed, falling back to briefing.");
-            modalFrame.style.display = "none"; // Hide broken iframe so briefing is visible
-        };
-
-        // Setup External Link button
-        modalExtBtn.onclick = () => window.open(article.url, '_blank');
-    }
-
-    function closeModal() {
-        if (!modalOverlay) return;
-        modalOverlay.classList.remove('active');
-        setTimeout(() => { 
-            modalFrame.src = ''; 
-            modalFrame.style.opacity = "0";
-        }, 300);
     }
 
     // --- Fetching Logic ---
@@ -258,11 +188,12 @@ function initNewsAggregator() {
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
 
-            // CLICK HANDLER: Open Modal with Object Data
-            articleDiv.onclick = (e) => {
-                if (e.target.closest('.read-more-button')) return; 
-                openModal(article);
+            // DIRECT LINK ACTION: Open in new tab
+            const openLink = () => {
+                if (url !== '#') window.open(url, '_blank');
             };
+
+            articleDiv.onclick = openLink;
 
             const isBreaking = index === 0 && (new Date() - new Date(article.time) < 3600000); 
             const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
@@ -270,7 +201,7 @@ function initNewsAggregator() {
             const displaySummary = article.summary ? sanitizeHTML(article.summary).substring(0, 150) : '';
             const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
             
-            const readMoreHtml = url !== '#' ? `<span class="read-more-button">Read Now <i class="fas fa-expand-alt"></i></span>` : '';
+            const readMoreHtml = url !== '#' ? `<span class="read-more-button">Read Now <i class="fas fa-external-link-alt"></i></span>` : '';
 
             articleDiv.innerHTML = `
                 <div class="article-header">
@@ -340,10 +271,6 @@ function initNewsAggregator() {
     if (viewToggleBtn) viewToggleBtn.addEventListener('click', toggleCompactView);
     if (retryBtn) retryBtn.onclick = window.tg_news.retryFetch;
     
-    // Modal Listeners
-    if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
-    if (modalOverlay) modalOverlay.onclick = (e) => { if(e.target === modalOverlay) closeModal(); };
-
     // Initial State
     if (newsAggregatorContainer && isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
     
