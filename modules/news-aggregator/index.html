@@ -61,7 +61,7 @@
                 </div>
             </div>
             
-            <div class="news-iframe-container" style="position: relative; overflow: hidden;">
+            <div class="news-iframe-container" style="position: relative; overflow: hidden; height: 100%;">
                 
                 <div id="modal-briefing-layer" style="position: absolute; top:0; left:0; width:100%; height:100%; padding:30px; box-sizing:border-box; overflow-y:auto; background:#1e222d; z-index: 1;">
                     <div style="color: #666; font-size: 0.8rem; margin-bottom: 15px; display:flex; gap:15px;">
@@ -79,7 +79,7 @@
 
                 <iframe id="news-reader-frame" class="news-iframe" 
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 2; opacity: 0; transition: opacity 0.8s ease-in-out;"
-                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups">
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation allow-presentation">
                 </iframe>
                 
             </div>
