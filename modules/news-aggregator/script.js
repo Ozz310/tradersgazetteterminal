@@ -6,7 +6,7 @@ function initNewsAggregator() {
     // Configuration
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
-    const CACHE_DURATION_MS = 300000; // 5 minutes cache
+    const CACHE_DURATION_MS = 300000; 
 
     let refreshIntervalId;
     let activeFeed = 'general';
@@ -19,6 +19,13 @@ function initNewsAggregator() {
     const viewToggleBtn = document.getElementById('view-toggle-btn');
     const newsAggregatorContainer = document.querySelector('.news-aggregator-container');
     const retryBtn = document.getElementById('news-retry-btn');
+    
+    // Modal Elements
+    const modalOverlay = document.getElementById('news-modal-overlay');
+    const modalTitle = document.getElementById('modal-article-title');
+    const modalFrame = document.getElementById('news-reader-frame');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalExtBtn = document.getElementById('modal-open-ext-btn');
 
     // --- 🛡️ Security & Formatting ---
     function sanitizeHTML(str) {
@@ -45,32 +52,23 @@ function initNewsAggregator() {
         try {
             const cached = localStorage.getItem(`tg_news_cache_${feed}`);
             if (!cached) return null;
-            
             const data = JSON.parse(cached);
             const now = new Date().getTime();
-            
-            if (now - data.timestamp < CACHE_DURATION_MS) {
-                return data.articles;
-            }
+            if (now - data.timestamp < CACHE_DURATION_MS) return data.articles;
             return null;
-        } catch (e) {
-            return null;
-        }
+        } catch (e) { return null; }
     }
 
     function setCachedNews(feed, articles) {
         try {
-            const data = {
+            localStorage.setItem(`tg_news_cache_${feed}`, JSON.stringify({
                 timestamp: new Date().getTime(),
                 articles: articles
-            };
-            localStorage.setItem(`tg_news_cache_${feed}`, JSON.stringify(data));
-        } catch (e) {
-            console.warn('Failed to cache news:', e);
-        }
+            }));
+        } catch (e) { console.warn('Cache failed', e); }
     }
 
-    // --- Helper: Show Skeleton ---
+    // --- UI Helpers ---
     function showSkeleton() {
         if (!newsList) return;
         newsList.innerHTML = `
@@ -85,28 +83,57 @@ function initNewsAggregator() {
         `;
     }
 
+    function hideError() {
+        if (errorState) {
+            errorState.classList.add('hidden');
+            errorState.style.display = 'none'; // Force hide
+        }
+        if (newsList) newsList.classList.remove('hidden');
+    }
+
+    function showError() {
+        if (newsList) newsList.classList.add('hidden');
+        if (errorState) {
+            errorState.classList.remove('hidden');
+            errorState.style.display = 'flex'; // Force show
+        }
+    }
+
+    // --- Modal Logic ---
+    function openModal(url, title) {
+        if (!modalOverlay) return;
+        
+        modalTitle.textContent = title;
+        modalFrame.src = url;
+        modalOverlay.classList.add('active');
+        
+        // Setup External Link button
+        modalExtBtn.onclick = () => window.open(url, '_blank');
+    }
+
+    function closeModal() {
+        if (!modalOverlay) return;
+        modalOverlay.classList.remove('active');
+        // Clear iframe to stop audio/video playing in background
+        setTimeout(() => { modalFrame.src = ''; }, 300);
+    }
+
     // --- Fetching Logic ---
     async function fetchNews(feedSource) {
         if (!newsList) return;
 
-        // Hide error state initially
-        if (errorState) {
-            errorState.classList.add('hidden');
-            errorState.style.display = 'none';
-        }
-        newsList.classList.remove('hidden');
+        // 1. Force Error Hidden FIRST (Fixes Flash)
+        hideError();
 
-        // 1. Check Cache
+        // 2. Check Cache
         const cachedArticles = getCachedNews(feedSource);
         if (cachedArticles) {
-            console.log(`News Aggregator: Loaded '${feedSource}' from cache.`);
             renderNews(cachedArticles, feedSource);
             return;
         }
 
-        // 2. If no cache, ensure Skeleton is visible (Safety check)
-        // If the list is empty or has old data (though handleTabSwitch clears it), show skeleton
-        if (!newsList.querySelector('.skeleton-wrapper')) {
+        // 3. Show Skeleton if empty
+        if (!newsList.querySelector('.news-article')) {
             showSkeleton();
         }
 
@@ -116,7 +143,6 @@ function initNewsAggregator() {
             case 'market-watch': sheetName = 'MarketWatch'; break;
             case 'coin-telegraph': sheetName = 'CoinTelegraph'; break;
             case 'news-bitcoin': sheetName = 'News.Bitcoin'; break;
-            default: sheetName = 'News Articles'; break;
         }
         
         const fetchUrl = `${GOOGLE_SHEET_BASE_URL}?sheet=${sheetName}`;
@@ -134,27 +160,24 @@ function initNewsAggregator() {
                 return typeof headlineValue === 'string' && headlineValue.trim() !== '';
             });
 
+            // Double check error is hidden before render
+            hideError();
+            
             setCachedNews(feedSource, articles);
             renderNews(articles, feedSource);
             
         } catch (error) {
-            console.error(`Error fetching ${feedSource} news:`, error);
-            
-            // Only show error if we are stuck on skeleton or empty
+            console.error(`Error fetching ${feedSource}:`, error);
+            // Only show error screen if we have NOTHING to show
             if (newsList.children.length === 0 || newsList.querySelector('.skeleton-wrapper')) {
-                newsList.classList.add('hidden');
-                if (errorState) {
-                    errorState.classList.remove('hidden');
-                    errorState.style.display = 'flex';
-                }
+                showError();
             }
         }
     }
 
-    // --- ⚡ Rendering Logic ---
+    // --- Rendering Logic ---
     function renderNews(articlesToDisplay, feedSource) {
         if (!newsList) return;
-        
         newsList.innerHTML = '';
 
         if (!articlesToDisplay || articlesToDisplay.length === 0) {
@@ -174,51 +197,56 @@ function initNewsAggregator() {
 
         const fragment = document.createDocumentFragment();
 
-        try {
-            articlesToDisplay.sort((a, b) => {
-                const dateA = new Date(a[map.time]);
-                const dateB = new Date(b[map.time]);
-                return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
-            });
+        articlesToDisplay.sort((a, b) => {
+            const dateA = new Date(a[map.time]);
+            const dateB = new Date(b[map.time]);
+            return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+        });
 
-            articlesToDisplay.forEach((article, index) => {
-                const headline = sanitizeHTML(article[map.headline] || '');
-                const summary = sanitizeHTML(article[map.summary] || '');
-                let url = article[map.url] || '#';
-                const publishedTime = article[map.time] || '';
-                
-                if (url !== '' && url !== '#') {
-                    url = url.replace(/^"|"$/g, '').trim();
-                    if (!url.startsWith('http')) url = 'https://' + url;
-                }
-
-                const articleDiv = document.createElement('div');
-                articleDiv.classList.add('news-article');
-
-                const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); 
-                const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
-                
-                const displaySummary = summary ? summary.substring(0, 150) : '';
-                const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
-                const readMoreHtml = url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="read-more-button">Read More <i class="fas fa-external-link-alt"></i></a>` : '';
-
-                articleDiv.innerHTML = `
-                    <div class="article-header">
-                        ${breakingHtml}
-                        <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
-                    </div>
-                    <h2><a href="${url}" target="_blank" rel="noopener noreferrer">${headline}</a></h2>
-                    ${summaryHtml}
-                    ${readMoreHtml}
-                `;
-                fragment.appendChild(articleDiv);
-            });
-
-            newsList.appendChild(fragment);
+        articlesToDisplay.forEach((article, index) => {
+            const headline = sanitizeHTML(article[map.headline] || '');
+            const summary = sanitizeHTML(article[map.summary] || '');
+            let url = article[map.url] || '#';
+            const publishedTime = article[map.time] || '';
             
-        } catch (renderError) {
-            console.error("Error during rendering:", renderError);
-        }
+            if (url !== '' && url !== '#') {
+                url = url.replace(/^"|"$/g, '').trim();
+                if (!url.startsWith('http')) url = 'https://' + url;
+            }
+
+            const articleDiv = document.createElement('div');
+            articleDiv.classList.add('news-article');
+
+            // CLICK HANDLER: Open Modal instead of link
+            articleDiv.onclick = (e) => {
+                // Prevent if clicking specifically on the external link icon inside (rare but possible)
+                if (e.target.closest('.read-more-button')) return; 
+                openModal(url, headline);
+            };
+
+            const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); 
+            const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
+            
+            const displaySummary = summary ? summary.substring(0, 150) : '';
+            const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
+            
+            // Note: removed target="_blank" from Read More to allow modal logic
+            // But we keep the button visual. The div click handles the modal.
+            const readMoreHtml = url !== '#' ? `<span class="read-more-button">Read Now <i class="fas fa-expand-alt"></i></span>` : '';
+
+            articleDiv.innerHTML = `
+                <div class="article-header">
+                    ${breakingHtml}
+                    <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
+                </div>
+                <h2>${headline}</h2>
+                ${summaryHtml}
+                ${readMoreHtml}
+            `;
+            fragment.appendChild(articleDiv);
+        });
+
+        newsList.appendChild(fragment);
     }
 
     // --- Event Handlers ---
@@ -229,17 +257,13 @@ function initNewsAggregator() {
         const newFeed = target.dataset.feed;
         if (newFeed === activeFeed) return;
 
-        // 1. Update UI Tabs
         document.querySelectorAll('.news-tab').forEach(tab => tab.classList.remove('active'));
         target.classList.add('active');
         activeFeed = newFeed;
 
-        // 2. CRITICAL UX FIX: Instant Wipe & Skeleton
-        // Immediately clear old content and show skeleton.
-        // This prevents "Data Bleed" where old news lingers.
-        showSkeleton(); 
+        // Instant Visual Feedback: Clear & Skeleton
+        showSkeleton();
 
-        // 3. Reset Timer & Fetch
         clearInterval(refreshIntervalId);
         startAutoRefresh(activeFeed);
         
@@ -249,34 +273,22 @@ function initNewsAggregator() {
     function toggleCompactView() {
         isCompactView = !isCompactView;
         localStorage.setItem('tg_news_compact_view', isCompactView);
-        
         if (newsAggregatorContainer) {
-            if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
-            else newsAggregatorContainer.classList.remove('compact-view-active');
+            isCompactView ? newsAggregatorContainer.classList.add('compact-view-active') 
+                          : newsAggregatorContainer.classList.remove('compact-view-active');
         }
-        // No need to wipe for view toggle, just re-fetch/render cache
         fetchNews(activeFeed); 
     }
 
-    let lastScrollTop = 0;
-    function handleScroll() {
-        if (!footer || window.innerWidth > 768) return;
-        
-        const scrollTop = newsList.scrollTop;
-        if (scrollTop > lastScrollTop && scrollTop > 50) {
-            footer.classList.add('footer-hidden');
-        } else {
-            footer.classList.remove('footer-hidden');
-        }
-        lastScrollTop = scrollTop;
-    }
-
-    // --- Cleanup & Init ---
-    window.tg_news.retryFetch = () => fetchNews(activeFeed);
+    // --- Initialization ---
+    window.tg_news.retryFetch = () => {
+        hideError();
+        showSkeleton();
+        fetchNews(activeFeed);
+    };
     
     window.tg_news.cleanup = function() {
         if (refreshIntervalId) clearInterval(refreshIntervalId);
-        if (newsList) newsList.removeEventListener('scroll', handleScroll);
     };
 
     function startAutoRefresh(feed) {
@@ -287,31 +299,20 @@ function initNewsAggregator() {
         }, AUTO_REFRESH_INTERVAL_MS);
     }
 
-    // --- Event Listener Assignments ---
-    const newsTabsContainer = document.querySelector('.news-tabs');
-    if (newsTabsContainer) newsTabsContainer.addEventListener('click', handleTabSwitch);
-    
+    // Listeners
+    if (document.querySelector('.news-tabs')) document.querySelector('.news-tabs').addEventListener('click', handleTabSwitch);
     if (viewToggleBtn) viewToggleBtn.addEventListener('click', toggleCompactView);
+    if (retryBtn) retryBtn.onclick = window.tg_news.retryFetch;
     
-    if (newsList) newsList.addEventListener('scroll', handleScroll);
+    // Modal Listeners
+    if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
+    if (modalOverlay) modalOverlay.onclick = (e) => { if(e.target === modalOverlay) closeModal(); };
 
-    if (retryBtn) {
-        const newRetryBtn = retryBtn.cloneNode(true);
-        retryBtn.parentNode.replaceChild(newRetryBtn, retryBtn);
-        newRetryBtn.addEventListener('click', () => {
-            console.log('Retrying fetch...');
-            if (errorState) errorState.classList.add('hidden');
-            // Show skeleton on retry too
-            showSkeleton();
-            fetchNews(activeFeed);
-        });
-    }
-
-    if (newsAggregatorContainer) {
-         if (isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
-    }
+    // Initial State
+    if (newsAggregatorContainer && isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
     
-    // Initial Load - Ensure Skeleton shows if there's a delay
+    // Ensure clean slate start
+    hideError();
     showSkeleton();
     startAutoRefresh(activeFeed);  
 }
