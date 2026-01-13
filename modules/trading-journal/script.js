@@ -88,9 +88,6 @@ window.initTradingJournal = async function() {
                 contentWrapper.classList.remove('content-hidden');
             }
         }
-        
-        // If we are doing a modal action (like CSV upload), use the old spinner if available
-        // logic for that is separate or can be handled here if needed.
     }
 
     function toCsvString(data) {
@@ -188,9 +185,6 @@ window.initTradingJournal = async function() {
     async function loadTrades() {
         toggleLoader(true); // SHOW SKELETON
         
-        // Artificial delay (optional, remove for production speed) to show off the skeleton
-        // await new Promise(r => setTimeout(r, 800)); 
-
         const response = await callBackend('readTrades');
         if (response.status === 'Error' || !response.trades) {
             console.error(`Failed to load trades: ${response.error}`);
