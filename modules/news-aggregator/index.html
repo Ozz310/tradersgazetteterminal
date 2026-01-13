@@ -32,7 +32,7 @@
                 <div id="news-list" class="news-list">
                     </div>
 
-                <div id="news-error-state" class="news-error-state hidden">
+                <div id="news-error-state" class="news-error-state hidden" style="display: none;">
                     <i class="fas fa-exclamation-triangle error-icon"></i>
                     <h3>Connection Lost</h3>
                     <p>Unable to retrieve the latest headlines. Please check your connection.</p>
@@ -43,6 +43,25 @@
                     <img src="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" alt="The Traders Gazette Logo">
                     <p>Powered by The Trader's Gazette</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="news-modal-overlay" class="news-modal-overlay">
+        <div class="news-modal-content">
+            <div class="news-modal-header">
+                <div class="news-modal-title" id="modal-article-title">Loading Article...</div>
+                <div class="news-modal-actions">
+                    <button id="modal-open-ext-btn" class="news-modal-btn primary">
+                        <i class="fas fa-external-link-alt"></i> Open in Browser
+                    </button>
+                    <button id="modal-close-btn" class="news-modal-btn">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+            <div class="news-iframe-container">
+                <iframe id="news-reader-frame" class="news-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
             </div>
         </div>
     </div>
