@@ -466,7 +466,7 @@ textarea {
 
 /* Modals, Animations, Utilities */
 .modal {
-    display: flex;
+    display: none; /* CHANGED FROM flex TO none - CRITICAL FIX */
     position: fixed;
     z-index: 1000;
     left: 0;
