@@ -5,6 +5,10 @@ window.tg_news = window.tg_news || {};
 function initNewsAggregator() {
     // Configuration
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
+    
+    // ⚠️ REPLACE WITH YOUR CLOUDFLARE WORKER URL AFTER DEPLOYMENT ⚠️
+    const CLOUDFLARE_WORKER_URL = 'https://your-worker-name.workers.dev'; 
+    
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
     const CACHE_DURATION_MS = 300000; 
 
@@ -26,6 +30,12 @@ function initNewsAggregator() {
     const modalFrame = document.getElementById('news-reader-frame');
     const modalCloseBtn = document.getElementById('modal-close-btn');
     const modalExtBtn = document.getElementById('modal-open-ext-btn');
+    
+    // Briefing Layer Elements
+    const modalDate = document.getElementById('modal-meta-date');
+    const modalSource = document.getElementById('modal-meta-source');
+    const modalBriefingHeadline = document.getElementById('modal-briefing-headline');
+    const modalBriefingSummary = document.getElementById('modal-briefing-summary');
 
     // --- 🛡️ Security & Formatting ---
     function sanitizeHTML(str) {
@@ -86,7 +96,7 @@ function initNewsAggregator() {
     function hideError() {
         if (errorState) {
             errorState.classList.add('hidden');
-            errorState.style.display = 'none'; // Force hide
+            errorState.style.display = 'none'; 
         }
         if (newsList) newsList.classList.remove('hidden');
     }
@@ -95,26 +105,49 @@ function initNewsAggregator() {
         if (newsList) newsList.classList.add('hidden');
         if (errorState) {
             errorState.classList.remove('hidden');
-            errorState.style.display = 'flex'; // Force show
+            errorState.style.display = 'flex'; 
         }
     }
 
-    // --- Modal Logic ---
-    function openModal(url, title) {
+    // --- ⚡ MODAL LOGIC (Instant Briefing + Stealth Proxy) ---
+    function openModal(article) {
         if (!modalOverlay) return;
         
-        modalTitle.textContent = title;
-        modalFrame.src = url;
+        // 1. INSTANT BRIEFING: Populate Text Layer immediately
+        modalTitle.textContent = "Executive Briefing";
+        if (modalDate) modalDate.textContent = formatNewspaperDateline(article.time);
+        if (modalSource) modalSource.textContent = activeFeed.toUpperCase();
+        if (modalBriefingHeadline) modalBriefingHeadline.textContent = sanitizeHTML(article.headline);
+        if (modalBriefingSummary) {
+            modalBriefingSummary.textContent = sanitizeHTML(article.summary) || "Retrieving full intelligence...";
+        }
+
+        // 2. PREPARE IFRAME: Reset State
+        modalFrame.src = ""; // Clear previous
+        modalFrame.style.opacity = "0"; // Hide until ready
+        
+        // 3. STEALTH PROXY: Construct Worker URL
+        // We route the target URL through your Cloudflare Worker
+        const proxyUrl = `${CLOUDFLARE_WORKER_URL}?url=${encodeURIComponent(article.url)}`;
+        
+        modalFrame.src = proxyUrl;
         modalOverlay.classList.add('active');
         
+        // 4. THE REVEAL: Fade in Iframe ONLY when loaded
+        modalFrame.onload = () => {
+             // Small delay to ensure render is complete
+             setTimeout(() => {
+                 modalFrame.style.opacity = "1";
+             }, 500);
+        };
+
         // Setup External Link button
-        modalExtBtn.onclick = () => window.open(url, '_blank');
+        modalExtBtn.onclick = () => window.open(article.url, '_blank');
     }
 
     function closeModal() {
         if (!modalOverlay) return;
         modalOverlay.classList.remove('active');
-        // Clear iframe to stop audio/video playing in background
         setTimeout(() => { modalFrame.src = ''; }, 300);
     }
 
@@ -122,17 +155,14 @@ function initNewsAggregator() {
     async function fetchNews(feedSource) {
         if (!newsList) return;
 
-        // 1. Force Error Hidden FIRST (Fixes Flash)
         hideError();
 
-        // 2. Check Cache
         const cachedArticles = getCachedNews(feedSource);
         if (cachedArticles) {
             renderNews(cachedArticles, feedSource);
             return;
         }
 
-        // 3. Show Skeleton if empty
         if (!newsList.querySelector('.news-article')) {
             showSkeleton();
         }
@@ -160,15 +190,24 @@ function initNewsAggregator() {
                 return typeof headlineValue === 'string' && headlineValue.trim() !== '';
             });
 
-            // Double check error is hidden before render
+            // Standardize Object Structure
+            const map = isSimpleRssFeed ? 
+                { headline: 'Title', summary: 'Summary', url: 'URL', time: 'Date Created' } : 
+                { headline: 'Headline', summary: 'Summary', url: 'URL', time: 'Published Time' };
+
+            const processedArticles = articles.map(a => ({
+                headline: a[map.headline],
+                summary: a[map.summary],
+                url: a[map.url],
+                time: a[map.time]
+            }));
+
             hideError();
-            
-            setCachedNews(feedSource, articles);
-            renderNews(articles, feedSource);
+            setCachedNews(feedSource, processedArticles);
+            renderNews(processedArticles, feedSource);
             
         } catch (error) {
             console.error(`Error fetching ${feedSource}:`, error);
-            // Only show error screen if we have NOTHING to show
             if (newsList.children.length === 0 || newsList.querySelector('.skeleton-wrapper')) {
                 showError();
             }
@@ -190,56 +229,45 @@ function initNewsAggregator() {
              else newsAggregatorContainer.classList.remove('compact-view-active');
         }
 
-        const isSimpleRssFeed = ['cnbc', 'market-watch', 'coin-telegraph', 'news-bitcoin'].includes(feedSource);
-        const map = isSimpleRssFeed ? 
-            { headline: 'Title', summary: 'Summary', url: 'URL', time: 'Date Created' } : 
-            { headline: 'Headline', summary: 'Summary', url: 'URL', time: 'Published Time' };
-
         const fragment = document.createDocumentFragment();
 
         articlesToDisplay.sort((a, b) => {
-            const dateA = new Date(a[map.time]);
-            const dateB = new Date(b[map.time]);
+            const dateA = new Date(a.time);
+            const dateB = new Date(b.time);
             return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
         });
 
         articlesToDisplay.forEach((article, index) => {
-            const headline = sanitizeHTML(article[map.headline] || '');
-            const summary = sanitizeHTML(article[map.summary] || '');
-            let url = article[map.url] || '#';
-            const publishedTime = article[map.time] || '';
-            
+            let url = article.url || '#';
             if (url !== '' && url !== '#') {
                 url = url.replace(/^"|"$/g, '').trim();
                 if (!url.startsWith('http')) url = 'https://' + url;
+                article.url = url; 
             }
 
             const articleDiv = document.createElement('div');
             articleDiv.classList.add('news-article');
 
-            // CLICK HANDLER: Open Modal instead of link
+            // CLICK HANDLER: Open Modal with Object Data
             articleDiv.onclick = (e) => {
-                // Prevent if clicking specifically on the external link icon inside (rare but possible)
                 if (e.target.closest('.read-more-button')) return; 
-                openModal(url, headline);
+                openModal(article);
             };
 
-            const isBreaking = index === 0 && (new Date() - new Date(publishedTime) < 3600000); 
+            const isBreaking = index === 0 && (new Date() - new Date(article.time) < 3600000); 
             const breakingHtml = isBreaking ? '<span class="breaking-ribbon">BREAKING</span>' : '';
             
-            const displaySummary = summary ? summary.substring(0, 150) : '';
+            const displaySummary = article.summary ? sanitizeHTML(article.summary).substring(0, 150) : '';
             const summaryHtml = displaySummary ? `<p>${displaySummary}...</p>` : '';
             
-            // Note: removed target="_blank" from Read More to allow modal logic
-            // But we keep the button visual. The div click handles the modal.
             const readMoreHtml = url !== '#' ? `<span class="read-more-button">Read Now <i class="fas fa-expand-alt"></i></span>` : '';
 
             articleDiv.innerHTML = `
                 <div class="article-header">
                     ${breakingHtml}
-                    <span class="article-dateline">${formatNewspaperDateline(publishedTime)}</span>
+                    <span class="article-dateline">${formatNewspaperDateline(article.time)}</span>
                 </div>
-                <h2>${headline}</h2>
+                <h2>${sanitizeHTML(article.headline)}</h2>
                 ${summaryHtml}
                 ${readMoreHtml}
             `;
@@ -261,9 +289,7 @@ function initNewsAggregator() {
         target.classList.add('active');
         activeFeed = newFeed;
 
-        // Instant Visual Feedback: Clear & Skeleton
         showSkeleton();
-
         clearInterval(refreshIntervalId);
         startAutoRefresh(activeFeed);
         
@@ -311,7 +337,6 @@ function initNewsAggregator() {
     // Initial State
     if (newsAggregatorContainer && isCompactView) newsAggregatorContainer.classList.add('compact-view-active');
     
-    // Ensure clean slate start
     hideError();
     showSkeleton();
     startAutoRefresh(activeFeed);  
