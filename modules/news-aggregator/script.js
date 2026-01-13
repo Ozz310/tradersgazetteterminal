@@ -7,7 +7,7 @@ function initNewsAggregator() {
     const GOOGLE_SHEET_BASE_URL = 'https://script.google.com/macros/s/AKfycbzIpig_oQ3eEbYOow209uyJMPdqfA7ByGXT6W-9kB--DmVPmYqmYsdHEIM_svNvmt-r/exec';
     
     // ⚠️ REPLACE WITH YOUR CLOUDFLARE WORKER URL AFTER DEPLOYMENT ⚠️
-    const CLOUDFLARE_WORKER_URL = 'https://your-worker-name.workers.dev'; 
+    const CLOUDFLARE_WORKER_URL = 'https://tg-news-proxy.mohammadosama310.workers.dev/'; 
     
     const AUTO_REFRESH_INTERVAL_MS = 300000; // 5 minutes
     const CACHE_DURATION_MS = 300000; 
