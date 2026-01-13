@@ -119,12 +119,13 @@ function initNewsAggregator() {
         if (modalSource) modalSource.textContent = activeFeed.toUpperCase();
         if (modalBriefingHeadline) modalBriefingHeadline.textContent = sanitizeHTML(article.headline);
         if (modalBriefingSummary) {
-            modalBriefingSummary.textContent = sanitizeHTML(article.summary) || "Retrieving full intelligence...";
+            modalBriefingSummary.innerHTML = sanitizeHTML(article.summary) || "Retrieving full intelligence...";
         }
 
         // 2. PREPARE IFRAME: Reset State
         modalFrame.src = ""; // Clear previous
         modalFrame.style.opacity = "0"; // Hide until ready
+        modalFrame.style.display = "block"; // Ensure it's not hidden from previous errors
         
         // 3. STEALTH PROXY: Construct Worker URL
         // We route the target URL through your Cloudflare Worker
@@ -141,6 +142,12 @@ function initNewsAggregator() {
              }, 500);
         };
 
+        // 5. ERROR HANDLING: If proxy fails, keep showing the Briefing Layer
+        modalFrame.onerror = () => {
+            console.log("Proxy load failed, falling back to briefing.");
+            modalFrame.style.display = "none"; // Hide broken iframe so briefing is visible
+        };
+
         // Setup External Link button
         modalExtBtn.onclick = () => window.open(article.url, '_blank');
     }
@@ -148,7 +155,10 @@ function initNewsAggregator() {
     function closeModal() {
         if (!modalOverlay) return;
         modalOverlay.classList.remove('active');
-        setTimeout(() => { modalFrame.src = ''; }, 300);
+        setTimeout(() => { 
+            modalFrame.src = ''; 
+            modalFrame.style.opacity = "0";
+        }, 300);
     }
 
     // --- Fetching Logic ---
