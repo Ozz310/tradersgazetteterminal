@@ -50,18 +50,38 @@
     <div id="news-modal-overlay" class="news-modal-overlay">
         <div class="news-modal-content">
             <div class="news-modal-header">
-                <div class="news-modal-title" id="modal-article-title">Loading Article...</div>
+                <div class="news-modal-title" id="modal-article-title">Loading Intelligence...</div>
                 <div class="news-modal-actions">
                     <button id="modal-open-ext-btn" class="news-modal-btn primary">
-                        <i class="fas fa-external-link-alt"></i> Open in Browser
+                        <i class="fas fa-external-link-alt"></i> Open Browser
                     </button>
                     <button id="modal-close-btn" class="news-modal-btn">
                         <i class="fas fa-times"></i> Close
                     </button>
                 </div>
             </div>
-            <div class="news-iframe-container">
-                <iframe id="news-reader-frame" class="news-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+            
+            <div class="news-iframe-container" style="position: relative; overflow: hidden;">
+                
+                <div id="modal-briefing-layer" style="position: absolute; top:0; left:0; width:100%; height:100%; padding:30px; box-sizing:border-box; overflow-y:auto; background:#1e222d; z-index: 1;">
+                    <div style="color: #666; font-size: 0.8rem; margin-bottom: 15px; display:flex; gap:15px;">
+                        <span id="modal-meta-date">--</span>
+                        <span id="modal-meta-source" style="color:#d4af37;">--</span>
+                    </div>
+                    <h2 id="modal-briefing-headline" style="color:#fff; font-family:'Merriweather', serif; font-size:1.5rem; margin-bottom:20px;"></h2>
+                    <div style="width:100%; height:1px; background:#333; margin-bottom:20px;"></div>
+                    <div id="modal-briefing-summary" style="color:#ccc; line-height:1.6; font-size:1rem;">
+                        </div>
+                    <div style="margin-top: 40px; text-align: center; color: #555; font-size: 0.8rem;">
+                        <p>Accessing external intelligence network...</p>
+                    </div>
+                </div>
+
+                <iframe id="news-reader-frame" class="news-iframe" 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 2; opacity: 0; transition: opacity 0.8s ease-in-out;"
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups">
+                </iframe>
+                
             </div>
         </div>
     </div>
