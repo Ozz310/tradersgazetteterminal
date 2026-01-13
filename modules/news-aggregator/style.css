@@ -1,6 +1,8 @@
 /* All styles are scoped to the .news-aggregator container */
 .news-aggregator {
     /* Set the gradient as a custom property for use in text */
+    --news-modal-bg: #1e222d;
+    --news-modal-border: #2a2e39;
     --gold-text-gradient: linear-gradient(145deg, #F0D788, #DDAA33);
     
     box-sizing: border-box;
@@ -29,6 +31,7 @@
     z-index: 30; 
     position: relative;
     background-color: var(--sidebar-color);
+    border-bottom: 1px solid var(--border-color); /* Added separator */
 }
 
 .news-aggregator .news-title {
@@ -93,6 +96,7 @@
     aspect-ratio: 16 / 9; 
     height: auto; 
     align-self: start; 
+    border: 1px solid var(--border-color); /* Wrapper Match */
 }
 
 .news-aggregator .youtube-live-container iframe {
@@ -103,12 +107,14 @@
     height: 100%;
 }
 
-/* News List Container */
+/* News List Container - THE WRAPPER UPGRADE */
 .news-aggregator .news-aggregator-container {
     flex: 1 1 50%;
     background-color: var(--sidebar-color);
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    /* Enhanced Border and Shadow for Containment */
+    border: 1px solid var(--border-color); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -181,6 +187,7 @@
     border: 1px solid transparent;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
     transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer; /* Indicates Clickable */
 }
 .news-aggregator .news-article:hover {
     border-color: var(--gold-color);
@@ -227,9 +234,10 @@
     margin: 0 0 8px 0;
     font-size: 1.1rem;
     line-height: 1.4;
+    color: #e1e1e1; /* Fallback */
 }
+/* Removed pointer events on link to allow card click */
 .news-aggregator .news-article h2 a {
-    /* Gold Gradient for Headlines */
     color: transparent; 
     background-image: var(--gold-text-gradient);
     background-clip: text;
@@ -237,9 +245,7 @@
     -webkit-text-fill-color: transparent;
     text-decoration: none;
     transition: none; 
-}
-.news-aggregator .news-article h2 a:hover {
-    text-shadow: 0 0 5px rgba(240, 215, 136, 0.5);
+    pointer-events: none; /* Let the card click handler take over */
 }
 
 .news-aggregator .news-article p {
@@ -259,9 +265,7 @@
     -webkit-text-fill-color: transparent;
     text-decoration: none;
     transition: none;
-}
-.news-aggregator .read-more-button:hover {
-    text-shadow: 0 0 5px rgba(240, 215, 136, 0.5);
+    pointer-events: none; /* Let card click handler take over */
 }
 
 /* Footer */
@@ -329,6 +333,109 @@
 @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
 
+/* --- NEW: NEWS READER MODAL --- */
+.news-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.news-modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.news-modal-content {
+    width: 90%;
+    height: 90%;
+    background: var(--news-modal-bg);
+    border: 1px solid var(--news-modal-border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.news-modal-overlay.active .news-modal-content {
+    transform: scale(1);
+}
+
+.news-modal-header {
+    padding: 12px 20px;
+    background: var(--news-modal-border);
+    border-bottom: 1px solid #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.news-modal-title {
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.news-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.news-modal-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #ccc;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.news-modal-btn:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: #fff;
+}
+
+.news-modal-btn.primary {
+    border-color: var(--gold-color);
+    color: var(--gold-color);
+}
+
+.news-iframe-container {
+    flex: 1;
+    background: #fff; 
+    position: relative;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    overflow: hidden;
+}
+
+.news-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+
 /* --- MOBILE RESPONSIVENESS (Max-Width 768px) --- */
 @media (max-width: 768px) {
     /* FIX: Force Header Banner visibility and position */
@@ -337,20 +444,18 @@
         position: relative !important;
         height: 150px !important; 
         width: 100% !important;
-        margin: 0 0 20px 0 !important; /* Clear negative margins */
-        flex: 0 0 auto !important; /* Prevent squashing */
+        margin: 0 0 20px 0 !important; 
+        flex: 0 0 auto !important; 
         border-radius: 0 !important;
         box-shadow: none !important;
     }
     
-    /* FIX: Reset content area padding */
     .news-aggregator .news-content-area { 
         padding: 0 0 60px 0 !important; 
         display: flex;
         flex-direction: column;
     }
 
-    /* Ensure vertical stacking */
     .news-aggregator .news-content-flex {
         flex-direction: column;
         max-height: none; 
@@ -364,6 +469,7 @@
         border-radius: 0; 
         box-shadow: none; 
         margin-bottom: 20px; 
+        border: none;
     }
 
     .news-aggregator .news-aggregator-container {
@@ -371,9 +477,9 @@
         border-radius: 0;
         min-height: 500px;
         box-shadow: none;
+        border: none; /* Remove border on mobile */
     }
 
-    /* Sticky Tabs */
     .news-aggregator .news-tabs {
         position: sticky;
         top: 0;
@@ -381,8 +487,6 @@
         background-color: var(--sidebar-color);
         padding: 10px 15px;
         border-bottom: 1px solid var(--border-color);
-        mask-image: linear-gradient(to right, black 90%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
     }
     
     .news-aggregator .news-list {
@@ -398,4 +502,10 @@
     .news-aggregator .article-dateline { margin-bottom: 0; }
 
     .news-aggregator .news-toolbar { display: none; }
+    
+    /* Mobile Modal adjustments */
+    .news-modal-content {
+        width: 100%; height: 100%;
+        border-radius: 0;
+    }
 }
