@@ -1,6 +1,8 @@
 <div class="analysis-hub-container fade-in">
     
-    <div class="analysis-cover-photo"></div>
+    <div class="analysis-cover-photo">
+        <div class="banner-overlay"></div>
+    </div>
 
     <div class="analysis-content-wrapper">
         
@@ -14,26 +16,36 @@
                 <i class="fas fa-chart-candlestick"></i> ADVANCED CHARTING
             </div>
             
-            <div class="tradingview-widget-container">
-                <div id="tradingview_chart"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                <script type="text/javascript">
-                new TradingView.widget({
-                    "autosize": true,
-                    "symbol": "OANDA:XAUUSD",
-                    "interval": "D",
-                    "timezone": "Etc/UTC",
-                    "theme": "dark",
-                    "style": "1",
-                    "locale": "en",
-                    "toolbar_bg": "#f1f3f6",
-                    "enable_publishing": false,
-                    "allow_symbol_change": true,
-                    "container_id": "tradingview_chart"
-                });
-                </script>
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+              {
+              "allow_symbol_change": true,
+              "calendar": false,
+              "details": true,
+              "hide_side_toolbar": true,
+              "hide_top_toolbar": false,
+              "hide_legend": false,
+              "hide_volume": false,
+              "hotlist": false,
+              "interval": "D",
+              "locale": "en",
+              "save_image": true,
+              "style": "1",
+              "symbol": "OANDA:XAUUSD", 
+              "theme": "dark",
+              "timezone": "Etc/UTC",
+              "backgroundColor": "#0F0F0F",
+              "gridColor": "rgba(242, 242, 242, 0.06)",
+              "watchlist": [],
+              "withdateranges": true,
+              "compareSymbols": [],
+              "studies": [],
+              "autosize": true
+              }
+              </script>
             </div>
-        </div>
+            </div>
 
         <div class="calendar-section">
             <div class="panel-header">
@@ -44,8 +56,7 @@
                 <iframe 
                     src="https://www.myfxbook.com/widget/calendar.html" 
                     class="calendar-iframe"
-                    scrolling="yes" 
-                    sandbox="allow-scripts allow-same-origin allow-forms">
+                    scrolling="yes">
                 </iframe>
             </div>
         </div>
