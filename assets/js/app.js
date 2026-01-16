@@ -1,6 +1,6 @@
-/* TG TERMINAL BUILDER v6.5 - SOVEREIGN ROUTER
+/* TG TERMINAL BUILDER v6.6 - SOVEREIGN ROUTER
    Features: CSS-First Loading (No Flash), Phantom Transitions, Smart Pathing
-   FIX v6.5: Disabled "Force Visibility" to prevent auto-opening Modals/Hidden Forms
+   FIX v6.6: Added Initialization Trigger for Risk Management Hub
 */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -138,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.innerHTML = newContent;
 
             // --- G. CRITICAL: FORCE VISIBILITY (Anti-Black Screen) ---
-            // ⚠️ FIX APPLIED: We DISABLED this block because it was finding hidden Modals/Forms 
-            // and forcing them to display:block, breaking the UI logic.
+            // ⚠️ DISABLED to prevent auto-opening Modals/Hidden Forms.
+            // The module is responsible for its own initial visibility state.
             /*
             const hiddenEls = targetContainer.querySelectorAll('.hidden, .module-loader-hidden, .invisible');
             hiddenEls.forEach(el => {
@@ -194,13 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. HELPERS ---
 
     const initModuleFunction = (moduleName) => {
-        if (moduleName === 'auth' && window.tg_auth?.initAuthModule) window.tg_auth.initAuthModule();
-        else if (moduleName === 'trading-journal' && window.initTradingJournal) window.initTradingJournal();
+        if (moduleName === 'auth' && window.tg_auth?.initAuthModule) {
+            window.tg_auth.initAuthModule();
+        } 
+        else if (moduleName === 'trading-journal' && window.initTradingJournal) {
+            window.initTradingJournal();
+        } 
         else if (moduleName === 'dashboard') {
             if (window.tg_dashboard?.initDashboard) window.tg_dashboard.initDashboard();
             else if (window.initDashboard) window.initDashboard();
-        } else if (moduleName === 'news-aggregator' && window.initNewsAggregator) {
+        } 
+        else if (moduleName === 'news-aggregator' && window.initNewsAggregator) {
              window.initNewsAggregator();
+        }
+        // ✅ NEW: Risk Management Hub Initialization
+        else if (moduleName === 'risk-management-hub' && window.initRiskManagementHub) {
+            console.log('Igniting Risk Management Hub...');
+            window.initRiskManagementHub();
         }
     };
 
@@ -235,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cleanupModule = (moduleName) => {
         if (moduleName === 'dashboard' && window.tg_dashboard?.cleanup) window.tg_dashboard.cleanup();
         if (moduleName === 'news-aggregator' && window.tg_news?.cleanup) window.tg_news.cleanup();
+        // Clean up Risk Management if needed (optional)
+        // if (moduleName === 'risk-management-hub' && window.cleanupRiskManagement) window.cleanupRiskManagement();
     };
 
     function handleLogout() {
