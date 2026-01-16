@@ -1,89 +1,60 @@
-/* MODULE: CFD BROKERS - PROPORTION FIX v3.1 */
+/* MODULE: CFD BROKERS - FINAL POLISH v3.2 */
 
 /* 1. CONTAINER RESET */
 .cfd-brokers-container {
     font-family: 'Poppins', sans-serif;
-    /* We keep the container clean to allow the banner to break out */
-    overflow-x: hidden; /* Prevent horizontal scrollbar from 100vw hack */
+    overflow-x: hidden;
 }
 
-/* 2. TRUE FULL-WIDTH BANNER (Breakout Strategy) */
+/* 2. FULL-WIDTH BANNER */
 .brokers-cover-photo {
-    /* "Breakout" Hack: Forces element to stretch 100% of Viewport, ignoring parent padding */
     width: 100vw; 
     position: relative;
     left: 50%;
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    
-    height: 320px; /* Slightly taller for impact */
+    height: 320px; 
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Trading%20Calculator.png'); 
     background-size: cover;
     background-position: center;
-    
-    /* Flush to top correction */
     margin-top: -45px; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     z-index: 0;
 }
 
-/* Reduced Overlay Opacity (So image is visible) */
 .banner-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000); /* Lighter top */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
 }
 
 /* 3. CONTENT WRAPPER */
 .brokers-content-wrapper {
     width: 100%;
     max-width: 1400px;
-    margin: -80px auto 0 auto; /* Pull content up to overlap banner */
+    margin: -80px auto 0 auto; 
     padding: 20px;
     box-sizing: border-box;
     position: relative;
     z-index: 2;
 }
 
-/* 4. HEADER */
-.section-header {
-    text-align: center;
-    margin-bottom: 50px;
-}
+/* HEADER REMOVED (Styles kept just in case, but unused) */
 
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 3rem;
-    color: #fff;
-    margin-bottom: 5px;
-    text-shadow: 0 5px 15px rgba(0,0,0,0.9);
-}
-
-.gold-text {
-    color: #d4af37;
-}
-
-.section-subtitle {
-    color: #ccc;
-    font-size: 1.1rem;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-}
-
-/* 5. GRID (Centered & Constrained) */
+/* 4. GRID SYSTEM */
 .brokers-grid {
-    display: flex; /* Flex is better for centering a single item than Grid */
+    display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Centers the card */
+    justify-content: center;
     gap: 30px;
     width: 100%;
 }
 
-/* 6. CARD (Fixed Width) */
+/* 5. CARD DESIGN */
 .broker-card {
     width: 100%;
-    max-width: 550px; /* <--- CRITICAL FIX: Stops the "Billboard" effect */
-    
+    max-width: 550px;
     background-color: #141414;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
@@ -103,7 +74,7 @@
 
 /* A. BRAND HERO */
 .broker-brand-hero {
-    height: 200px; /* Taller header */
+    height: 200px;
     background: radial-gradient(circle at center, #222 0%, #080808 100%);
     position: relative;
     display: flex;
@@ -113,10 +84,9 @@
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-/* LOGO FIX */
 .broker-logo-img {
     max-width: 90%;
-    max-height: 140px; /* <--- CRITICAL FIX: Increased from 100px */
+    max-height: 140px;
     object-fit: contain;
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6));
     transition: transform 0.4s ease;
@@ -150,6 +120,8 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    /* Ensure box-sizing handles padding correctly */
+    box-sizing: border-box; 
 }
 
 .broker-name {
@@ -203,7 +175,7 @@
     color: #d4af37;
 }
 
-/* C. ACTION BUTTON */
+/* C. ACTION BUTTON - [UPDATED FIX] */
 .action-btn {
     position: relative;
     overflow: hidden;
@@ -211,7 +183,11 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    width: 100%;
+    
+    /* WIDTH FIX: */
+    width: 100%; /* Fills the container (which has 35px padding) */
+    box-sizing: border-box; /* CRITICAL: Includes padding in width calculation */
+    
     padding: 18px;
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     color: #000;
@@ -220,7 +196,12 @@
     border-radius: 8px;
     font-size: 1.1rem;
     letter-spacing: 1px;
+    
     margin-top: 15px;
+    /* Auto margins to ensure perfect centering if width < 100% ever used */
+    margin-left: auto;
+    margin-right: auto;
+    
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: none;
     box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
@@ -256,7 +237,7 @@
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-    .section-title { font-size: 2rem; }
-    .broker-card { max-width: 100%; } /* Allow full width on mobile */
+    .broker-card { max-width: 100%; }
     .brokers-cover-photo { height: 200px; }
+    .broker-body { padding: 20px; } /* Less padding on mobile */
 }
