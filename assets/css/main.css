@@ -454,3 +454,75 @@ table.trade-journal-table { width: 100%; border-collapse: collapse; color: #f1f1
 .close-button:hover { color: #fff; }
 .modal-content h3 { color: #d4af37; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 15px; }
 @media (max-width: 1200px) { .kpi-dashboard { grid-template-columns: repeat(2, 1fr); } }
+/* =========================================
+   SOVEREIGN LIQUID GOLD ENGINE (Global)
+   ========================================= */
+
+/* The Shine Animation */
+@keyframes liquidShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* 1. Liquid Text (Headings/Labels) */
+.liquid-gold-text {
+    background: linear-gradient(
+        110deg, 
+        #DDAA33 20%, 
+        #F0D788 40%, 
+        #ffffff 50%, 
+        #F0D788 60%, 
+        #DDAA33 80%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: liquidShine 4s linear infinite;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+/* 2. Liquid Borders (Panels/Cards) */
+.liquid-gold-border {
+    position: relative;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    z-index: 1;
+}
+.liquid-gold-border::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    margin: -1px; /* Border width */
+    border-radius: inherit;
+    background: linear-gradient(
+        110deg, 
+        #DDAA33, #F0D788, #fff, #F0D788, #DDAA33
+    );
+    background-size: 200% auto;
+    animation: liquidShine 4s linear infinite;
+}
+
+/* 3. Liquid Buttons (High Priority Actions) */
+.liquid-gold-btn {
+    background: linear-gradient(
+        110deg, 
+        #DDAA33 20%, 
+        #F0D788 40%, 
+        #ffffff 50%, 
+        #F0D788 60%, 
+        #DDAA33 80%
+    );
+    background-size: 200% auto;
+    color: #000 !important;
+    font-weight: bold;
+    border: none;
+    animation: liquidShine 4s linear infinite;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    transition: transform 0.2s;
+}
+.liquid-gold-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
