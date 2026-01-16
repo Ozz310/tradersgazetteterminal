@@ -1,4 +1,4 @@
-/* MODULE: CFD BROKERS - FINAL POLISH v3.2 */
+/* MODULE: CFD BROKERS - SPACING FIX v3.3 */
 
 /* 1. CONTAINER RESET */
 .cfd-brokers-container {
@@ -29,18 +29,19 @@
     background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
 }
 
-/* 3. CONTENT WRAPPER */
+/* 3. CONTENT WRAPPER - [FIXED SPACING] */
 .brokers-content-wrapper {
     width: 100%;
     max-width: 1400px;
-    margin: -80px auto 0 auto; 
+    
+    /* CHANGED: From -80px (overlap) to 40px (gap) */
+    margin: 40px auto 0 auto; 
+    
     padding: 20px;
     box-sizing: border-box;
     position: relative;
     z-index: 2;
 }
-
-/* HEADER REMOVED (Styles kept just in case, but unused) */
 
 /* 4. GRID SYSTEM */
 .brokers-grid {
@@ -120,7 +121,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* Ensure box-sizing handles padding correctly */
     box-sizing: border-box; 
 }
 
@@ -175,7 +175,7 @@
     color: #d4af37;
 }
 
-/* C. ACTION BUTTON - [UPDATED FIX] */
+/* C. ACTION BUTTON */
 .action-btn {
     position: relative;
     overflow: hidden;
@@ -183,11 +183,8 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    
-    /* WIDTH FIX: */
-    width: 100%; /* Fills the container (which has 35px padding) */
-    box-sizing: border-box; /* CRITICAL: Includes padding in width calculation */
-    
+    width: 100%;
+    box-sizing: border-box; 
     padding: 18px;
     background: linear-gradient(145deg, #F0D788, #DDAA33);
     color: #000;
@@ -198,7 +195,6 @@
     letter-spacing: 1px;
     
     margin-top: 15px;
-    /* Auto margins to ensure perfect centering if width < 100% ever used */
     margin-left: auto;
     margin-right: auto;
     
@@ -239,5 +235,5 @@
 @media (max-width: 768px) {
     .broker-card { max-width: 100%; }
     .brokers-cover-photo { height: 200px; }
-    .broker-body { padding: 20px; } /* Less padding on mobile */
+    .broker-body { padding: 20px; }
 }
