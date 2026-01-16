@@ -1,85 +1,157 @@
-/* All styles are scoped to the .analysis-hub container */
-.analysis-hub {
+/* MODULE: ANALYSIS HUB - SOVEREIGN INTEL v1.0 */
+
+/* 1. CONTAINER LAYOUT */
+.analysis-hub-container {
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden; /* Prevent outer scroll, we scroll inside panels */
+}
+
+/* 2. HEADER */
+.analysis-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    min-height: calc(100vh - 40px);
-    
-    /* FIX: Apply negative margin here to pull the ENTIRE module 
-       up and flush the banner to the top edge of the main content area, 
-       counteracting any external padding/gap. */
-    margin-top: -50px; /* Adjust this value if needed based on the main layout's padding/gap */
+    margin-bottom: 15px;
+    flex-shrink: 0; /* Don't shrink header */
 }
 
-/* 1. Banner Flush Fix (Now handled by the container's negative margin) */
-.analysis-hub .analysis-hub-cover-photo {
-    width: 100%;
-    /* FINAL FIX: Increased height to better frame the image */
-    height: 300px;
-    background-image: url('https://github.com/Ozz310/tradersgazetteterminal/blob/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png?raw=true');
-    background-size: cover;
-    background-position: center;
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* Removed margin-bottom to aid in flushing (restored later with content padding) */
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: #fff;
+    margin: 0;
 }
 
-/* 1. Banner Flush Reversal & Content Gap Restoration */
-.analysis-hub .analysis-hub-content-container {
-    width: 100%;
-    max-width: none;
+.gold-text { color: #d4af37; }
+
+/* View Controls (Mobile Only mostly) */
+.view-controls { display: none; }
+
+/* 3. GRID SYSTEM (Desktop) */
+.analysis-grid {
+    display: flex;
+    gap: 20px;
+    flex: 1; /* Fill remaining height */
+    overflow: hidden;
+}
+
+/* A. CHART SECTOR (70% Width) */
+.chart-container {
+    flex: 3;
+    background-color: #141414;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    
-    /* REVERSE FIX: Removed margin-top: -60px; to restore gap between banner and chart */
-    margin-top: 0; /* Ensures content starts below the banner */
-    padding: 20px; /* RESTORE: Add sufficient padding/margin back to create the desired gap
-                      between the banner and the first widget, and add horizontal spacing. */
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* Helper class for the required gradient text (kept for reference, but applied directly below) */
-.solid-gold-gradient-text {
-    /* The requested solid gold gradient */
-    background: linear-gradient(145deg, #F0D788, #DDAA33); 
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent; /* Fallback/standard way to hide text color */
-}
-
-.analysis-hub .advanced-chart-container,
-.analysis-hub .economic-calendar-container {
-    background-color: var(--accent-color); /* Assuming this is the dark/black background */
-    padding: 20px;
+/* B. CALENDAR SECTOR (30% Width) */
+.calendar-container {
+    flex: 1;
+    background-color: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    min-width: 350px; /* Don't get too small */
+    overflow: hidden;
 }
 
-.analysis-hub .widget-title {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    /* Maintain the gold border-bottom for design consistency */
-    border-bottom: 2px solid var(--gold-color);
-    padding-bottom: 10px;
-    
-    /* 2. Gold Gradient Font Fix (Already applied, kept here for correctness) */
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
+/* 4. PANEL HEADERS */
+.panel-header {
+    background: #0a0a0a;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #d4af37;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
+/* 5. IFRAME & WIDGET WRAPPERS */
+.tradingview-widget-container {
+    flex: 1;
+    background: #000;
+}
 
-.analysis-hub .tradingview-widget-container {
-    height: 600px;
+.calendar-wrapper {
+    flex: 1;
+    position: relative;
+    background: #fff; /* Myfxbook usually has white bg, adapt if needed */
+    overflow: hidden;
+}
+
+.calendar-iframe {
     width: 100%;
-}
-
-.analysis-hub .economic-calendar-container iframe {
-    width: 100%;
-    height: 600px;
+    height: 100%;
     border: none;
+    display: block;
+}
+
+.redirect-blocker-message {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.8);
+    color: #aaa;
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 2px 0;
+    pointer-events: none; /* Let clicks pass through to scrollbar */
+}
+
+/* 6. RESPONSIVE MOBILE OPTIMIZATION */
+@media (max-width: 1024px) {
+    .analysis-hub-container {
+        height: auto; /* Allow scroll on tablet/mobile */
+        overflow-y: auto;
+    }
+
+    .analysis-grid {
+        flex-direction: column; /* Stack them */
+        height: auto;
+        gap: 30px;
+    }
+
+    .chart-container {
+        flex: none;
+        height: 60vh; /* Fixed height for chart on mobile */
+        min-height: 450px;
+    }
+
+    .calendar-container {
+        flex: none;
+        height: 500px; /* Fixed height for calendar */
+    }
+
+    /* Optional: Show View Controls if you want tabs later */
+    .view-controls {
+        display: none; /* Kept hidden for now, just stacking */
+    }
+}
+
+@media (max-width: 600px) {
+    .analysis-hub-container {
+        padding: 10px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .chart-container {
+        height: 55vh; /* Slightly smaller on phones */
+    }
 }
