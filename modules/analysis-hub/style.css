@@ -1,157 +1,130 @@
-/* MODULE: ANALYSIS HUB - SOVEREIGN INTEL v1.0 */
+/* MODULE: ANALYSIS HUB - VERTICAL STACK RESTORED v2.0 */
 
-/* 1. CONTAINER LAYOUT */
+/* 1. CONTAINER RESET */
 .analysis-hub-container {
     width: 100%;
-    height: 100vh; /* Full viewport height */
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 2. FULL WIDTH BANNER */
+.analysis-cover-photo {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 300px;
+    
+    /* Using the Charting image as placeholder */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/technical-analysis.jpg');
+    background-size: cover;
+    background-position: center;
+    
+    margin-top: -45px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 0;
+}
+
+/* 3. CONTENT WRAPPER */
+.analysis-content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto 0 auto; /* Separation from banner */
     padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden; /* Prevent outer scroll, we scroll inside panels */
+    gap: 40px; /* Space between Chart and Calendar */
+    position: relative;
+    z-index: 2;
 }
 
-/* 2. HEADER */
-.analysis-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-shrink: 0; /* Don't shrink header */
+/* HEADER */
+.section-header {
+    text-align: center;
+    margin-bottom: 20px;
 }
-
 .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
+    font-size: 2.5rem;
     color: #fff;
-    margin: 0;
+    margin-bottom: 5px;
 }
-
 .gold-text { color: #d4af37; }
+.section-subtitle { color: #ccc; font-size: 1rem; }
 
-/* View Controls (Mobile Only mostly) */
-.view-controls { display: none; }
-
-/* 3. GRID SYSTEM (Desktop) */
-.analysis-grid {
-    display: flex;
-    gap: 20px;
-    flex: 1; /* Fill remaining height */
-    overflow: hidden;
-}
-
-/* A. CHART SECTOR (70% Width) */
-.chart-container {
-    flex: 3;
+/* 4. PANEL STYLES (Common) */
+.chart-section, 
+.calendar-section {
     background-color: #141414;
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
-/* B. CALENDAR SECTOR (30% Width) */
-.calendar-container {
-    flex: 1;
-    background-color: #141414;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    min-width: 350px; /* Don't get too small */
-    overflow: hidden;
-}
-
-/* 4. PANEL HEADERS */
 .panel-header {
     background: #0a0a0a;
-    padding: 10px 15px;
+    padding: 15px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     color: #d4af37;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
-/* 5. IFRAME & WIDGET WRAPPERS */
+/* 5. CHART HEIGHT CONTROL */
 .tradingview-widget-container {
-    flex: 1;
+    width: 100%;
+    height: 600px; /* Desktop Height */
     background: #000;
 }
 
+#tradingview_chart {
+    height: 100%;
+    width: 100%;
+}
+
+/* 6. CALENDAR WRAPPER */
 .calendar-wrapper {
-    flex: 1;
+    width: 100%;
+    height: 600px; /* Desktop Height */
+    background: #fff;
     position: relative;
-    background: #fff; /* Myfxbook usually has white bg, adapt if needed */
-    overflow: hidden;
 }
 
 .calendar-iframe {
     width: 100%;
     height: 100%;
     border: none;
-    display: block;
 }
 
-.redirect-blocker-message {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.8);
-    color: #aaa;
-    font-size: 0.7rem;
-    text-align: center;
-    padding: 2px 0;
-    pointer-events: none; /* Let clicks pass through to scrollbar */
-}
-
-/* 6. RESPONSIVE MOBILE OPTIMIZATION */
-@media (max-width: 1024px) {
-    .analysis-hub-container {
-        height: auto; /* Allow scroll on tablet/mobile */
-        overflow-y: auto;
-    }
-
-    .analysis-grid {
-        flex-direction: column; /* Stack them */
-        height: auto;
-        gap: 30px;
-    }
-
-    .chart-container {
-        flex: none;
-        height: 60vh; /* Fixed height for chart on mobile */
-        min-height: 450px;
-    }
-
-    .calendar-container {
-        flex: none;
-        height: 500px; /* Fixed height for calendar */
-    }
-
-    /* Optional: Show View Controls if you want tabs later */
-    .view-controls {
-        display: none; /* Kept hidden for now, just stacking */
-    }
-}
-
-@media (max-width: 600px) {
-    .analysis-hub-container {
-        padding: 10px;
+/* 7. RESPONSIVE OPTIMIZATION */
+@media (max-width: 768px) {
+    /* Adjust Banner Height */
+    .analysis-cover-photo { height: 200px; }
+    
+    .section-title { font-size: 2rem; }
+    
+    /* Optimize Heights for Mobile */
+    .tradingview-widget-container {
+        height: 500px; /* Readable chart height on mobile */
     }
     
-    .section-title {
-        font-size: 1.5rem;
+    .calendar-wrapper {
+        height: 500px; /* Readable calendar height on mobile */
     }
-
-    .chart-container {
-        height: 55vh; /* Slightly smaller on phones */
+    
+    .analysis-content-wrapper {
+        padding: 10px; /* Use more screen space */
+        gap: 30px;
     }
 }
