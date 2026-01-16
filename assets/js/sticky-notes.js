@@ -7,58 +7,52 @@ document.addEventListener('DOMContentLoaded', function() {
         const loaderOverlay = document.getElementById('loader-overlay');
         const syncBtn = document.getElementById('sync-notes-btn');
         const syncStatus = document.getElementById('sync-status');
+        
+        // Modal Elements
         const conflictModalOverlay = document.getElementById('conflict-modal-overlay');
         const useLocalBtn = document.getElementById('use-local-btn');
         const useCloudBtn = document.getElementById('use-cloud-btn');
         
-        // Use your worker URL
+        // WORKER URL
         const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
         
         const MAX_NOTES = 4;
-        const MAX_ITEMS = 5;
+        const MAX_ITEMS = 6;
         
+        // --- 1. PASTEL COLORS (Standard Sticky Note Theme) ---
+        // Yellow, Blue, Green, Pink
+        const noteColors = ['#fff9c4', '#b3e5fc', '#c8e6c9', '#f8bbd0'];
+        const defaultNoteTitles = ['To Do List', 'Trading Goals', 'Strategy Notes', 'Reminders'];
+
         let notes = [];
         let isSaving = false;
         let notesToMerge = [];
-        
-        // Colors for note indicators (optional usage)
-        const noteColors = ['#F0D788', '#F0D788', '#F0D788', '#F0D788'];
-        const defaultNoteTitles = ['To Do List', 'Trading Goals', 'Strategy Notes', 'Reminders'];
 
+        // ... [Helper functions: arraysAreEqual, getUserId, etc. remain the same] ...
         function arraysAreEqual(arr1, arr2) {
-            if (arr1.length !== arr2.length) return false;
+            if (!arr1 || !arr2 || arr1.length !== arr2.length) return false;
             for (let i = 0; i < arr1.length; i++) {
                 if (arr1[i] !== arr2[i]) return false;
             }
             return true;
         }
 
-        function showLoader() {
-            if (loaderOverlay) loaderOverlay.classList.remove('hidden');
-        }
+        function getUserId() { return localStorage.getItem('tg_userId'); }
 
-        function hideLoader() {
-            if (loaderOverlay) loaderOverlay.classList.add('hidden');
-        }
-
+        // --- UI TOGGLES ---
+        function showLoader() { if (loaderOverlay) loaderOverlay.classList.remove('hidden'); }
+        function hideLoader() { if (loaderOverlay) loaderOverlay.classList.add('hidden'); }
+        
         function showConflictModal() {
-            if (conflictModalOverlay) conflictModalOverlay.classList.remove('hidden');
+            if (conflictModalOverlay) conflictModalOverlay.classList.remove('hidden'); 
+        }
+        function hideConflictModal() { 
+            if (conflictModalOverlay) conflictModalOverlay.classList.add('hidden'); 
         }
 
-        function hideConflictModal() {
-            if (conflictModalOverlay) conflictModalOverlay.classList.add('hidden');
-        }
-
-        function getUserId() {
-            return localStorage.getItem('tg_userId');
-        }
-
+        // --- LOCAL STORAGE ---
         function saveNotesLocally() {
-            try {
-                localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
-            } catch (error) {
-                console.error('Error saving notes to local storage:', error);
-            }
+            localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         }
 
         function loadNotesLocally() {
@@ -70,42 +64,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     notes = defaultNoteTitles.map(title => `${title}:\n\n`);
                 }
             } catch (error) {
-                console.error('Error loading notes from local storage:', error);
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
         }
 
+        // --- API SYNC ---
         async function fetchNotesFromBackend(forceSync = false) {
             const userId = getUserId();
             if (!userId) return;
 
             try {
                 if (!forceSync) showLoader();
-                const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes`);
+                
+                // Add timestamp to prevent caching
+                const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes&t=${new Date().getTime()}`);
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                
                 const data = await response.json();
 
                 if (data && data.notes) {
                     const cloudNotes = data.notes;
                     if (!arraysAreEqual(notes, cloudNotes)) {
                         notesToMerge = cloudNotes;
-                        showConflictModal();
+                        showConflictModal(); // Trigger Popup
                     } else if (forceSync) {
-                        syncStatus.textContent = 'Already synced!';
-                        setTimeout(() => syncStatus.textContent = '', 2000);
-                    }
-                } else {
-                    if (forceSync) {
-                        syncStatus.textContent = 'No notes found on cloud.';
+                        syncStatus.textContent = 'Synced';
                         setTimeout(() => syncStatus.textContent = '', 2000);
                     }
                 }
             } catch (error) {
-                console.error('Error fetching notes from backend:', error);
-                if (forceSync) {
-                    syncStatus.textContent = 'Sync failed!';
-                    setTimeout(() => syncStatus.textContent = '', 2000);
-                }
+                console.error('Fetch error:', error);
+                // We do NOT show error on UI for passive sync to keep it clean
             } finally {
                 if (!forceSync) hideLoader();
             }
@@ -116,30 +107,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isSaving || !userId) return;
 
             isSaving = true;
-            syncBtn.disabled = true;
-            syncBtn.classList.add('syncing');
-            syncStatus.textContent = 'Syncing...';
+            if(syncBtn) syncBtn.classList.add('syncing');
 
             try {
-                const response = await fetch(`${SCRIPT_URL}?action=saveNotes`, {
+                await fetch(`${SCRIPT_URL}?action=saveNotes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: userId, notes: notes }),
                 });
-
-                if (!response.ok) throw new Error(`Server responded with a non-200 status: ${response.status}`);
-                syncStatus.textContent = 'Synced successfully!';
+                if(syncStatus) syncStatus.textContent = 'Saved';
             } catch (error) {
-                console.error('Error saving notes to backend:', error);
-                syncStatus.textContent = 'Sync failed!';
+                console.error('Save error:', error);
             } finally {
                 isSaving = false;
-                syncBtn.disabled = false;
-                syncBtn.classList.remove('syncing');
-                setTimeout(() => syncStatus.textContent = '', 2000);
+                if(syncBtn) syncBtn.classList.remove('syncing');
+                setTimeout(() => { if(syncStatus) syncStatus.textContent = ''; }, 2000);
             }
         }
 
+        // --- RENDER LOGIC (UPDATED FOR COLORS) ---
         function renderNotes() {
             if (!notesList) return;
             notesList.innerHTML = '';
@@ -148,6 +134,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const noteItem = document.createElement('div');
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
+                
+                // APPLY PASTEL COLOR
+                const bgColor = noteColors[index % noteColors.length];
+                noteItem.style.backgroundColor = bgColor;
+
                 noteItem.innerHTML = createNoteContent(note, index);
                 notesList.appendChild(noteItem);
             });
@@ -159,58 +150,50 @@ document.addEventListener('DOMContentLoaded', function() {
             const noteTitle = defaultNoteTitles[index];
             const isToDo = noteTitle === 'To Do List';
             
-            // Split by newline but handle potential empty notes gracefully
             const parts = note.split('\n');
-            // The first line is usually the title in storage format "Title:", discard it if present
-            // but rely on `defaultNoteTitles` for display to keep UI clean.
             const items = parts.slice(1); 
-
-            let itemsHTML = '';
             const filteredItems = items.filter(s => s.trim());
+            
+            let itemsHTML = '';
 
             if (filteredItems.length === 0) {
-                itemsHTML = `<li class="empty-state-text">Click 'Add ${isToDo ? 'Task' : 'Note'}' to begin.</li>`;
+                itemsHTML = `<li style="color: #666; font-style: italic;">Empty. Add an item below.</li>`;
             } else {
                 if (isToDo) {
                     filteredItems.forEach((item, i) => {
                         const isChecked = item.trim().startsWith('[x]');
                         const text = item.replace(/\[x\]|\[\s\]/g, '').trim();
+                        // Checkbox checked state handled manually
                         itemsHTML += `
-                            <li class="todo-item ${isChecked ? 'checked' : ''}" data-task-index="${i}">
+                            <li class="todo-item ${isChecked ? 'checked' : ''}">
                                 <input type="checkbox" ${isChecked ? 'checked' : ''}>
-                                <span contenteditable="true">${text}</span>
-                                <button class="delete-task-btn"><i class="fas fa-trash-can"></i></button>
-                            </li>
-                        `;
+                                <span contenteditable="true" style="color:#000">${text}</span>
+                                <button class="delete-task-btn"><i class="fas fa-times"></i></button>
+                            </li>`;
                     });
                 } else {
                     filteredItems.forEach((item, i) => {
                         const text = item.replace(/^\* /, '').trim();
                         itemsHTML += `
-                            <li class="bullet-item" data-bullet-index="${i}">
-                                <span contenteditable="true">${text}</span>
-                                <button class="delete-task-btn"><i class="fas fa-trash-can"></i></button>
-                            </li>
-                        `;
+                            <li class="bullet-item">
+                                <span style="color:#000; font-weight:bold;">•</span>
+                                <span contenteditable="true" style="color:#000">${text}</span>
+                                <button class="delete-task-btn"><i class="fas fa-times"></i></button>
+                            </li>`;
                     });
                 }
             }
 
-            const deleteButton = `<button class="note-delete-btn" title="Clear All"><i class="fas fa-trash-can"></i></button>`;
-            const addButton = `<button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">+ Add Item</button>`;
-            
             return `
                 <div class="note-header">
                     <h3>${noteTitle}</h3>
-                    ${deleteButton}
+                    <button class="note-delete-btn" title="Clear"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="note-body">
-                    <ul class="${isToDo ? 'todo-list' : 'bullet-list'}">
-                        ${itemsHTML}
-                    </ul>
+                    <ul>${itemsHTML}</ul>
                 </div>
                 <div class="note-footer">
-                    ${addButton}
+                    <button class="add-item-btn" data-type="${isToDo ? 'task' : 'note'}">+ Add</button>
                 </div>
             `;
         }
@@ -219,17 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add Item
             notesList.querySelectorAll('.add-item-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const noteItem = e.target.closest('.note-item');
-                    const index = noteItem.getAttribute('data-index');
-                    // Get current raw data
+                    const index = e.target.closest('.note-item').getAttribute('data-index');
                     const [title, ...items] = notes[index].split('\n');
-                    
                     if (items.filter(s => s.trim()).length < MAX_ITEMS) {
                         const newItem = btn.getAttribute('data-type') === 'task' ? '[ ] New Task' : '* New Note';
                         notes[index] += `\n${newItem}`;
                         renderNotes();
                         saveNotesLocally();
-                        // Focus logic could go here
+                        syncNotesToBackend();
                     }
                 });
             });
@@ -237,83 +217,68 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clear Note
             notesList.querySelectorAll('.note-delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const noteItem = e.target.closest('.note-item');
-                    const index = noteItem.getAttribute('data-index');
-                    const noteTitle = defaultNoteTitles[index];
-                    notes[index] = `${noteTitle}:\n\n`; // Reset
+                    const index = e.target.closest('.note-item').getAttribute('data-index');
+                    notes[index] = `${defaultNoteTitles[index]}:\n\n`; 
                     renderNotes();
                     saveNotesLocally();
+                    syncNotesToBackend();
                 });
             });
 
             // Delete Single Task
             notesList.querySelectorAll('.delete-task-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const noteItem = e.target.closest('.note-item');
-                    const noteIndex = noteItem.getAttribute('data-index');
                     const listItem = e.target.closest('li');
-                    const listContainer = listItem.parentElement;
-                    const taskIndex = Array.from(listContainer.children).indexOf(listItem);
-
-                    const [title, ...items] = notes[noteIndex].split('\n');
-                    const cleanItems = items.filter(s => s.trim());
+                    const index = e.target.closest('.note-item').getAttribute('data-index');
+                    // Find index of LI in UL
+                    const taskIndex = Array.from(listItem.parentElement.children).indexOf(listItem);
                     
-                    if(cleanItems[taskIndex]) {
+                    const [title, ...items] = notes[index].split('\n');
+                    const cleanItems = items.filter(s => s.trim()); // Remove empty lines to match rendered list
+                    
+                    if (cleanItems[taskIndex]) {
+                        // Reconstruct array without the item
                         cleanItems.splice(taskIndex, 1);
-                        notes[noteIndex] = [title, ...cleanItems].join('\n');
+                        notes[index] = [title, ...cleanItems].join('\n');
                         renderNotes();
                         saveNotesLocally();
+                        syncNotesToBackend();
                     }
                 });
             });
 
-            // Checkbox Logic
-            notesList.querySelectorAll('.todo-item input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', (e) => {
-                    const listItem = e.target.closest('li');
-                    const noteItem = e.target.closest('.note-item');
-                    const index = noteItem.getAttribute('data-index');
-                    const listContainer = listItem.parentElement;
-                    const taskIndex = Array.from(listContainer.children).indexOf(listItem);
-
-                    if (e.target.checked) listItem.classList.add('checked');
-                    else listItem.classList.remove('checked');
-
-                    const [title, ...items] = notes[index].split('\n');
-                    const cleanItems = items.filter(s => s.trim());
-                    
-                    let currentLine = cleanItems[taskIndex];
-                    let textContent = currentLine.replace(/\[x\]|\[\s\]/g, '').trim();
-                    cleanItems[taskIndex] = e.target.checked ? `[x] ${textContent}` : `[ ] ${textContent}`;
-                    
-                    notes[index] = [title, ...cleanItems].join('\n');
-                    saveNotesLocally();
-                });
+            // Inputs & Edits
+            notesList.querySelectorAll('input[type="checkbox"]').forEach(box => {
+                box.addEventListener('change', () => updateNoteFromDOM(box));
             });
+            notesList.querySelectorAll('[contenteditable="true"]').forEach(span => {
+                span.addEventListener('input', () => updateNoteFromDOM(span));
+            });
+        }
+
+        function updateNoteFromDOM(element) {
+            const noteItem = element.closest('.note-item');
+            const index = noteItem.getAttribute('data-index');
+            const title = defaultNoteTitles[index];
             
-            // Content Editable Logic (Typing)
-            notesList.querySelectorAll('.note-item [contenteditable="true"]').forEach(element => {
-                element.addEventListener('input', (e) => {
-                    const noteItem = e.target.closest('.note-item');
-                    const index = noteItem.getAttribute('data-index');
-                    const title = defaultNoteTitles[index];
-                    const listItems = noteItem.querySelectorAll('li');
+            const listItems = noteItem.querySelectorAll('li');
+            const lines = Array.from(listItems).map(li => {
+                // If it's an empty state placeholder, ignore
+                if(li.classList.contains('empty-state-text')) return '';
+                
+                const text = li.querySelector('[contenteditable]').textContent.trim();
+                const checkbox = li.querySelector('input[type="checkbox"]');
+                
+                if (checkbox) {
+                    return checkbox.checked ? `[x] ${text}` : `[ ] ${text}`;
+                } else {
+                    return `* ${text}`;
+                }
+            }).filter(line => line !== '');
 
-                    const updatedLines = Array.from(listItems).map(li => {
-                        const text = li.querySelector('span').textContent.trim();
-                        const isToDo = li.classList.contains('todo-item');
-                        if (isToDo) {
-                            const isChecked = li.querySelector('input').checked;
-                            return isChecked ? `[x] ${text}` : `[ ] ${text}`;
-                        } else {
-                            return `* ${text}`;
-                        }
-                    });
-                    
-                    notes[index] = `${title}:\n${updatedLines.join('\n')}`;
-                    saveNotesLocally();
-                });
-            });
+            notes[index] = `${title}:\n${lines.join('\n')}`;
+            saveNotesLocally();
+            // Debounce sync could be added here
         }
 
         // --- INIT ---
@@ -327,25 +292,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+        if(closeBtn) closeBtn.addEventListener('click', () => {
+            panel.classList.remove('open');
+            toggleBtn.classList.remove('active');
+        });
 
-        if(closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                panel.classList.remove('open');
-                toggleBtn.classList.remove('active');
-            });
-        }
-
-        if (syncBtn) {
-            syncBtn.addEventListener('click', () => syncNotesToBackend());
-        }
-
+        // Conflict Modal Buttons
         if(useLocalBtn) {
             useLocalBtn.addEventListener('click', () => {
                 hideConflictModal();
-                syncNotesToBackend();
+                syncNotesToBackend(); // Overwrite cloud
             });
         }
-
         if(useCloudBtn) {
             useCloudBtn.addEventListener('click', () => {
                 hideConflictModal();
@@ -354,8 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderNotes();
             });
         }
-        
-        // Initial load check (optional, but good to have)
+
+        // Auto Load
         if(localStorage.getItem('traders-gazette-notes')) {
             loadNotesLocally();
         }
