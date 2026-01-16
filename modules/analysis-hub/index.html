@@ -1,6 +1,7 @@
 <div class="analysis-hub-container fade-in">
     
-    <div class="analysis-cover-photo">
+    <div class="analysis-banner-wrapper">
+        <div class="analysis-cover-photo"></div>
         <div class="banner-overlay"></div>
     </div>
 
@@ -16,13 +17,9 @@
                 <i class="fas fa-chart-candlestick"></i> ADVANCED CHARTING
             </div>
             
-            <div class="tradingview-widget-container" style="height:100%;width:100%">
-                <iframe 
-                    style="width: 100%; height: 100%; border: none;" 
-                    src="https://www.tradingview.com/chart-widget-embed/?symbol=OANDA%3AXAUUSD&interval=D&theme=dark&style=1&timezone=Etc%2FUTC&backgroundColor=%230F0F0F&gridColor=rgba(242%2C%20242%2C%20242%2C%200.06)&locale=en&toolbar_bg=%23f1f3f6&enable_publishing=false&hide_side_toolbar=true&allow_symbol_change=true&save_image=true&details=true&calendar=false&hotlist=false"
-                    allowfullscreen>
-                </iframe>
-            </div>
+            <div class="tradingview-widget-container" id="tv-chart-container">
+                <div class="tradingview-widget-container__widget"></div>
+                </div>
         </div>
 
         <div class="calendar-section">
@@ -36,12 +33,14 @@
                     style="border: 0; width:100%; height:100%;">
                 </iframe>
                 <div style="margin-top: 10px;">
-                    <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
-                        <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
+                    <div style="width: fit-content; margin: auto; font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
+                        <a href="https://www.myfxbook.com/forex-economic-calendar" class="myfxbookLink" target="_blank" rel="noopener">
+                            <b style="color:#666666">Economic Calendar</b>
+                        </a>
                         by Myfxbook.com
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
 
     </div>
