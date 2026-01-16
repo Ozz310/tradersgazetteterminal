@@ -1,5 +1,6 @@
-/* TG TERMINAL BUILDER v6.4 - SOVEREIGN ROUTER
+/* TG TERMINAL BUILDER v6.5 - SOVEREIGN ROUTER
    Features: CSS-First Loading (No Flash), Phantom Transitions, Smart Pathing
+   FIX v6.5: Disabled "Force Visibility" to prevent auto-opening Modals/Hidden Forms
 */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -137,12 +138,16 @@ document.addEventListener('DOMContentLoaded', () => {
             targetContainer.innerHTML = newContent;
 
             // --- G. CRITICAL: FORCE VISIBILITY (Anti-Black Screen) ---
+            // ⚠️ FIX APPLIED: We DISABLED this block because it was finding hidden Modals/Forms 
+            // and forcing them to display:block, breaking the UI logic.
+            /*
             const hiddenEls = targetContainer.querySelectorAll('.hidden, .module-loader-hidden, .invisible');
             hiddenEls.forEach(el => {
                 el.classList.remove('hidden', 'module-loader-hidden', 'invisible');
                 el.style.opacity = '1';
                 el.style.display = 'block'; 
             });
+            */
 
             // H. LOAD SCRIPT (With Fallback)
             const oldScript = document.querySelector(`script[data-module-script="${moduleName}"]`);
