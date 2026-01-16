@@ -1,122 +1,259 @@
+/* MODULE: CFD BROKERS - COMMAND GRID SYSTEM v2.0 */
 
-/* All styles are scoped to the .cfd-brokers container */
-.cfd-brokers {
-    /* 💥 FIX 1: Remove padding from the root container. This allows the banner
-       (the first child element) to expand and be flush against the edges
-       of the now padding-less .module-container. */
-    padding: 0;
+/* 1. MAIN CONTAINER */
+.cfd-brokers-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* 2. SECTION HEADER */
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.gold-text {
+    color: #d4af37;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.section-subtitle {
+    color: #a0a0a0;
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 3. THE COMMAND GRID */
+.brokers-grid {
+    display: grid;
+    /* Responsive Grid: 1 col mobile, 2 col tablet, 3 col desktop */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    width: 100%;
+}
+
+/* 4. TITANIUM CARD ARCHITECTURE */
+.broker-card {
+    background-color: #141414; /* Surface Level 1 */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /* This min-height calculation needs adjustment because of the padding removal.
-       Let's remove it for dynamic content growth. */
-    min-height: auto; /* Changed from calc(100vh - 40px) */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.cfd-brokers .brokers-cover-photo {
-    width: 100%;
-    /* ⭐ UPDATE 1: Set height to 280px as requested for the new banner size ⭐ */
-    height: 280px; 
-    /* 💥 UPDATE 2: Apply the new banner image URL 💥 */
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/brokers.png');
-    /* Ensure the image covers the area and is horizontally centered for the best fit */
-    background-size: cover;
-    background-position: center;
-    
-    /* 💥 FIX 2: Zero out the top and side border radius so the banner touches the edges,
-       but keep the bottom radius for the aesthetic break between banner and content. */
-    border-radius: 0 0 8px 8px; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    /* Remove bottom margin, the content padding will create separation */
-    margin-bottom: 0;
+.broker-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(212, 175, 55, 0.5); /* Gold Glow on Hover */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.1);
 }
 
-.cfd-brokers .brokers-content-container {
-    width: 100%;
-    max-width: 900px;
-    /* 💥 FIX 3: Introduce padding here. This re-applies the necessary 20px
-       padding/spacing to all content *BELOW* the banner, fixing the broken UX. */
-    padding: 20px;
-    box-sizing: border-box; /* Ensure padding is included in the width */
-}
-
-.cfd-brokers .broker-card {
-    background-color: var(--accent-color);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+/* 5. HERO HEADER (Brand Zone) */
+.broker-hero {
+    height: 140px;
+    background: linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%);
     display: flex;
-    gap: 30px;
     align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.cfd-brokers .broker-image-section {
-    flex: 0 0 250px;
+.broker-logo {
+    max-height: 70px; /* Much larger than before */
+    max-width: 80%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+}
+
+.broker-card:hover .broker-logo {
+    transform: scale(1.05);
+}
+
+.trust-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(20, 255, 0, 0.1);
+    color: #4caf50;
+    border: 1px solid rgba(20, 255, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* 6. INTEL BODY */
+.broker-body {
+    padding: 25px;
+    flex: 1; /* Pushes footer down */
     text-align: center;
 }
 
-.cfd-brokers .broker-image-section img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
-.cfd-brokers .broker-text-section {
-    flex: 1;
-}
-
-.cfd-brokers .broker-text-section h2 {
-    /* ⭐ UPDATED: Use consistent gold color variable for H2 titles ⭐ */
-    color: var(--gold-color) !important; 
-    font-size: 2rem;
-    margin-top: 0;
-}
-
-.cfd-brokers .broker-text-section p {
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-/* 🔑 TGG PRIMARY CTA ENFORCEMENT 🔑 */
-.cfd-brokers .join-now-button {
-    display: inline-block;
-    padding: 12px 30px; /* Slightly wider padding for a solid look */
-    text-decoration: none;
+.broker-name {
+    font-size: 1.5rem;
+    color: #fff;
+    margin: 0 0 5px 0;
     font-weight: 700;
-    font-size: 1.05rem;
-    text-transform: uppercase;
+}
+
+.broker-tagline {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    font-style: italic;
+}
+
+/* SPEC PILLS GRID */
+.broker-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2x2 Grid */
+    gap: 15px;
+}
+
+.spec-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px;
     border-radius: 8px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.02);
+    transition: background 0.3s;
+}
+
+.broker-card:hover .spec-item {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.spec-icon {
+    color: #d4af37;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.spec-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.spec-value {
+    font-size: 0.95rem;
+    color: #eee;
+    font-weight: 600;
+}
+
+/* 7. ACTION FOOTER */
+.broker-footer {
+    padding: 20px 25px 25px 25px;
+    background-color: #0f0f0f;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%); /* Liquid Gold */
+    color: #000;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+    border: none;
     cursor: pointer;
-    transition: all 0.25s ease;
-    
-    /* ENFORCEMENT: Solid Gold Gradient background */
-    background-image: none !important;
-    background: linear-gradient(145deg, #F0D788, #DDAA33) !important; 
-    color: var(--dark-color-for-text) !important; /* CRITICAL: Dark text enforced */
-    border: none !important;
-    
-    /* Premium Shadow Match (Lifted) */
-    box-shadow: 
-        0 4px 10px rgba(0, 0, 0, 0.4) !important, 
-        inset 0 0 15px rgba(255, 255, 255, 0.1) !important;
 }
 
-.cfd-brokers .join-now-button:hover {
-    /* Subtle hover effect for luxury feel */
-    background: linear-gradient(145deg, #FFEB9C, #F0D788) !important;
+.action-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 
-        0 6px 15px rgba(0, 0, 0, 0.6) !important, 
-        0 0 10px rgba(240, 215, 136, 0.6) !important; /* Gold glowing effect */
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, #f0d788 0%, #b89a3a 100%);
 }
-/* 🔑 END TGG PRIMARY CTA ENFORCEMENT 🔑 */
 
+.terms-text {
+    font-size: 0.65rem;
+    color: #444;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* 8. PLACEHOLDER CARD (Locked State) */
+.placeholder-card .broker-hero {
+    background: #0d0d0d;
+}
+.placeholder-logo {
+    font-size: 3rem;
+    color: #333;
+}
+.coming-soon-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.opacity-50 {
+    opacity: 0.3;
+}
+.action-btn.disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.action-btn.disabled:hover {
+    transform: none;
+}
+
+/* ANIMATIONS */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .cfd-brokers .broker-card {
-        flex-direction: column;
-        text-align: center;
+    .section-title {
+        font-size: 1.8rem;
+    }
+    .brokers-grid {
+        grid-template-columns: 1fr; /* Single Column Stack */
+    }
+    .broker-hero {
+        height: 120px;
     }
 }
