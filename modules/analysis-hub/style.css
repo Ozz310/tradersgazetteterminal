@@ -1,4 +1,4 @@
-/* MODULE: ANALYSIS HUB - FUNCTIONALITY RESTORED v5.0 */
+/* MODULE: ANALYSIS HUB - IFRAME PROTOCOL v6.0 */
 
 .analysis-hub-container {
     width: 100%;
@@ -8,7 +8,7 @@
     overflow-x: hidden;
 }
 
-/* 1. TOP BANNER (Keep negative margin fix) */
+/* 1. TOP BANNER */
 .analysis-cover-photo {
     width: 100vw;
     position: relative;
@@ -17,11 +17,9 @@
     margin-left: -50vw;
     margin-right: -50vw;
     height: 320px;
-    
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png');
     background-size: cover;
     background-position: center;
-    
     margin-top: -45px; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     z-index: 1;
@@ -60,8 +58,7 @@
 .gold-text { color: #d4af37; }
 .section-subtitle { color: #ccc; font-size: 1rem; }
 
-/* 3. PANELS - CRITICAL HEIGHT FIX */
-/* We MUST set a fixed height here, or the chart script calculates height as 0 */
+/* 3. PANELS - FIXED HEIGHT IS MANDATORY FOR IFRAMES */
 .chart-section {
     background-color: #141414;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -70,7 +67,7 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    height: 650px; /* <--- REQUIRED FOR CHART TO SHOW */
+    height: 650px; /* <--- Forces chart to have space */
 }
 
 .calendar-section {
@@ -81,7 +78,8 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    height: 800px; /* <--- REQUIRED FOR CALENDAR TO SHOW */
+    /* Auto height for calendar allows it to fit your footer text naturally */
+    height: 800px; 
 }
 
 .panel-header {
@@ -91,15 +89,15 @@
     color: #d4af37;
     font-size: 1rem;
     font-weight: 600;
-    flex-shrink: 0; /* Header doesn't shrink */
+    flex-shrink: 0;
 }
 
 /* 4. WRAPPERS */
-/* Ensure the inner containers fill the fixed height parent */
 .tradingview-widget-container {
     width: 100%;
     height: 100%; 
     flex-grow: 1;
+    background: #0F0F0F; /* Matches your chart bg */
 }
 
 .calendar-wrapper {
@@ -107,13 +105,14 @@
     height: 100%;
     flex-grow: 1;
     background: #fff; /* Calendar needs white background */
+    display: flex;
+    flex-direction: column;
 }
 
 /* 5. MOBILE OPTIMIZATION */
 @media (max-width: 768px) {
     .analysis-cover-photo { height: 200px; margin-top: -42px; }
     
-    /* Adjust heights for mobile screens */
     .chart-section { height: 500px; }
     .calendar-section { height: 600px; }
     
