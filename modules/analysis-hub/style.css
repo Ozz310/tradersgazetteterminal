@@ -1,48 +1,53 @@
-/* MODULE: ANALYSIS HUB - IFRAME PROTOCOL v6.0 */
+/* MODULE: ANALYSIS HUB - ABSOLUTE FIX v7.0 */
 
 .analysis-hub-container {
     width: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Poppins', sans-serif;
+    /* This allows the absolute banner to position relative to this container */
+    position: relative; 
     overflow-x: hidden;
 }
 
-/* 1. TOP BANNER */
+/* 1. TOP BANNER (ABSOLUTE POSITIONING) */
+/* This forces the banner to the very top, behind the content */
+.analysis-banner-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 350px;
+    z-index: 0; /* Behind content */
+}
+
 .analysis-cover-photo {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    height: 320px;
+    width: 100%;
+    height: 100%;
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png');
     background-size: cover;
     background-position: center;
-    margin-top: -45px; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    z-index: 1;
 }
 
 .banner-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #111);
 }
 
 /* 2. CONTENT WRAPPER */
 .analysis-content-wrapper {
     width: 100%;
     max-width: 1200px;
-    margin: 40px auto 0 auto; 
+    /* Push content down so it starts over the banner's bottom half */
+    margin: 180px auto 0 auto; 
     padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 40px; 
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Sits on top of banner */
 }
 
 .section-header {
@@ -54,11 +59,12 @@
     font-size: 2.5rem;
     color: #fff;
     margin-bottom: 5px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8);
 }
 .gold-text { color: #d4af37; }
-.section-subtitle { color: #ccc; font-size: 1rem; }
+.section-subtitle { color: #ccc; font-size: 1rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-/* 3. PANELS - FIXED HEIGHT IS MANDATORY FOR IFRAMES */
+/* 3. PANELS */
 .chart-section {
     background-color: #141414;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -67,7 +73,7 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    height: 650px; /* <--- Forces chart to have space */
+    height: 650px; /* REQUIRED HEIGHT */
 }
 
 .calendar-section {
@@ -78,8 +84,7 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    /* Auto height for calendar allows it to fit your footer text naturally */
-    height: 800px; 
+    height: 800px; /* REQUIRED HEIGHT */
 }
 
 .panel-header {
@@ -97,25 +102,22 @@
     width: 100%;
     height: 100%; 
     flex-grow: 1;
-    background: #0F0F0F; /* Matches your chart bg */
+    background: #0F0F0F;
 }
 
 .calendar-wrapper {
     width: 100%;
     height: 100%;
     flex-grow: 1;
-    background: #fff; /* Calendar needs white background */
-    display: flex;
-    flex-direction: column;
+    background: #fff;
+    overflow-y: auto; /* Allow scroll inside if needed */
 }
 
-/* 5. MOBILE OPTIMIZATION */
+/* 5. MOBILE */
 @media (max-width: 768px) {
-    .analysis-cover-photo { height: 200px; margin-top: -42px; }
-    
+    .analysis-banner-wrapper { height: 250px; }
+    .analysis-content-wrapper { margin-top: 120px; padding: 10px; }
     .chart-section { height: 500px; }
     .calendar-section { height: 600px; }
-    
-    .analysis-content-wrapper { padding: 10px; gap: 30px; }
     .section-title { font-size: 2rem; }
 }
