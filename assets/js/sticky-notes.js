@@ -13,14 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const useLocalBtn = document.getElementById('use-local-btn');
         const useCloudBtn = document.getElementById('use-cloud-btn');
         
-        // WORKER URL
+        // WORKER URL (Ensure this matches your deployment)
         const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
         
         const MAX_NOTES = 4;
         const MAX_ITEMS = 6;
         
-        // --- 1. PASTEL COLORS (Standard Sticky Note Theme) ---
-        // Yellow, Blue, Green, Pink
+        // PASTEL COLORS
         const noteColors = ['#fff9c4', '#b3e5fc', '#c8e6c9', '#f8bbd0'];
         const defaultNoteTitles = ['To Do List', 'Trading Goals', 'Strategy Notes', 'Reminders'];
 
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let isSaving = false;
         let notesToMerge = [];
 
-        // ... [Helper functions: arraysAreEqual, getUserId, etc. remain the same] ...
         function arraysAreEqual(arr1, arr2) {
             if (!arr1 || !arr2 || arr1.length !== arr2.length) return false;
             for (let i = 0; i < arr1.length; i++) {
@@ -72,7 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- API SYNC ---
         async function fetchNotesFromBackend(forceSync = false) {
             const userId = getUserId();
-            if (!userId) return;
+            if (!userId) {
+                console.warn("No User ID found, skipping sync.");
+                return;
+            }
 
             try {
                 if (!forceSync) showLoader();
@@ -80,7 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add timestamp to prevent caching
                 const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes&t=${new Date().getTime()}`);
                 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    throw new Error(`Server status: ${response.status}`);
+                }
                 
                 const data = await response.json();
 
@@ -90,13 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         notesToMerge = cloudNotes;
                         showConflictModal(); // Trigger Popup
                     } else if (forceSync) {
-                        syncStatus.textContent = 'Synced';
-                        setTimeout(() => syncStatus.textContent = '', 2000);
+                        if(syncStatus) {
+                            syncStatus.textContent = 'Synced';
+                            setTimeout(() => syncStatus.textContent = '', 2000);
+                        }
                     }
                 }
             } catch (error) {
                 console.error('Fetch error:', error);
-                // We do NOT show error on UI for passive sync to keep it clean
             } finally {
                 if (!forceSync) hideLoader();
             }
@@ -118,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(syncStatus) syncStatus.textContent = 'Saved';
             } catch (error) {
                 console.error('Save error:', error);
+                if(syncStatus) syncStatus.textContent = 'Error saving';
             } finally {
                 isSaving = false;
                 if(syncBtn) syncBtn.classList.remove('syncing');
@@ -125,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // --- RENDER LOGIC (UPDATED FOR COLORS) ---
+        // --- RENDER LOGIC ---
         function renderNotes() {
             if (!notesList) return;
             notesList.innerHTML = '';
@@ -135,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
                 
-                // APPLY PASTEL COLOR
                 const bgColor = noteColors[index % noteColors.length];
                 noteItem.style.backgroundColor = bgColor;
 
@@ -163,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     filteredItems.forEach((item, i) => {
                         const isChecked = item.trim().startsWith('[x]');
                         const text = item.replace(/\[x\]|\[\s\]/g, '').trim();
-                        // Checkbox checked state handled manually
                         itemsHTML += `
                             <li class="todo-item ${isChecked ? 'checked' : ''}">
                                 <input type="checkbox" ${isChecked ? 'checked' : ''}>
@@ -230,14 +233,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.addEventListener('click', (e) => {
                     const listItem = e.target.closest('li');
                     const index = e.target.closest('.note-item').getAttribute('data-index');
-                    // Find index of LI in UL
                     const taskIndex = Array.from(listItem.parentElement.children).indexOf(listItem);
                     
                     const [title, ...items] = notes[index].split('\n');
-                    const cleanItems = items.filter(s => s.trim()); // Remove empty lines to match rendered list
+                    const cleanItems = items.filter(s => s.trim());
                     
                     if (cleanItems[taskIndex]) {
-                        // Reconstruct array without the item
                         cleanItems.splice(taskIndex, 1);
                         notes[index] = [title, ...cleanItems].join('\n');
                         renderNotes();
@@ -263,22 +264,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const listItems = noteItem.querySelectorAll('li');
             const lines = Array.from(listItems).map(li => {
-                // If it's an empty state placeholder, ignore
                 if(li.classList.contains('empty-state-text')) return '';
-                
                 const text = li.querySelector('[contenteditable]').textContent.trim();
                 const checkbox = li.querySelector('input[type="checkbox"]');
-                
-                if (checkbox) {
-                    return checkbox.checked ? `[x] ${text}` : `[ ] ${text}`;
-                } else {
-                    return `* ${text}`;
-                }
+                return checkbox ? (checkbox.checked ? `[x] ${text}` : `[ ] ${text}`) : `* ${text}`;
             }).filter(line => line !== '');
 
             notes[index] = `${title}:\n${lines.join('\n')}`;
             saveNotesLocally();
-            // Debounce sync could be added here
         }
 
         // --- INIT ---
@@ -297,11 +290,10 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleBtn.classList.remove('active');
         });
 
-        // Conflict Modal Buttons
         if(useLocalBtn) {
             useLocalBtn.addEventListener('click', () => {
                 hideConflictModal();
-                syncNotesToBackend(); // Overwrite cloud
+                syncNotesToBackend();
             });
         }
         if(useCloudBtn) {
@@ -313,7 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Auto Load
         if(localStorage.getItem('traders-gazette-notes')) {
             loadNotesLocally();
         }
