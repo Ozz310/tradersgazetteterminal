@@ -5,10 +5,16 @@
     bottom: 0;
     left: 250px; /* Aligns with the end of the sidebar */
     width: calc(100vw - 250px); /* Spans the remaining width */
-    z-index: 1000;
-    display: flex;
+    height: 0; /* Zero height so it doesn't block clicks */
+    z-index: 10000 !important; /* Top of stack */
+    
+    /* OVERRIDE main.css conflict */
+    display: flex !important;
     justify-content: center;
     align-items: flex-end; /* Aligns items to the bottom */
+    
+    /* Let clicks pass through the invisible wrapper, capture on children */
+    pointer-events: none;
 }
 
 /* --- Loader Overlay --- */
@@ -25,6 +31,7 @@
     z-index: 9999;
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
+    pointer-events: auto; /* Capture clicks on loader */
 }
 
 .loader-overlay.hidden {
@@ -74,74 +81,81 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
     position: absolute;
-    bottom: 20px;
+    bottom: 30px; /* Lifted slightly */
     left: 50%;
     transform: translateX(-50%);
+    
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    pointer-events: auto; /* Re-enable clicks */
+    z-index: 10001;
 }
 
 .sticky-notes-toggle-btn.active {
     transform: translateX(-50%) rotate(45deg);
+    background-color: #F0D788;
+    color: #000;
 }
 
 .sticky-notes-toggle-btn:hover {
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.sticky-notes-toggle-btn:active {
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(-4px);
+    box-shadow: 0 6px 15px rgba(240, 215, 136, 0.3);
 }
 
 /* --- Sticky Notes Panel --- */
 .sticky-notes-panel {
     position: fixed;
-    bottom: 90px;
-    left: 250px;
-    width: calc(100vw - 250px);
-    height: 450px; 
-    background: rgba(26, 26, 26, 0.8);
+    bottom: 100px;
+    left: 50%; /* Center horizontally relative to content */
+    transform: translateX(-50%) scale(0.9) translateY(20px);
+    width: 90%;
+    max-width: 800px;
+    height: 500px;
+    
+    background: #141414; /* Match Enterprise Dark Theme */
+    border: 1px solid rgba(212, 175, 55, 0.2); /* Gold Border */
     backdrop-filter: blur(10px);
     border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    transform: scale(0.8) translateY(10%);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+    
     opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     pointer-events: none;
     display: flex;
     flex-direction: column;
-    z-index: 999;
+    z-index: 10000;
     overflow: hidden;
 }
 
 .sticky-notes-panel.open {
-    transform: scale(1) translateY(0);
+    transform: translateX(-50%) scale(1) translateY(0);
     opacity: 1;
     pointer-events: auto;
 }
 
 .sticky-notes-panel .panel-header {
-    background: #3a3a3a;
+    background: #0a0a0a;
     color: white;
     padding: 15px 20px;
-    border-bottom: 1px solid #4a4a4a;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0; /* Prevent header from shrinking */
+    flex-shrink: 0;
 }
 
 .sticky-notes-panel .panel-header h3 {
     margin: 0;
     font-size: 1.2rem;
     color: #F0D788;
+    font-family: 'Playfair Display', serif;
 }
 
 .sync-actions-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .sync-btn {
@@ -155,11 +169,16 @@
 
 .sync-btn:hover { transform: scale(1.1); }
 .sync-btn.syncing .sync-icon { animation: spin 1.5s linear infinite; }
+.sync-status { font-size: 0.85rem; color: #888; }
 
-.sync-status {
-    font-size: 0.85rem;
-    color: #f7f7f7;
+.close-panel-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
 }
+.close-panel-btn:hover { color: #fff; }
 
 /* Notes List Container */
 .notes-list {
@@ -170,44 +189,43 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
+    background: #0f0f0f;
 }
 
 /* Note Item Styling */
 .note-item {
-    background-color: #3a3a3a;
-    border-left: 4px solid #F0D788;
+    background-color: #1a1a1a;
+    border-left: 3px solid #F0D788;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: 10px;
     transition: transform 0.2s ease;
 }
 
-.note-item:hover { transform: translateY(-2px); }
+.note-item:hover { transform: translateY(-2px); border-left-color: #fff; }
 
 .note-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     padding-bottom: 8px;
-    margin-bottom: 8px;
 }
 
 .note-header h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: #36454F;
+    color: #ccc;
 }
 
 .note-body {
     flex-grow: 1;
     overflow-y: auto;
-    max-height: 200px; /* Prevent single note taking up too much space */
+    max-height: 200px;
 }
 
 .todo-list, .bullet-list {
@@ -220,28 +238,15 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     line-height: 1.5;
-    color: #36454F;
+    color: #aaa;
     margin-bottom: 5px;
-    position: relative;
 }
 
-.todo-list li input[type="checkbox"] {
-    accent-color: #F0D788;
-    flex-shrink: 0;
-}
-
-.todo-list li.checked span {
-    text-decoration: line-through;
-    color: #888;
-}
-
-.todo-list li span, .bullet-list li span {
-    outline: none;
-    cursor: text;
-    flex-grow: 1;
-}
+.todo-list li input[type="checkbox"] { accent-color: #F0D788; }
+.todo-list li.checked span { text-decoration: line-through; color: #555; }
+.todo-list li span, .bullet-list li span { outline: none; cursor: text; flex-grow: 1; }
 
 .bullet-list li::before {
     content: '•';
@@ -249,145 +254,50 @@
     font-weight: bold;
 }
 
-.delete-task-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0;
-    visibility: hidden;
-}
-
-.todo-list li:hover .delete-task-btn, .bullet-list li:hover .delete-task-btn {
-    visibility: visible;
-}
-
-.empty-state-text {
-    font-style: italic;
-    font-size: 0.9rem;
-    color: rgba(54, 69, 79, 0.6);
-    text-align: center;
-    width: 100%;
-    margin-top: 15px;
-}
-
-.limit-reached-message {
-    font-size: 0.9rem;
-    text-align: center;
-    color: #36454F;
-    opacity: 0.7;
-    margin-top: 10px;
-}
-
 .note-footer {
     padding-top: 10px;
-    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(255,255,255,0.05);
     text-align: center;
-    color: #36454F;
 }
 
 .add-item-btn {
     background: none;
-    border: none;
-    color: #36454F;
-    font-weight: 500;
+    border: 1px solid #333;
+    color: #888;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     cursor: pointer;
+    transition: all 0.2s;
 }
+.add-item-btn:hover { border-color: #F0D788; color: #F0D788; }
 
-.add-item-btn:hover { color: #F0D788; }
-
-.note-delete-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 1rem;
-    cursor: pointer;
+.note-delete-btn, .delete-task-btn {
+    background: none; border: none; color: #555; cursor: pointer;
 }
+.note-delete-btn:hover, .delete-task-btn:hover { color: #e74c3c; }
 
-/* --- Mobile Responsiveness --- */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .sticky-notes-toggle-btn {
-        position: fixed;
-        top: 50%;
-        right: 20px;
-        left: auto;
-        transform: translateY(-50%);
-    }
-
-    .sticky-notes-toggle-btn.active {
-        transform: translateY(-50%) rotate(45deg);
-    }
-    
-    /* 🚀 FIX: Full Screen Overlay for Mobile */
-    .sticky-notes-panel {
-        position: fixed;
-        top: 0;
+    .sticky-notes-component-container {
         left: 0;
+        width: 100%;
+        bottom: 80px; /* Above bottom nav */
+    }
+    .sticky-notes-toggle-btn {
+        position: absolute; /* Keep it relative to container */
         bottom: 0;
-        right: 0;
+        right: 20px; /* Right align on mobile */
+        left: auto;
+        transform: none;
+    }
+    .sticky-notes-toggle-btn.active {
+        transform: rotate(45deg);
+    }
+    .sticky-notes-panel {
         width: 100vw;
         height: 100vh;
+        bottom: 0;
         border-radius: 0;
-        background: rgba(26, 26, 26, 0.98);
-        transform: scale(0.95) translateY(0);
-        
-        /* Ensure proper flex behavior */
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* 🚀 FIX: Scrollable Notes List */
-    .notes-list {
-        display: block; /* Stack notes vertically */
-        padding: 15px;
-        /* Critical: Add bottom padding so FAB doesn't cover last item */
-        padding-bottom: 100px; 
-        flex-grow: 1;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .note-item {
-        margin-bottom: 20px;
-    }
-
-    .sticky-notes-component-container {
-        width: 100%;
-        left: 0;
-        right: 0;
     }
 }
-
-/* --- Conflict Modal Styles --- */
-.conflict-modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(26, 26, 26, 0.9);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 9999; opacity: 1; transition: opacity 0.3s;
-}
-.conflict-modal-overlay.hidden { opacity: 0; pointer-events: none; }
-
-.conflict-modal {
-    background: #1a1a1a;
-    border: 1px solid #4a4a4a;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-    padding: 30px; text-align: center;
-    max-width: 450px; width: 90%;
-}
-
-.modal-header h3 {
-    margin: 0; font-size: 1.5rem; color: #F0D788;
-    border-bottom: 2px solid #F0D788; padding-bottom: 10px;
-}
-.modal-body p { color: #f7f7f7; font-size: 1rem; margin: 20px 0; }
-.modal-footer { display: flex; justify-content: center; gap: 15px; }
-
-.modal-btn {
-    padding: 12px 25px; border: none; border-radius: 8px;
-    font-weight: 500; cursor: pointer;
-}
-.primary-btn { background-color: #F0D788; color: #1a1a1a; }
-.secondary-btn { background-color: #3a3a3a; color: #f7f7f7; border: 1px solid #4a4a4a; }
