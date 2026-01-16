@@ -1,4 +1,4 @@
-/* MODULE: CFD BROKERS - SPACING FIX v3.3 */
+/* MODULE: CFD BROKERS - FINAL ASSET FIX v3.4 */
 
 /* 1. CONTAINER RESET */
 .cfd-brokers-container {
@@ -6,7 +6,7 @@
     overflow-x: hidden;
 }
 
-/* 2. FULL-WIDTH BANNER */
+/* 2. FULL-WIDTH BANNER [CORRECTED IMAGE] */
 .brokers-cover-photo {
     width: 100vw; 
     position: relative;
@@ -15,7 +15,10 @@
     margin-left: -50vw;
     margin-right: -50vw;
     height: 320px; 
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Trading%20Calculator.png'); 
+    
+    /* UPDATED: Correct Brokers Banner URL */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/brokers.png'); 
+    
     background-size: cover;
     background-position: center;
     margin-top: -45px; 
@@ -29,14 +32,11 @@
     background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
 }
 
-/* 3. CONTENT WRAPPER - [FIXED SPACING] */
+/* 3. CONTENT WRAPPER */
 .brokers-content-wrapper {
     width: 100%;
     max-width: 1400px;
-    
-    /* CHANGED: From -80px (overlap) to 40px (gap) */
-    margin: 40px auto 0 auto; 
-    
+    margin: 40px auto 0 auto; /* Positive margin for clean separation */
     padding: 20px;
     box-sizing: border-box;
     position: relative;
