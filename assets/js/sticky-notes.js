@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const stickyNotes = (function() {
+        // UI Elements
         const toggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const panel = document.getElementById('sticky-notes-panel');
         const closeBtn = document.querySelector('.close-panel-btn');
@@ -13,29 +14,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const useLocalBtn = document.getElementById('use-local-btn');
         const useCloudBtn = document.getElementById('use-cloud-btn');
         
-        // WORKER URL (Ensure this matches your deployment)
+        // --- APPLY LIQUID GOLD CLASSES PROGRAMMATICALLY (Safety) ---
+        if(toggleBtn) toggleBtn.classList.add('liquid-gold-btn'); // Add shine
+        if(useCloudBtn) useCloudBtn.classList.add('liquid-gold-btn'); // Add shine to primary action
+
+        // WORKER URL
         const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
         
         const MAX_NOTES = 4;
-        const MAX_ITEMS = 6;
+        const MAX_ITEMS = 8;
         
-        // PASTEL COLORS
-        const noteColors = ['#fff9c4', '#b3e5fc', '#c8e6c9', '#f8bbd0'];
+        // --- ACCENT COLORS (Neon/Pastel for Borders) ---
+        // Yellow, Cyan, Green, Pink
+        const noteColors = ['#F0D788', '#4fc3f7', '#81c784', '#f06292'];
         const defaultNoteTitles = ['To Do List', 'Trading Goals', 'Strategy Notes', 'Reminders'];
 
         let notes = [];
         let isSaving = false;
         let notesToMerge = [];
 
+        function getUserId() { return localStorage.getItem('tg_userId'); }
         function arraysAreEqual(arr1, arr2) {
             if (!arr1 || !arr2 || arr1.length !== arr2.length) return false;
-            for (let i = 0; i < arr1.length; i++) {
-                if (arr1[i] !== arr2[i]) return false;
-            }
+            for (let i = 0; i < arr1.length; i++) if (arr1[i] !== arr2[i]) return false;
             return true;
         }
-
-        function getUserId() { return localStorage.getItem('tg_userId'); }
 
         // --- UI TOGGLES ---
         function showLoader() { if (loaderOverlay) loaderOverlay.classList.remove('hidden'); }
@@ -48,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (conflictModalOverlay) conflictModalOverlay.classList.add('hidden'); 
         }
 
-        // --- LOCAL STORAGE ---
+        // --- DATA SYNC ---
         function saveNotesLocally() {
             localStorage.setItem('traders-gazette-notes', JSON.stringify(notes));
         }
@@ -56,51 +59,38 @@ document.addEventListener('DOMContentLoaded', function() {
         function loadNotesLocally() {
             try {
                 const savedNotes = localStorage.getItem('traders-gazette-notes');
-                if (savedNotes) {
-                    notes = JSON.parse(savedNotes);
-                } else {
-                    notes = defaultNoteTitles.map(title => `${title}:\n\n`);
-                }
+                notes = savedNotes ? JSON.parse(savedNotes) : defaultNoteTitles.map(title => `${title}:\n\n`);
             } catch (error) {
                 notes = defaultNoteTitles.map(title => `${title}:\n\n`);
             }
             renderNotes();
         }
 
-        // --- API SYNC ---
         async function fetchNotesFromBackend(forceSync = false) {
             const userId = getUserId();
-            if (!userId) {
-                console.warn("No User ID found, skipping sync.");
-                return;
-            }
+            if (!userId) return;
 
             try {
                 if (!forceSync) showLoader();
-                
-                // Add timestamp to prevent caching
                 const response = await fetch(`${SCRIPT_URL}?userId=${userId}&action=getNotes&t=${new Date().getTime()}`);
-                
-                if (!response.ok) {
-                    throw new Error(`Server status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error('Network error');
                 
                 const data = await response.json();
-
                 if (data && data.notes) {
                     const cloudNotes = data.notes;
                     if (!arraysAreEqual(notes, cloudNotes)) {
                         notesToMerge = cloudNotes;
-                        showConflictModal(); // Trigger Popup
+                        showConflictModal();
                     } else if (forceSync) {
                         if(syncStatus) {
                             syncStatus.textContent = 'Synced';
+                            syncStatus.classList.add('liquid-gold-text');
                             setTimeout(() => syncStatus.textContent = '', 2000);
                         }
                     }
                 }
-            } catch (error) {
-                console.error('Fetch error:', error);
+            } catch (e) {
+                console.error(e);
             } finally {
                 if (!forceSync) hideLoader();
             }
@@ -111,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isSaving || !userId) return;
 
             isSaving = true;
-            if(syncBtn) syncBtn.classList.add('syncing');
+            if(syncBtn) { syncBtn.classList.add('syncing'); syncBtn.innerHTML = '<i class="fas fa-sync fa-spin"></i>'; }
 
             try {
                 await fetch(`${SCRIPT_URL}?action=saveNotes`, {
@@ -119,18 +109,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: userId, notes: notes }),
                 });
-                if(syncStatus) syncStatus.textContent = 'Saved';
-            } catch (error) {
-                console.error('Save error:', error);
-                if(syncStatus) syncStatus.textContent = 'Error saving';
-            } finally {
+                if(syncStatus) {
+                    syncStatus.textContent = 'Saved';
+                    syncStatus.classList.add('liquid-gold-text');
+                }
+            } catch (error) { console.error(error); } 
+            finally {
                 isSaving = false;
-                if(syncBtn) syncBtn.classList.remove('syncing');
+                if(syncBtn) syncBtn.innerHTML = '<i class="fas fa-sync"></i>'; // Reset icon
                 setTimeout(() => { if(syncStatus) syncStatus.textContent = ''; }, 2000);
             }
         }
 
-        // --- RENDER LOGIC ---
+        // --- RENDERER (DARK MODE UPDATE) ---
         function renderNotes() {
             if (!notesList) return;
             notesList.innerHTML = '';
@@ -140,17 +131,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
                 
-                const bgColor = noteColors[index % noteColors.length];
-                noteItem.style.backgroundColor = bgColor;
+                // Style: Dark BG (CSS) + Colored Left Border (JS)
+                const accentColor = noteColors[index % noteColors.length];
+                noteItem.style.borderLeftColor = accentColor;
+                
+                // Add header color hint
+                const headerStyle = `style="color:${accentColor}"`;
 
-                noteItem.innerHTML = createNoteContent(note, index);
+                noteItem.innerHTML = createNoteContent(note, index, headerStyle);
                 notesList.appendChild(noteItem);
             });
 
             addEventListenersToNotes();
         }
 
-        function createNoteContent(note, index) {
+        function createNoteContent(note, index, headerStyle) {
             const noteTitle = defaultNoteTitles[index];
             const isToDo = noteTitle === 'To Do List';
             
@@ -164,23 +159,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 itemsHTML = `<li style="color: #666; font-style: italic;">Empty. Add an item below.</li>`;
             } else {
                 if (isToDo) {
-                    filteredItems.forEach((item, i) => {
+                    filteredItems.forEach(item => {
                         const isChecked = item.trim().startsWith('[x]');
                         const text = item.replace(/\[x\]|\[\s\]/g, '').trim();
                         itemsHTML += `
                             <li class="todo-item ${isChecked ? 'checked' : ''}">
                                 <input type="checkbox" ${isChecked ? 'checked' : ''}>
-                                <span contenteditable="true" style="color:#000">${text}</span>
+                                <span contenteditable="true" ${isChecked ? 'style="text-decoration:line-through; color:#666"' : 'style="color:#ccc"'}>${text}</span>
                                 <button class="delete-task-btn"><i class="fas fa-times"></i></button>
                             </li>`;
                     });
                 } else {
-                    filteredItems.forEach((item, i) => {
+                    filteredItems.forEach(item => {
                         const text = item.replace(/^\* /, '').trim();
                         itemsHTML += `
                             <li class="bullet-item">
-                                <span style="color:#000; font-weight:bold;">•</span>
-                                <span contenteditable="true" style="color:#000">${text}</span>
+                                <span style="color:#F0D788; font-weight:bold;">•</span>
+                                <span contenteditable="true" style="color:#ccc">${text}</span>
                                 <button class="delete-task-btn"><i class="fas fa-times"></i></button>
                             </li>`;
                     });
@@ -189,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             return `
                 <div class="note-header">
-                    <h3>${noteTitle}</h3>
+                    <h3 ${headerStyle}>${noteTitle}</h3>
                     <button class="note-delete-btn" title="Clear"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="note-body">
@@ -201,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
 
+        // --- EVENTS ---
         function addEventListenersToNotes() {
             // Add Item
             notesList.querySelectorAll('.add-item-btn').forEach(btn => {
@@ -217,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Clear Note
+            // Clear & Delete logic (Standard)
             notesList.querySelectorAll('.note-delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const index = e.target.closest('.note-item').getAttribute('data-index');
@@ -228,16 +224,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Delete Single Task
             notesList.querySelectorAll('.delete-task-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const listItem = e.target.closest('li');
                     const index = e.target.closest('.note-item').getAttribute('data-index');
                     const taskIndex = Array.from(listItem.parentElement.children).indexOf(listItem);
-                    
                     const [title, ...items] = notes[index].split('\n');
                     const cleanItems = items.filter(s => s.trim());
-                    
                     if (cleanItems[taskIndex]) {
                         cleanItems.splice(taskIndex, 1);
                         notes[index] = [title, ...cleanItems].join('\n');
@@ -248,12 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Inputs & Edits
-            notesList.querySelectorAll('input[type="checkbox"]').forEach(box => {
-                box.addEventListener('change', () => updateNoteFromDOM(box));
-            });
-            notesList.querySelectorAll('[contenteditable="true"]').forEach(span => {
-                span.addEventListener('input', () => updateNoteFromDOM(span));
+            // Input Listeners (Auto Save)
+            notesList.querySelectorAll('input[type="checkbox"], [contenteditable="true"]').forEach(el => {
+                el.addEventListener('input', () => updateNoteFromDOM(el));
             });
         }
 
@@ -265,7 +255,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const listItems = noteItem.querySelectorAll('li');
             const lines = Array.from(listItems).map(li => {
                 if(li.classList.contains('empty-state-text')) return '';
-                const text = li.querySelector('[contenteditable]').textContent.trim();
+                const textSpan = li.querySelector('[contenteditable]');
+                const text = textSpan ? textSpan.textContent.trim() : '';
                 const checkbox = li.querySelector('input[type="checkbox"]');
                 return checkbox ? (checkbox.checked ? `[x] ${text}` : `[ ] ${text}`) : `* ${text}`;
             }).filter(line => line !== '');
@@ -289,24 +280,9 @@ document.addEventListener('DOMContentLoaded', function() {
             panel.classList.remove('open');
             toggleBtn.classList.remove('active');
         });
+        if(useLocalBtn) useLocalBtn.addEventListener('click', () => { hideConflictModal(); syncNotesToBackend(); });
+        if(useCloudBtn) useCloudBtn.addEventListener('click', () => { hideConflictModal(); notes = notesToMerge; saveNotesLocally(); renderNotes(); });
 
-        if(useLocalBtn) {
-            useLocalBtn.addEventListener('click', () => {
-                hideConflictModal();
-                syncNotesToBackend();
-            });
-        }
-        if(useCloudBtn) {
-            useCloudBtn.addEventListener('click', () => {
-                hideConflictModal();
-                notes = notesToMerge;
-                saveNotesLocally();
-                renderNotes();
-            });
-        }
-
-        if(localStorage.getItem('traders-gazette-notes')) {
-            loadNotesLocally();
-        }
+        if(localStorage.getItem('traders-gazette-notes')) loadNotesLocally();
     })();
 });
