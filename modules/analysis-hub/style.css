@@ -1,4 +1,4 @@
-/* MODULE: ANALYSIS HUB - VERTICAL STACK RESTORED v2.0 */
+/* MODULE: ANALYSIS HUB - FINAL FIX v2.1 */
 
 /* 1. CONTAINER RESET */
 .analysis-hub-container {
@@ -9,7 +9,7 @@
     overflow-x: hidden;
 }
 
-/* 2. FULL WIDTH BANNER */
+/* 2. FULL WIDTH BANNER [CORRECTED LINK] */
 .analysis-cover-photo {
     width: 100vw;
     position: relative;
@@ -19,26 +19,32 @@
     margin-right: -50vw;
     height: 300px;
     
-    /* Using the Charting image as placeholder */
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/technical-analysis.jpg');
+    /* CORRECTED IMAGE URL */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png');
+    
     background-size: cover;
     background-position: center;
-    
     margin-top: -45px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     z-index: 0;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000);
 }
 
 /* 3. CONTENT WRAPPER */
 .analysis-content-wrapper {
     width: 100%;
     max-width: 1200px;
-    margin: 40px auto 0 auto; /* Separation from banner */
+    margin: 40px auto 0 auto; 
     padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 40px; /* Space between Chart and Calendar */
+    gap: 40px; 
     position: relative;
     z-index: 2;
 }
@@ -57,7 +63,7 @@
 .gold-text { color: #d4af37; }
 .section-subtitle { color: #ccc; font-size: 1rem; }
 
-/* 4. PANEL STYLES (Common) */
+/* 4. PANEL STYLES */
 .chart-section, 
 .calendar-section {
     background-color: #141414;
@@ -82,21 +88,24 @@
 }
 
 /* 5. CHART HEIGHT CONTROL */
-.tradingview-widget-container {
-    width: 100%;
-    height: 600px; /* Desktop Height */
-    background: #000;
+/* The widget container is handled by inline styles in your code, 
+   but we set the parent height here */
+.chart-section {
+    height: 650px; /* Fixed height for the whole panel */
 }
 
-#tradingview_chart {
-    height: 100%;
-    width: 100%;
+.tradingview-widget-container {
+    background-color: #0F0F0F;
 }
 
 /* 6. CALENDAR WRAPPER */
+.calendar-section {
+    height: 700px; /* Fixed height for calendar panel */
+}
+
 .calendar-wrapper {
     width: 100%;
-    height: 600px; /* Desktop Height */
+    height: 100%; /* Fill the section */
     background: #fff;
     position: relative;
 }
@@ -109,22 +118,19 @@
 
 /* 7. RESPONSIVE OPTIMIZATION */
 @media (max-width: 768px) {
-    /* Adjust Banner Height */
     .analysis-cover-photo { height: 200px; }
-    
     .section-title { font-size: 2rem; }
     
-    /* Optimize Heights for Mobile */
-    .tradingview-widget-container {
+    .chart-section {
         height: 500px; /* Readable chart height on mobile */
     }
     
-    .calendar-wrapper {
-        height: 500px; /* Readable calendar height on mobile */
+    .calendar-section {
+        height: 600px; 
     }
     
     .analysis-content-wrapper {
-        padding: 10px; /* Use more screen space */
+        padding: 10px;
         gap: 30px;
     }
 }
