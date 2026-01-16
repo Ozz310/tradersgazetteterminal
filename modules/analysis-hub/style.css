@@ -1,6 +1,5 @@
-/* MODULE: ANALYSIS HUB - FINAL FIX v2.1 */
+/* MODULE: ANALYSIS HUB - ALIGNMENT & FIX v3.0 */
 
-/* 1. CONTAINER RESET */
 .analysis-hub-container {
     width: 100%;
     margin: 0;
@@ -9,7 +8,7 @@
     overflow-x: hidden;
 }
 
-/* 2. FULL WIDTH BANNER [CORRECTED LINK] */
+/* 1. TOP BANNER FIX (FLUSH TO BORDER) */
 .analysis-cover-photo {
     width: 100vw;
     position: relative;
@@ -17,14 +16,15 @@
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    height: 300px;
+    height: 320px;
     
-    /* CORRECTED IMAGE URL */
     background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png');
-    
     background-size: cover;
     background-position: center;
-    margin-top: -45px;
+    
+    /* PULLS IMAGE TO TOP BORDER */
+    margin-top: -45px; 
+    
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     z-index: 0;
 }
@@ -32,14 +32,14 @@
 .banner-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
 }
 
-/* 3. CONTENT WRAPPER */
+/* 2. CONTENT SPACING */
 .analysis-content-wrapper {
     width: 100%;
     max-width: 1200px;
-    margin: 40px auto 0 auto; 
+    margin: 20px auto 0 auto; 
     padding: 20px;
     box-sizing: border-box;
     display: flex;
@@ -49,23 +49,8 @@
     z-index: 2;
 }
 
-/* HEADER */
-.section-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
-    color: #fff;
-    margin-bottom: 5px;
-}
-.gold-text { color: #d4af37; }
-.section-subtitle { color: #ccc; font-size: 1rem; }
-
-/* 4. PANEL STYLES */
-.chart-section, 
-.calendar-section {
+/* 3. CHART & CALENDAR PANELS */
+.chart-section, .calendar-section {
     background-color: #141414;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
@@ -82,55 +67,28 @@
     color: #d4af37;
     font-size: 1rem;
     font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
-/* 5. CHART HEIGHT CONTROL */
-/* The widget container is handled by inline styles in your code, 
-   but we set the parent height here */
-.chart-section {
-    height: 650px; /* Fixed height for the whole panel */
-}
+/* 4. HEIGHT FIXES */
+.chart-section { height: 600px; }
+.calendar-section { height: 700px; }
 
-.tradingview-widget-container {
-    background-color: #0F0F0F;
-}
-
-/* 6. CALENDAR WRAPPER */
-.calendar-section {
-    height: 700px; /* Fixed height for calendar panel */
-}
-
-.calendar-wrapper {
+.tradingview-widget-container, .calendar-wrapper {
     width: 100%;
-    height: 100%; /* Fill the section */
-    background: #fff;
-    position: relative;
+    height: 100%;
+    flex: 1;
 }
 
 .calendar-iframe {
     width: 100%;
     height: 100%;
     border: none;
+    background: #fff; /* Most calendars require white bg for contrast */
 }
 
-/* 7. RESPONSIVE OPTIMIZATION */
+/* 5. MOBILE OPTIMIZATION */
 @media (max-width: 768px) {
-    .analysis-cover-photo { height: 200px; }
-    .section-title { font-size: 2rem; }
-    
-    .chart-section {
-        height: 500px; /* Readable chart height on mobile */
-    }
-    
-    .calendar-section {
-        height: 600px; 
-    }
-    
-    .analysis-content-wrapper {
-        padding: 10px;
-        gap: 30px;
-    }
+    .analysis-cover-photo { height: 200px; margin-top: -40px; }
+    .chart-section { height: 450px; }
+    .calendar-section { height: 550px; }
 }
