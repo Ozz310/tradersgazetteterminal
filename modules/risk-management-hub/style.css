@@ -30,40 +30,47 @@
     /* ======================== */
 }
 
-
+/* --- [UPDATED] ENTERPRISE WRAPPER --- */
 .risk-management-hub .main-widget-container {
-    background-color: var(--content-bg-color);
+    /* 1. DISTINCT SURFACE: Dark Grey to float above the Obsidian Void */
+    background-color: #141414 !important; 
+    
+    /* 2. THE GOLDEN PERIMETER */
+    border: 1px solid rgba(212, 175, 55, 0.2); 
+    
+    /* 3. ENTERPRISE ELEVATION */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(240, 215, 136, 0.1);
     width: 100%;
     max-width: 1200px;
     box-sizing: border-box;
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px; /* Increased gap for visual breathing room */
+    
     /* This margin-top provides the required visual gap between the banner and the content */
     margin-top: 20px; 
     position: relative;
     overflow: hidden;
 }
 
-/* ... (rest of the CSS remains the same) ... */
-
-/*
-The rest of the CSS is unchanged from the previous, correctly formatted version.
-Only the .risk-management-hub and .risk-management-cover-photo styles were modified.
-*/
-
+/* --- [UPDATED] HEADER TITLE --- */
 .risk-management-hub .header-title {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--gold-color);
     text-align: center;
-    margin-bottom: 0;
     font-family: 'Playfair Display', serif;
     letter-spacing: 2px;
+    
+    /* VISUAL SEPARATION */
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 }
 
 .risk-management-hub .main-content-flex {
@@ -181,15 +188,16 @@ Only the .risk-management-hub and .risk-management-cover-photo styles were modif
     font-size: 0.95rem;
 }
 
+/* --- [UPDATED] INPUT CONTRAST --- */
 .risk-management-hub input[type="number"], 
 .risk-management-hub select, 
 .risk-management-hub input[type="range"] {
     width: 100%;
     padding: 12px;
-    border: 1px solid #555;
+    border: 1px solid #333; /* Darker border */
     border-radius: 8px;
-    background-color: var(--border-color);
-    color: var(--text-color);
+    background-color: #080808 !important; /* Almost Black for contrast against wrapper */
+    color: #fff !important;
     font-size: 1rem;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
