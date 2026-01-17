@@ -1,146 +1,160 @@
-/* All styles are scoped to the .contact-us container */
-.contact-us {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    /* Padding to shift content away from sidebar */
-    padding: 20px 20px 20px 40px;
+/* MODULE: CONTACT US - SOVEREIGN EDITION v1.0 */
+
+.contact-us-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
 }
 
-.contact-us .contact-us-cover-photo {
-    /* Inline styles in HTML handle height/width priority now */
+/* 1. TOP BANNER (Breakout) */
+.contact-cover-photo {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
     
-    /* Image Logic */
-    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_g0wrydg0wrydg0wr.png');
+    height: 350px; /* Tall, impactful banner */
+    
+    /* YOUR SPECIFIC IMAGE */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/News%20Room%201.png');
+    
     background-size: cover;
     background-position: center;
-    border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
     
-    /* Negative Margins (Confirmed Working) */
-    margin-top: -20px;
-    margin-left: -40px;
-    margin-right: -20px;
+    /* Flush to top correction */
+    margin-top: -45px; 
+    
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 1;
 }
 
-.contact-us .contact-us-content-container {
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000);
+}
+
+/* 2. CONTENT WRAPPER */
+.contact-content-wrapper {
     width: 100%;
-    max-width: 900px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 0;
-}
-
-.contact-us .contact-form-card, .contact-us .contact-channels-card {
-    flex: 1;
-    min-width: 300px;
-    /* ENFORCED FIX: Ensure dark background using !important */
-    background-color: var(--accent-color) !important; 
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    max-width: 1200px;
+    margin: 40px auto 0 auto; 
+    padding: 20px;
     box-sizing: border-box;
-}
-
-/* 🎨 APPROVED IMPROVEMENT: Headline Text Gradient */
-.contact-us .widget-title {
-    /* Fallback color */
-    color: #DDAA33;
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    
-    /* Gradient Text Magic */
-    background: linear-gradient(145deg, #F0D788, #DDAA33);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    
-    /* Keep the border solid gold */
-    border-bottom: 2px solid #DDAA33;
-    padding-bottom: 10px;
-}
-
-.contact-us .contact-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
-}
-
-.contact-us .contact-form input, .contact-us .contact-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-    background-color: var(--sidebar-color);
-    color: var(--text-color);
-    box-sizing: border-box;
-    /* ADDED: Transition for smooth focus effect */
-    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-/* 🔑 APPROVED IMPROVEMENT: Gold Glow Animation on Focus */
-.contact-us .contact-form input:focus, 
-.contact-us .contact-form textarea:focus {
-    outline: none; /* Remove default blue focus outline */
-    border-color: #F0D788; /* Strong Gold Border */
-    box-shadow: 0 0 10px rgba(240, 215, 136, 0.5); /* Subtle Gold Shadow (Glow) */
-}
-
-
-/* NOTE: .submit-button styling is correctly enforced globally in main.css */
-
-.contact-us .contact-channels-card p {
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-.contact-us .social-links {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 50px; 
+    position: relative;
+    z-index: 2;
 }
 
-.contact-us .social-button {
+.section-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 5px;
+}
+/* Note: .liquid-gold-text is defined globally in main.css now */
+.section-subtitle { color: #ccc; font-size: 1rem; }
+
+/* 3. CONTACT GRID */
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.contact-card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 12px;
-    border-radius: 8px;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Icon Halo */
+.icon-box {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    color: #F0D788;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    margin-bottom: 10px;
+}
+
+.contact-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #fff;
+    margin: 0;
+}
+
+.contact-card p {
+    color: #888;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+/* Action Buttons */
+.contact-action-btn {
+    padding: 12px 25px;
     color: #fff;
     text-decoration: none;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.02);
+    width: 80%;
 }
 
-.contact-us .social-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+.contact-action-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: #F0D788;
 }
 
-.contact-us .social-button i {
-    font-size: 1.2rem;
-    margin-right: 10px;
+.contact-action-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #333;
 }
 
-.contact-us .telegram-button {
-    background-color: #0088cc;
-}
-
-.contact-us .whatsapp-button {
-    background-color: #25D366;
-}
-
-.contact-us .tawk-live-chat-placeholder {
-    color: #b0b0b0;
-    font-style: italic;
+/* 4. FOOTER LOCATION */
+.location-brief {
     text-align: center;
-    margin-top: 20px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: #555;
+    font-size: 0.9rem;
+}
+.location-brief i { color: #F0D788; margin-right: 8px; }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .contact-cover-photo { height: 250px; }
+    .section-title { font-size: 2.2rem; }
 }
