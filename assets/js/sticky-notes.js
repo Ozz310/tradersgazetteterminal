@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const stickyNotes = (function() {
         // UI Elements
+        // Note: We need to select the CONTAINER, not just the toggle button, to hide everything
+        const container = document.querySelector('.sticky-notes-component-container');
         const toggleBtn = document.getElementById('sticky-notes-toggle-btn');
         const panel = document.getElementById('sticky-notes-panel');
         const closeBtn = document.querySelector('.close-panel-btn');
@@ -14,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const useLocalBtn = document.getElementById('use-local-btn');
         const useCloudBtn = document.getElementById('use-cloud-btn');
         
-        // --- APPLY LIQUID GOLD CLASSES PROGRAMMATICALLY (Safety) ---
-        if(toggleBtn) toggleBtn.classList.add('liquid-gold-btn'); // Add shine
-        if(useCloudBtn) useCloudBtn.classList.add('liquid-gold-btn'); // Add shine to primary action
+        // --- APPLY LIQUID GOLD CLASSES ---
+        if(toggleBtn) toggleBtn.classList.add('liquid-gold-btn');
+        if(useCloudBtn) useCloudBtn.classList.add('liquid-gold-btn');
 
         // WORKER URL
         const SCRIPT_URL = 'https://tradersgazette-stickynotes.mohammadosama310.workers.dev/';
@@ -24,8 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const MAX_NOTES = 4;
         const MAX_ITEMS = 8;
         
-        // --- ACCENT COLORS (Neon/Pastel for Borders) ---
-        // Yellow, Cyan, Green, Pink
+        // ACCENT COLORS
         const noteColors = ['#F0D788', '#4fc3f7', '#81c784', '#f06292'];
         const defaultNoteTitles = ['To Do List', 'Trading Goals', 'Strategy Notes', 'Reminders'];
 
@@ -34,6 +35,39 @@ document.addEventListener('DOMContentLoaded', function() {
         let notesToMerge = [];
 
         function getUserId() { return localStorage.getItem('tg_userId'); }
+        
+        // --- AUTH GUARD SYSTEM (NEW) ---
+        function checkAuthStatus() {
+            const userId = getUserId();
+            if (!container) return;
+
+            if (!userId) {
+                // User is Logged Out -> Hide Module
+                if (!container.classList.contains('auth-hidden')) {
+                    container.classList.add('auth-hidden');
+                    // Also close panel if open
+                    if(panel) panel.classList.remove('open');
+                    if(toggleBtn) toggleBtn.classList.remove('active');
+                }
+            } else {
+                // User is Logged In -> Show Module
+                if (container.classList.contains('auth-hidden')) {
+                    container.classList.remove('auth-hidden');
+                    // Load notes fresh on login detection
+                    loadNotesLocally();
+                    fetchNotesFromBackend();
+                }
+            }
+        }
+
+        // Run immediately
+        checkAuthStatus();
+        
+        // Run constantly to react to Logout/Login events instantly
+        setInterval(checkAuthStatus, 1000);
+
+        // ... [Rest of the file remains unchanged below] ...
+
         function arraysAreEqual(arr1, arr2) {
             if (!arr1 || !arr2 || arr1.length !== arr2.length) return false;
             for (let i = 0; i < arr1.length; i++) if (arr1[i] !== arr2[i]) return false;
@@ -116,12 +150,12 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) { console.error(error); } 
             finally {
                 isSaving = false;
-                if(syncBtn) syncBtn.innerHTML = '<i class="fas fa-sync"></i>'; // Reset icon
+                if(syncBtn) syncBtn.innerHTML = '<i class="fas fa-sync"></i>'; 
                 setTimeout(() => { if(syncStatus) syncStatus.textContent = ''; }, 2000);
             }
         }
 
-        // --- RENDERER (DARK MODE UPDATE) ---
+        // --- RENDERER ---
         function renderNotes() {
             if (!notesList) return;
             notesList.innerHTML = '';
@@ -131,11 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 noteItem.classList.add('note-item');
                 noteItem.setAttribute('data-index', index);
                 
-                // Style: Dark BG (CSS) + Colored Left Border (JS)
                 const accentColor = noteColors[index % noteColors.length];
                 noteItem.style.borderLeftColor = accentColor;
-                
-                // Add header color hint
                 const headerStyle = `style="color:${accentColor}"`;
 
                 noteItem.innerHTML = createNoteContent(note, index, headerStyle);
@@ -198,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- EVENTS ---
         function addEventListenersToNotes() {
-            // Add Item
             notesList.querySelectorAll('.add-item-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const index = e.target.closest('.note-item').getAttribute('data-index');
@@ -213,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Clear & Delete logic (Standard)
             notesList.querySelectorAll('.note-delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const index = e.target.closest('.note-item').getAttribute('data-index');
@@ -241,7 +270,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Input Listeners (Auto Save)
             notesList.querySelectorAll('input[type="checkbox"], [contenteditable="true"]').forEach(el => {
                 el.addEventListener('input', () => updateNoteFromDOM(el));
             });
