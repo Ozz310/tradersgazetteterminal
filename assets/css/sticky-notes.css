@@ -220,3 +220,22 @@
     .notes-list { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
     .note-item { min-width: 100%; max-width: 100%; min-height: 200px; }
 }
+/* --- 7. MOBILE OPTIMIZATION --- */
+@media (max-width: 768px) {
+    /* ... [Keep existing mobile styles] ... */
+    .sticky-notes-toggle-btn {
+        /* ... */
+        box-shadow: -5px 5px 20px rgba(0,0,0,0.4);
+    }
+}
+
+/* =========================================
+   8. AUTHENTICATION GUARD (New)
+   ========================================= */
+/* This class is toggled by JS when user is logged out */
+.sticky-notes-component-container.auth-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
