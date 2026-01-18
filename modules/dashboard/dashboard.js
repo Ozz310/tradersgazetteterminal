@@ -5,28 +5,29 @@ window.tg_dashboard = window.tg_dashboard || {};
 
 (function() {
     let dashboardTimers = {};
-    
+
     // 🔑 FIX: Keys aligned with HTML data-timezone
     const MARKET_TIMEZONES = {
         'NY': 'America/New_York',
         'LON': 'Europe/London',
         'TYO': 'Asia/Tokyo',
         'SYD': 'Australia/Sydney',
-        'FRA': 'Europe/Berlin', 
+        'FRA': 'Europe/Berlin',
     };
-    
+
     const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let activeTimeZone = localTimezone; 
+    let activeTimeZone = localTimezone;
 
     const MARKET_HOURS = {
-        'Australia/Sydney': { open: 7, close: 16 }, 
-        'Asia/Tokyo': { open: 9, close: 18 },      
-        'Europe/Berlin': { open: 8, close: 17 },   
-        'Europe/London': { open: 8, close: 17 },   
-        'America/New_York': { open: 8, close: 17 } 
+        'Australia/Sydney': { open: 7, close: 16 },
+        'Asia/Tokyo': { open: 9, close: 18 },
+        'Europe/Berlin': { open: 8, close: 17 },
+        'Europe/London': { open: 8, close: 17 },
+        'America/New_York': { open: 8, close: 17 }
     };
 
-    const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyaZhSXxPWIP4gB6JJ1px2SuOE_q65v2jtohcemd5s5v_Lf9xiakJe0RvIVzsG5Qpub/exec'; 
+    // 🚀 UPDATED URL: Connected to new Sovereign Market Brief Backend
+    const GAS_MARKET_API_URL = 'https://script.google.com/macros/s/AKfycbyrUd4l0Y2QayTUccWBwWuI9XqLbrETInQc2hBJq-hhYsB-7xTVSblW-lSEgKKAau2Y/exec';
 
     function initDashboard() {
         const dashboardContainer = document.querySelector('.dashboard-page');
@@ -36,8 +37,8 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
 
         console.log('Dashboard module initialized successfully.');
-        
-        setupTimeZoneButtons(); 
+
+        setupTimeZoneButtons();
         setupLiveClock();
         fetchMarketBrief();
     }
@@ -46,10 +47,11 @@ window.tg_dashboard = window.tg_dashboard || {};
     async function fetchMarketBrief() {
         const briefContainer = document.getElementById('elite-alpha-brief');
         if (!briefContainer) return;
-        
+
+        // Safety check for placeholder URL
         if (GAS_MARKET_API_URL.includes('YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE')) {
             briefContainer.innerHTML = `<div class="eab-error">Critical Error: API Placeholder not replaced.</div>`;
-            return; 
+            return;
         }
 
         try {
@@ -57,12 +59,14 @@ window.tg_dashboard = window.tg_dashboard || {};
             
             const response = await fetch(GAS_MARKET_API_URL);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            
             const data = await response.json();
-
+            
             if (data.error) {
                 briefContainer.innerHTML = `<div class="eab-error">Data unavailable: ${data.error}</div>`;
                 return;
             }
+
             renderMarketBrief(briefContainer, data);
 
         } catch (error) {
@@ -70,15 +74,39 @@ window.tg_dashboard = window.tg_dashboard || {};
             briefContainer.innerHTML = `<div class="eab-error">Failed to load Market Brief.</div>`;
         }
     }
-    
+
     function renderMarketBrief(container, data) {
-        const biasMatch = data.content ? data.content.match(/Analyst Bias & Conclusion:(.*?)(BULLISH|BEARISH|NEUTRAL)/i) : null;
-        const analystBias = biasMatch ? biasMatch[2].toUpperCase() : 'NEUTRAL';
+        // Updated rendering logic for HTML content
+        // Note: The new backend returns 'html' in data.html, but we support fallback if structure differs
         
         const displayDate = data.timestamp ? new Date(data.timestamp) : new Date();
         const formattedDate = displayDate.toLocaleDateString('en-US', { 
             month: 'short', day: 'numeric', year: 'numeric' 
         });
+
+        // If the new backend returns raw HTML directly (data.html), use that.
+        // Otherwise, fall back to parsing old JSON structure for headline/content
+        
+        let contentHTML = '';
+        let headline = 'Daily Market Intelligence';
+        let analystBias = 'NEUTRAL';
+
+        if (data.html) {
+            // New Sovereign Format (HTML Table support)
+            contentHTML = data.html;
+            
+            // Try to extract bias from HTML if present (simple regex scan)
+            const biasMatch = contentHTML.match(/S&P 500:<\/strong>\s*(BULLISH|BEARISH|NEUTRAL)/i);
+            if (biasMatch) analystBias = biasMatch[1].toUpperCase();
+
+        } else {
+            // Old Format Fallback
+            headline = data.headline || 'Market Brief';
+            contentHTML = (data.content || 'No content available.').replace(/\n/g, '<br>');
+            
+            const biasMatch = data.content ? data.content.match(/Analyst Bias & Conclusion:(.*?)(BULLISH|BEARISH|NEUTRAL)/i) : null;
+            if (biasMatch) analystBias = biasMatch[2].toUpperCase();
+        }
 
         container.innerHTML = `
             <div class="eab-header" id="eabHeader">
@@ -86,21 +114,21 @@ window.tg_dashboard = window.tg_dashboard || {};
                     <span class="eab-date">${formattedDate}</span>
                     <span class="eab-bias eab-bias-${analystBias.toLowerCase()}">${analystBias}</span>
                 </div>
-                <h2 class="eab-headline">${data.headline || 'Market Brief'}</h2>
+                <h2 class="eab-headline">${headline}</h2>
                 <button class="eab-toggle-btn" aria-expanded="false" aria-controls="eabContent">
                     <span class="read-text">READ MORE</span>
                     <i class="fas fa-chevron-down toggle-icon"></i>
                 </button>
             </div>
             <div class="eab-content-wrapper" id="eabContent" aria-hidden="true">
-                <div class="eab-content-inner">${(data.content || 'No content available.').replace(/\n/g, '<br>')}</div>
+                <div class="eab-content-inner">${contentHTML}</div>
             </div>
         `;
-        
+
         const toggleButton = document.querySelector('.eab-toggle-btn');
         if (toggleButton) toggleButton.addEventListener('click', toggleBriefContent);
     }
-    
+
     function toggleBriefContent(event) {
         const button = event.currentTarget;
         const contentWrapper = document.getElementById('eabContent');
@@ -124,11 +152,10 @@ window.tg_dashboard = window.tg_dashboard || {};
     }
 
     // --- CLOCK & SESSION LOGIC ---
-
     function setupLiveClock() {
         updateClock(activeTimeZone);
         updateSessionIndicator();
-        
+
         dashboardTimers.clock = setInterval(() => {
             updateClock(activeTimeZone);
             updateSessionIndicator();
@@ -141,13 +168,14 @@ window.tg_dashboard = window.tg_dashboard || {};
         buttons.forEach(button => {
             const tzKey = button.dataset.timezone;
             // Map short code to full IANA zone
-            const timezone = MARKET_TIMEZONES[tzKey] || localTimezone; 
-            button.dataset.fullTimezone = timezone; 
-            
+            const timezone = MARKET_TIMEZONES[tzKey] || localTimezone;
+            button.dataset.fullTimezone = timezone;
+
             button.addEventListener('click', () => {
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                const newTimezone = button.dataset.fullTimezone; 
+                
+                const newTimezone = button.dataset.fullTimezone;
                 // Update global active zone so interval picks it up
                 activeTimeZone = newTimezone;
                 updateClock(newTimezone);
@@ -155,9 +183,9 @@ window.tg_dashboard = window.tg_dashboard || {};
         });
 
         const localButton = document.querySelector('.tz-button[data-timezone="LOCAL"]');
-        if (localButton) { 
+        if (localButton) {
             localButton.classList.add('active');
-            localButton.dataset.fullTimezone = localTimezone; 
+            localButton.dataset.fullTimezone = localTimezone;
         }
     }
 
@@ -176,22 +204,21 @@ window.tg_dashboard = window.tg_dashboard || {};
         }
 
         const now = new Date();
-        
         // Reliable time components in target zone
         const dateInZone = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
         const hours = dateInZone.getHours();
         const minutes = dateInZone.getMinutes();
         const seconds = dateInZone.getSeconds();
-        
+
         const minuteDegrees = (minutes * 60 + seconds) / 3600 * 360;
         const hourDegrees = (hours % 12 * 3600 + minutes * 60 + seconds) / 43200 * 360;
-        
+
         minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
         hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
         const digitalTimeOptions = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: true };
         const digitalDateOptions = { timeZone: timezone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        
+
         digitalTime.textContent = new Intl.DateTimeFormat('en-US', digitalTimeOptions).format(now);
         digitalDate.textContent = new Intl.DateTimeFormat('en-US', digitalDateOptions).format(now);
     }
@@ -199,9 +226,9 @@ window.tg_dashboard = window.tg_dashboard || {};
     function updateSessionIndicator() {
         const clockCard = document.getElementById('clock-card');
         const indicator = document.getElementById('session-indicator');
-        
+
         if (!clockCard || !indicator) return;
-        
+
         const now = new Date();
 
         const getHourAndDayInZone = (zone) => {
@@ -210,7 +237,7 @@ window.tg_dashboard = window.tg_dashboard || {};
                 const dateInZone = new Date(dateString);
                 return {
                     hour: dateInZone.getHours(),
-                    jsDay: dateInZone.getDay() 
+                    jsDay: dateInZone.getDay()
                 };
             } catch (e) {
                 console.error('Timezone Error:', e);
@@ -219,14 +246,16 @@ window.tg_dashboard = window.tg_dashboard || {};
         };
 
         clockCard.classList.remove('session-sydney', 'session-tokyo', 'session-london', 'session-frankfurt', 'session-ny');
+        
         let activeSessions = [];
-
+        
         const checkMarket = (tzKey, classKey) => {
             const zone = MARKET_TIMEZONES[tzKey];
             const { hour, jsDay } = getHourAndDayInZone(zone);
             const marketData = MARKET_HOURS[zone];
-
+            
             if (!marketData) return false;
+
             const { open, close } = marketData;
             
             if (jsDay >= 1 && jsDay <= 5 && hour >= open && hour < close) {
@@ -244,15 +273,15 @@ window.tg_dashboard = window.tg_dashboard || {};
 
         if (activeSessions.includes('New York') && activeSessions.includes('London')) {
             indicator.textContent = '⚡ NY & London Overlap - High Liquidity';
-            clockCard.classList.add('session-ny'); 
+            clockCard.classList.add('session-ny');
         } else if (activeSessions.length > 0) {
             indicator.textContent = `${activeSessions.join(' & ')} Session Active`;
         } else {
             const { jsDay } = getHourAndDayInZone(localTimezone);
             if (jsDay === 6 || jsDay === 0) {
-                 indicator.textContent = 'Weekend Closure';
+                indicator.textContent = 'Weekend Closure';
             } else {
-                 indicator.textContent = 'Off-Peak Trading Hours';
+                indicator.textContent = 'Off-Peak Trading Hours';
             }
         }
     }
@@ -262,6 +291,8 @@ window.tg_dashboard = window.tg_dashboard || {};
         dashboardTimers = {};
     }
 
+    // Expose init and cleanup to global scope
     window.tg_dashboard.initDashboard = initDashboard;
     window.tg_dashboard.cleanup = cleanupDashboard;
+
 })();
