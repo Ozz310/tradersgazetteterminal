@@ -1,0 +1,187 @@
+/* modules/auth/style.css */
+/* TG TERMINAL - AUTHENTICATION MODULE STYLES */
+
+/* --- Layout & Container --- */
+#auth-module {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Changed from 700px to vh for better responsiveness */
+    font-family: 'Inter', sans-serif;
+    color: white;
+    width: 100%;
+}
+
+/* --- 3D Glass Card Effect --- */
+.glass-card-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    perspective: 1200px;
+    padding: 20px; /* Safety padding for mobile */
+}
+
+.glass-card {
+    position: relative;
+    background: rgba(10, 10, 10, 0.95); /* Deep Black Premium */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+}
+
+/* --- Ambient Gold Glow --- */
+.ambient-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(221, 170, 51, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- Typography --- */
+.auth-header h2 {
+    font-family: serif; /* Matches premium aesthetic */
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    margin-top: 0;
+}
+
+.auth-header p {
+    color: #8B949E;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.text-gold { color: #DDAA33; }
+
+/* --- Inputs --- */
+.tg-input {
+    width: 100%;
+    background-color: #111;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: white;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tg-input:focus {
+    border-color: #DDAA33;
+    box-shadow: 0 0 0 2px rgba(221, 170, 51, 0.2);
+    outline: none;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #8B949E;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+/* --- Buttons --- */
+.tg-btn-primary {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border-radius: 6px;
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    color: black;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.tg-btn-primary:hover {
+    box-shadow: 0 0 20px rgba(221, 170, 51, 0.4);
+    transform: translateY(-1px);
+}
+
+.tg-btn-primary:active {
+    transform: translateY(0);
+}
+
+/* --- Utilities --- */
+.hidden { display: none !important; }
+
+.divider {
+    position: relative;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 0;
+}
+
+.divider span {
+    position: relative;
+    background: #0a0a0a; /* Matches card bg */
+    padding: 0 10px;
+    color: #8B949E;
+    font-size: 0.7rem;
+    z-index: 1;
+    text-transform: uppercase;
+}
+
+/* --- Links --- */
+.links {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.link-text { 
+    color: #8B949E; 
+    text-decoration: none; 
+    transition: color 0.2s; 
+}
+.link-text:hover { color: #DDAA33; }
+
+.link-accent { 
+    color: #DDAA33; 
+    font-weight: 600; 
+    text-decoration: none; 
+}
+.link-accent:hover { text-decoration: underline; }
+
+/* --- Status Messages --- */
+#auth-message {
+    margin-bottom: 20px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+}

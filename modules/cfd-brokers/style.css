@@ -1,0 +1,239 @@
+/* MODULE: CFD BROKERS - FINAL ASSET FIX v3.4 */
+
+/* 1. CONTAINER RESET */
+.cfd-brokers-container {
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 2. FULL-WIDTH BANNER [CORRECTED IMAGE] */
+.brokers-cover-photo {
+    width: 100vw; 
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 320px; 
+    
+    /* UPDATED: Correct Brokers Banner URL */
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/brokers.png'); 
+    
+    background-size: cover;
+    background-position: center;
+    margin-top: -45px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 0;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
+}
+
+/* 3. CONTENT WRAPPER */
+.brokers-content-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 40px auto 0 auto; /* Positive margin for clean separation */
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+}
+
+/* 4. GRID SYSTEM */
+.brokers-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+}
+
+/* 5. CARD DESIGN */
+.broker-card {
+    width: 100%;
+    max-width: 550px;
+    background-color: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    transition: transform 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.broker-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 25px rgba(212, 175, 55, 0.15);
+}
+
+/* A. BRAND HERO */
+.broker-brand-hero {
+    height: 200px;
+    background: radial-gradient(circle at center, #222 0%, #080808 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.broker-logo-img {
+    max-width: 90%;
+    max-height: 140px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6));
+    transition: transform 0.4s ease;
+}
+
+.broker-card:hover .broker-logo-img {
+    transform: scale(1.08);
+}
+
+.trust-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(20, 255, 0, 0.1);
+    color: #4caf50;
+    border: 1px solid rgba(20, 255, 0, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 5;
+}
+
+/* B. INTEL BODY */
+.broker-body {
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box; 
+}
+
+.broker-name {
+    color: #fff;
+    font-size: 2rem;
+    font-family: 'Playfair Display', serif;
+    margin: 0;
+    text-align: center;
+}
+
+.broker-description p {
+    color: #ccc;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.broker-description strong {
+    color: #d4af37;
+}
+
+/* SPECS */
+.broker-specs-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.spec-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s;
+}
+
+.broker-card:hover .spec-pill {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.3);
+    color: #fff;
+}
+
+.spec-pill i {
+    color: #d4af37;
+}
+
+/* C. ACTION BUTTON */
+.action-btn {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box; 
+    padding: 18px;
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    color: #000;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+}
+
+/* Shine Effect */
+.shine-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: 0.5s;
+}
+
+.action-btn:hover::after {
+    left: 100%;
+}
+
+.terms-text {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .broker-card { max-width: 100%; }
+    .brokers-cover-photo { height: 200px; }
+    .broker-body { padding: 20px; }
+}

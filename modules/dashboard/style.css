@@ -1,0 +1,357 @@
+/* /modules/dashboard/style.css */
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD MODULE STYLES (OBSIDIAN THEME)
+|--------------------------------------------------------------------------
+*/
+
+:root {
+    /* Session Text Colors */
+    --sydney-color: #00bcd4; 
+    --tokyo-color: #e91e63; 
+    --london-color: #4caf50; 
+    --ny-color: #ff5722;     
+    --frankfurt-color: #8e44ad;
+    
+    /* Analyst Bias Colors */
+    --bias-bullish: #4CAF50; 
+    --bias-bearish: #F44336; 
+    --bias-neutral: #FFD700; 
+}
+
+.dashboard-page * { box-sizing: border-box; }
+
+.dashboard-page {
+    position: relative; 
+    width: 100%; 
+    min-height: auto; 
+    background-color: transparent !important; 
+    color: var(--text-color);
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    overflow-x: hidden;
+    margin-top: -40px; 
+    padding: 0 0 40px 0; 
+}
+
+.dashboard-cover-photo {
+    width: 100%; 
+    height: 380px;  
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;  
+    margin: 0 0 40px 0; 
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* --- WIDGETS GRID LAYOUT --- */
+.dashboard-widgets-grid {
+    padding: 0 20px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    align-items: start;
+    justify-items: center;
+}
+
+.widget-card {
+    background-color: var(--card-bg) !important; 
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 2.5rem 2rem;  
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; 
+}
+
+/* --- ELITE ALPHA BRIEF STYLES --- */
+.elite-alpha-brief {
+    padding: 1.5rem 1.5rem; 
+    transition: box-shadow 0.3s ease-in-out, transform 0.1s ease-out;
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ensure full width */
+}
+
+.elite-alpha-brief:hover {
+    box-shadow: 0 0 5px var(--gold-color), 0 10px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.eab-loading, .eab-error {
+    width: 100%;
+    text-align: center;
+    padding: 40px 20px; 
+    background-color: rgba(255,255,255,0.03);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    margin: 0; 
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px; 
+    height: 100%;
+}
+
+.eab-loading {
+    color: #F0D788; 
+    background: linear-gradient(145deg, #F0D788, #DDAA33);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.eab-error {
+    background-color: rgba(244, 67, 54, 0.1); 
+    color: var(--bias-bearish);
+    border-color: var(--bias-bearish);
+}
+
+.eab-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    width: 100%; 
+    flex-shrink: 0; 
+}
+
+.eab-metadata {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.eab-date { font-size: 0.85rem; opacity: 0.6; letter-spacing: 0.5px; margin-right: 15px; color: var(--secondary-text-color); }
+
+.eab-bias {
+    font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: #000 !important; 
+    background-color: transparent !important; 
+    background-image: var(--gold-gradient) !important;
+    border: none !important;
+}
+
+.eab-headline {
+    font-size: 1.25rem; font-weight: 600; color: var(--text-color);
+    line-height: 1.4; margin: 0; animation: fadeInSlide 0.5s ease-out; 
+}
+
+.eab-toggle-btn {
+    position: absolute; top: 5px; right: 0; background: transparent; border: none;
+    color: var(--gold-color); cursor: pointer; font-size: 0.9rem; padding: 0;
+    display: flex; align-items: center;
+}
+.eab-toggle-btn:focus { outline: none; text-shadow: 0 0 5px var(--gold-color); }
+.eab-toggle-btn .read-text {
+    font-size: 0.75rem; margin-right: 5px; text-transform: uppercase;
+    font-weight: 500; color: var(--text-color); opacity: 0.7;
+}
+.toggle-icon { transition: transform 0.3s ease; }
+
+.eab-content-wrapper {
+    max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out;
+    padding-top: 0; will-change: max-height; overflow-y: auto; 
+    width: 100%; /* Enforce width */
+}
+.eab-content-wrapper.is-expanded { max-height: 70vh; padding-top: 1.5rem; }
+
+.eab-content-wrapper::-webkit-scrollbar { width: 6px; }
+.eab-content-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+.eab-content-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--gold-color); 
+    border-radius: 20px; border: 1px solid #000; 
+}
+
+/* 🛠️ GLOBAL CONTENT FIX: NO GAPS, PROPER WRAPPING */
+.eab-content-inner {
+    font-size: 0.95rem; line-height: 1.7; color: var(--secondary-text-color); 
+    white-space: normal !important; /* Kills AI double spacing */
+    word-wrap: break-word !important; /* Prevents overflow */
+    overflow-wrap: anywhere !important; /* Aggressive wrapping for long words */
+    max-width: 100% !important;
+}
+
+/* Global Spacing Control */
+.eab-content-inner p { margin-bottom: 0.8rem !important; margin-top: 0 !important; }
+.eab-content-inner ul, .eab-content-inner ol {
+    margin-bottom: 1rem !important; margin-top: 0.5rem !important; padding-left: 20px !important;
+}
+.eab-content-inner li { margin-bottom: 0.5rem !important; }
+.eab-content-inner br { display: none !important; } 
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ANALOG CLOCK STYLES --- */
+.live-clock-container {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0;  
+}
+.analog-clock {
+    position: relative; width: 250px; height: 250px; border-radius: 50%;
+    background-color: transparent; border: none; box-shadow: none; z-index: 1;
+}
+.analog-dial { position: relative; width: 100%; height: 100%; }
+.tick-marks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.tick {
+    position: absolute; top: 0; left: 50%; width: 2px; height: 8px; 
+    background-color: var(--text-color); transform-origin: 0 125px; 
+}
+.tick.hour { height: 15px; background-color: var(--gold-color); }
+.analog-hand {
+    position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center;
+    transition: transform 0.05s linear; border-radius: 2px; z-index: 2;
+}
+.hour-hand { width: 4px; height: 60px; background-color: var(--text-color); }
+.minute-hand { width: 3px; height: 80px; background-color: var(--text-color); }
+.analog-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 12px; height: 12px; border-radius: 50%; background-color: var(--gold-color);
+    border: 2px solid #000; z-index: 3;
+}
+.digital-display {
+    text-align: center; margin-top: 3rem; color: var(--text-color);
+    letter-spacing: 2px; font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+#digital-time {
+    font-size: 3rem; font-weight: 300; color: var(--gold-color); 
+    display: block; text-shadow: 0 0 5px rgba(221, 170, 51, 0.3); 
+}
+#digital-date { font-size: 1rem; font-weight: 200; opacity: 0.8; }
+
+.time-zone-selector {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 0.5rem; margin-top: 1.5rem; max-width: 100%;
+}
+.tz-button {
+    background-color: transparent; border: 1px solid var(--gold-color); 
+    color: var(--gold-color); font-size: 0.7rem; font-weight: bold;
+    padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;
+    transition: all 0.2s ease; text-transform: uppercase; box-shadow: none; 
+}
+.tz-button:hover {
+    background-color: rgba(221, 170, 51, 0.1); color: var(--gold-color);
+    transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+.tz-button.active {
+    background-image: none !important;
+    background: var(--gold-gradient) !important;  
+    color: #000 !important; border: none !important; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+    font-weight: 700 !important; transform: none;
+}
+.session-indicator {
+    text-align: center; margin-top: 1rem; font-size: 0.9rem;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* ------------------------------------------- */
+/* 🚀 DESKTOP LAYOUT (> 1024px) */
+/* ------------------------------------------- */
+
+@media (min-width: 1024px) {
+    .dashboard-widgets-grid {
+        grid-template-columns: 350px 1fr;
+        grid-template-rows: 580px; 
+        align-items: start; 
+        gap: 30px;
+        max-width: 1400px; 
+        margin: 0 auto; 
+    }
+
+    #clock-card {
+        max-width: 100%; height: 100%; margin-bottom: 0;
+    }
+
+    #elite-alpha-brief {
+        max-width: none !important; width: 100% !important; height: 100%; margin: 0;
+    }
+
+    .eab-toggle-btn { display: none !important; }
+
+    .eab-content-wrapper {
+        max-height: unset !important; opacity: 1 !important; display: block !important;
+        flex-grow: 1; overflow-y: auto; padding-top: 1.5rem;
+        -ms-overflow-style: none; scrollbar-width: none;  
+    }
+   .eab-content-wrapper::-webkit-scrollbar { display: none; }
+}
+
+/* =========================================
+   📱 TIERED MOBILE OPTIMIZATION v4.0
+   ========================================= */
+
+/* 1. STANDARD TABLET/MOBILE (< 768px) */
+@media (max-width: 768px) {
+    .dashboard-page { padding: 0 0 20px 0; margin-top: -20px; }
+    .dashboard-cover-photo { height: 180px; margin: 0 0 20px 0; }
+
+    .dashboard-widgets-grid {
+        display: flex !important; flex-direction: column !important;
+        width: 100% !important;
+        padding: 0 20px !important; /* Standard gutters */
+        box-sizing: border-box !important; gap: 25px;
+    }
+    
+    .widget-card { 
+        padding: 20px !important; 
+        width: 100% !important; max-width: 100% !important; 
+        margin: 0 0 20px 0 !important;
+    }
+
+    /* Table Handling */
+    .eab-content-inner table {
+        display: block; width: 100%; overflow-x: auto; white-space: nowrap;
+    }
+
+    .eab-headline { margin-bottom: 5px !important; font-size: 1.1rem; }
+    .eab-header { padding-bottom: 10px !important; margin-bottom: 10px !important; }
+    
+    .analog-clock { width: 180px; height: 180px; }
+    .tick { transform-origin: 0 90px; }
+    .hour-hand { height: 50px; }
+    .minute-hand { height: 70px; }
+    #digital-time { font-size: 2rem; }
+    .time-zone-selector { margin-top: 1rem; gap: 0.3rem; }
+}
+
+/* 2. ULTRA-MOBILE PORTRAIT (< 480px) - THE FIX FOR YOUR SCREENSHOT */
+@media (max-width: 480px) {
+    /* Aggressively reduce padding to save space */
+    .dashboard-widgets-grid {
+        padding: 0 10px !important; /* Slimmer gutters */
+    }
+
+    .widget-card {
+        padding: 15px !important; /* Tight padding inside card */
+        border-radius: 8px; /* Slightly sharper corners */
+    }
+
+    /* Shrink fonts slightly */
+    .eab-content-inner { font-size: 0.85rem !important; }
+    .eab-headline { font-size: 1rem !important; }
+
+    /* Fix List Indentation on tiny screens */
+    .eab-content-inner ul, .eab-content-inner ol {
+        padding-left: 15px !important; /* Save 5px horizontal space */
+    }
+
+    /* Clock Resizing */
+    .analog-clock { width: 150px; height: 150px; }
+    .tick { transform-origin: 0 75px; }
+    .hour-hand { height: 40px; }
+    .minute-hand { height: 60px; }
+    #digital-time { font-size: 1.8rem; }
+}

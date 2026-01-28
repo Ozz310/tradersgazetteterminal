@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TG Terminal: The Sovereign Commander's interface for financial market dominance. Real-time charting, news aggregation, and trade journaling.">
+    <title>The Traders Gazette - Terminal</title>
+    
+    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" sizes="16x16">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* Critical Rendering Path: FOUC Protection */
+        body.fouc-hidden {
+            background-color: #0F1115 !important; /* Obsidian Black */
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/assets/css/sticky-notes.css">
+    <link rel="stylesheet" href="/assets/css/transitions.css">
+    <link rel="stylesheet" href="/assets/css/main.css" id="main-app-style">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "TG Terminal",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+</head>
+<body class="fouc-hidden">
+    
+    <div id="main-app-container" class="terminal-container hidden">
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo-link">
+                    <img src="https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/main/images/WhatsApp%20Image%202025-06-18%20at%2011.37.16.jpeg" alt="The Traders Gazette Logo" class="sidebar-logo">
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <a href="#" class="nav-item active" data-module="dashboard">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        <span class="nav-label">DASHBOARD</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="news-aggregator">
+                        <i class="fas fa-newspaper nav-icon"></i>
+                        <span class="nav-label">NEWS ROOM</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="analysis-hub">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-label">ANALYSIS HUB</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="trading-journal">
+                        <i class="fas fa-book nav-icon"></i>
+                        <span class="nav-label">JOURNAL</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="trading-ebooks">
+                        <i class="fas fa-book-reader nav-icon"></i>
+                        <span class="nav-label">LIBRARY</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="risk-management-hub">
+                        <i class="fas fa-balance-scale nav-icon"></i>
+                        <span class="nav-label">RISK MGMT</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="cfd-brokers">
+                        <i class="fas fa-handshake nav-icon"></i>
+                        <span class="nav-label">BROKERS</span>
+                    </a>
+                    <a href="#" class="nav-item" data-module="contact-us">
+                        <i class="fas fa-envelope nav-icon"></i>
+                        <span class="nav-label">CONTACT</span>
+                    </a>
+                    
+                    <a href="#" class="nav-item logout-item" data-module="logout">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span class="nav-label">LOG OUT</span>
+                    </a>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-wrapper">
+            <div id="module-container" class="module-container">
+            </div>
+            
+            <nav class="bottom-nav">
+                <div class="bottom-nav-container">
+                    <a href="#" class="bottom-nav-item active" data-module="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="bottom-nav-label">Dash</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="news-aggregator">
+                        <i class="fas fa-newspaper"></i>
+                        <span class="bottom-nav-label">News</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="analysis-hub">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="bottom-nav-label">Chart</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="trading-journal">
+                        <i class="fas fa-book"></i>
+                        <span class="bottom-nav-label">Log</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="trading-ebooks">
+                        <i class="fas fa-book-reader"></i>
+                        <span class="bottom-nav-label">Lib</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="risk-management-hub">
+                        <i class="fas fa-balance-scale"></i>
+                        <span class="bottom-nav-label">Risk</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="cfd-brokers">
+                        <i class="fas fa-handshake"></i>
+                        <span class="bottom-nav-label">Broker</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="contact-us">
+                        <i class="fas fa-envelope"></i>
+                        <span class="bottom-nav-label">Help</span>
+                    </a>
+                    <a href="#" class="bottom-nav-item" data-module="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="bottom-nav-label">Exit</span>
+                    </a>
+                </div>
+            </nav>
+        </main>
+    </div>
+    
+    <div id="auth-container" class="module-container"></div>
+
+    <div class="sticky-notes-component-container">
+        <div class="sticky-notes-panel" id="sticky-notes-panel">
+            <div class="panel-header">
+                <h3>My Notes & Tasks</h3>
+                <div class="sync-actions-container">
+                    <button class="sync-btn" id="sync-notes-btn" title="Sync with Cloud">
+                        <i class="fas fa-sync-alt sync-icon"></i>
+                    </button>
+                    <span id="sync-status" class="sync-status"></span>
+                </div>
+                <button class="close-panel-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="notes-list" class="notes-list"></div>
+        </div>
+        <div id="loader-overlay" class="loader-overlay hidden">
+            <div class="loader"></div>
+        </div>
+        <button id="sticky-notes-toggle-btn" class="sticky-notes-toggle-btn">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+    
+    <div id="conflict-modal-overlay" class="conflict-modal-overlay hidden">
+        <div class="conflict-modal">
+            <div class="modal-header">
+                <h3>Data Conflict Detected</h3>
+            </div>
+            <div class="modal-body">
+                <p>Your notes on this device have unsynced changes. What would you like to do?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="use-local-btn" class="modal-btn btn-local">Use Local Notes</button>
+                <button id="use-cloud-btn" class="modal-btn btn-cloud">Use Cloud Notes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="delete-modal-overlay" class="conflict-modal-overlay hidden">
+        <div class="conflict-modal">
+            <div class="modal-header">
+                <h3 style="color: #ff4444;">Delete List?</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to permanently delete this list? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-delete-btn" class="modal-btn btn-local">Cancel</button>
+                <button id="confirm-delete-btn" class="modal-btn" style="background: #ff4444; color: #fff; border:none; padding:12px 28px; border-radius:4px; font-weight:700; cursor:pointer;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/app.js?v=2"></script> 
+    <script src="/assets/js/sticky-notes.js"></script>
+    <script type="module" src="/modules/auth/auth.js"></script>
+</body>
+</html>

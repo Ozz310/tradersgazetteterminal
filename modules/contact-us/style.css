@@ -1,0 +1,197 @@
+/* MODULE: CONTACT US - BRAND COLORS FIXED v3.0 */
+
+.contact-us-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 1. TOP BANNER */
+.contact-cover-photo {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 350px;
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/News%20Room%201.png');
+    background-size: cover;
+    background-position: center;
+    margin-top: -45px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 1;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000);
+}
+
+/* 2. CONTENT WRAPPER */
+.contact-content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto 0 auto; 
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 40px; 
+    position: relative;
+    z-index: 2;
+}
+
+/* 3. SPLIT LAYOUT */
+.contact-split-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.column-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* --- LEFT COLUMN: COMMS CARDS (BRAND COLORS) --- */
+.contact-info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px; /* Aligns with form container top */
+}
+
+.comms-card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.comms-card:hover {
+    transform: translateX(10px);
+    background: #1a1a1a;
+}
+
+.comms-icon {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    background: rgba(255,255,255,0.05);
+    color: #ccc;
+    transition: 0.3s;
+}
+
+/* --- BRAND SPECIFIC STYLES --- */
+
+/* Telegram (Blue) */
+.comms-card.telegram { border-color: rgba(0, 136, 204, 0.3); }
+.comms-card.telegram .comms-icon { color: #0088cc; background: rgba(0, 136, 204, 0.1); }
+.comms-card.telegram:hover { border-color: #0088cc; }
+
+/* WhatsApp (Green) */
+.comms-card.whatsapp { border-color: rgba(37, 211, 102, 0.3); }
+.comms-card.whatsapp .comms-icon { color: #25d366; background: rgba(37, 211, 102, 0.1); }
+.comms-card.whatsapp:hover { border-color: #25d366; }
+
+/* Email (Light Red Accent) */
+.comms-card.email { border-color: rgba(255, 82, 82, 0.3); }
+.comms-card.email .comms-icon { color: #ff5252; background: rgba(255, 82, 82, 0.1); }
+.comms-card.email:hover { border-color: #ff5252; }
+
+
+.comms-details h4 { margin: 0; color: #fff; font-size: 1.1rem; }
+.comms-details p { margin: 5px 0 0 0; color: #888; font-size: 0.85rem; }
+
+.arrow-icon { margin-left: auto; color: #444; transition: 0.3s; }
+.comms-card:hover .arrow-icon { color: #fff; }
+
+
+/* --- RIGHT COLUMN: FORM --- */
+.form-container {
+    background: #141414;
+    padding: 30px;
+    border-radius: 12px;
+    /* Standard Border - Shine removed */
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    color: #ccc;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background: #1e1e1e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    /* Keep gold focus for consistency with terminal, or change if requested */
+    border-color: #F0D788; 
+    background: #252525;
+}
+
+/* Submit Button - Liquid Gold Class remains */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Status Message */
+.form-status {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    min-height: 20px;
+}
+.form-status.success { color: #4caf50; }
+.form-status.error { color: #f44336; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .contact-split-layout { grid-template-columns: 1fr; }
+    .contact-cover-photo { height: 250px; }
+    .contact-info-column { margin-top: 0; }
+}

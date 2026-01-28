@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced Trading Journal and Analytics Dashboard for the TG Terminal.">
+    <title>Trading Journal - Trader's Gazette Terminal</title>
+    
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/modules/trading-journal/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <div class="terminal-container">
+        
+        <div class="journal-cover-photo"></div>
+
+        <div class="content-wrapper">
+            <div class="module-container module-no-top-padding"> 
+                
+                <div class="journal-hub">
+                    <div class="journal-content-container">
+                        <div class="action-buttons">
+                            <button id="add-entry-button" class="tgg-primary-cta">Add New Entry</button>
+                            <button id="upload-csv-button" class="tgg-primary-cta">Upload CSV</button>
+                        </div>
+
+                        <div class="journal-entry-form-card hidden" id="entry-form-card">
+                            <h2 class="widget-title">Add a New Trade</h2>
+                            <form id="trade-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="date">Date:</label>
+                                        <input type="date" id="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="symbol">Symbol:</label>
+                                        <input type="text" id="symbol" placeholder="e.g. BTCUSD" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assetType">Asset Type:</label>
+                                        <select id="assetType" required>
+                                            <option value="Forex">Forex</option>
+                                            <option value="Crypto">Crypto</option>
+                                            <option value="Indices">Indices</option>
+                                            <option value="Commodities">Commodities</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="buySell">Buy/Sell:</label>
+                                        <select id="buySell" required>
+                                            <option value="Buy">Buy</option>
+                                            <option value="Sell">Sell</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="entryPrice">Entry Price:</label>
+                                        <input type="number" id="entryPrice" step="0.00001" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exitPrice">Exit Price:</label>
+                                        <input type="number" id="exitPrice" step="0.00001">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="takeProfit">Take Profit:</label>
+                                        <input type="number" id="takeProfit" step="0.00001">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stopLoss">Stop Loss:</label>
+                                        <input type="number" id="stopLoss" step="0.00001">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pnlNet">P&L Net:</label>
+                                        <input type="number" id="pnlNet" step="0.00001">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="positionSize">Position Size:</label>
+                                        <input type="number" id="positionSize" step="0.00001">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="strategyName">Strategy Name:</label>
+                                        <select id="strategyName">
+                                            <option value="" disabled selected>Select a strategy</option>
+                                            <option value="Breakout">Breakout</option>
+                                            <option value="Reversal">Reversal</option>
+                                            <option value="Trend Following">Trend Following</option>
+                                            <option value="Range Trading">Range Trading</option>
+                                            <option value="Scalping">Scalping</option>
+                                            <option value="Swing Trading">Swing Trading</option>
+                                            <option value="Long Term">Long Term</option>
+                                            <option value="Test">Test</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="notes">Notes:</label>
+                                    <textarea id="notes" placeholder="Why did you take this trade?"></textarea>
+                                </div>
+                                <button type="submit" class="tgg-primary-cta">Save Trade Entry</button>
+                            </form>
+                        </div>
+
+                        <div class="tab-switcher">
+                            <button class="tab active" id="table-tab">Table View</button>
+                            <button class="tab" id="analytics-tab">Analytics View</button>
+                        </div>
+
+                        <div class="journal-data-card" id="analytics-view" style="display: none;">
+                            <h3 class="widget-title">Analytics Dashboard</h3>
+                            <div class="kpi-dashboard-card">
+                                <div class="kpi-grid">
+                                    <div class="kpi-item"><span class="kpi-label">Net P&L</span><span class="kpi-value" id="kpi-net-pnl">$0.00</span></div>
+                                    <div class="kpi-item"><span class="kpi-label">Win Rate</span><span class="kpi-value" id="kpi-win-rate">0%</span></div>
+                                    <div class="kpi-item"><span class="kpi-label">Avg R:R</span><span class="kpi-value" id="kpi-avg-rr">0.0</span></div>
+                                    <div class="kpi-item"><span class="kpi-label">Total Trades</span><span class="kpi-value" id="kpi-total-trades">0</span></div>
+                                </div>
+                            </div>
+                            <div class="analytics-controls">
+                                <div class="time-frame-selector">
+                                    <label for="time-frame">Time Frame:</label>
+                                    <select id="time-frame">
+                                        <option value="all">All Time</option>
+                                        <option value="7days">Last 7 Days</option>
+                                        <option value="30days">Last 30 Days</option>
+                                    </select>
+                                </div>
+                                <div class="export-button"><button id="export-analytics-csv" class="tgg-primary-cta">Download Analytics</button></div>
+                            </div>
+                            <div class="analytics-grid">
+                                <div class="chart-row">
+                                    <div class="chart-card"><h4>Time-Based P&L</h4><canvas id="timePnlChart"></canvas></div>
+                                    <div class="chart-card"><h4>Asset-Based P&L</h4><canvas id="assetPnlChart"></canvas></div>
+                                </div>
+                                <div class="chart-row">
+                                    <div class="chart-card"><h4>Win vs Loss Count</h4><canvas id="winLossChart"></canvas></div>
+                                    <div class="chart-card"><h4>P&L Distribution</h4><canvas id="pnlDistributionChart"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="journal-data-card" id="table-view">
+                            <h3 class="widget-title">Trade Journal Log</h3>
+                            <div class="export-button"><button id="export-table-csv" class="tgg-primary-cta">Download CSV</button></div>
+                            <div id="journal-skeleton" class="journal-list">
+                                <div class="skeleton-row"><div class="skeleton skeleton-tag"></div><div style="flex:1"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div><div class="skeleton skeleton-tag"></div></div>
+                                <div class="skeleton-row"><div class="skeleton skeleton-tag"></div><div style="flex:1"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div><div class="skeleton skeleton-tag"></div></div>
+                            </div>
+                            <div id="journal-content-wrapper" class="content-hidden">
+                                <div id="trade-card-view" class="trade-card-list"></div>
+                                <div class="journal-table-wrapper journal-table-container">
+                                    <table id="journalTable">
+                                        <thead>
+                                            <tr>
+                                                <th data-sort="date">Date</th>
+                                                <th data-sort="symbol">Symbol</th>
+                                                <th data-sort="assetType">Asset Type</th>
+                                                <th data-sort="buySell">Buy/Sell</th>
+                                                <th data-sort="entryPrice">Entry Price</th>
+                                                <th data-sort="exitPrice">Exit Price</th>
+                                                <th data-sort="takeProfit">TP</th>
+                                                <th data-sort="stopLoss">SL</th>
+                                                <th data-sort="pnlNet">P&L Net</th>
+                                                <th data-sort="positionSize">Size</th>
+                                                <th data-sort="strategyName">Strategy</th>
+                                                <th data-sort="notes">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="trade-table-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="upload-csv-modal" class="modal hidden" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close" id="close-csv-modal">&times;</span>
+                                <h2>Upload Trades via CSV</h2>
+                                <form id="upload-csv-form">
+                                    <div class="form-group full-width">
+                                        <label for="csv-file">Select CSV File:</label>
+                                        <input type="file" id="csv-file" accept=".csv" required>
+                                    </div>
+                                    <button type="submit" class="tgg-primary-cta">Upload and Sync</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="notification" class="notification hidden"></div>
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+
+    <script src="/modules/trading-journal/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the module
+            if (typeof window.initTradingJournal === 'function') {
+                window.initTradingJournal();
+            } else {
+                console.error('initTradingJournal function not found.');
+            }
+            
+            // Clean logic: No DOM Surgery script needed anymore 
+            // because the banner is structurally outside the wrapper.
+        });
+    </script>
+</body>
+</html>

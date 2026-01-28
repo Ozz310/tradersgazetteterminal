@@ -1,0 +1,129 @@
+<div id="auth-module">
+    <div class="glass-card-container">
+        <div class="ambient-glow"></div>
+
+        <div class="glass-card">
+            
+            <div class="auth-header">
+                <h2>Terminal <span class="text-gold">Access</span></h2>
+                <p>Institutional Identity Verification</p>
+            </div>
+
+            <div id="auth-message" class="hidden"></div>
+
+            <div id="google-button-container" style="display: flex; justify-content: center; min-height: 40px; margin-bottom: 10px;"></div>
+
+            <div class="divider">
+                <span>Or Authenticate via Email</span>
+            </div>
+
+            <div id="login-form-container" class="form-container">
+                <form id="login-form">
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Email Identity</label>
+                        <input type="email" id="login-email" class="tg-input" required placeholder="trader@fund.com">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Access Key</label>
+                        <input type="password" id="login-password" class="tg-input" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="tg-btn-primary">Initialize Session</button>
+                </form>
+                <div class="links">
+                    <a href="#" id="forgot-password-link" class="link-text">Forgot Credentials?</a>
+                    <a href="#" id="signup-toggle" class="link-accent">Register New Identity</a>
+                </div>
+            </div>
+
+            <div id="signup-form-container" class="form-container hidden">
+                <form id="signup-form">
+                    <div style="margin-bottom: 12px;">
+                        <label class="input-label">Full Name</label>
+                        <input type="text" id="signup-name" class="tg-input" required>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label class="input-label">Email Identity</label>
+                        <input type="email" id="signup-email" class="tg-input" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                        <div>
+                            <label class="input-label">Password</label>
+                            <input type="password" id="signup-password" class="tg-input" required>
+                        </div>
+                        <div>
+                            <label class="input-label">Confirm</label>
+                            <input type="password" id="confirm-password" class="tg-input" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="tg-btn-primary">Create Access Identity</button>
+                </form>
+                <div class="links" style="justify-content: center;">
+                    <a href="#" id="back-to-login-link" class="link-text">Return to Terminal Login</a>
+                </div>
+            </div>
+
+            <div id="forgot-password-form-container" class="form-container hidden">
+                <p style="color: #8B949E; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">
+                    Enter your registered email. The system will dispatch a secure reset token.
+                </p>
+                <form id="forgot-password-form">
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Email Identity</label>
+                        <input type="email" id="forgot-password-email" class="tg-input" required>
+                    </div>
+                    <button type="submit" class="tg-btn-primary">Request Reset Token</button>
+                </form>
+                <div class="links" style="justify-content: center;">
+                    <a href="#" id="back-to-login-link2" class="link-text">Return to Terminal Login</a>
+                </div>
+            </div>
+
+            <div id="reset-password-container" class="form-container hidden">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: #DDAA33; font-size: 1.2rem; margin-bottom: 5px;">Set New Access Key</h3>
+                    <p style="font-size: 0.8rem; color: #8B949E;">Create a strong password for your account.</p>
+                </div>
+
+                <form id="reset-password-form">
+                    <input type="hidden" id="reset-token"> <div style="margin-bottom: 15px;">
+                        <label class="input-label">New Password</label>
+                        <input type="password" id="new-password" class="tg-input" required placeholder="••••••••">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label class="input-label">Confirm Password</label>
+                        <input type="password" id="confirm-new-password" class="tg-input" required placeholder="••••••••">
+                    </div>
+                    
+                    <button type="submit" class="tg-btn-primary">Update Secure Key</button>
+                </form>
+                
+                <div class="links" style="justify-content: center;">
+                    <a href="#" id="back-to-login-link-reset" class="link-text">Return to Login</a>
+                </div>
+            </div>
+
+            <div id="verify-pending-container" class="form-container hidden" style="text-align: center; padding: 20px 0;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">✉️</div>
+                <h3 style="color: #DDAA33; margin-bottom: 10px; font-size: 1.2rem;">Verification Dispatched</h3>
+                <p style="color: #8B949E; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.5;">
+                    A secure link has been sent to your email.<br>
+                    Please click the link to activate your terminal access.
+                </p>
+                <button id="back-to-login-link3" class="tg-btn-primary" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #8B949E;">
+                    Return to Login
+                </button>
+            </div>
+
+            <div id="verify-processing-container" class="form-container hidden" style="text-align: center; padding: 40px 0;">
+                <div style="border: 3px solid #333; border-top: 3px solid #DDAA33; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
+                <h3 style="color: white; margin-bottom: 10px;">Verifying Identity...</h3>
+                <p id="verify-status-text" style="color: #8B949E; font-size: 0.9rem;">Connecting to Security Core...</p>
+            </div>
+
+            <style>
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            </style>
+
+        </div>
+    </div>
+</div>

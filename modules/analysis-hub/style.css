@@ -1,0 +1,95 @@
+/* MODULE: ANALYSIS HUB - TV CALENDAR UPDATE v10.0 */
+
+.analysis-hub-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 1. TOP BANNER */
+.analysis-cover-photo {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 320px;
+    background-image: url('https://raw.githubusercontent.com/Ozz310/tradersgazetteterminal/refs/heads/main/images/Gemini_Generated_Image_8o1zaa8o1zaa8o1z.png');
+    background-size: cover;
+    background-position: center;
+    margin-top: -45px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 1;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), #000);
+}
+
+/* 2. CONTENT WRAPPER */
+.analysis-content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto 0 auto; 
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 40px; 
+    position: relative;
+    z-index: 2;
+}
+
+.section-header { text-align: center; margin-bottom: 20px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 3rem; color: #fff; margin-bottom: 5px; font-weight: 700; }
+.section-subtitle { color: #ccc; font-size: 1rem; }
+
+/* 3. PANELS */
+.chart-section, 
+.calendar-section {
+    background-color: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+.panel-header {
+    background: #0a0a0a;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.panel-header i { color: #F0D788; }
+
+/* 4. IFRAME CONTAINERS */
+.widget-iframe-container { width: 100%; background-color: #000; }
+
+.chart-section .widget-iframe-container { height: 600px; }
+
+/* Calendar Container */
+.calendar-section .widget-iframe-container { 
+    height: 700px;
+    background-color: #131722; /* Matches TradingView Dark Theme Background */
+}
+
+/* 5. MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+    .analysis-cover-photo { height: 200px; margin-top: -42px; }
+    .chart-section .widget-iframe-container { height: 500px; }
+    .calendar-section .widget-iframe-container { height: 600px; }
+    .analysis-content-wrapper { padding: 10px; gap: 30px; }
+    .section-title { font-size: 2.2rem; }
+}
